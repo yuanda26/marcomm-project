@@ -26,7 +26,7 @@ databaseConnection.connect((err, db) => {
     server.use(morgan("dev"));
 
     // Route
-    require("./routes/Route")(server);
+    require("./routes/Routes")(server);
 
     // Server Static Assets if in Production
     if (process.env.NODE_ENV === "production") {
