@@ -3,6 +3,7 @@ const unitLogic = require("../bisnislogics/M_Unit_Logic");
 const souvenirLogic = require("../bisnislogics/M_Souvenir_Logic");
 const tDesignLogic = require("../bisnislogics/T_Design_Logic");
 const tDesignItemLogic = require("../bisnislogics/T_Design_Item_Logic.js");
+const productLogic = require("../Bisnislogic/M_Product_Logic");
 
 module.exports = server => {
   // Root Route
@@ -46,4 +47,15 @@ module.exports = server => {
   server.put("/api/design/item", tDesignItemLogic.updateItemHandler);
   server.del("/api/design/item/:itemId", tDesignItemLogic.deleteItemHandler);
   //== End of Transaction Design Item Route
+
+  // PRODUCT by Purwanto
+  server.get("/api/product", productLogic.readAllHandler);
+  server.get("/api/product/:productId", productLogic.readByIdHandler);
+  server.get(
+    // code, name, description, created_date, created_by
+    "/api/product/:Code/:Name/:Description/:createdDate/:createdBy"
+    , productLogic.searchHandler);
+  server.post("/api/product", productLogic.createHandler);
+  server.put("/api/product/:productId", productLogic.updateHandler);
+  server.del("/api/product/:productId", productLogic.deleteHandler);
 };
