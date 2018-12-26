@@ -1,7 +1,6 @@
 const DB = require('../models/Database');
 const objectId = require('mongodb').ObjectId;
 const tEventModel = require('../models/T_Event_Model');
-const tEventModel1 = require('../models/T_Event_Model_1');
 const db = DB.getConnection();
 
 const tEventDatalayer = {
@@ -80,9 +79,29 @@ const tEventDatalayer = {
 	},
 	
 	createHandlerData : (callback, body) => {
-		let newBody = new tEventModel1(body)
-		newBody.is_delete = false;
-		newBody.status = 1;
+		let newBody = {
+			_id           : body._id,
+			code          : body.code,
+			event_name    : body.event_name,
+			start_date    : body.start_date,
+			end_date      : body.end_date,
+			place         : body.place,
+			budget        : body.budget,
+			request_by    : body.request_by,
+			request_date  : body.request_date,
+			approved_by   : body.approved_by,
+			approved_date : body.approved_date,
+			assign_to     : body.assign_to,
+			closed_date   : body.closed_date,
+			note          : body.note,
+			status        : 1,
+			reject_reason : body.reject_reason,
+			is_delete     : false,
+			created_by    : body.created_by,
+			created_date  : body.created_date,
+			updated_by    : body.updated_by,
+			updated_date  : body.updated_date
+		}
 		db.collection('t_event').insertOne(newBody, (err, docs) => {
 			callback(newBody)
 		})
