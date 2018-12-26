@@ -1,10 +1,11 @@
 const authenticate = require("../helpers/Auth_Helper").checkToken;
+const userLogic = require("../bisnislogics/M_User_Logic");
 const unitLogic = require("../bisnislogics/M_Unit_Logic");
 const souvenirLogic = require("../bisnislogics/M_Souvenir_Logic");
-const tDesignLogic = require("../bisnislogics/T_Design_Logic");
-const tDesignItemLogic = require("../bisnislogics/T_Design_Item_Logic.js");
 const productLogic = require("../bisnislogics/M_Product_Logic");
 const employeeLogic = require("../bisnislogics/M_Employee_Logic");
+const tDesignLogic = require("../bisnislogics/T_Design_Logic");
+const tDesignItemLogic = require("../bisnislogics/T_Design_Item_Logic.js");
 const tEvent = require("../bisnislogics/T_Event_Logic");
 
 module.exports = server => {
@@ -84,5 +85,10 @@ module.exports = server => {
   server.post("/api/tevent", tEvent.createHandler);
   server.put("/api/tevent/:teventId", tEvent.updateHandler);
   server.del("/api/tevent/:teventId", tEvent.deleteHandler);
+  //== End of T Event Route
+
+  // Master User Route - Login Process
+  // Made By: Hanif Al Baaits
+  server.post("/api/user/login", userLogic.loginUserHandler);
   //== End of T Event Route
 };
