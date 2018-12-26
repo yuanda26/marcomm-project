@@ -19,6 +19,7 @@ import DesignAdd from "./components/content/design/DesignAdd";
 import DesignList from "./components/content/design/DesignList";
 import DesignView from "./components/content/design/DesignView";
 import DesignEdit from "./components/content/design/DesignEdit";
+import SouvenirList from "./components/content/souvenir/SouvenirList";
 
 // Check for Token
 if (localStorage.token) {
@@ -55,6 +56,7 @@ class App extends Component {
                 path="/design/edit/:code"
                 component={DesignEdit}
               />
+              <PrivateRoute exact path="/souvenir" component={SouvenirList} />
             </Switch>
           </div>
         </Router>
