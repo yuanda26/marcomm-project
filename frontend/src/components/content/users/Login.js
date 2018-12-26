@@ -65,7 +65,7 @@ class Login extends Component {
               <div className="col-md-5 m-auto">
                 <h1 className="display-4 text-center">Log In</h1>
                 <p className="lead text-center">
-                  Sign in to your MiniProject Account
+                  Sign in to your Marcomm Account
                 </p>
                 <form onSubmit={this.onSubmit}>
                   <TextField

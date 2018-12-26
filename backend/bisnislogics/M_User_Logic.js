@@ -14,9 +14,9 @@ const M_user_Logic = {
     userData.readUserByUsername(user => {
       if (user) {
         if (bcrypt.compareSync(userdata.password, user.password)) {
-          let token = jwt.sign(user, authConfig.secretKey);
-          // Remove Password Property
-          delete user.password;
+          let token = jwt.sign(user, authConfig.secretKey, {
+            expiresIn: "12h"
+          });
 
           responseHelper.sendResponse(res, 200, { token: token });
         } else {

@@ -5,18 +5,11 @@ import ApiConfig from "../config/API_Config";
 
 // Login User Action
 export const loginUser = userData => dispatch => {
-  axios({
-    method: "post",
-    url: `${ApiConfig.host}/user/login`,
-    header: {
-      "Content-Type": "application/json"
-    },
-    data: userData
-  })
+  axios
+    .post(`${ApiConfig.host}/user/login`, userData)
     .then(res => {
-      // Save to localStorage
-      const { token } = res.data.message;
       // Set Token to localStorage
+      const { token } = res.data.message;
       localStorage.setItem("token", token);
       // Decode Token to Get User Data
       const decoded = jwt_decode(token);
@@ -28,13 +21,12 @@ export const loginUser = userData => dispatch => {
         payload: decoded
       });
     })
-    .catch(err => {
-      console.log(err);
+    .catch(err =>
       dispatch({
         type: ERRORS,
         payload: err
-      });
-    });
+      })
+    );
 };
 
 // Logout User Action
