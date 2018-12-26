@@ -11,14 +11,11 @@ const designData = {
       .find({ is_delete: false })
       .sort({ code: 1 })
       .toArray((err, designs) => {
-        let tDesign = designs.map(design => {
-          return new M_Design(design);
-        });
         // Return Data to Callback
         if (err) {
           callback(err);
         } else {
-          callback(tDesign);
+          callback(designs);
         }
       });
   },

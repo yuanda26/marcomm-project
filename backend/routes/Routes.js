@@ -3,7 +3,7 @@ const unitLogic = require("../bisnislogics/M_Unit_Logic");
 const souvenirLogic = require("../bisnislogics/M_Souvenir_Logic");
 const tDesignLogic = require("../bisnislogics/T_Design_Logic");
 const tDesignItemLogic = require("../bisnislogics/T_Design_Item_Logic.js");
-const productLogic = require("../Bisnislogic/M_Product_Logic");
+const productLogic = require("../bisnislogics/M_Product_Logic");
 const employeeLogic = require("../bisnislogics/M_Employee_Logic");
 const tEvent = require("../bisnislogics/T_Event_Logic");
 
@@ -55,8 +55,9 @@ module.exports = server => {
   server.get("/api/product/:productId", productLogic.readByIdHandler);
   server.get(
     // code, name, description, created_date, created_by
-    "/api/product/:Code/:Name/:Description/:createdDate/:createdBy"
-    , productLogic.searchHandler);
+    "/api/product/:Code/:Name/:Description/:createdDate/:createdBy",
+    productLogic.searchHandler
+  );
   server.post("/api/product", productLogic.createHandler);
   server.put("/api/product/:productId", productLogic.updateHandler);
   server.del("/api/product/:productId", productLogic.deleteHandler);
@@ -68,17 +69,12 @@ module.exports = server => {
   server.get("/api/employee/:employeeId", employeeLogic.readByIdHandler);
   server.get(
     // empId, empName, company, createdDate, createdBy)
-    "/api/employee/:empId/:empName/:company/:createdDate/:createdBy"
-    , employeeLogic.searchHandler);
+    "/api/employee/:empId/:empName/:company/:createdDate/:createdBy",
+    employeeLogic.searchHandler
+  );
   server.post("/api/employee", employeeLogic.createHandler);
-  server.put(
-    "/api/employee/:employeeId",
-    employeeLogic.updateHandler
-  );
-  server.del(
-    "/api/employee/:employeeId",
-    employeeLogic.deleteHandler
-  );
+  server.put("/api/employee/:employeeId", employeeLogic.updateHandler);
+  server.del("/api/employee/:employeeId", employeeLogic.deleteHandler);
   //== End of Employee Route
 
   // T Event Route
@@ -86,13 +82,7 @@ module.exports = server => {
   server.get("/api/tevent", tEvent.readAllHandler);
   server.get("/api/tevent/:teventId", tEvent.readByIdHandler);
   server.post("/api/tevent", tEvent.createHandler);
-  server.put(
-    "/api/tevent/:teventId",
-    tEvent.updateHandler
-  );
-  server.del(
-    "/api/tevent/:teventId",
-    tEvent.deleteHandler
-  );
+  server.put("/api/tevent/:teventId", tEvent.updateHandler);
+  server.del("/api/tevent/:teventId", tEvent.deleteHandler);
   //== End of T Event Route
 };
