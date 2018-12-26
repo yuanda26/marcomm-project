@@ -16,7 +16,13 @@ class Navbar extends Component {
     // Define Links
     const authLinks = (
       <React.Fragment>
-        <ul className="navbar-nav mr-auto" />
+        <ul className="navbar-nav mr-auto">
+          <li className="nav-item">
+            <Link className="nav-link" to="/design">
+              Design
+            </Link>
+          </li>
+        </ul>
         <ul className="navbar-nav ml-auto">
           <li className="nav-item">
             <Link className="nav-link" to="" onClick={this.onLogout}>

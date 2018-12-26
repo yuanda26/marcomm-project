@@ -30,17 +30,37 @@ module.exports = server => {
 
   // Transaction Design Route
   // Made By: Dian Yuanda
-  server.get("/api/design", tDesignLogic.readAllDesignHandler);
-  server.get("/api/design/code", tDesignLogic.getCodeHandler);
-  server.get("/api/design/:code", tDesignLogic.readByCodeHandler);
-  server.post("/api/design", tDesignLogic.createDesignHandler);
-  server.put("/api/design/:code", tDesignLogic.updateDesignHandler);
-  server.put("/api/design/approve/:code", tDesignLogic.approveHandler);
-  server.put("/api/design/close/:code", tDesignLogic.closeReqHandler);
-  server.post("/api/design/upload_files", tDesignLogic.createDesignItemFile);
-  server.get("/api/design/files/:itemId", tDesignLogic.getDesignFiles);
-  server.get("/api/design/requester", tDesignLogic.getRequester);
-  server.get("/api/design/staff", tDesignLogic.getStaff);
+  server.get("/api/design", authenticate, tDesignLogic.readAllDesignHandler);
+  server.get("/api/design/code", authenticate, tDesignLogic.getCodeHandler);
+  server.get("/api/design/:code", authenticate, tDesignLogic.readByCodeHandler);
+  server.post("/api/design", authenticate, tDesignLogic.createDesignHandler);
+  server.put(
+    "/api/design/:code",
+    authenticate,
+    tDesignLogic.updateDesignHandler
+  );
+  server.put(
+    "/api/design/approve/:code",
+    authenticate,
+    tDesignLogic.approveHandler
+  );
+  server.put(
+    "/api/design/close/:code",
+    authenticate,
+    tDesignLogic.closeReqHandler
+  );
+  server.post(
+    "/api/design/upload_files",
+    authenticate,
+    tDesignLogic.createDesignItemFile
+  );
+  server.get(
+    "/api/design/files/:itemId",
+    authenticate,
+    tDesignLogic.getDesignFiles
+  );
+  server.get("/api/design/requester", authenticate, tDesignLogic.getRequester);
+  server.get("/api/design/staff", authenticate, tDesignLogic.getStaff);
   //== End of Transaction Design Route
 
   // Transaction Design Item Route

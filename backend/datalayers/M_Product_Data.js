@@ -1,4 +1,4 @@
-const Database = require("../Models/Database");
+const Database = require("../models/Database");
 const M_Product = require("../models/M_Product_Model");
 const db = Database.getConnection();
 

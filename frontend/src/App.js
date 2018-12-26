@@ -15,6 +15,10 @@ import Navbar from "./components/layout/Navbar";
 // Import Components
 import Dashboard from "./Dashboard";
 import Login from "./components/content/users/Login";
+import DesignAdd from "./components/content/design/DesignAdd";
+import DesignList from "./components/content/design/DesignList";
+import DesignView from "./components/content/design/DesignView";
+import DesignEdit from "./components/content/design/DesignEdit";
 
 // Check for Token
 if (localStorage.token) {
@@ -39,6 +43,18 @@ class App extends Component {
             <Route exact path="/" component={Login} />
             <Switch>
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
+              <PrivateRoute exact path="/design" component={DesignList} />
+              <PrivateRoute exact path="/design/add" component={DesignAdd} />
+              <PrivateRoute
+                exact
+                path="/design/view/:code"
+                component={DesignView}
+              />
+              <PrivateRoute
+                exact
+                path="/design/edit/:code"
+                component={DesignEdit}
+              />
             </Switch>
           </div>
         </Router>
