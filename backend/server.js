@@ -34,7 +34,7 @@ databaseConnection.connect((err, db) => {
       server.get(
         "*",
         restify.plugins.serveStatic({
-          directory: "./public/build",
+          directory: "../frontend/public/build",
           default: "index.html"
         })
       );
