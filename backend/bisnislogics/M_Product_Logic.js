@@ -1,24 +1,20 @@
 const ResponseHelper = require("../helpers/Response_Helper");
-const dtl = require("../datalayers/M_Product_Data");
+const productData = require("../datalayers/M_Product_Data");
 
 const M_Product_Data = {
   //GET PRODUCT TABLE
   readAllHandler: (req, res, next) => {
-    console.log("disini");
-    dtl.readAllHandlerData(items => {
+    productData.readAllHandlerData(items => {
       ResponseHelper.sendResponse(res, 200, items);
-      //console.log(JSON.stringify(items))
     });
   },
-
   //GET PRODUCT BY ID
   readByIdHandler: (req, res, next) => {
-    let id = req.params.productId;
-    dtl.readByIdHandler(items => {
+    let code = req.params.productId;
+    productData.readByIdHandler(items => {
       ResponseHelper.sendResponse(res, 200, items);
-    }, id);
+    }, code);
   },
-
   //SEARCH
   searchHandler: (req, res, next) => {
     let code = req.params.Code;
@@ -26,7 +22,8 @@ const M_Product_Data = {
     let description = req.params.Description;
     let created_date = req.params.createdDate;
     let created_by = req.params.createdBy;
-    dtl.searchHandlerData(
+
+    productData.searchHandlerData(
       items => {
         ResponseHelper.sendResponse(res, 200, items);
       },
@@ -37,12 +34,10 @@ const M_Product_Data = {
       created_by
     );
   },
-
   //ADD PRODUCT TABLE
   createHandler: (req, res, next) => {
     let name = req.body.name.toUpperCase();
     let thisDate = new Date();
-
     let date = thisDate.getDate().toString();
     let month = (thisDate.getMonth() + 1).toString();
     let year = thisDate.getFullYear().toString();
@@ -58,11 +53,11 @@ const M_Product_Data = {
 
     let create_date = year + "-" + month + "-" + date;
 
-    dtl.readByUsername(docs => {
+    productData.readByUsername(docs => {
       if (docs) {
         ResponseHelper.sendResponse(res, 401, "PRODUCT SUDAH ADA");
       } else {
-        dtl.readLastId(companies => {
+        productData.readLastId(companies => {
           if (companies.length > 0) {
             let pattern = companies[0].code.substr(-4);
             let lastestCode = parseInt(pattern) + 1;
@@ -84,39 +79,36 @@ const M_Product_Data = {
             created_date: create_date
           };
 
-          //console.log(data)
-
-          dtl.createHandler(function(items) {
+          productData.createHandler(items => {
             ResponseHelper.sendResponse(res, 200, items);
           }, data);
         });
       }
     }, name);
   },
-
   //DELETE PRODUCT
   deleteHandler: (req, res, next) => {
-    let id = req.params.productId;
-    dtl.deleteHandler(items => {
+    let code = req.params.productId;
+    productData.deleteHandler(items => {
       ResponseHelper.sendResponse(res, 200, items);
-    }, id);
+    }, code);
   },
-
   //EDIT PRODUCT
   updateHandler: (req, res, next) => {
-    let id = req.params.productId;
+    let code = req.params.productId;
     const data = {
       name: req.body.name.toUpperCase(),
       description: req.body.description,
       update_by: req.body.update_by,
       update_date: new Date()
     };
-    dtl.updateHandler(
+
+    productData.updateHandler(
       items => {
         ResponseHelper.sendResponse(res, 200, items);
       },
       data,
-      id
+      code
     );
   }
 };
