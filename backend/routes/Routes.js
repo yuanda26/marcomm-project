@@ -121,6 +121,11 @@ module.exports = server => {
   server.del("/api/employee/:employeeId", employeeLogic.deleteHandler);
   //== End of Employee Route
 
+  // company Route
+  // Made By: Purwanto
+  server.get("/api/company", companyLogic.readAllHandler);
+  //== End of Company Route
+
   // T Event Route
   // Made By: Purwanto
   server.get("/api/tevent", tEvent.readAllHandler);

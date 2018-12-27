@@ -124,6 +124,7 @@ const employeeDatalayer = {
 		db.collection('m_employee').insertOne(body, (err, docs) => {
 			callback(body)
 		})
+
 	},
 
 	updateHandlerData : (callback, param, body) => {

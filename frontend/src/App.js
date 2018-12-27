@@ -21,6 +21,7 @@ import DesignView from "./components/content/design/DesignView";
 import DesignEdit from "./components/content/design/DesignEdit";
 import SouvenirList from "./components/content/souvenir/SouvenirList";
 import UnitList from "./components/content/unit/UnitList";
+import EmployeeList from "./components/content/employee/ListEmployee";
 
 // Check for Token
 if (localStorage.token) {
@@ -59,6 +60,7 @@ class App extends Component {
               />
               <PrivateRoute exact path="/souvenir" component={SouvenirList} />
               <PrivateRoute exact path="/unit" component={UnitList} />
+              <PrivateRoute exact path="/employee" component={EmployeeList} />
             </Switch>
           </div>
         </Router>
