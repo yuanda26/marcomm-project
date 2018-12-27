@@ -1,4 +1,5 @@
 const authenticate = require("../helpers/Auth_Helper").checkToken;
+const companyLogic = require("../bisnislogics/M_Company_Logic");
 const userLogic = require("../bisnislogics/M_User_Logic");
 const unitLogic = require("../bisnislogics/M_Unit_Logic");
 const souvenirLogic = require("../bisnislogics/M_Souvenir_Logic");
@@ -7,10 +8,32 @@ const employeeLogic = require("../bisnislogics/M_Employee_Logic");
 const tDesignLogic = require("../bisnislogics/T_Design_Logic");
 const tDesignItemLogic = require("../bisnislogics/T_Design_Item_Logic.js");
 const tEvent = require("../bisnislogics/T_Event_Logic");
+const tSouvenirLogic = require("../bisnislogics/T_Souvenir_Logic");
+const tSouvenirItemLogic = require("../bisnislogics/T_Souvenir_Item_Logic");
 
 module.exports = server => {
   // Root Route
   server.get("/", (req, res, next) => {});
+
+  // Master Company Route
+  server.get("/api/company", authenticate, companyLogic.readAllCompany);
+  server.get(
+    "/api/company/:companyId",
+    authenticate,
+    companyLogic.readCompanyByID
+  );
+  server.post("/api/company", authenticate, companyLogic.createCompany);
+  server.put(
+    "/api/company/:companyId",
+    authenticate,
+    companyLogic.updateCompany
+  );
+  server.del(
+    "/api/company/:companyId",
+    authenticate,
+    companyLogic.deleteCompany
+  );
+  //== End of Company Route
 
   // Master Souvenir Route
   server.get("/api/souvenir", souvenirLogic.readAllSouvenir);
@@ -111,4 +134,77 @@ module.exports = server => {
   // Made By: Hanif Al Baaits
   server.post("/api/user/login", userLogic.loginUserHandler);
   //== End of T Event Route
+
+  // Transaction Souvenir Route
+  server.get("/api/tsouvenir", authenticate, tSouvenirLogic.readAllHandler);
+  server.get(
+    "/api/tsouvenir/:souvenirId",
+    authenticate,
+    tSouvenirLogic.readByIdHandler
+  );
+  server.post("/api/tsouvenir", authenticate, tSouvenirLogic.createHandlerItem);
+  server.put(
+    "/api/tsouvenir/:souvenirId",
+    authenticate,
+    tSouvenirLogic.updateHandler
+  );
+  //== End of Transaction Souvenir Route
+
+  // Transaction Souvenir Item Route
+  server.get(
+    "/api/tsouveniritem",
+    authenticate,
+    tSouvenirItemLogic.readSouvenirAllHandler
+  );
+  server.get(
+    "/api/tsouveniritemview",
+    authenticate,
+    tSouvenirItemLogic.readSouvenirItemAllHandler
+  );
+  server.get(
+    "/api/tsouveniritem/:souvenirId",
+    authenticate,
+    tSouvenirItemLogic.readByIdHandler
+  );
+  server.post(
+    "/api/tsouveniritem",
+    authenticate,
+    tSouvenirItemLogic.createHandlerItem
+  );
+  server.put(
+    "/api/tsouveniritem/:souvenirId",
+    authenticate,
+    tSouvenirItemLogic.updateHandler
+  );
+  server.put(
+    "/api/tsouveniritemapprove/:souvenirId",
+    authenticate,
+    tSouvenirItemLogic.approveHandler
+  );
+  server.put(
+    "/api/tsouveniritemreject/:souvenirId",
+    authenticate,
+    tSouvenirItemLogic.rejectHandler
+  );
+
+  server.put(
+    "/api/tsouveniritemreceived/:souvenirId",
+    authenticate,
+    tSouvenirItemLogic.receivedHandler
+  );
+  server.put(
+    "/api/tsouveniritemsettlement/:souvenirId",
+    authenticate,
+    tSouvenirItemLogic.settlementHandler
+  );
+  server.put(
+    "/api/tsouveniritemapprovesettlement/:souvenirId",
+    authenticate,
+    tSouvenirItemLogic.approveSettlementHandler
+  );
+  server.put(
+    "/api/tsouveniritemcloseorder/:souvenirId",
+    authenticate,
+    tSouvenirItemLogic.closeOrderHandler
+  );
 };
