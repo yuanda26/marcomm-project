@@ -21,11 +21,11 @@ module.exports = server => {
   //== End of Master Souvenir Route
 
   // Master Unit Route
-  server.get("/api/unit", unitLogic.readAllUnit);
-  server.get("/api/unit/:unitId", unitLogic.readOneById);
-  server.post("/api/unit", unitLogic.createUnit);
-  server.put("/api/unit/:unitId", unitLogic.updateUnit);
-  server.del("/api/unit/:unitId", unitLogic.deleteUnit);
+  server.get("/api/unit", authenticate, unitLogic.readAllUnit);
+  server.get("/api/unit/:unitId", authenticate, unitLogic.readOneById);
+  server.post("/api/unit", authenticate, unitLogic.createUnit);
+  server.put("/api/unit/:unitId", authenticate, unitLogic.updateUnit);
+  server.del("/api/unit/:unitId", authenticate, unitLogic.deleteUnit);
   //==End of Master Unit Route
 
   // Transaction Design Route
