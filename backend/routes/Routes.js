@@ -7,10 +7,27 @@ const employeeLogic = require("../bisnislogics/M_Employee_Logic");
 const tDesignLogic = require("../bisnislogics/T_Design_Logic");
 const tDesignItemLogic = require("../bisnislogics/T_Design_Item_Logic.js");
 const tEvent = require("../bisnislogics/T_Event_Logic");
-
+const roleLogic = require("../bisnislogics/M_Role_Bisnis_Logic");
+const accessLogic = require("../bisnislogics/M_Menu_Access_Bisnis_Logic");
 module.exports = server => {
   // Root Route
   server.get("/", (req, res, next) => {});
+
+  // Master Role Route
+  // Made By: Randika Alditia
+  server.get("/api/role", authenticate, roleLogic.readAllRole);
+  server.get("/api/role/:id", authenticate, roleLogic.readOneRole);
+  server.post("/api/role", authenticate, roleLogic.createRole);
+  server.put("/api/role/:id", authenticate, roleLogic.updateRole);
+  server.del("/api/role/:id", authenticate, roleLogic.deleteRole);
+  //== End of Master Role Route
+
+  // Master Access Menu Route
+  // Made By: Randika Alditia
+  server.get("/api/access", authenticate, accessLogic.readAllAccess);
+  server.get("/api/access/:id", authenticate, accessLogic.readOneAccess);
+  server.put("/api/access/:id", authenticate, accessLogic.updateAccess);
+  //== End of Master Access Menu Route
 
   // Master Souvenir Route
   server.get("/api/souvenir", souvenirLogic.readAllSouvenir);
