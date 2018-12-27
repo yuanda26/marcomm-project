@@ -7,7 +7,7 @@ import {
   DELETE_SOUVENIR,
   ERRORS
 } from "./types";
-import ApiConfig from "../config/API_Config";
+import ApiConfig from "../config/Host_Config";
 
 // Get All Units
 export const getUnits = () => dispatch => {
