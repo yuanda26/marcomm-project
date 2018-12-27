@@ -45,3 +45,27 @@ export const UPDATE_PROVINCE = "UPDATE_PROVINCE";
 // Common Types
 export const ERRORS = "ERRORS";
 export const CURRENT_USER = "CURRENT_USER";
+
+// Product Types
+export const SEARCH_PRODUCT = "SEARCH_PRODUCT";
+export const CREATE_PRODUCT = "CREATE_PRODUCT";
+export const DEL_PRODUCT = "DEL_PRODUCT";
+export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
+
+// Employee Types
+export const GET_EMPLOYEE    = "GET_EMPLOYEE";
+export const CREATE_EMPLOYEE = "CREATE_EMPLOYEE";
+export const SEARCH_EMPLOYEE = "SEARCH_EMPLOYEE";
+export const GET_ID_EMPLOYEE = "GET_ID_EMPLOYEE";
+export const UPDATE_EMPLOYEE = "UPDATE_EMPLOYEE";
+export const DELETE_EMPLOYEE = "DELETE_EMPLOYEE";
+
+// Event Types
+export const GET_ID_EVENT = "GET_ID_EVENT";
+export const UPDATE_EVENT = "UPDATE_EVENT";
+export const DELETE_EVENT = "DELETE_EVENT";
+export const CREATE_EVENT = "CREATE_EVENT";
+
+// Company Types
+export const GET_COMPANIES    = "GET_COMPANIES";
+export const GET_USER    = "GET_USER";
