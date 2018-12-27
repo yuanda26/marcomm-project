@@ -14,7 +14,7 @@ import {
   UPDATE_DESIGN_ITEM,
   ERRORS
 } from "./types";
-import ApiConfig from "../config/API_Config";
+import ApiConfig from "../config/Host_Config";
 
 // Get All Designs
 export const getAllDesign = () => dispatch => {
