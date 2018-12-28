@@ -249,11 +249,12 @@ class ListEmployee extends React.Component {
                           name="company"
                           className="form-control"
                           onChange={this.changeHandler}
+                          defaultValue=""
                         >
-                        <option selected value="">Select Company...</option>
+                        <option value="" >Select Company...</option>
                           {company.myCompany.map((row,x) => {
                             return (
-                              <option value={row.code}>{row.name}</option>
+                              <option key={row._id} value={row.code}>{row.name}</option>
                           )})}
                         </select>
                        </div>
@@ -299,7 +300,7 @@ class ListEmployee extends React.Component {
                     </thead>
                     <tbody>
                       {employee.myEmployee.map((row,x)=>
-                      <tr>
+                      <tr key={row._id}>
                         <td>{x + 1}</td>
                         <td>{row.employee_number}</td>
                         <td>{row.first_name + " " + row.last_name}</td>

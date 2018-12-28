@@ -7,7 +7,7 @@ const employeeLogic = require("../bisnislogics/M_Employee_Logic");
 const tDesignLogic = require("../bisnislogics/T_Design_Logic");
 const tDesignItemLogic = require("../bisnislogics/T_Design_Item_Logic.js");
 const tEvent = require("../bisnislogics/T_Event_Logic");
-const companyLogic = require("../bisnislogics/M_Company_Logic");
+// const companyLogic = require("../bisnislogics/M_Company_Logic");
 
 module.exports = server => {
   // Root Route
@@ -101,7 +101,7 @@ module.exports = server => {
 
   // company Route
   // Made By: Purwanto
-  server.get("/api/company", companyLogic.readAllHandler);
+  // server.get("/api/company", companyLogic.readAllHandler);
   //== End of Company Route
 
   // T Event Route

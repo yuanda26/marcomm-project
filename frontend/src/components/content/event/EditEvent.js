@@ -6,12 +6,11 @@ import {
 } from 'reactstrap'
 import { connect } from "react-redux";
 import { updateEvent } from "../../../actions/event/update_act";
-import apiconfig from '../../../config/apiconfig.json'
 
 class EditEvent extends React.Component {
   constructor (props) {
     super(props)
-    let userdata =JSON.parse(localStorage.getItem(apiconfig.LS.USERDATA))      
+    let userdata = "purwanto"
     super(props)
     this.state = {
       formdata : {
@@ -26,7 +25,7 @@ class EditEvent extends React.Component {
         created_by : userdata.username
       },
       updated_by : userdata.username,
-      readOnly : "",
+      readOnly : false,
       currentEmployee : '',
       statusUpdated : null,
       messageUpdated : null,
@@ -45,7 +44,7 @@ class EditEvent extends React.Component {
 
   componentWillReceiveProps(newProps){
     let { event, currentEvent } = newProps
-    let { readOnly, formdata, currentEmployee } = this.state
+    let { readOnly } = this.state
     let { request_by_first_name, request_by_last_name } = currentEvent
     if( currentEvent.status === "Submitted" ){
       readOnly = false
@@ -119,8 +118,8 @@ class EditEvent extends React.Component {
         'Transaction Event Request With Code',
         ' has been updated!',
         this.state.formdata.code)
-    }else if ( this.state.statusUpdated != 200 &&
-       this.state.statusCreated != null){
+    }else if ( this.state.statusUpdated !== 200 &&
+       this.state.statusCreated !== null){
       this.props.modalStatus(2, 'Failed' )
     }
     return(
