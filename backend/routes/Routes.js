@@ -5,13 +5,13 @@ const unitLogic = require("../bisnislogics/M_Unit_Logic");
 const souvenirLogic = require("../bisnislogics/M_Souvenir_Logic");
 const productLogic = require("../bisnislogics/M_Product_Logic");
 const employeeLogic = require("../bisnislogics/M_Employee_Logic");
+const roleLogic = require("../bisnislogics/M_Role_Bisnis_Logic");
+const accessLogic = require("../bisnislogics/M_Menu_Access_Bisnis_Logic");
 const tDesignLogic = require("../bisnislogics/T_Design_Logic");
 const tDesignItemLogic = require("../bisnislogics/T_Design_Item_Logic.js");
 const tEvent = require("../bisnislogics/T_Event_Logic");
 const tSouvenirLogic = require("../bisnislogics/T_Souvenir_Logic");
 const tSouvenirItemLogic = require("../bisnislogics/T_Souvenir_Item_Logic");
-const roleLogic = require("../bisnislogics/M_Role_Bisnis_Logic");
-const accessLogic = require("../bisnislogics/M_Menu_Access_Bisnis_Logic");
 
 module.exports = server => {
   // Root Route
@@ -152,7 +152,7 @@ module.exports = server => {
 
   // Employee Route
   // Made By: Purwanto
-  server.get("/api/employee", authenticate, employeeLogic.readAllHandler);
+  server.get("/api/employee", employeeLogic.readAllHandler);
   server.get("/api/employee/:employeeId", employeeLogic.readByIdHandler);
   server.get(
     // empId, empName, company, createdDate, createdBy)

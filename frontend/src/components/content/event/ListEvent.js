@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Alert } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import { connect } from "react-redux";
-import { getEvent } from "../../../actions/event/get_all_act";
+import { getAllEvent } from "../../../actions/eventAction";
 
 import EditEvent from './EditEvent'
 import CreateEvent from './CreateEvent'
@@ -117,7 +117,7 @@ class ListEvent extends React.Component {
 			created_by
 		} = this.state.initialSearch
 		let test = [];
-		this.state.event.map(ele => {
+		this.state.event.forEach(ele => {
 			let fullName = ele.request_by_first_name + " " + ele.request_by_last_name
 			if(
 				( code.test(ele.code.toLowerCase()) ||
@@ -163,7 +163,7 @@ class ListEvent extends React.Component {
 	}
 
 	componentDidMount = () => {
-		this.props.getEvent();
+		this.props.getAllEvent();
 	}
 
 	componentWillReceiveProps(newProp){
@@ -200,8 +200,8 @@ class ListEvent extends React.Component {
 								<div className="col">
 									<nav aria-label="breadcrumb">
 										<ul className="breadcrumb">
-											<li className="breadcrumb-item"><a href="" >Home</a></li>
-											<li className="breadcrumb-item"><a href="#">Transaction</a></li>
+											<li className="breadcrumb-item"><a href="/dashboard" >Home</a></li>
+											<li className="breadcrumb-item"><a href="/dashboard">Transaction</a></li>
 											<li className="breadcrumb-item active" aria-current="page">List Event</li>
 										</ul>
 									</nav>
@@ -389,7 +389,7 @@ class ListEvent extends React.Component {
 }
 
 ListEvent.propTypes = {
-  getEvent: PropTypes.func.isRequired,
+  getAllEvent: PropTypes.func.isRequired,
   event: PropTypes.object.isRequired,
 };
 
@@ -399,5 +399,5 @@ const mapStateToProps = state => ({
 });
 
 export default connect(
-	mapStateToProps,{ getEvent }
+	mapStateToProps,{ getAllEvent }
 	)( ListEvent );

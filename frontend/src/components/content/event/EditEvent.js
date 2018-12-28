@@ -5,7 +5,7 @@ import {
   Modal, ModalBody, ModalFooter, ModalHeader, Button
 } from 'reactstrap'
 import { connect } from "react-redux";
-import { updateEvent } from "../../../actions/event/update_act";
+import { updateEvent } from "../../../actions/eventAction";
 
 class EditEvent extends React.Component {
   constructor (props) {
@@ -112,22 +112,12 @@ class EditEvent extends React.Component {
 
 
   render(){
-    //status, action, message, optional, code
-    if( this.state.statusUpdated === 200 ){
-      this.props.modalStatus(1, 'Updated',
-        'Transaction Event Request With Code',
-        ' has been updated!',
-        this.state.formdata.code)
-    }else if ( this.state.statusUpdated !== 200 &&
-       this.state.statusCreated !== null){
-      this.props.modalStatus(2, 'Failed' )
-    }
     return(
       <Modal isOpen={this.props.edit} className="modal-dialog modal-lg border-primary card">
         <ModalHeader className="bg-primary text-white card-header">{" Edit Event - " + this.state.formdata.code }
         </ModalHeader>
         <ModalBody className="card-body">
-          <div className="form-control container">
+          <div className="container">
             <form className="needs-validation">
               <div className="row">
                 <div className="col-sm-6">
@@ -145,7 +135,7 @@ class EditEvent extends React.Component {
                       />
                     </div>
                     <br/><br/>
-                    <label for="validateEventName" className="col-sm-5 col-form-label text-right">* Event Name</label>
+                    <label htmlFor="validateEventName" className="col-sm-5 col-form-label text-right">* Event Name</label>
                     <div>
                       <input
                         id="validateEventName"
@@ -167,7 +157,7 @@ class EditEvent extends React.Component {
                       </div>
                     </div>
                     <br/><br/>
-                    <label for="validateEventPlace" className="col-sm-5 col-form-label text-right">* Event Place</label>
+                    <label htmlFor="validateEventPlace" className="col-sm-5 col-form-label text-right">* Event Place</label>
                     <div className=" float-right">
                       <input
                         id="validateEventPlace"
@@ -187,7 +177,7 @@ class EditEvent extends React.Component {
                       </div>
                     </div>
                     <br/><br/>
-                    <label for="validateEventStartDate" className="col-sm-5 col-form-label text-right">* Event Start Date</label>
+                    <label htmlFor="validateEventStartDate" className="col-sm-5 col-form-label text-right">* Event Start Date</label>
                     <div>
                       <input
                         type="date"
@@ -209,7 +199,7 @@ class EditEvent extends React.Component {
                       </div>
                     </div>
                     <br/><br/>
-                    <label for="validateEventEndDate" className="col-sm-5 col-form-label text-right">* Event End Date</label>
+                    <label htmlFor="validateEventEndDate" className="col-sm-5 col-form-label text-right">* Event End Date</label>
                     <div>
                       <input
                         type="date"
@@ -233,7 +223,7 @@ class EditEvent extends React.Component {
                       </div>
                     </div>
                     <br/><br/>
-                    <label for="validateBudget" className="col-sm-5 col-form-label text-right">* Budget (Rp)</label>
+                    <label htmlFor="validateBudget" className="col-sm-5 col-form-label text-right">* Budget (Rp)</label>
                     <div>
                       <input
                         type="text"
@@ -261,7 +251,7 @@ class EditEvent extends React.Component {
                     <div>
                       <input
                         type="text" 
-                        class="form-control" 
+                        className="form-control" 
                         placeholder="Request By" 
                         name="request_by" 
                         value={this.state.currentEmployee} 

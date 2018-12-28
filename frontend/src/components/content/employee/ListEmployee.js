@@ -7,9 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Alert } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import { connect } from "react-redux";
-import { getEmployee } from "../../../actions/employee/get_all_act";
-import { searchEmployee } from "../../../actions/employee/search_act";
-import { getCompanies } from "../../../actions/company/get_all_act";
+import { getAllEmployee, searchEmployee } from "../../../actions/employeeAction";
 
 import EditEmployee from './EditEmployee'
 import CreateEmployee from './CreateEmployee'
@@ -31,7 +29,6 @@ class ListEmployee extends React.Component {
       },
       showCreateEmployee:false,
       currentEmployee:{},
-      hasil : [],
       alertData : {
         status : 0,
         message : "",
@@ -40,14 +37,13 @@ class ListEmployee extends React.Component {
         code : ""
       },
       created_date : null,
-      selectedCompany : {},
     }
   }
 
   deleteModalHandler = (employeeid) => {
     let tmp = {};
-    this.props.employee.myEmployee.map(ele => {
-      if (employeeid == ele._id) {
+    this.props.employee.myEmployee.forEach(ele => {
+      if (employeeid === ele._id) {
       tmp = ele;
     }
     });
@@ -59,8 +55,8 @@ class ListEmployee extends React.Component {
 
   viewModalHandler = (employeeid) => {
     let tmp = {};
-    this.props.employee.myEmployee.map(ele => {
-      if (employeeid == ele._id) {
+    this.props.employee.myEmployee.forEach(ele => {
+      if (employeeid === ele._id) {
         tmp = ele;
       }
     });
@@ -72,14 +68,14 @@ class ListEmployee extends React.Component {
 
   editModalHandler = (employeeid) => {
     let tmp = {};
-    this.props.employee.myEmployee.map(ele => {
-      if (employeeid == ele._id) {
+    this.props.employee.myEmployee.forEach(ele => {
+      if (employeeid === ele._id) {
         tmp = ele
-        this.setState({
-          currentEmployee: tmp,
-          editEmployee: true
-        });
       }
+    });
+    this.setState({
+      currentEmployee: tmp,
+      editEmployee: true
     });
   }
 
@@ -135,8 +131,8 @@ class ListEmployee extends React.Component {
   }
 
   componentDidMount = () => {
-    this.props.getEmployee();
-    this.props.getCompanies();
+    this.props.getAllEmployee();
+    // this.props.getCompanies();
   }
 
   modalStatus = (status, action, message, optional, code) => {
@@ -147,15 +143,17 @@ class ListEmployee extends React.Component {
         action: action,
         optional:optional,
         code: code
-      },
-      viewCompany: false,
-      editCompany: false,
-      deleteCompany: false
+      }
     });
   }
 
   render() {
-    let { employee, company } = this.props
+    let { employee } = this.props
+
+    let company = {myCompany : [
+      {_id : "124653546575", code : "CP0001", name : "XSIS"},
+      {_id : "557453235657", code : "CP0002", name : "ASTRA"}
+      ]}
     return (
       <div className="container">
         <div className="row">
@@ -166,14 +164,14 @@ class ListEmployee extends React.Component {
                 <div className="col">
                   <nav aria-label="breadcrumb">
                     <ul className="breadcrumb">
-                      <li className="breadcrumb-item"><a href="#" >Home</a></li>
-                      <li className="breadcrumb-item"><a href="#">Master</a></li>
+                      <li className="breadcrumb-item"><a href="/dashboard" >Home</a></li>
+                      <li className="breadcrumb-item"><a href="/dashboard">Master</a></li>
                       <li className="breadcrumb-item active" aria-current="page">List Employee</li>
                     </ul>
                   </nav>
                 </div>
                 <div>
-                  {this.state.alertData.status == 1 ? (
+                  {this.state.alertData.status === 1 ? (
                     <Alert color="success">
                       <b>Data {this.state.alertData.action} !</b>
                         {" " + this.state.alertData.message + " "} 
@@ -182,7 +180,7 @@ class ListEmployee extends React.Component {
                     </Alert>
                     ) : ("")
                     }
-                    {this.state.alertData.status == 2 ? (
+                    {this.state.alertData.status === 2 ? (
                       <Alert color="danger">
                         <b>Data {this.state.alertData.action} !</b>
                           {" " + this.state.alertData.message + " "} 
@@ -200,10 +198,8 @@ class ListEmployee extends React.Component {
                   </button>
                   <CreateEmployee
                     create={this.state.showCreateEmployee}
-                    employee={this.props.employee.myEmployee}
                     closeHandler={this.closeHandler}
                     modalStatus={this.modalStatus}
-                    getList = {this.props.getEmployee}
                   />
                   <ViewEmployee
                     view={this.state.viewEmployee}
@@ -215,15 +211,12 @@ class ListEmployee extends React.Component {
                     currentEmployee={this.state.currentEmployee}
                     closeModalHandler={this.closeModalHandler}
                     modalStatus={this.modalStatus}
-                    getList = {this.props.getEmployee}
                   />
                   <EditEmployee
-                    employee={this.props.employee.myEmployee}
                     edit={this.state.editEmployee}
                     closeModalHandler={this.closeModalHandler}
                     currentEmployee={this.state.currentEmployee}
                     modalStatus={this.modalStatus}
-                    getList = {this.props.getEmployee}
                   />
                   <br/> <br/>
                   <form>
@@ -364,17 +357,15 @@ class ListEmployee extends React.Component {
 }
 
 ListEmployee.propTypes = {
-  getEmployee: PropTypes.func.isRequired,
-  getCompanies: PropTypes.func.isRequired,
+  getAllEmployee: PropTypes.func.isRequired,
   searchEmployee: PropTypes.func.isRequired,
   employee: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   employee: state.employee,
-  company: state.company,
 });
 
 export default connect(
-  mapStateToProps,{ getEmployee, getCompanies, searchEmployee }
+  mapStateToProps,{ getAllEmployee, searchEmployee }
   )(ListEmployee);

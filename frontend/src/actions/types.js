@@ -52,7 +52,6 @@ export const DEL_PRODUCT = "DEL_PRODUCT";
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 
 // Employee Types
-export const GET_EMPLOYEE    = "GET_EMPLOYEE";
 export const CREATE_EMPLOYEE = "CREATE_EMPLOYEE";
 export const SEARCH_EMPLOYEE = "SEARCH_EMPLOYEE";
 export const GET_ID_EMPLOYEE = "GET_ID_EMPLOYEE";

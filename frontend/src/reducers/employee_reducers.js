@@ -10,12 +10,8 @@ import {
 const initialState = {
   myEmployee: [],
   myEmployeeId: null,
-  idCreated : [],
-  idUpdated : [],
-  messageDeleted : [],
-  statusDeleted : null,
-  statusCreated : null,
-  statusUpdated : null
+  status : null,
+  _id: null
 };
 
 export default function(state = initialState, action) {
@@ -35,15 +31,16 @@ export default function(state = initialState, action) {
           }
           return newObjArray
         }),
-        idUpdated: action.idUpdated,
+        status : action.status
       };
     case CREATE_EMPLOYEE:
-    let newObjArray = action.payload
-    newObjArray.m_company_name = action.companyName
+      let newObjArray = action.payload
+      newObjArray.m_company_name = action.companyName
       return {
         ...state,
         myEmployee: [...state.myEmployee, newObjArray],
-        statusCreated: action.status 
+        status: action.status,
+        _id : action.payload._id
       };
     case SEARCH_EMPLOYEE:
       return {
@@ -54,6 +51,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         myEmployee: state.myEmployee.filter(row => row._id !== action.payload),
+        status: action.status
       };
     case GET_ID_EMPLOYEE:
       return {

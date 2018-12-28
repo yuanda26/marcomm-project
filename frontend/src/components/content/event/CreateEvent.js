@@ -3,8 +3,7 @@ import moment from 'moment'
 import PropTypes from "prop-types"
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from 'reactstrap'
 import { connect } from "react-redux";
-import { createEvent } from "../../../actions/event/create_act";
-import { getEvent } from "../../../actions/event/get_all_act";
+import { createEvent } from "../../../actions/eventAction";
 
 class CreateEvent extends React.Component{
   constructor (props){
@@ -71,7 +70,7 @@ class CreateEvent extends React.Component{
   }
 
   submitHandler = () => {
-    let { formdata, regexBudget, validate } = this.state
+    let { formdata, regexBudget } = this.state
     let {
       event_name, place, start_date, end_date, budget
     } = formdata;
@@ -102,22 +101,12 @@ class CreateEvent extends React.Component{
   }
 
   render(){
-    if(this.state.statusCreated === 200){
-      // status, action, message, optional, code
-      this.props.modalStatus(1, 'Saved',
-        'Data Event has been add with Event ID Number',
-        " !",
-        this.state.messageCreated.code)
-    }else if (this.state.statusCreated !== 200 &&
-       this.state.statusCreated !== null){
-      this.props.modalStatus(2, 'Failed', '', "")
-    }
     return(
       <Modal isOpen={this.props.create} className="modal-dialog modal-lg border-primary card">
         <ModalHeader className="bg-primary text-white card-header"> Add Event</ModalHeader>
         <ModalBody className="card-body">
-          <div className="form-control">
-            <form class="needs-validation">
+          <div>
+            <form className="needs-validation">
               <div className="row">
                 <div className="col-sm-6">
                   <div className="row">
@@ -134,7 +123,7 @@ class CreateEvent extends React.Component{
                       />
                     </div>
                     <br/><br/>
-                    <label for="validateEventName" className="col-sm-5 col-form-label text-right">* Event Name</label>
+                    <label htmlFor="validateEventName" className="col-sm-5 col-form-label text-right">* Event Name</label>
                     <div>
                       <input
                         id="validateEventName"
@@ -154,7 +143,7 @@ class CreateEvent extends React.Component{
                       </div>
                     </div>
                     <br/><br/>
-                    <label for="validateEventPlace" className="col-sm-5 col-form-label text-right">* Event Place</label>
+                    <label htmlFor="validateEventPlace" className="col-sm-5 col-form-label text-right">* Event Place</label>
                     <div className=" float-right">
                       <input
                         id="validateEventPlace"
@@ -176,7 +165,7 @@ class CreateEvent extends React.Component{
                       </div>
                     </div>
                     <br/><br/>
-                    <label for="validateEventStartDate" className="col-sm-5 col-form-label text-right">* Event Start Date</label>
+                    <label htmlFor="validateEventStartDate" className="col-sm-5 col-form-label text-right">* Event Start Date</label>
                     <div>
                       <input
                         type="date"
@@ -194,7 +183,7 @@ class CreateEvent extends React.Component{
                       </div>
                     </div>
                     <br/><br/>
-                    <label for="validateEventEndDate" className="col-sm-5 col-form-label text-right">* Event End Date</label>
+                    <label htmlFor="validateEventEndDate" className="col-sm-5 col-form-label text-right">* Event End Date</label>
                     <div>
                       <input
                         type="date"
@@ -214,7 +203,7 @@ class CreateEvent extends React.Component{
                       </div>
                     </div>
                     <br/><br/>
-                    <label for="validateBudget" className="col-sm-5 col-form-label text-right">* Budget (Rp)</label>
+                    <label htmlFor="validateBudget" className="col-sm-5 col-form-label text-right">* Budget (Rp)</label>
                     <div>
                       <input
                         type="text"
@@ -268,7 +257,7 @@ class CreateEvent extends React.Component{
                     <div>
                       <textarea
                         type="text-area" 
-                        class="form-control" 
+                        className="form-control" 
                         placeholder="Type Note" 
                         name="note" 
                         cols="21"
@@ -301,7 +290,6 @@ class CreateEvent extends React.Component{
 
 CreateEvent.propTypes = {
   createEvent: PropTypes.func.isRequired,
-  getEvent: PropTypes.func.isRequired,
   event: PropTypes.object.isRequired,
 };
 
@@ -311,5 +299,5 @@ const mapStateToProps = state => ({
 });
 
 export default connect(
-  mapStateToProps,{ createEvent, getEvent }
+  mapStateToProps,{ createEvent }
   )(CreateEvent);
