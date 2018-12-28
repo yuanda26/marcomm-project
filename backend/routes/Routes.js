@@ -54,11 +54,20 @@ module.exports = server => {
   //== End of Master Access Menu Route
 
   // Master Souvenir Route
-  server.get("/api/souvenir", souvenirLogic.readAllSouvenir);
-  server.get("/api/souvenir/:souvenirId", souvenirLogic.readSouvenirById);
-  server.post("/api/souvenir", souvenirLogic.createSouvenir);
-  server.put("/api/souvenir/:souvenirId", souvenirLogic.updateSouvenir);
-  server.del("/api/souvenir/:code", souvenirLogic.deleteSouvenir);
+  // Made By: Dian Yuanda
+  server.get("/api/souvenir", authenticate, souvenirLogic.readAllSouvenir);
+  server.get(
+    "/api/souvenir/:souvenirId",
+    authenticate,
+    souvenirLogic.readSouvenirById
+  );
+  server.post("/api/souvenir", authenticate, souvenirLogic.createSouvenir);
+  server.put(
+    "/api/souvenir/:souvenirId",
+    authenticate,
+    souvenirLogic.updateSouvenir
+  );
+  server.del("/api/souvenir/:code", authenticate, souvenirLogic.deleteSouvenir);
   //== End of Master Souvenir Route
 
   // Master Unit Route
@@ -106,10 +115,26 @@ module.exports = server => {
 
   // Transaction Design Item Route
   // Made By: Dian Yuanda
-  server.get("/api/design/item/:code", tDesignItemLogic.readAllItemHandler);
-  server.post("/api/design/item", tDesignItemLogic.createItemHandler);
-  server.put("/api/design/item", tDesignItemLogic.updateItemHandler);
-  server.del("/api/design/item/:itemId", tDesignItemLogic.deleteItemHandler);
+  server.get(
+    "/api/design/item/:code",
+    authenticate,
+    tDesignItemLogic.readAllItemHandler
+  );
+  server.post(
+    "/api/design/item",
+    authenticate,
+    tDesignItemLogic.createItemHandler
+  );
+  server.put(
+    "/api/design/item",
+    authenticate,
+    tDesignItemLogic.updateItemHandler
+  );
+  server.del(
+    "/api/design/item/:itemId",
+    authenticate,
+    tDesignItemLogic.deleteItemHandler
+  );
   //== End of Transaction Design Item Route
 
   // PRODUCT by Purwanto
@@ -138,11 +163,6 @@ module.exports = server => {
   server.put("/api/employee/:employeeId", employeeLogic.updateHandler);
   server.del("/api/employee/:employeeId", employeeLogic.deleteHandler);
   //== End of Employee Route
-
-  // company Route
-  // Made By: Purwanto
-  // server.get("/api/company", companyLogic.readAllHandler);
-  //== End of Company Route
 
   // T Event Route
   // Made By: Purwanto
