@@ -1,15 +1,13 @@
 import axios from "axios";
 import { GET_PRODUCT, DEL_PRODUCT,CREATE_PRODUCT, UPDATE_PRODUCT, SEARCH_PRODUCT } from "./types"; //, CREATE_MENU, DELETE_MENU
-import ApiConfig from "../configs/api.config.json";
-
-let token = localStorage.getItem(ApiConfig.LS.TOKEN);
+import ApiConfig from "../config/Host_Config";
 
 export const getAllProduct = () => dispatch => {
   let options = {
-    url: ApiConfig.BASE_URL + ApiConfig.ENDPOINTS.PRODUCT,
+    url: `${ApiConfig.host}/product`,
     method: "get",
     headers: {
-      Authorization: token
+      Authorization: localStorage.token
     }
   };
   axios(options)
@@ -30,10 +28,10 @@ export const getAllProduct = () => dispatch => {
 
 export const delProduct = param => dispatch => {
   let options = {
-    url: ApiConfig.BASE_URL + ApiConfig.ENDPOINTS.PRODUCT + "/" + param,
+    url: `${ApiConfig.host}/product/${param}`,
     method: "delete",
     headers: {
-      Authorization: token
+      Authorization: localStorage.token
     }
   };
   axios(options)
@@ -55,12 +53,11 @@ export const delProduct = param => dispatch => {
 };
 
 export const createProduct = body => dispatch => {
-  let token = localStorage.getItem(ApiConfig.LS.TOKEN);
   let option = {
-    url: ApiConfig.BASE_URL + ApiConfig.ENDPOINTS.PRODUCT,
+    url: `${ApiConfig.host}/product`,
     method: "post",
     headers: {
-      Authorization: token,
+      Authorization: localStorage.token,
       "Content-Type": "application/json"
     },
     data: body
@@ -82,12 +79,11 @@ export const createProduct = body => dispatch => {
 };
 
 export const updateProduct = (theData)=>dispatch=>{
-  let token = localStorage.getItem(ApiConfig.LS.TOKEN);
   let option = {
-    url: ApiConfig.BASE_URL + ApiConfig.ENDPOINTS.PRODUCT + "/" + theData.code,
+    url: `${ApiConfig.host}/product/${theData.code}`,
     method: "put",
     headers: {
-      Authorization: token,
+      Authorization: localStorage.token,
       "Content-Type": "application/json"
     },
     data: theData
@@ -109,17 +105,15 @@ export const updateProduct = (theData)=>dispatch=>{
 };
 
 export const searchProduct = ( param1, param2, param3, param4, param5 ) => dispatch => {
-  let token = localStorage.getItem(ApiConfig.LS.TOKEN)
   let options = {
-    url: ApiConfig.BASE_URL + ApiConfig.ENDPOINTS.PRODUCT + "/" + param1 + "/" + param2 + "/" + param3 + "/" + param4 + "/" + param5,
+    url: `${ApiConfig.host}/product/${param1}/${param2}/${param3}/${param4}/${param5}`,
     method: "get",
     headers: {
-      Authorization: token
+      Authorization: localStorage.token
     }
   };
   axios(options)
     .then(res => {
-      console.log(res)
       dispatch({
         type: SEARCH_PRODUCT,
         payload: res.data.message

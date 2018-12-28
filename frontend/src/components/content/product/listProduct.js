@@ -1,10 +1,6 @@
 import React from "react";
-import API from "../../../helpers/API"
-import apiconfig from '../../../configs/api.config.json'
-import axios from "axios";
 import { Link } from "react-router-dom";
-import { Alert, FormGroup, Input, Form, Button } from "reactstrap";
-import $ from "jquery";
+import { Alert, Button } from "reactstrap";
 import { getAllProduct, searchProduct } from "../../../actions/productAction";
 import { connect } from "react-redux";
 
@@ -34,17 +30,6 @@ import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Grid from "@material-ui/core/Grid";
 import moment from "moment";
-
-const gridstyles = theme => ({
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    padding: theme.spacing.unit * 2,
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
-});
 
 const actionsStyles = theme => ({
   root: {
@@ -135,9 +120,8 @@ const TablePaginationActionsWrapped = withStyles(actionsStyles, {
 
 const styles = theme => ({
   root: {
-    width: "100%",
-    marginTop: theme.spacing.unit * 3,
-    overflowX: "auto"
+    ...theme.mixins.gutters(),
+    minWidth: "90%"
   },
   table: {
     minWidth: 700,
@@ -164,6 +148,9 @@ class ListProduct extends React.Component {
       },
       search: "",
       showCreateProduct: false,
+      deleteProduct: false,
+      viewProduct: false,
+      editProduct: false,
       result: [],
       currentProduct: {},
       alertData: {
@@ -198,8 +185,8 @@ class ListProduct extends React.Component {
 
   deleteModalHandler = (companyid) => {
     let tmp = {};
-    this.state.result.map(ele => {
-      if (companyid == ele._id) {
+    this.state.result.forEach(ele => {
+      if (companyid === ele._id) {
         tmp = ele;
       }
     });
@@ -211,8 +198,8 @@ class ListProduct extends React.Component {
 
   viewModalHandler(companyid) {
     let tmp = {};
-    this.state.result.map(ele => {
-      if (companyid == ele._id) {
+    this.state.result.forEach(ele => {
+      if (companyid === ele._id) {
         tmp = ele;
       }
     });
@@ -228,14 +215,14 @@ class ListProduct extends React.Component {
 
   editModalHandler(companyid) {
     let tmp = {};
-    this.state.result.map(ele => {
-      if (companyid == ele._id) {
+    this.state.result.forEach(ele => {
+      if (companyid === ele._id) {
         tmp = {
           _id: ele._id,
           code: ele.code,
           name: ele.name,
           description:ele.description,
-          update_by: JSON.parse(localStorage.getItem(apiconfig.LS.USERDATA)),
+          update_by: "purwanto",
           address: ele.address,
         };
         //alert(JSON.stringify(tmp));
@@ -265,7 +252,7 @@ class ListProduct extends React.Component {
         created_date
       } = this.state.initialSearch;
       let temp = [];
-      this.state.result.map(ele => {
+      this.state.result.forEach(ele => {
       if (
         code.test(ele.code.toLowerCase()) &&
         name.test(ele.name.toLowerCase()) &&
@@ -275,7 +262,6 @@ class ListProduct extends React.Component {
       ) {
         temp.push(ele);
       }
-      //alert(JSON.stringify(temp))
       return temp;
     });
     this.setState({
@@ -287,60 +273,11 @@ class ListProduct extends React.Component {
     const {
       code, name, description, created_date, created_by 
     } = this.state.initialSearch
-    // console.log(this.state.initialSearch)
-    // let test = [];
-    // this.props.employee.myEmployee.map(ele => {
-    //  let fullName = ele.first_name + " " + ele.last_name
-      // if(
-      //  ( employee_id.test(ele.employee_number) ||
-      //          employee_id.test("") )
-      //  &&
-      //  ( employee_name.test(fullName.toLowerCase()) ||
-      //          employee_name.test("") )
-      //  &&
-      //  ( company.test(ele.m_company_id.toLowerCase()) ||
-      //          company.test(""))
-      //  &&
-      //  ( created_date.test(ele.created_date) ||
-      //          created_date.test("") )
-      //  &&
-      //  ( created_by.test(ele.created_by.toLowerCase()) ||
-      //          created_by.test("") ) 
-      // ){
-        this.props.searchProduct(
-          code, name, description, created_date, created_by  
-          )
-      //  test.push(ele);
-      // }
-    // });
-    // this.setState({
-    //  hasil: test,
-    // });
+    this.props.searchProduct(
+      code, name, description, created_date, created_by  
+    )
   }
-
-  // changeHandler(e){
-  //   let test = [];
-  //   let search = e.target.value;
-  //   let patt = new RegExp(search.toLowerCase());
-
-  //   this.state.result.map(ele => {
-  //     if (
-  //       patt.test(ele.code.toLowerCase()) ||
-  //       patt.test(ele.name.toLowerCase())||
-  //       patt.test(ele.created_date.toLowerCase())
-
-
-  //     ) {
-  //       test.push(ele);
-  //     }
-  //   });
-  //   this.setState({
-  //     hasil: test
-  //   });
-	// }
-
-
-
+  
   closeModalHandler() {
     this.setState({
       viewProduct: false,
@@ -368,10 +305,6 @@ class ListProduct extends React.Component {
     });
   }
 
-  // func(arrReq){
-  //   return arrReq
-  // }
-
   modalStatus(status, message, code) {
     this.setState({
       alertData: {
@@ -383,216 +316,216 @@ class ListProduct extends React.Component {
   }
 
   render() {
-    //
-    const { classes } = this.props;
-    const regex = /[A-Z]+/g;
-    // const { rows, rowsPerPage, page } = this.state;
-    //const { company } = this.props.bujang;
+    const { classes } = this.props
     return (
-      <div>
-        <Grid container spacing={0}>
-          <Grid item xs={12}>
-            <Paper>
-              <ul class="breadcrumb">
-                <li>
-                  <a href="/company">Home</a> <span class="divider">/</span>
-                </li>
-                <li>
-                  <a href="#">Master</a> <span class="divider">/</span>
-                </li>
-                <li class="active">List Product</li>
-              </ul>
-            </Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <h4>List Product</h4>
-          </Grid>
-          
-          <form>
-            <div className="form-row align-items-center">
-              <div className='col-md-2'>
-                <input 
-                  placeholder="Code" 
-                  className="form-control" 
-                  name="code"
-                  onChange={this.changeHandler}
-                />
-              </div>
-              <div className='col-md-2'>
-                <input 
-                  placeholder="Name" 
-                  className="form-control" 
-                  name="name"
-                  onChange={this.changeHandler}
-                />
-              </div>
-              <div className='col-md-2'>
-                <input 
-                  placeholder="Description" 
-                  className="form-control" 
-                  name="description"
-                  onChange={this.changeHandler}
-                />
-               </div>
-              <div className='col-md'>
-                <input
-                  type="date"
-                  className="form-control" 
-                  placeholder="Search Created Date"
-                  name="created_date"
-                  onChange={this.changeHandler}
-                />
-              </div>
-              <div className='col-md-2'>
-                <input 
-                  placeholder="Created By" 
-                  name="created_by"
-                  className="form-control" 
-                  onChange={this.changeHandler}
-                />
-              </div>
-              <div className='col-md'>
-                <button 
-                  type="button" 
-                  className="btn btn-warning float-right"
-                  onClick ={this.SearchHandler}
-                >Search
-                </button>
-              </div>
-              <div className='col-md'>
-                <Button 
-                  variant="contained" 
-                  color="primary" 
-                  size="small" 
-                  onClick={this.showHandler}>
-                  Add
-                </Button>
-              </div>
-            </div>
-          </form>
-          <DeleteProduct
-            delete={this.state.deleteProduct}
-            product_del={this.state.currentProduct}
-            closeModalHandler={this.closeModalHandler}
-            modalStatus={this.modalStatus}
-          />
-          <ViewProduct
-            view={this.state.viewProduct}
-            closeModalHandler={this.closeModalHandler}
-            product={this.state.currentProduct}
-          />
-         <CreateProduct
-            create={this.state.showCreateProduct}
-            closeHandler={this.closeHandler}
-            getAllProduct = {this.props.getAllProduct}
-            modalStatus={this.modalStatus}
-            dataValidation = {(this.props.product.production.map(content=>content.name))}
-          />
-           <EditProduct
-            edit={this.state.editProduct}
-            closeModalHandler={this.closeModalHandler}
-            product_test={this.state.currentProduct}
-            getAllProduct = {this.props.getAllProduct}
-            modalStatus={this.modalStatus}
-            dataValidation = {(this.props.product.production.map(content=>content.name))}
-          />
-          <Grid item xs={12}>
-            <Hidden>
-              <br />
-              <Paper>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>No</TableCell>
-                      <TableCell>Product Code</TableCell>
-                      <TableCell>Product Name</TableCell>
-                      <TableCell>Description</TableCell>
-                      <TableCell>Created By</TableCell>
-                      <TableCell>Created Date</TableCell>
-                      <TableCell>Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {this.props.product.production
-                      .slice(
-                        this.state.page * this.state.rowsPerPage,
-                        this.state.page * this.state.rowsPerPage +
-                          this.state.rowsPerPage
-                      )
-                      .map((row, index) => {
-                        return (
-                          <TableRow key={row.id}>
-                            <TableCell>{index+1+this.state.page * this.state.rowsPerPage}</TableCell>
-                            <TableCell component="th" scope="row">
-                              {row.code}
-                            </TableCell>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell>{row.description}</TableCell>
-                            <TableCell>{row.created_by}</TableCell>
-                            <TableCell>{this.chanegeDate(row.created_date)}</TableCell>
-                            <TableCell>
-                              <Link to="#">
-                                <SearchIcon
-                                  onClick={() => {
-                                    this.viewModalHandler(row._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <CreateOutlinedIcon
-                                  onClick={() => {
-                                    this.editModalHandler(row._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <DeleteOutlinedIcon
-                                  onClick={() => {
-                                    this.deleteModalHandler(row._id);
-                                  }}
-                                />
-                              </Link>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        colSpan={3}
-                        count={this.state.hasil.length}
-                        rowsPerPage={this.state.rowsPerPage}
-                        page={this.state.page}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActionsWrapped}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+          <Grid container spacing={0}>
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                <ul className="breadcrumb">
+                  <li>
+                    <a href="/dashboard">Home</a> <span className="divider">/</span>
+                  </li>
+                  <li>
+                    <a href="/dashboard">Master</a> <span className="divider">/</span>
+                  </li>
+                  <li className="active">List Product</li>
+                </ul>
               </Paper>
-            </Hidden>
+            </Grid>
+            <Grid item xs={12}>
+              <h4>List Product</h4>
+            </Grid>
+            
+            <form>
+              <div className="form-row align-items-center">
+                <div className='col-md-2'>
+                  <input 
+                    placeholder="Code" 
+                    className="form-control" 
+                    name="code"
+                    onChange={this.changeHandler}
+                  />
+                </div>
+                <div className='col-md-2'>
+                  <input 
+                    placeholder="Name" 
+                    className="form-control" 
+                    name="name"
+                    onChange={this.changeHandler}
+                  />
+                </div>
+                <div className='col-md-2'>
+                  <input 
+                    placeholder="Description" 
+                    className="form-control" 
+                    name="description"
+                    onChange={this.changeHandler}
+                  />
+                 </div>
+                <div className='col-md'>
+                  <input
+                    type="date"
+                    className="form-control" 
+                    placeholder="Search Created Date"
+                    name="created_date"
+                    onChange={this.changeHandler}
+                  />
+                </div>
+                <div className='col-md-2'>
+                  <input 
+                    placeholder="Created By" 
+                    name="created_by"
+                    className="form-control" 
+                    onChange={this.changeHandler}
+                  />
+                </div>
+                <div className='col-md'>
+                  <button 
+                    type="button" 
+                    className="btn btn-warning float-right"
+                    onClick ={this.SearchHandler}
+                  >Search
+                  </button>
+                </div>
+                <div className='col-md'>
+                  <Button 
+                    variant="contained" 
+                    color="primary" 
+                    size="small" 
+                    onClick={this.showHandler}>
+                    Add
+                  </Button>
+                </div>
+              </div>
+            </form>
+            <DeleteProduct
+              delete={this.state.deleteProduct}
+              product_del={this.state.currentProduct}
+              closeModalHandler={this.closeModalHandler}
+              modalStatus={this.modalStatus}
+            />
+            <ViewProduct
+              view={this.state.viewProduct}
+              closeModalHandler={this.closeModalHandler}
+              product={this.state.currentProduct}
+            />
+           <CreateProduct
+              create={this.state.showCreateProduct}
+              closeHandler={this.closeHandler}
+              getAllProduct = {this.props.getAllProduct}
+              modalStatus={this.modalStatus}
+              dataValidation = {(this.props.product.production.map(content=>content.name))}
+            />
+             <EditProduct
+              edit={this.state.editProduct}
+              closeModalHandler={this.closeModalHandler}
+              product_test={this.state.currentProduct}
+              getAllProduct = {this.props.getAllProduct}
+              modalStatus={this.modalStatus}
+              dataValidation = {(this.props.product.production.map(content=>content.name))}
+            />
+            <Grid item xs={12}>
+              <Hidden>
+                <br />
+                <Paper>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>No</TableCell>
+                        <TableCell>Product Code</TableCell>
+                        <TableCell>Product Name</TableCell>
+                        <TableCell>Description</TableCell>
+                        <TableCell>Created By</TableCell>
+                        <TableCell>Created Date</TableCell>
+                        <TableCell>Action</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {this.props.product.production
+                        .slice(
+                          this.state.page * this.state.rowsPerPage,
+                          this.state.page * this.state.rowsPerPage +
+                            this.state.rowsPerPage
+                        )
+                        .map((row, index) => {
+                          return (
+                            <TableRow key={row._id}>
+                              <TableCell>{index+1+this.state.page * this.state.rowsPerPage}</TableCell>
+                              <TableCell component="th" scope="row">
+                                {row.code}
+                              </TableCell>
+                              <TableCell>{row.name}</TableCell>
+                              <TableCell>{row.description}</TableCell>
+                              <TableCell>{row.created_by}</TableCell>
+                              <TableCell>{this.chanegeDate(row.created_date)}</TableCell>
+                              <TableCell>
+                                <Link to="#">
+                                  <SearchIcon
+                                    onClick={() => {
+                                      this.viewModalHandler(row._id);
+                                    }}
+                                  />
+                                </Link>
+                                <Link to="#">
+                                  <CreateOutlinedIcon
+                                    onClick={() => {
+                                      this.editModalHandler(row._id);
+                                    }}
+                                  />
+                                </Link>
+                                <Link to="#">
+                                  <DeleteOutlinedIcon
+                                    onClick={() => {
+                                      this.deleteModalHandler(row._id);
+                                    }}
+                                  />
+                                </Link>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TablePagination
+                          colSpan={3}
+                          count={this.state.hasil.length}
+                          rowsPerPage={this.state.rowsPerPage}
+                          page={this.state.page}
+                          onChangePage={this.handleChangePage}
+                          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                          ActionsComponent={TablePaginationActionsWrapped}
+                        />
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
+                </Paper>
+              </Hidden>
+            </Grid>
           </Grid>
-        </Grid>
-        <br />
-          <Grid>
-            {this.state.alertData.status == 1 ? (
-              <Alert color="success">
-                <b>Data {this.state.alertData.message}</b> Data Product with
-                referential code <strong>{this.state.alertData.code} </strong>
-                has been {this.state.alertData.message}
-              </Alert>
-            ) : (
-              ""
-            )}
-            {this.state.alertData.status == 2 ? (
-              <Alert color="danger">{this.state.alertData.message} </Alert>
-            ) : (
-              ""
-            )}
-          </Grid>
+          <br />
+            <Grid>
+              {this.state.alertData.status === 1 ? (
+                <Alert color="success">
+                  <b>Data {this.state.alertData.message}</b> Data Product with
+                  referential code <strong>{this.state.alertData.code} </strong>
+                  has been {this.state.alertData.message}
+                </Alert>
+              ) : (
+                ""
+              )}
+              {this.state.alertData.status === 2 ? (
+                <Alert color="danger">{this.state.alertData.message} </Alert>
+              ) : (
+                ""
+              )}
+            </Grid>
+        </div>
       </div>
+    </div>
     );
   }
 }
@@ -611,4 +544,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   { getAllProduct, searchProduct}
-)(ListProduct);
+)( withStyles(styles)(ListProduct) );

@@ -1,11 +1,9 @@
 import React from "react"
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap"
-import axios from "axios";
 
-import {delProduct} from "../../../actions/productAction";
+import { delProduct } from "../../../actions/productAction";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
 
 class DeleteProduct extends React.Component {
   constructor(props) {
@@ -28,10 +26,6 @@ class DeleteProduct extends React.Component {
   }
 
   render() {
-    this.state.status == 200
-      ? this.props.modalStatus(1, "Deleted!", this.props.product_del.code)
-      : console.log(this.state.status);
-
     return (
       <Modal isOpen={this.props.delete} className={this.props.className}>
         <ModalHeader> Delete Product </ModalHeader>
@@ -56,7 +50,6 @@ class DeleteProduct extends React.Component {
 
 DeleteProduct.propTypes = {
   delProduct: PropTypes.func.isRequired,
-  classes: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -66,4 +59,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   { delProduct }
-)(DeleteProduct);
+)( DeleteProduct );

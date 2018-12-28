@@ -1,15 +1,21 @@
 import React from 'react'
-import { Modal, Input, ModalBody, ModalFooter, ModalHeader, Button, Label, FormGroup, Alert } from 'reactstrap'
-import axios from 'axios'
-import apiconfig from '../../../configs/api.config.json'
-import {updateProduct} from '../../../actions/productAction'
-import {connect} from 'react-redux'
-import PropTypes from "prop-types";
+import { 
+    Modal, 
+    Input, 
+    ModalBody, 
+    ModalFooter, 
+    ModalHeader, 
+    Button, 
+    Label, FormGroup, 
+    Alert 
+} from 'reactstrap'
+import { updateProduct } from '../../../actions/productAction'
+import { connect } from 'react-redux'
 
 class EditProduct extends React.Component {
     constructor (props) {
         super(props)
-        let userdata = JSON.parse(localStorage.getItem(apiconfig.LS.USERDATA));
+        let userdata = "purwanto";
         super(props);
         this.state = {
             formdata: {
@@ -22,7 +28,7 @@ class EditProduct extends React.Component {
                 status: false,
                 message: ""
             },
-            updated_by:userdata.username,
+            updated_by:userdata,
         }
         this.submitHandler = this.submitHandler.bind(this);
         this.changeHandler = this.changeHandler.bind(this);
@@ -43,7 +49,6 @@ class EditProduct extends React.Component {
     }
 
     submitHandler() {
-        this.state.formdata.update_by = this.state.updated_by
         const func = (arrReq, input)=>{
             if(arrReq.filter(content => content.toUpperCase() === input.toUpperCase()).length !== 0){
                 return false
@@ -62,6 +67,7 @@ class EditProduct extends React.Component {
         }
         else if(func(this.props.dataValidation, this.state.formdata.name) === true) {
             let data = this.state.formdata
+            data.updated_by = this.state.updated_by
             this.props.updateProduct(data);
             this.props.closeModalHandler();
             this.props.modalStatus(1, ("Data updated! " + this.state.formdata.code + " has been updated!"));
@@ -70,8 +76,6 @@ class EditProduct extends React.Component {
     }
     
     render(){
-      // alert(JSON.stringify(this.state.formdata))
-        //console.log("ini isi formdata", this.state.formdata)
         return(
             <Modal isOpen={this.props.edit} className={this.props.className}>
                 <ModalHeader> Edit Product</ModalHeader>
@@ -90,7 +94,7 @@ class EditProduct extends React.Component {
                     </FormGroup>
                 </ModalBody>
                 <ModalFooter>
-                    {this.state.alertData.status == true ? (
+                    {this.state.alertData.status === true ? (
                         <Alert color="danger">{this.state.alertData.message} </Alert>
                     ) : (
                         ""
@@ -103,8 +107,4 @@ class EditProduct extends React.Component {
     }
 }
 
-EditProduct.propTypes = {
-    classes: PropTypes.object.isRequired
-};
-  
 export default connect(null, {updateProduct})(EditProduct);
