@@ -7,7 +7,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Alert } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import { connect } from "react-redux";
-import { getAllEmployee, searchEmployee } from "../../../actions/employeeAction";
+
+import { 
+  getAllEmployee, 
+  searchEmployee, 
+  getAllCompany 
+} from "../../../actions/employeeAction";
 
 import EditEmployee from './EditEmployee'
 import CreateEmployee from './CreateEmployee'
@@ -132,7 +137,7 @@ class ListEmployee extends React.Component {
 
   componentDidMount = () => {
     this.props.getAllEmployee();
-    // this.props.getCompanies();
+    this.props.getAllCompany();
   }
 
   modalStatus = (status, action, message, optional, code) => {
@@ -149,11 +154,6 @@ class ListEmployee extends React.Component {
 
   render() {
     let { employee } = this.props
-
-    let company = {myCompany : [
-      {_id : "124653546575", code : "CP0001", name : "XSIS"},
-      {_id : "557453235657", code : "CP0002", name : "ASTRA"}
-      ]}
     return (
       <div className="container">
         <div className="row">
@@ -245,7 +245,7 @@ class ListEmployee extends React.Component {
                           defaultValue=""
                         >
                         <option value="" >Select Company...</option>
-                          {company.myCompany.map((row,x) => {
+                          {employee.myCompany.map((row,x) => {
                             return (
                               <option key={row._id} value={row.code}>{row.name}</option>
                           )})}
@@ -301,29 +301,7 @@ class ListEmployee extends React.Component {
                         <td>{row.created_date}</td>
                         <td>{row.created_by}</td>
                         <td>
-                        {/*
-                          <Link to='#'>
-                            <span 
-                              onClick = {() => {
-                                this.viewModalHandler(row._id)}
-                              } 
-                              className="fa fa-search" 
-                              style={
-                                {fontSize : '18px', paddingRight : '30px'}
-                              }
-                            />
-                            <span 
-                              onClick = {() => {
-                                this.editModalHandler(row._id)}
-                              }  
-                              className="fa fa-edit" 
-                              style={
-                                {fontSize : '18px', paddingRight : '30px'}
-                              } 
-                            />
-                          </Link>
-                          */
-                          <Link to="#">
+                        <Link to="#">
                             <Search
                               onClick={() => {
                               this.viewModalHandler(row._id);
@@ -340,7 +318,6 @@ class ListEmployee extends React.Component {
                               }}
                             />
                           </Link>
-                          }
                         </td>
                       </tr>
                       )}
@@ -358,6 +335,7 @@ class ListEmployee extends React.Component {
 
 ListEmployee.propTypes = {
   getAllEmployee: PropTypes.func.isRequired,
+  getAllCompany: PropTypes.func.isRequired,
   searchEmployee: PropTypes.func.isRequired,
   employee: PropTypes.object.isRequired,
 };
@@ -367,5 +345,5 @@ const mapStateToProps = state => ({
 });
 
 export default connect(
-  mapStateToProps,{ getAllEmployee, searchEmployee }
+  mapStateToProps,{ getAllEmployee, searchEmployee, getAllCompany }
   )(ListEmployee);

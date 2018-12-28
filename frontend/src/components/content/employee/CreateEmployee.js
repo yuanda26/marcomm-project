@@ -4,7 +4,7 @@ import {
   Modal, ModalBody, ModalFooter, ModalHeader, Button
 } from 'reactstrap'
 import { connect } from "react-redux";
-import { createEmployee } from "../../../actions/employeeAction";
+import { createEmployee, getAllCompany } from "../../../actions/employeeAction";
 
 class CreateEmployee extends React.Component{
   constructor (props){
@@ -20,11 +20,6 @@ class CreateEmployee extends React.Component{
         created_by: userdata
       },
       companyName: null,
-      company:[
-                {_id : "124653546575", code : "CP0001", name : "XSIS"},
-                {_id : "557453235657", code : "CP0002", name : "ASTRA"}
-              ],
-      employee:[],
       selectedCompany: '',
       andaYakin : false,
       validate : {
@@ -32,14 +27,12 @@ class CreateEmployee extends React.Component{
         validateEmail : "form-control",
         validateCompany : "form-control"
       },
-      regexEmail : /^(([^<>()[].,;:s@"]+(.[^<>()[].,;:s@"]+)*)|(".+"))@(([^<>()[].,;:s@"]+.)+[^<>()[].,;:s@"]{2,})$/
+      regexEmail : /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     }
   }
 
-  componentWillReceiveProps(newProps){
-    this.setState({
-      employee : newProps.employee.myEmployee
-    })
+  componentDidMount=()=>{
+    this.props.getAllCompany()
   }
 
   changeHandler = (e) => {
@@ -74,10 +67,10 @@ class CreateEmployee extends React.Component{
 
 
   submitHandler = () => {
-    let { formdata, employee,  regexEmail, companyName } = this.state
+    let { formdata,  regexEmail, companyName } = this.state
     let { email, first_name, m_company_id } = formdata
     let emailJikaAda = ''
-    employee.forEach((ele)=>{
+    this.props.employee.myEmployee.forEach((ele)=>{
         if(ele.email === email){
           emailJikaAda = ele.email
         }
@@ -130,7 +123,7 @@ class CreateEmployee extends React.Component{
                   onChange={this.changeHandler}
                 >
                 <option value="">Select Company...</option>
-                  {this.state.company.map((row,x) => {
+                  {this.props.employee.myCompany.map((row,x) => {
                     return (
                       <option key={row._id} value={row.code}>{row.name}</option>
                   )})}
@@ -229,5 +222,5 @@ const mapStateToProps = state => ({
 });
 
 export default connect(
-  mapStateToProps,{ createEmployee }
+  mapStateToProps,{ createEmployee, getAllCompany }
   )(CreateEmployee);

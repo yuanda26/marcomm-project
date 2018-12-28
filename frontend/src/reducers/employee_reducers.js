@@ -4,11 +4,13 @@ import {
   CREATE_EMPLOYEE,
   DELETE_EMPLOYEE, 
   GET_ID_EMPLOYEE, 
-  SEARCH_EMPLOYEE
+  SEARCH_EMPLOYEE,
+  GET_COMPANY
 } from "../actions/types";
 
 const initialState = {
   myEmployee: [],
+  myCompany: [],
   myEmployeeId: null,
   status : null,
   _id: null
@@ -22,23 +24,21 @@ export default function(state = initialState, action) {
         myEmployee: action.payload
       };
     case UPDATE_EMPLOYEE:
+      let newObjArray = action.payload
       return {
         ...state,
         myEmployee: state.myEmployee.map(row=>{
           if(row._id === action.payload._id){
-            let newObjArray = row
-            newObjArray.m_company_name = action.companyName
+            row = newObjArray
           }
-          return newObjArray
+           return row
         }),
         status : action.status
       };
     case CREATE_EMPLOYEE:
-      let newObjArray = action.payload
-      newObjArray.m_company_name = action.companyName
       return {
         ...state,
-        myEmployee: [...state.myEmployee, newObjArray],
+        myEmployee: [...state.myEmployee, action.payload],
         status: action.status,
         _id : action.payload._id
       };
@@ -57,6 +57,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         myEmployeeId: action.payload,
+      };
+    case GET_COMPANY:
+      return {
+        ...state,
+        myCompany: action.payload,
       };
     default:
       return state;

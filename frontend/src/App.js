@@ -50,7 +50,7 @@ class App extends Component {
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
               <PrivateRoute exact path="/design" component={DesignList} />
               <PrivateRoute exact path="/design/add" component={DesignAdd} />
-              <PrivateRoute exact path="/tevent" component={ListEvent} />
+              <PrivateRoute exact path="/event" component={ListEvent} />
               <PrivateRoute
                 exact
                 path="/design/view/:code"

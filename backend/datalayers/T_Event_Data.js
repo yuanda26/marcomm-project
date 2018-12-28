@@ -69,6 +69,26 @@ const tEventDatalayer = {
 		})
 	},
 
+	// code, request_by, request_date, status, created_date, created_by
+	searchHandlerData : (callback, code, request_by, request_date, status, created_date, created_by) => {
+		db.collection('t_event').aggregate([
+			{ $match : {
+					code : new RegExp(code),
+					request_by : new RegExp(request_by), 
+					request_date : new RegExp(request_date),
+					status : new RegExp(status), 
+					created_date : new RegExp(created_date),
+					created_by : new RegExp(created_by), 
+					is_delete : false
+				}
+			}]).toArray((err, docs) => {
+			let mEmployee = docs.map((row) => {
+				return new employeeModel(row)
+			})
+			callback(mEmployee)
+		})
+	},
+
 	countTEvent : (callback, newDate)=>{
 		db.collection('t_event').find(
 			{ code : { $regex : new RegExp(newDate) } } ).count(

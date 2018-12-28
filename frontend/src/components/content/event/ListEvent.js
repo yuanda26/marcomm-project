@@ -82,7 +82,6 @@ class ListEvent extends React.Component {
   		initialSearch: initialSearch,
       created_date: date
     });
-    this.SearchHandler()
 	}
 
 	handleChangeRequestDate = date => {
@@ -97,7 +96,6 @@ class ListEvent extends React.Component {
   		initialSearch : initialSearch,
       request_date : date
     });
-    this.SearchHandler()
 	}
 
 	changeHandler = (event) => {
@@ -107,43 +105,10 @@ class ListEvent extends React.Component {
     this.setState({
       initialSearch : initialSearch
     });
-    this.SearchHandler()
 	}
 
 	SearchHandler = () => {
-		const {
-			code, request_by, request_date, 
-			status, created_date,
-			created_by
-		} = this.state.initialSearch
-		let test = [];
-		this.state.event.forEach(ele => {
-			let fullName = ele.request_by_first_name + " " + ele.request_by_last_name
-			if(
-				( code.test(ele.code.toLowerCase()) ||
-								code.test("") )
-				&&
-				( request_by.test(fullName.toLowerCase()) ||
-								request_by.test("") )
-				&&
-				( request_date.test(ele.request_date) ||
-								request_date.test("") )
-				&&
-				( status.test(ele.status.toLowerCase()) ||
-								status.test("") )
-				&&
-				( created_date.test(ele.created_date) ||
-								created_date.test("") )
-				&&
-				( created_by.test(ele.created_by.toLowerCase()) ||
-				 				created_by.test("") ) 
-			){
-				test.push(ele);
-			}
-		});
-		this.setState({
-			hasil: test,
-		});
+		alert("beoom")
 	}
 
 	closeModalHandler = () => {
@@ -339,26 +304,6 @@ class ListEvent extends React.Component {
 												<td>{row.created_date}</td>
 												<td>{row.created_by}</td>
 												<td>
-													{/*<Link to='#'>
-														<span 
-															onClick = {() => {
-																this.viewModalHandler(row._id)}
-															} 
-															className="fa fa-search" 
-															style={
-																{fontSize : '18px', paddingRight : '30px'}
-															}
-														/>
-														<span 
-															onClick = {() => {
-																this.editModalHandler(row._id)}
-															}	 
-															className="fa fa-edit" 
-															style={
-																{fontSize : '18px', paddingRight : '30px'}
-															} 
-														/>
-													</Link>*/}
 													<Link to="#">
 			                      <Search
 			                      onClick={() => {

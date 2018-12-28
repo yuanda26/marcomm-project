@@ -10,10 +10,22 @@ const tEventBisnislogic = {
 	},
 
 	readByIdHandler : (req, res, next) => {
-		let param = req.params.teventId;
+		let param = req.params.eventId;
 		dtl.readByIdHandlerData((items) => {
 			responseHelper.sendResponse(res, 200, items);
 		}, param);
+	},
+
+	searchHandler : (req, res, next) => {
+		let code = req.params.code;
+		let request_by = req.params.request_by;
+		let request_date = req.params.request_date;
+		let status = req.params.status;
+		let created_date = req.params.created_date;
+		let created_by = req.params.created_by;
+		dtl.searchHandlerData((items) => {
+			responseHelper.sendResponse(res, 200, items);
+		}, code, request_by, request_date, status, created_date, created_by);
 	},
 
 	createHandler  : (req, res, next) => {
@@ -36,7 +48,7 @@ const tEventBisnislogic = {
 
 	updateHandler : (req, res, next) => {
 		let date = moment().format("DD/MM/YYYY");
-		let param = req.params.teventId;
+		let param = req.params.eventId;
 		let body = {
 			code          : req.body.code,
 			event_name    : req.body.event_name,
@@ -65,7 +77,7 @@ const tEventBisnislogic = {
 	},
 
 	deleteHandler : (req, res, next) => {
-		let param = req.params.teventId;
+		let param = req.params.eventId;
 
 		dtl.deleteHandlerData((items) => {
 			responseHelper.sendResponse(res, 200, items);
