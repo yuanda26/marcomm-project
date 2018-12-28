@@ -2,6 +2,10 @@
   "local": {
     "host": "mongodb://localhost",
     "port": 27017,
+<<<<<<< HEAD
     "name": "backend"
+=======
+    "name": "miniproject176"
+>>>>>>> dafbd2d77657b22f5d301366e7ae164f1d5eb896
   }
 }

@@ -1,7 +1,7 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { CURRENT_USER, ERRORS } from "./types";
-import ApiConfig from "../config/API_Config";
+import ApiConfig from "../config/Host_Config";
 
 // Login User Action
 export const loginUser = userData => dispatch => {

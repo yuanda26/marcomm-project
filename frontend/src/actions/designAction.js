@@ -12,9 +12,11 @@ import {
   GET_DESIGN_ITEM,
   UPDATE_DESIGN,
   UPDATE_DESIGN_ITEM,
+  GET_EMPLOYEE,
+  GET_STAFF,
   ERRORS
 } from "./types";
-import ApiConfig from "../config/API_Config";
+import ApiConfig from "../config/Host_Config";
 
 // Get All Designs
 export const getAllDesign = () => dispatch => {
@@ -280,9 +282,7 @@ export const updateDesignItem = (designItemUpdate, history) => dispatch => {
   axios({
     url: `${ApiConfig.host}/design/item`,
     method: "put",
-    headers: {
-      Authorization: localStorage.token
-    },
+    headers: { Authorization: localStorage.token },
     data: { designItemUpdate }
   })
     .then(res => {
@@ -296,6 +296,48 @@ export const updateDesignItem = (designItemUpdate, history) => dispatch => {
       dispatch({
         type: ERRORS,
         payload: err.response.data
+      })
+    );
+};
+
+// Get User has Staff Role
+export const getStaff = () => dispatch => {
+  axios({
+    url: `${ApiConfig.host}/design/staff`,
+    method: "get",
+    headers: { Authorization: localStorage.token }
+  })
+    .then(res =>
+      dispatch({
+        type: GET_STAFF,
+        payload: res.data.message
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: ERRORS,
+        payload: {}
+      })
+    );
+};
+
+// Get All Employee
+export const getEmployee = () => dispatch => {
+  axios({
+    url: `${ApiConfig.host}/employee`,
+    method: "get",
+    headers: { Authorization: localStorage.token }
+  })
+    .then(res =>
+      dispatch({
+        type: GET_EMPLOYEE,
+        payload: res.data.message
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: ERRORS,
+        payload: {}
       })
     );
 };

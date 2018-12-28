@@ -11,6 +11,8 @@ import {
   ADD_DESIGN_ITEM,
   UPDATE_DESIGN,
   UPDATE_DESIGN_ITEM,
+  GET_STAFF,
+  GET_EMPLOYEE,
   ERRORS
 } from "../actions/types";
 
@@ -24,6 +26,8 @@ const initialState = {
   assign: [],
   items: [],
   item: {},
+  staff: [],
+  employee: [],
   errors: {},
   status: 0,
   message: ""
@@ -88,13 +92,23 @@ export default function(state = initialState, action) {
       return {
         ...state,
         status: 2,
-        message: `Data Updated! Transaction Souvenir Request with Code ${
+        message: `Data Updated! Transaction Design Request with Code ${
           action.code
         } Has Been Updated!`
       };
     case UPDATE_DESIGN_ITEM:
       return {
         ...state
+      };
+    case GET_STAFF:
+      return {
+        ...state,
+        staff: action.payload
+      };
+    case GET_EMPLOYEE:
+      return {
+        ...state,
+        employee: action.payload
       };
     case ERRORS:
       return {
