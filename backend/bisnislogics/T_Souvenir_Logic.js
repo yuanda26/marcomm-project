@@ -7,10 +7,8 @@ const moment = require("moment");
 const T_Souvenir_Data = {
   //GET TRANSACTION SOUVENIR
   readAllHandler: (req, res, next) => {
-    //console.log("disini");
     dtl.readSouvenirAllHandler(items => {
       ResponseHelper.sendResponse(res, 200, items);
-      //console.log(JSON.stringify(items))
     });
   },
   //GET TRANSACTION SOUVENIR BY ID
@@ -19,44 +17,6 @@ const T_Souvenir_Data = {
     dtl.readByIdHandler(items => {
       ResponseHelper.sendResponse(res, 200, items);
     }, id);
-  },
-
-  //ADD TRANSACTION SOUVERNIER
-  createHandler: (req, res, next) => {
-    //console.log(JSON.stringify(req.body));
-    let thisDate = new Date();
-    // ambil masing-masing yy, mm, dd
-    let date = thisDate.getDate().toString();
-    let month = (thisDate.getMonth() + 1).toString();
-    let year = thisDate
-      .getFullYear()
-      .toString()
-      .substr(2, 2);
-    // Untuk mendapatkan format yy.mm.dd
-    let newDate = "TRSV" + date + month + year;
-
-    dtl.countCode(count => {
-      let codeDate = newDate;
-      for (let i = 0; i < 5 - (count + 1).toString().length; i++) {
-        codeDate += "0";
-      }
-      codeDate += count + 1;
-
-      const dataTsouvenir = {
-        code: codeDate,
-        type: "Additional",
-        received_by: req.body[0].received_by,
-        received_date: req.body[0].received_date,
-        note: req.body[0].note,
-        is_delete: false,
-        created_by: req.body[0].created_by,
-        created_date: moment().format("YYYY-MM-DD")
-      };
-
-      dtl.createHandler(function(items) {
-        ResponseHelper.sendResponse(res, 200, items);
-      }, dataTsouvenir);
-    }, newDate);
   },
 
   //DELETE TRANSACTION SOUVENIR
@@ -69,23 +29,7 @@ const T_Souvenir_Data = {
 
   //EDIT TRANSACTION SOUVENIR
   updateHandler: (req, res, next) => {
-    let thisDate = new Date();
-    // ambil masing-masing yy, mm, dd
-    let date = thisDate.getDate().toString();
-    let month = (thisDate.getMonth() + 1).toString();
-    let year = thisDate
-      .getFullYear()
-      .toString()
-      .substr(2, 2);
-    let year1 = thisDate.getFullYear().toString();
-    if (month.length == 1) {
-      month = "0" + month;
-    }
-    //if date
-    if (date.length == 1) {
-      date = "0" + date;
-    }
-    let CD = year1 + "-" + month + "-" + date;
+    let CD = moment().format("YYYY-MM-DD");
     const id = req.params.souvenirId;
     const data = {
       received_by: req.body.souv.received_by,
@@ -114,8 +58,6 @@ const T_Souvenir_Data = {
           dtl.deleteData(deleteitem => {
             dtl.createItem(updateOldFile => {
               if (req.body.newFile.length > 0) {
-                //console.log("ini length",req.body.newFile.length)
-
                 dataNewFile = req.body.newFile.map((ele, idx) => {
                   return {
                     m_souvenir_id: ele.m_souvenir_id,
@@ -130,11 +72,9 @@ const T_Souvenir_Data = {
                   };
                 });
                 dtl.createItem(createNewFile => {
-                  //console.log("ini createNewFile", createNewFile)
                   ResponseHelper.sendResponse(res, 200, createNewFile);
                 }, dataNewFile);
               } else {
-                //console.log("ini updateOldFile", updateOldFile)
                 ResponseHelper.sendResponse(res, 200, updateOldFile);
               }
             }, dataOldFile);
@@ -149,9 +89,8 @@ const T_Souvenir_Data = {
   // SOUVENIR ITEM
   createHandlerItem: (req, res, next) => {
     const data = req.body;
-    //console.log("ini data yang harus ke souvenir", data[0])
-    // console.log("ini data yang harus ke souvenir item", data[1])
     let newDate = "TRSV" + moment().format("DDMMYY");
+    let CD = moment().format("YYYY-MM-DD");
     dtl.countCode(
       count => {
         let codeDate = newDate;

@@ -7,7 +7,6 @@ const dt = {
   //CRUD Company
 
   readCompanyAllHandlerData: callback => {
-    //res=lempar data ke client
     db.collection("m_company")
       .aggregate([
         {
@@ -56,7 +55,6 @@ const dt = {
   },
 
   readOneByIdCompanyData: callback => {
-    //res=lempar data ke client
     db.collection("m_company")
       .find({ _id: new ObjectID(id) })
       .sort({ code: 1 })
@@ -69,7 +67,6 @@ const dt = {
   },
 
   createCompanyHandlerData: (callback, data) => {
-    //res=lempar data ke client
     let company_object = new M_Company(data);
     company_object._id = new ObjectID();
     db.collection("m_company").insert(company_object, (err, docs) => {
@@ -82,7 +79,6 @@ const dt = {
   },
 
   updateCompanyHandlerData: (callback, code, data) => {
-    //res=lempar data ke client
     db.collection("m_company").updateOne(
       { code: code },
       { $set: data },

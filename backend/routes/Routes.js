@@ -136,13 +136,13 @@ module.exports = server => {
   //== End of T Event Route
 
   // Transaction Souvenir Route
-  server.get("/api/tsouvenir", authenticate, tSouvenirLogic.readAllHandler);
+  server.get("/api/tsouvenir", tSouvenirLogic.readAllHandler);
   server.get(
     "/api/tsouvenir/:souvenirId",
     authenticate,
     tSouvenirLogic.readByIdHandler
   );
-  server.post("/api/tsouvenir", authenticate, tSouvenirLogic.createHandlerItem);
+  server.post("/api/tsouvenir", tSouvenirLogic.createHandlerItem);
   server.put(
     "/api/tsouvenir/:souvenirId",
     authenticate,

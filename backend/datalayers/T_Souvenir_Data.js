@@ -8,14 +8,6 @@ const dtl = {
   readSouvenirAllHandler: callback => {
     db.collection("t_souvenir")
       .aggregate([
-        // {
-        //   $lookup: {
-        //     from: "t_souvenir_item",
-        //     localField: "t_souvenir_id",
-        //     foreignField: "code",
-        //     as: "KEY"
-        //   }
-        // },
         {
           $lookup: {
             from: "m_employee",
@@ -32,7 +24,6 @@ const dtl = {
             as: "creater"
           }
         },
-        // { $unwind: "$KEY" },
         { $unwind: "$receiver" },
         { $unwind: "$creater" },
         {
@@ -52,13 +43,11 @@ const dtl = {
         }
       ])
       .toArray((err, docs) => {
-        // let t_souvenir = docs.map(row => {
-        //   return new T_souvenir(row);
-        // });
         callback(docs);
       });
   },
 
+  //GET TRANSACTION SOUVENIR BY ID
   readByIdHandler: (callback, id) => {
     db.collection("t_souvenir")
       .find({ code: id })
@@ -71,9 +60,8 @@ const dtl = {
       });
   },
 
-  //AUTO INCREMENT
+  //AUTO INCREMENT CODE
   countCode: (callback, newDate) => {
-    //console.log(newDate)
     db.collection("t_souvenir")
       .find({ code: { $regex: new RegExp(newDate) } })
       .count((err, count) => {
@@ -83,9 +71,12 @@ const dtl = {
 
   //POST TRANSACTION SOUVENIR
   createHandler: (callback, data) => {
-    //console.log(JSON.stringify(data));
     db.collection("t_souvenir").insert(data, (err, docs) => {
-      callback(docs);
+      if (err) {
+        callback(err);
+      } else {
+        callback(data);
+      }
     });
   },
 
@@ -95,24 +86,30 @@ const dtl = {
       { code: id },
       { $set: { is_delete: true } },
       (err, docs) => {
-        callback(docs);
+        if (err) {
+          callback(err);
+        } else {
+          callback(id);
+        }
       }
     );
   },
 
   //EDIT TRANSACTION SOUVENIR
   updateHandler: (callback, data, id) => {
-    //console.log(data);
     db.collection("t_souvenir").updateOne(
       { code: id },
       { $set: data },
       (err, docs) => {
-        callback(docs);
+        if (err) {
+          callback(err);
+        } else {
+          callback(data);
+        }
       }
     );
   },
 
-  //ini adalah comment
   createItem: (callback, data) => {
     const func = input => {
       return input.map(content => {
@@ -120,7 +117,11 @@ const dtl = {
       });
     };
     db.collection("t_souvenir_item").insertMany(func(data), (err, docs) => {
-      callback(docs);
+      if (err) {
+        callback(err);
+      } else {
+        callback(data);
+      }
     });
   },
 
@@ -128,14 +129,22 @@ const dtl = {
     db.collection("t_souvenir_item").remove(
       { t_souvenir_id: id },
       (err, docs) => {
-        callback(docs);
+        if (err) {
+          callback(err);
+        } else {
+          callback(id);
+        }
       }
     );
   },
 
   createData: (callback, formdata) => {
     db.collection("t_souvenir_item").insertMany(formdata, (err, docs) => {
-      callback(docs);
+      if (err) {
+        callback(err);
+      } else {
+        callback(formdata);
+      }
     });
   }
 };

@@ -30,15 +30,12 @@ const M_Company_Logic = {
         code: newCode,
         name: req.body.name,
         address: req.body.address,
-        // province: req.body.province,
-        // city:req.body.city,
         phone: req.body.phone,
         email: req.body.email,
         is_delete: false,
         created_by: req.body.created_by,
         created_date: moment().format("YYYY-MM-DD")
       };
-      //console.log(JSON.stringify(data))
       dtl.createCompanyHandlerData(function(items) {
         ResponseHelper.sendResponse(res, 200, items);
       }, data);
