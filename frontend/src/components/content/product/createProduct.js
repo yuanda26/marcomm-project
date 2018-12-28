@@ -2,26 +2,24 @@ import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button, Input, Label, FormGroup } from "reactstrap";
 import { Alert } from "reactstrap";
 import PropTypes from "prop-types";
-import apiconfig from "../../../configs/api.config.json";
 import { connect } from "react-redux";
 import { createProduct } from "../../../actions/productAction";
 
 class CreateProduct extends React.Component {
   constructor(props) {
     super(props);
-    let userdata = JSON.parse(localStorage.getItem(apiconfig.LS.USERDATA));
+    let userdata = "purwanto";
     
     this.state = {
       code: "",
       name: "",
       description: "",
-      created_by: userdata.username,
-      update_by:  userdata.username,
+      created_by: userdata,
+      update_by:  userdata,
       alertData: {
-        status: false,
+        status: "",
         message: ""
       },
-      labelWidth: 0,
       selectedOption:"",
       selectedOption2:"",
     };
@@ -68,7 +66,7 @@ class CreateProduct extends React.Component {
     }
     else {
       const func = (arrReq, input)=>{
-          if(arrReq.filter(content => content.toUpperCase() == input.toUpperCase()).length !== 0){
+          if(arrReq.filter(content => content.toUpperCase() === input.toUpperCase()).length !== 0){
               return false
           }
           else{
@@ -84,7 +82,7 @@ class CreateProduct extends React.Component {
         update_by:this.state.update_by
       }
 
-      if(func(this.props.dataValidation, this.state.name) == false){
+      if(func(this.props.dataValidation, this.state.name) === false){
         this.setState({
           alertData: {
             status: true,
@@ -92,7 +90,7 @@ class CreateProduct extends React.Component {
           }
         });
       }
-      if(func(this.props.dataValidation, this.state.name) == true) {
+      if(func(this.props.dataValidation, this.state.name) === true) {
         this.props.createProduct(formdata);
         this.props.modalStatus(1, "Created!", this.state.name);
 
@@ -106,10 +104,7 @@ class CreateProduct extends React.Component {
     }
   }
 
-  render() {
-
-    const { classes } = this.props;
-    
+  render() {    
     return (
       <Modal isOpen={this.props.create} className={this.props.className}>
         <ModalHeader> Add Product</ModalHeader>
@@ -128,7 +123,7 @@ class CreateProduct extends React.Component {
           </FormGroup>
         </ModalBody>
         <ModalFooter>
-          {this.state.alertData.status == true ? (
+          {this.state.alertData.status === true ? (
               <Alert color="danger">{this.state.alertData.message} </Alert>
           ) : (
               ""
@@ -150,8 +145,6 @@ class CreateProduct extends React.Component {
 }
 
 CreateProduct.propTypes = {
-    classes: PropTypes.object.isRequired,
-    create: PropTypes.func.isRequired,
     product: PropTypes.object.isRequired
   };
   
