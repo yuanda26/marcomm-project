@@ -33,7 +33,7 @@ class CreateEmployee extends React.Component{
         validateEmail : "form-control",
         validateCompany : "form-control"
       },
-      regexEmail : /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/
+      regexEmail : /^(([^<>()[].,;:s@"]+(.[^<>()[].,;:s@"]+)*)|(".+"))@(([^<>()[].,;:s@"]+.)+[^<>()[].,;:s@"]{2,})$/
     }
   }
 
@@ -151,7 +151,7 @@ class CreateEmployee extends React.Component{
                 <option selected value="">Select Company...</option>
                   {this.state.company.map((row,x) => {
                     return (
-                      <option value={row.code}>{row.name}</option>
+                      <option key={row._id} value={row.code}>{row.name}</option>
                   )})}
                 </select>
                 <div className="valid-feedback">

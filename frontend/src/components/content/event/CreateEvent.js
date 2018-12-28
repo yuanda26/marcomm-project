@@ -1,17 +1,15 @@
 import React from 'react'
-import Select from 'react-select'
 import moment from 'moment'
 import PropTypes from "prop-types"
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from 'reactstrap'
 import { connect } from "react-redux";
 import { createEvent } from "../../../actions/event/create_act";
 import { getEvent } from "../../../actions/event/get_all_act";
-import apiconfig from '../../../config/apiconfig.json'
 
 class CreateEvent extends React.Component{
   constructor (props){
     super(props)
-    let userdata = JSON.parse(localStorage.getItem(apiconfig.LS.USERDATA))
+    let userdata = "purwanto"
     this.state={
       formdata : {
         code : '',

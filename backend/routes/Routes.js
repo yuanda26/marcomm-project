@@ -123,7 +123,7 @@ module.exports = server => {
 
   // company Route
   // Made By: Purwanto
-  server.get("/api/company", companyLogic.readAllHandler);
+  // server.get("/api/company", companyLogic.readAllHandler);
   //== End of Company Route
 
   // T Event Route
