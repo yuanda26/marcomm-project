@@ -17,7 +17,7 @@ class ViewEmployee extends React.Component {
               <div className="col-sm-4">
                 <input 
                   type="text" 
-                  class="form-control" 
+                  className="form-control" 
                   readOnly
                   name="code" 
                   value={this.props.currentEmployee.employee_number} 
@@ -28,7 +28,7 @@ class ViewEmployee extends React.Component {
               <div className="col-sm-4">
                 <input 
                   type="text" 
-                  class="form-control" 
+                  className="form-control" 
                   placeholder="Type Unit Name" 
                   readOnly
                   name="name" 
@@ -42,7 +42,7 @@ class ViewEmployee extends React.Component {
               <div className="col-sm-4">
                 <input 
                   type="text" 
-                  class="form-control" 
+                  className="form-control" 
                   placeholder="email" 
                   readOnly
                   name="email" 
@@ -54,7 +54,7 @@ class ViewEmployee extends React.Component {
               <div className="col-sm-4">
                 <input 
                   type="text" 
-                  class="form-control" 
+                  className="form-control" 
                   placeholder="Type address" 
                   readOnly
                   name="address" 
@@ -68,7 +68,7 @@ class ViewEmployee extends React.Component {
               <div className="col-sm-4">
                 <input 
                   type="text" 
-                  class="form-control" 
+                  className="form-control" 
                   placeholder="Last Name" readOnly
                   name="last_name" 
                   value={this.props.currentEmployee.last_name} 

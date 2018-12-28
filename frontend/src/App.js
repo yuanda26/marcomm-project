@@ -20,6 +20,7 @@ import DesignList from "./components/content/design/DesignList";
 import DesignView from "./components/content/design/DesignView";
 import DesignEdit from "./components/content/design/DesignEdit";
 import SouvenirList from "./components/content/souvenir/SouvenirList";
+import UnitList from "./components/content/unit/UnitList";
 import EmployeeList from "./components/content/employee/ListEmployee";
 import ListEvent from "./components/content/event/ListEvent";
 
@@ -48,7 +49,6 @@ class App extends Component {
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
               <PrivateRoute exact path="/design" component={DesignList} />
               <PrivateRoute exact path="/design/add" component={DesignAdd} />
-              <PrivateRoute exact path="/employee" component={EmployeeList} />
               <PrivateRoute exact path="/tevent" component={ListEvent} />
               <PrivateRoute
                 exact
@@ -61,6 +61,8 @@ class App extends Component {
                 component={DesignEdit}
               />
               <PrivateRoute exact path="/souvenir" component={SouvenirList} />
+              <PrivateRoute exact path="/unit" component={UnitList} />
+              <PrivateRoute exact path="/employee" component={EmployeeList} />
             </Switch>
           </div>
         </Router>

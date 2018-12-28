@@ -2,8 +2,7 @@ import React from 'react'
 import PropTypes from "prop-types"
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from 'reactstrap'
 import { connect } from "react-redux";
-import { updateEmployee } from "../../../actions/employee/update_act";
-import { getCompanies } from "../../../actions/company/get_all_act";
+import { updateEmployee } from "../../../actions/employeeAction";
 
 class EditEmployee extends React.Component {
   constructor (props) {
@@ -17,7 +16,10 @@ class EditEmployee extends React.Component {
       companyname: null,
       first_name : '',
       last_name: '',
-      company : [],
+      company : [
+                {_id : "124653546575", code : "CP0001", name : "XSIS"},
+                {_id : "557453235657", code : "CP0002", name : "ASTRA"}
+              ],
       statusUpdated : null,
       messageUpdated : null,
       validate : {
@@ -31,18 +33,16 @@ class EditEmployee extends React.Component {
   }
 
   componentWillReceiveProps(newProps){
-    let { company, employee, currentEmployee } = newProps
+    let { employee, currentEmployee } = newProps
     let formdata = {
       _id : currentEmployee._id,
       employee_number : currentEmployee.employee_number,
-      m_company_id : currentEmployee.m_company_id,
       first_name : currentEmployee.first_name,
       last_name : currentEmployee.last_name,
       email : currentEmployee.email,
     }
   
     this.setState({
-      company : company.myCompany,
       statusUpdated : employee.statusUpdated,
       messageUpdated : employee.idUpdated,
       formdata : formdata,
@@ -51,28 +51,24 @@ class EditEmployee extends React.Component {
     })
   }
 
-  componentDidMount(){
-    this.props.getCompanies();
-  }
-
   changeHandler = (e) => {
     let { formdata, validate, regexEmail } = this.state
     let { name, value, id } = e.target
 
     let companyName = null
-    if(name == "m_company_id"){
+    if(name === "m_company_id"){
       formdata[name] = value[0]
       companyName = value[1]
     }else{
       formdata[name] = value
     }
 
-    if( name=="email" && regexEmail.test(value) && value != '' ){
+    if( name==="email" && regexEmail.test(value) && value !== '' ){
       validate[id] = "form-control is-valid"
     }else if(
-      ( name=="email" && !regexEmail.test(value) && value != '' ) ||
-      ( name=="m_company_id" && value=="" ) ||
-      ( name=="first_name" && value=="" )
+      ( name==="email" && !regexEmail.test(value) && value !== '' ) ||
+      ( name==="m_company_id" && value==="" ) ||
+      ( name==="first_name" && value==="" )
     ){
       validate[id] = "form-control is-invalid"
     }else{
@@ -87,15 +83,15 @@ class EditEmployee extends React.Component {
   }
 
   submitHandler = () => {
-    let { formdata, validate, regexEmail, updated_by, companyName } = this.state
+    let { formdata, regexEmail, updated_by, companyName } = this.state
     let { email, first_name, m_company_id } = formdata
     formdata["updated_by"] = updated_by
 
-    if( m_company_id == "" ){
+    if( m_company_id === "" ){
       alert( "Select Company!" )
-    }else if( first_name == '' ){
+    }else if( first_name === '' ){
       alert( "Type First Name!" )
-    }else if( !regexEmail.test(email) && email != ''){
+    }else if( !regexEmail.test(email) && email !== ''){
       alert( "Email Incorrect!" )
     }else{
       this.props.updateEmployee(formdata._id, formdata, companyName)
@@ -105,17 +101,6 @@ class EditEmployee extends React.Component {
 
 
   render(){
-    // status, action, message, optional, code
-    if(this.state.statusUpdated == 200){
-      this.props.modalStatus(1, 'Updated',
-        'Data Employee has been updated',
-        '',
-        '')
-    }else if (this.state.statusUpdated != 200 &&
-       this.state.statusCreated != null){
-      this.props.modalStatus(2, 'Failed')
-    }
-
     return(
       <Modal isOpen={this.props.edit} className="modal-dialog modal-lg border-primary card">
         <ModalHeader className="bg-primary text-white card-header"> Edit Employee -
@@ -124,7 +109,7 @@ class EditEmployee extends React.Component {
             this.state.formdata.employee_number+"}"}
         </ModalHeader>
         <ModalBody className="card-body">
-          <form class="needs-validation">
+          <form className="needs-validation">
               <div className="form-group row">
                 <label className="col-sm-2 col-form-label text-right">* Emp ID Number</label>
                 <div className="col-sm-4">
@@ -138,16 +123,16 @@ class EditEmployee extends React.Component {
                     onChange={this.changeHandler}
                   />
                 </div>
-                <label for="validateCompany" className="col-sm-2 col-form-label text-right">* Company Name</label>
+                <label htmlFor="validateCompany" className="col-sm-2 col-form-label text-right">* Company Name</label>
                 <div className="col-sm-4">
                   <select
                     id="validateCompany"
                     name="m_company_id"
                     className={this.state.validate.validateCompany}
                     onChange={this.changeHandler}
-                    value={this.state.formdata.m_company_id}
+                    defaultValue={this.state.formdata.m_company_id}
                   >
-                  <option selected value="">Select Company...</option>
+                  <option value="">Select Company...</option>
                     {this.state.company.map((row,x) => {
                       return (
                         <option key={row._id} value={row.code}>{row.name}</option>
@@ -162,7 +147,7 @@ class EditEmployee extends React.Component {
                 </div>
               </div>
               <div className="form-group row">
-                <label for="validateFirsname" className="col-sm-2 col-form-label text-right">* First Name</label>
+                <label htmlFor="validateFirsname" className="col-sm-2 col-form-label text-right">* First Name</label>
                 <div className="col-sm-4">
                   <input 
                     type="text"
@@ -181,12 +166,12 @@ class EditEmployee extends React.Component {
                     Please Type First Name!.
                   </div>
                 </div>
-                <label for="validateEmail" className="col-sm-2 col-form-label text-right">Email</label>
+                <label htmlFor="validateEmail" className="col-sm-2 col-form-label text-right">Email</label>
                 <div className="col-sm-4">
                   <input 
                     id="validateEmail"
                     type="text" 
-                    class={this.state.validate.validateEmail} 
+                    className={this.state.validate.validateEmail} 
                     placeholder="email" 
                     name="email" 
                     value={this.state.formdata.email} 
@@ -206,7 +191,7 @@ class EditEmployee extends React.Component {
                 <div className="col-sm-4">
                   <input 
                     type="text" 
-                    class="form-control" 
+                    className="form-control" 
                     placeholder="Last Name" 
                     name="last_name" 
                     value={this.state.formdata.last_name} 
@@ -237,15 +222,13 @@ class EditEmployee extends React.Component {
 
 EditEmployee.propTypes = {
   updateEmployee: PropTypes.func.isRequired,
-  getCompanies: PropTypes.func.isRequired,
   employee: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   employee: state.employee,
-  company: state.company,
 });
 
 export default connect(
-  mapStateToProps,{ updateEmployee, getCompanies }
+  mapStateToProps,{ updateEmployee }
   )(EditEmployee);
