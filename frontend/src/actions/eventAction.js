@@ -4,14 +4,14 @@ import {
   GET_ID_EVENT,
   CREATE_EVENT,
   UPDATE_EVENT,
-  // SEARCH_EVENT
+  SEARCH_EVENT
 } from "./types";
 import ApiConfig from "../config/Host_Config";
 
 // Get All EVENT
 export const getAllEvent = () => dispatch => {
   axios({
-    url: `${ApiConfig.host}/tevent`,
+    url: `${ApiConfig.host}/event`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -26,7 +26,7 @@ export const getAllEvent = () => dispatch => {
     .catch(err =>
       dispatch({
         type: GET_EVENT,
-        payload: err.response.data
+        payload: err
       })
     );
 };
@@ -34,7 +34,7 @@ export const getAllEvent = () => dispatch => {
 // Get Single Emloye
 export const getEventId = (param) => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/tevent/${param}`,
+    url: `${ApiConfig.host}/event/${param}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -58,7 +58,7 @@ export const getEventId = (param) => dispatch => {
 // Add New EVENT
 export const createEvent = (body, companyName) => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/tevent`,
+    url: `${ApiConfig.host}/event`,
     method: "post",
     headers: {
       Authorization: localStorage.token
@@ -86,7 +86,7 @@ export const createEvent = (body, companyName) => dispatch => {
 // Update EVENT
 export const updateEvent = (param, body) => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/tevent/${param}`,
+    url: `${ApiConfig.host}/event/${param}`,
     method: "put",
     headers: {
       Authorization: localStorage.token
@@ -110,25 +110,25 @@ export const updateEvent = (param, body) => dispatch => {
 };
 
 // Search EVENT
-// export const searchEvent = ( param1, param2, param3, param4, param5 ) => dispatch => {
-//   let options = {
-//     url: `${ApiConfig.host}/tevent/${param1}/${param2}/${param3}/${param4}/${param5}`,
-//     method: "get",
-//     headers: {
-//       Authorization: localStorage.token
-//     }
-//   };
-//   axios(options)
-//     .then(res => {
-//       dispatch({
-//         type: SEARCH_EVENT,
-//         payload: res.data.message
-//       });
-//     })
-//     .catch(error => {
-//       dispatch({
-//         type: SEARCH_EVENT,
-//         payload: null
-//       });
-//     });
-// };
+export const searchEvent = ( param1, param2, param3, param4, param5, param6 ) => dispatch => {
+  let options = {
+    url: `${ApiConfig.host}/event/${param1}/${param2}/${param3}/${param4}/${param5}/${param6}`,
+    method: "get",
+    headers: {
+      Authorization: localStorage.token
+    }
+  };
+  axios(options)
+    .then(res => {
+      dispatch({
+        type: SEARCH_EVENT,
+        payload: res.data.message
+      });
+    })
+    .catch(error => {
+      dispatch({
+        type: SEARCH_EVENT,
+        payload: null
+      });
+    });
+};

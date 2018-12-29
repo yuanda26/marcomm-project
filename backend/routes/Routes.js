@@ -9,7 +9,7 @@ const roleLogic = require("../bisnislogics/M_Role_Bisnis_Logic");
 const accessLogic = require("../bisnislogics/M_Menu_Access_Bisnis_Logic");
 const tDesignLogic = require("../bisnislogics/T_Design_Logic");
 const tDesignItemLogic = require("../bisnislogics/T_Design_Item_Logic.js");
-const tEvent = require("../bisnislogics/T_Event_Logic");
+const event = require("../bisnislogics/T_Event_Logic");
 const tSouvenirLogic = require("../bisnislogics/T_Souvenir_Logic");
 const tSouvenirItemLogic = require("../bisnislogics/T_Souvenir_Item_Logic");
 
@@ -18,7 +18,7 @@ module.exports = server => {
   server.get("/", (req, res, next) => {});
 
   // Master Company Route
-  server.get("/api/company", authenticate, companyLogic.readAllCompany);
+  server.get("/api/company", companyLogic.readAllCompany);
   server.get(
     "/api/company/:companyId",
     authenticate,
@@ -166,11 +166,16 @@ module.exports = server => {
 
   // T Event Route
   // Made By: Purwanto
-  server.get("/api/tevent", tEvent.readAllHandler);
-  server.get("/api/tevent/:teventId", tEvent.readByIdHandler);
-  server.post("/api/tevent", tEvent.createHandler);
-  server.put("/api/tevent/:teventId", tEvent.updateHandler);
-  server.del("/api/tevent/:teventId", tEvent.deleteHandler);
+  server.get("/api/event", event.readAllHandler);
+  server.get("/api/event/:eventId", event.readByIdHandler);
+  server.get(
+    // code, request_by, request_date, , status, created_date, created_by)
+    "/api/event/:code/:request_by/:request_date/:status/:created_date/:created_by",
+    event.searchHandler
+  );
+  server.post("/api/event", event.createHandler);
+  server.put("/api/event/:eventId", event.updateHandler);
+  server.del("/api/event/:eventId", event.deleteHandler);
   //== End of T Event Route
 
   // Master User Route - Login Process

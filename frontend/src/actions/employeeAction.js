@@ -5,7 +5,8 @@ import {
   CREATE_EMPLOYEE,
   UPDATE_EMPLOYEE,
   DELETE_EMPLOYEE,
-  SEARCH_EMPLOYEE
+  SEARCH_EMPLOYEE,
+  GET_COMPANY
 } from "./types";
 import ApiConfig from "../config/Host_Config";
 
@@ -157,4 +158,27 @@ export const searchEmployee = ( param1, param2, param3, param4, param5 ) => disp
         payload: null
       });
     });
+};
+
+// Get All EMPLOYEE
+export const getAllCompany = () => dispatch => {
+  axios({
+    url: `${ApiConfig.host}/company`,
+    method: "get",
+    headers: {
+      Authorization: localStorage.token
+    }
+  })
+    .then(res =>{
+      dispatch({
+        type: GET_COMPANY,
+        payload: res.data.message
+      })}
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_COMPANY,
+        payload: err.response.data
+      })
+    );
 };
