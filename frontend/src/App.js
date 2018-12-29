@@ -6,12 +6,12 @@ import store from "./store";
 import jwt_decode from "jwt-decode";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
-
+import RouteSwitcher from "./RouteSwitcher";
 // Private Route
 import PrivateRoute from "./PrivateRoute";
 // Layout Components
 import Navbar from "./components/layout/Navbar";
-
+import Sidebar from "./components/layout/Sidebar";
 // Import Components
 import Dashboard from "./Dashboard";
 import Login from "./components/content/users/Login";
@@ -44,7 +44,9 @@ class App extends Component {
           <div className="App">
             <Navbar />
             <Route exact path="/" component={Login} />
-            <Switch>
+            <RouteSwitcher />
+            <Sidebar />
+            {/* <Switch>
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
               <PrivateRoute exact path="/design" component={DesignList} />
               <PrivateRoute exact path="/design/add" component={DesignAdd} />
@@ -61,7 +63,7 @@ class App extends Component {
               <PrivateRoute exact path="/souvenir" component={SouvenirList} />
               <PrivateRoute exact path="/unit" component={UnitList} />
               <PrivateRoute exact path="/employee" component={EmployeeList} />
-            </Switch>
+            </Switch> */}
           </div>
         </Router>
       </Provider>

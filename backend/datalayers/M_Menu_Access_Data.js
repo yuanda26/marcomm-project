@@ -6,29 +6,6 @@ const db = DB.getConnection();
 
 const datalayer = {
   readAllAccess: callback => {
-    // db.collection('m_menu_access').aggregate([
-    //     {
-    //         $lookup:{
-    //             from            : "m_role",
-    //             localField      : "m_role_id",
-    //             foreignField    : "code",
-    //             as              : "role_doc"
-    //         }
-    //     },
-    //     {$unwind: "$role_doc"},
-    //     {
-    //         $project:{
-    //             "m_role_id"     : "$m_role_id",
-    //             "role_name"     : "$role_doc.name",
-    //             "m_menu_id"     : "$m_menu_id",
-    //             "is_delete"     : "$is_delete",
-    //             "created_by"    : "$created_by",
-    //             "created_date"  : "$created_date",
-    //             "updated_by"    : "$updated_by",
-    //             "updated_date"  : "$updated_date"
-    //         }
-    //     }
-    // ]).sort({ m_role_id: 1 })
     db.collection("m_role")
       .find({ is_delete: false })
       .sort({ code: 1 })

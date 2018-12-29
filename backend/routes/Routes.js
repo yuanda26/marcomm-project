@@ -1,5 +1,6 @@
 const authenticate = require("../helpers/Auth_Helper").checkToken;
 const companyLogic = require("../bisnislogics/M_Company_Logic");
+const menuLogic = require("../bisnislogics/M_Menu_Bisnis_Logic");
 const userLogic = require("../bisnislogics/M_User_Logic");
 const unitLogic = require("../bisnislogics/M_Unit_Logic");
 const souvenirLogic = require("../bisnislogics/M_Souvenir_Logic");
@@ -32,6 +33,16 @@ module.exports = server => {
   server.get("/api/access/:id", authenticate, accessLogic.readOneAccess);
   server.put("/api/access/:id", authenticate, accessLogic.updateAccess);
   //== End of Master Access Menu Route
+
+  // Master Menu Route
+  // Made By: Randika Alditia
+  server.get("/api/menu", authenticate, menuLogic.readMenuAlHandler);
+  server.get("/api/menusidebar", authenticate, menuLogic.readMenuSidebar);
+  server.get("/api/menu/:menuid", authenticate, menuLogic.readMenuOneById);
+  server.post("/api/menu", authenticate, menuLogic.createMenuHandler);
+  server.put("/api/menu/:menuid", authenticate, menuLogic.updateMenuHandler);
+  server.del("/api/menu/:menuid", authenticate, menuLogic.deleteMenuHandler);
+  //== End of Master Menu Route
   // Master Company Route
   server.get("/api/company", authenticate, companyLogic.readAllCompany);
   server.get(
@@ -137,11 +148,6 @@ module.exports = server => {
   server.put("/api/employee/:employeeId", employeeLogic.updateHandler);
   server.del("/api/employee/:employeeId", employeeLogic.deleteHandler);
   //== End of Employee Route
-
-  // company Route
-  // Made By: Purwanto
-  server.get("/api/company", companyLogic.readAllHandler);
-  //== End of Company Route
 
   // T Event Route
   // Made By: Purwanto

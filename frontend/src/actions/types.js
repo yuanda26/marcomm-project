@@ -9,7 +9,6 @@ export const GET_ASSIGN = "GET_ASSIGN";
 export const ADD_DESIGN = "ADD_DESIGN";
 export const UPDATE_DESIGN = "UPDATE_DESIGN";
 export const GET_STAFF = "GET_STAFF";
-export const GET_EMPLOYEE = "GET_EMPLOYEE";
 
 // Transaction Design Item
 export const GET_DESIGN_ITEM = "GET_DESIGN_ITEM";
@@ -52,7 +51,7 @@ export const DEL_PRODUCT = "DEL_PRODUCT";
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 
 // Employee Types
-export const GET_EMPLOYEE    = "GET_EMPLOYEE";
+export const GET_EMPLOYEE = "GET_EMPLOYEE";
 export const CREATE_EMPLOYEE = "CREATE_EMPLOYEE";
 export const SEARCH_EMPLOYEE = "SEARCH_EMPLOYEE";
 export const GET_ID_EMPLOYEE = "GET_ID_EMPLOYEE";
@@ -66,5 +65,13 @@ export const DELETE_EVENT = "DELETE_EVENT";
 export const CREATE_EVENT = "CREATE_EVENT";
 
 // Company Types
-export const GET_COMPANIES    = "GET_COMPANIES";
-export const GET_USER    = "GET_USER";
+export const GET_COMPANIES = "GET_COMPANIES";
+export const GET_USER = "GET_USER";
+
+//Role Types
+export const GET_ROLE = "GET_ROLE"; //fetch
+export const DEL_ROLE = "DEL_ROLE"; //delete
+export const ADD_ROLE = "ADD_ROLE"; //add
+export const PUT_ROLE = "PUT_ROLE"; //update
+
+//access menu Types
