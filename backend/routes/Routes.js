@@ -1,5 +1,7 @@
 const authenticate = require("../helpers/Auth_Helper").checkToken;
 const companyLogic = require("../bisnislogics/M_Company_Logic");
+const event = require("../bisnislogics/T_Event_Logic");
+const menuLogic = require("../bisnislogics/M_Menu_Bisnis_Logic");
 const userLogic = require("../bisnislogics/M_User_Logic");
 const unitLogic = require("../bisnislogics/M_Unit_Logic");
 const souvenirLogic = require("../bisnislogics/M_Souvenir_Logic");
@@ -9,13 +11,22 @@ const roleLogic = require("../bisnislogics/M_Role_Bisnis_Logic");
 const accessLogic = require("../bisnislogics/M_Menu_Access_Bisnis_Logic");
 const tDesignLogic = require("../bisnislogics/T_Design_Logic");
 const tDesignItemLogic = require("../bisnislogics/T_Design_Item_Logic.js");
-const event = require("../bisnislogics/T_Event_Logic");
 const tSouvenirLogic = require("../bisnislogics/T_Souvenir_Logic");
 const tSouvenirItemLogic = require("../bisnislogics/T_Souvenir_Item_Logic");
 
 module.exports = server => {
   // Root Route
   server.get("/", (req, res, next) => {});
+
+  // Master Menu Route
+  // Made By: Randika Alditia
+  server.get("/api/menu", authenticate, menuLogic.readMenuAlHandler);
+  server.get("/api/menusidebar", authenticate, menuLogic.readMenuSidebar);
+  server.get("/api/menu/:menuid", authenticate, menuLogic.readMenuOneById);
+  server.post("/api/menu", authenticate, menuLogic.createMenuHandler);
+  server.put("/api/menu/:menuid", authenticate, menuLogic.updateMenuHandler);
+  server.del("/api/menu/:menuid", authenticate, menuLogic.deleteMenuHandler);
+  //== End of Master Menu Route
 
   // Master Company Route
   // Made By: Deovani Anugrah

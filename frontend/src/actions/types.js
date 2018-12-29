@@ -89,3 +89,11 @@ export const TSOUVENIR_RECEIVED = "TSOUVENIR_RECEIVED";
 export const TSOUVENIR_SETTLEMENT = "TSOUVENIR_SETTLEMENT";
 export const SETTLEMENT_APPROVE = "SETTLEMENT_APPROVE";
 export const CLOSE_ORDER = "CLOSE_ORDER";
+
+//Role Types
+export const GET_ROLE = "GET_ROLE";
+export const DEL_ROLE = "DEL_ROLE";
+export const ADD_ROLE = "ADD_ROLE";
+export const PUT_ROLE = "PUT_ROLE";
+
+//access menu Types
