@@ -319,7 +319,7 @@ class ListCompany extends React.Component {
                 <a href="/dashboard">Home</a> <span class="divider">/</span>
               </li>
               <li>
-                <a href="#">Master</a> <span class="divider">/</span>
+                <a href="#!">Master</a> <span class="divider">/</span>
               </li>
               <li class="active">List Company</li>
             </ul>

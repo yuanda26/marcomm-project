@@ -51,10 +51,7 @@ export const DEL_PRODUCT = "DEL_PRODUCT";
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 
 // Employee Types
-<<<<<<< HEAD
-=======
 export const GET_EMPLOYEE = "GET_EMPLOYEE";
->>>>>>> cfb4560b5b7d6ae82f3552f1dd4d0d1e8a269f5b
 export const CREATE_EMPLOYEE = "CREATE_EMPLOYEE";
 export const SEARCH_EMPLOYEE = "SEARCH_EMPLOYEE";
 export const GET_ID_EMPLOYEE = "GET_ID_EMPLOYEE";
@@ -69,9 +66,6 @@ export const CREATE_EVENT = "CREATE_EVENT";
 export const SEARCH_EVENT = "SEARCH_EVENT";
 
 // Company Types
-<<<<<<< HEAD
-export const GET_COMPANY = "GET_COMPANY";
-=======
 export const GET_COMPANIES = "GET_COMPANIES";
 export const CREATE_COMPANY = "CREATE_COMPANY";
 export const EDIT_COMPANY = "EDIT_COMPANY";
@@ -95,4 +89,3 @@ export const TSOUVENIR_RECEIVED = "TSOUVENIR_RECEIVED";
 export const TSOUVENIR_SETTLEMENT = "TSOUVENIR_SETTLEMENT";
 export const SETTLEMENT_APPROVE = "SETTLEMENT_APPROVE";
 export const CLOSE_ORDER = "CLOSE_ORDER";
->>>>>>> cfb4560b5b7d6ae82f3552f1dd4d0d1e8a269f5b

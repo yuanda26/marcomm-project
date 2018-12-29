@@ -6,7 +6,7 @@ import {
   UPDATE_EMPLOYEE,
   DELETE_EMPLOYEE,
   SEARCH_EMPLOYEE,
-  GET_COMPANY
+  GET_COMPANIES
 } from "./types";
 import ApiConfig from "../config/Host_Config";
 
@@ -19,12 +19,12 @@ export const getAllEmployee = () => dispatch => {
       Authorization: localStorage.token
     }
   })
-    .then(res =>{
-          dispatch({
-            type: GET_EMPLOYEE,
-            payload: res.data.message
-          })}
-    )
+    .then(res => {
+      dispatch({
+        type: GET_EMPLOYEE,
+        payload: res.data.message
+      });
+    })
     .catch(err =>
       dispatch({
         type: GET_EMPLOYEE,
@@ -34,7 +34,7 @@ export const getAllEmployee = () => dispatch => {
 };
 
 // Get Single Emloye
-export const getEmployeeId = (param) => dispatch => {
+export const getEmployeeId = param => dispatch => {
   let options = {
     url: `${ApiConfig.host}/employee/${param}`,
     method: "get",
@@ -58,14 +58,14 @@ export const getEmployeeId = (param) => dispatch => {
 };
 
 // Add New Employee
-export const createEmployee = (body) => dispatch => {
+export const createEmployee = body => dispatch => {
   let options = {
     url: `${ApiConfig.host}/employee`,
     method: "post",
     headers: {
       Authorization: localStorage.token
     },
-    data : body,
+    data: body
   };
   axios(options)
     .then(res => {
@@ -83,7 +83,6 @@ export const createEmployee = (body) => dispatch => {
     });
 };
 
-
 // Update Employee
 export const updateEmployee = (param, body) => dispatch => {
   let options = {
@@ -92,7 +91,7 @@ export const updateEmployee = (param, body) => dispatch => {
     headers: {
       Authorization: localStorage.token
     },
-    data : body,
+    data: body
   };
   axios(options)
     .then(res => {
@@ -112,20 +111,20 @@ export const updateEmployee = (param, body) => dispatch => {
 };
 
 // delete employee
-export const deleteEmployee = (param) => dispatch => {
+export const deleteEmployee = param => dispatch => {
   let options = {
     url: `${ApiConfig.host}/employee/${param}`,
     method: "delete",
     headers: {
       Authorization: localStorage.token
-    },
+    }
   };
   axios(options)
     .then(res => {
       dispatch({
         type: DELETE_EMPLOYEE,
         payload: param,
-        status: res.data.code,
+        status: res.data.code
       });
     })
     .catch(error => {
@@ -137,9 +136,17 @@ export const deleteEmployee = (param) => dispatch => {
 };
 
 // Search Employee
-export const searchEmployee = ( param1, param2, param3, param4, param5 ) => dispatch => {
+export const searchEmployee = (
+  param1,
+  param2,
+  param3,
+  param4,
+  param5
+) => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/employee/${param1}/${param2}/${param3}/${param4}/${param5}`,
+    url: `${
+      ApiConfig.host
+    }/employee/${param1}/${param2}/${param3}/${param4}/${param5}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -169,15 +176,15 @@ export const getAllCompany = () => dispatch => {
       Authorization: localStorage.token
     }
   })
-    .then(res =>{
+    .then(res => {
       dispatch({
-        type: GET_COMPANY,
+        type: GET_COMPANIES,
         payload: res.data.message
-      })}
-    )
+      });
+    })
     .catch(err =>
       dispatch({
-        type: GET_COMPANY,
+        type: GET_COMPANIES,
         payload: err.response.data
       })
     );

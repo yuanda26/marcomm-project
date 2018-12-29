@@ -91,10 +91,6 @@ class CreateTsouveniritem extends React.Component {
     this.setState({ shareholders: newShareholders });
   };
 
-  handleSubmit = evt => {
-    const { item, shareholders } = this.state;
-  };
-
   handleAddShareholder = () => {
     this.setState({
       shareholders: this.state.shareholders.concat([
