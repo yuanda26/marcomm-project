@@ -16,6 +16,7 @@ module.exports = server => {
   server.get("/", (req, res, next) => {});
 
   // Master Company Route
+  // Made By: Deovani Anugrah
   server.get("/api/company", authenticate, companyLogic.readAllCompany);
   server.get(
     "/api/company/:companyId",
@@ -121,11 +122,6 @@ module.exports = server => {
   server.del("/api/employee/:employeeId", employeeLogic.deleteHandler);
   //== End of Employee Route
 
-  // company Route
-  // Made By: Purwanto
-  server.get("/api/company", companyLogic.readAllHandler);
-  //== End of Company Route
-
   // T Event Route
   // Made By: Purwanto
   server.get("/api/tevent", tEvent.readAllHandler);
@@ -141,13 +137,14 @@ module.exports = server => {
   //== End of T Event Route
 
   // Transaction Souvenir Route
-  server.get("/api/tsouvenir", tSouvenirLogic.readAllHandler);
+  // Made By: Deovani Anugrah
+  server.get("/api/tsouvenir", authenticate, tSouvenirLogic.readAllHandler);
   server.get(
     "/api/tsouvenir/:souvenirId",
     authenticate,
     tSouvenirLogic.readByIdHandler
   );
-  server.post("/api/tsouvenir", tSouvenirLogic.createHandlerItem);
+  server.post("/api/tsouvenir", authenticate, tSouvenirLogic.createHandlerItem);
   server.put(
     "/api/tsouvenir/:souvenirId",
     authenticate,
@@ -156,13 +153,14 @@ module.exports = server => {
   //== End of Transaction Souvenir Route
 
   // Transaction Souvenir Item Route
+  // Made By: Deovani Anugrah
   server.get(
     "/api/tsouveniritem",
     authenticate,
     tSouvenirItemLogic.readSouvenirAllHandler
   );
   server.get(
-    "/api/tsouveniritemview",
+    "/api/tsouveniritemdetil",
     authenticate,
     tSouvenirItemLogic.readSouvenirItemAllHandler
   );
@@ -182,18 +180,18 @@ module.exports = server => {
     tSouvenirItemLogic.updateHandler
   );
   server.put(
-    "/api/tsouveniritemapprove/:souvenirId",
+    "/api/tsouveniritem/adminrequestapprove/:souvenirId",
     authenticate,
     tSouvenirItemLogic.approveHandler
   );
   server.put(
-    "/api/tsouveniritemreject/:souvenirId",
+    "/api/tsouveniritem/adminrequestreject/:souvenirId",
     authenticate,
     tSouvenirItemLogic.rejectHandler
   );
 
   server.put(
-    "/api/tsouveniritemreceived/:souvenirId",
+    "/api/tsouveniritem/receivedsouvenir/:souvenirId",
     authenticate,
     tSouvenirItemLogic.receivedHandler
   );
@@ -203,12 +201,12 @@ module.exports = server => {
     tSouvenirItemLogic.settlementHandler
   );
   server.put(
-    "/api/tsouveniritemapprovesettlement/:souvenirId",
+    "/api/tsouveniritem/adminapprovesettlement/:souvenirId",
     authenticate,
     tSouvenirItemLogic.approveSettlementHandler
   );
   server.put(
-    "/api/tsouveniritemcloseorder/:souvenirId",
+    "/api/tsouveniritem/colseorder/:souvenirId",
     authenticate,
     tSouvenirItemLogic.closeOrderHandler
   );

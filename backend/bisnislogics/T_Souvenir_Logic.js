@@ -35,7 +35,7 @@ const T_Souvenir_Data = {
       received_by: req.body.souv.received_by,
       received_date: req.body.souv.received_date,
       note: req.body.souv.note,
-      updated_by: req.body.souv.update_by,
+      updated_by: req.body.souv.updated_by,
       updated_date: CD
     };
     dtl.updateHandler(
@@ -68,7 +68,7 @@ const T_Souvenir_Data = {
                     t_souvenir_id: req.body.oldFile[idx].t_souvenir_id,
                     is_delete: false,
                     updated_by: data.updated_by,
-                    updated_date: req.body.oldFile[idx].update_date
+                    updated_date: CD
                   };
                 });
                 dtl.createItem(createNewFile => {
