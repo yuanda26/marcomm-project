@@ -6,10 +6,8 @@ const ObjectId = require("mongodb").ObjectID;
 const T_Souvenir_Data = {
   //GET TRANSACTION SOUVENIR
   readSouvenirAllHandler: (req, res, next) => {
-    //console.log("disini");
     dtl.readSouvenirAllHandler(items => {
       ResponseHelper.sendResponse(res, 200, items);
-      //console.log(JSON.stringify(items));
     });
   },
 
@@ -17,7 +15,6 @@ const T_Souvenir_Data = {
   readSouvenirItemAllHandler: (req, res, next) => {
     dtl.readSouvenirItemAllHandler(function(items) {
       ResponseHelper.sendResponse(res, 200, items);
-      //console.log(JSON.stringify(items));
     });
   },
 
@@ -31,28 +28,7 @@ const T_Souvenir_Data = {
 
   // SOUVENIR ITEM
   createHandlerItem: (req, res, next) => {
-    const data = req.body;
-    //console.log("ini data yang harus ke souvenir", data[0])
-    //console.log("ini data yang harus ke souvenir item", data[1])
-    let thisDate = new Date();
-    //ambil masing-masing yy, mm, dd
-    let date = thisDate.getDate().toString();
-    let month = (thisDate.getMonth() + 1).toString();
-    let year = thisDate
-      .getFullYear()
-      .toString()
-      .substr(2, 2);
-    let year1 = thisDate.getFullYear().toString();
-    if (month.length == 1) {
-      month = "0" + month;
-    }
-    if (date.length == 1) {
-      date = "0" + date;
-    }
-    //Untuk mendapatkan format yy.mm.dd
-    //let newDate = "TRSV" + date + month + year;
-    let newDate = "TRSV" + moment().format("DDMMYY");
-    let CD = year1 + "-" + month + "-" + date;
+    let CD = moment().format("YYYY-MM-DD");
     dtl.countCode(
       count => {
         let codeDate = newDate;
@@ -92,21 +68,6 @@ const T_Souvenir_Data = {
 
   //EDIT TRANSACTION SOUVENIR
   updateHandler: (req, res, next) => {
-    //console.log(req.body);
-    // let thisDate = new Date();
-    // ambil masing-masing yy, mm, dd
-    // let date = thisDate.getDate().toStrisng();
-    // let month = (thisDate.getMonth() + 1).toString();
-    // let year = thisDate.getFullYear().toString().substr(2, 2);
-    // let year1 = thisDate.getFullYear().toString();
-    // if (month.length == 1) {
-    //   month = "0" + month
-    // }
-    // //if date
-    // if (date.length == 1) {
-    //   date = "0" + date
-    // }
-    // let CD = year1 + "-" + month + "-" + date
     const id = req.params.souvenirId;
     const data = {
       request_due_date: req.body.souv.request_due_date,
@@ -165,20 +126,15 @@ const T_Souvenir_Data = {
 
   // ADMIN APPROVE REQUEST
   approveHandler: (req, res, next) => {
-    //console.log("admin Approve")
-    //console.log(req.body);
     let id = req.params.souvenirId;
     const data = {
-      //created_by: req.body.created_by,
       status: req.body.status,
       approved_by: req.body.approved_by,
       approved_date: req.body.approved_date
-      //update_by: ""
     };
     dtl.approveHandler(
       items => {
         ResponseHelper.sendResponse(res, 200, items);
-        //console.log(JSON.stringify(items))
       },
       data,
       id
@@ -187,18 +143,14 @@ const T_Souvenir_Data = {
 
   //ADMIN REJECT REQUEST
   rejectHandler: (req, res, next) => {
-    //console.log("admin Reject")
-    //console.log(req.body);
     let id = req.params.souvenirId;
     const data = {
       reject_reason: req.body.reject_reason,
       status: req.body.status
-      //update_by: ""
     };
     dtl.rejectHandler(
       items => {
         ResponseHelper.sendResponse(res, 400, items);
-        //console.log(JSON.stringify(items))
       },
       data,
       id
@@ -250,15 +202,12 @@ const T_Souvenir_Data = {
 
   // APPROVAL SETTLEMENT SOUVENIR REQUEST
   approveSettlementHandler: (req, res, next) => {
-    //console.log("masukin lah");
     let id = req.params.souvenirId;
-    //console.log(id);
     const data = {
       status: req.body.status,
       settlement_approved_by: req.body.settlement_approved_by,
       settlement_approved_date: req.body.settlement_approved_date
     };
-    //console.log(JSON.stringify(data));
     dtl.approveSettlementHandler(
       items => {
         ResponseHelper.sendResponse(res, 200, items);
@@ -281,49 +230,6 @@ const T_Souvenir_Data = {
       id
     );
   }
-
-  //ADD TRANSACTION SOUVENIER
-  // createHandler: (req, res, next) => {
-  //   let thisDate = new Date();
-  //   // ambil masing-masing yy, mm, dd
-  //   let date = thisDate.getDate().toString();
-  //   let month = (thisDate.getMonth() + 1).toString();
-  //   let year = thisDate.getFullYear().toString().substr(2, 2);
-  //   if (month.length == 1){
-  //     month = "0" + month
-  //   }
-  //   if (date.length == 1){
-  //     date = "0" + date
-  //   }
-  //   // Untuk mendapatkan format yy.mm.dd
-  //   let newDate = "TRSV" + date + month + year;
-
-  //   dtl.countCode(count => {
-  //     let codeDate = newDate;
-  //     for (let i = 0; i < 5 - (count + 1).toString().length; i++) {
-  //       codeDate += '0';
-  //     }
-  //     codeDate += count + 1;
-
-  //     const data = {
-  //       code: codeDate,
-  //       type: "Reduction",
-  //       t_event_id: req.body.t_event_id,
-  //       request_by: req.body.request_by,
-  //       request_date: req.body.request_date,
-  //       request_due_date: req.body.request_due_date,
-  //       note: req.body.note,
-  //       status: 1,
-  //       is_delete: false,
-  //       created_by: req.body.created_by,
-  //       created_date: req.body.created_date
-  //     }
-
-  //     dtl.createHandler(function (items) {
-  //       ResponseHelper.sendResponse(res, 200, items);
-  //     }, data);
-  //   }, newDate)
-  // },
 };
 
 module.exports = T_Souvenir_Data;
