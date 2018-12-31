@@ -13,7 +13,7 @@ const initialState = {
   myCompany: [],
   myEmployeeId: null,
   status : null,
-  _id: null
+  employee_number: null
 };
 
 export default function(state = initialState, action) {
@@ -24,23 +24,17 @@ export default function(state = initialState, action) {
         myEmployee: action.payload
       };
     case UPDATE_EMPLOYEE:
-      let newObjArray = action.payload
       return {
         ...state,
-        myEmployee: state.myEmployee.map(row=>{
-          if(row._id === action.payload._id){
-            row = newObjArray
-          }
-           return row
-        }),
+        myEmployee: action.payload,
         status : action.status
       };
     case CREATE_EMPLOYEE:
       return {
         ...state,
-        myEmployee: [...state.myEmployee, action.payload],
+        myEmployee: action.payload,
         status: action.status,
-        _id : action.payload._id
+        employee_number : action.created.employee_number
       };
     case SEARCH_EMPLOYEE:
       return {

@@ -44,7 +44,7 @@ export const getEventId = (param) => dispatch => {
     .then(res => {
       dispatch({
         type: GET_ID_EVENT,
-        payload: res.data.message[0]
+        payload: res.data.message
       });
     })
     .catch(error => {
@@ -70,7 +70,6 @@ export const createEvent = (body, companyName) => dispatch => {
       dispatch({
         type: CREATE_EVENT,
         payload: res.data.message,
-        companyName : companyName,
         status: res.data.code
       });
     })
@@ -97,14 +96,15 @@ export const updateEvent = (param, body) => dispatch => {
     .then(res => {
       dispatch({
         type: UPDATE_EVENT,
-        payload: body,
+        payload: res.data.message,
+        status: res.data.code
       });
     })
     .catch(error => {
       dispatch({
         type: UPDATE_EVENT,
-        companyName: null,
-        status: error
+        payload: error,
+        status: 403
       });
     });
 };

@@ -4,11 +4,11 @@ import PropTypes from "prop-types"
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from 'reactstrap'
 import { connect } from "react-redux";
 import { createEvent } from "../../../actions/eventAction";
+import { getEmployeeId } from "../../../actions/employeeAction";
 
 class CreateEvent extends React.Component{
   constructor (props){
     super(props)
-    let userdata = "purwanto"
     this.state={
       formdata : {
         code : '',
@@ -17,9 +17,9 @@ class CreateEvent extends React.Component{
         start_date : '',
         end_date : '',
         budget : '',
-        request_by : userdata.m_employee_id,
+        request_by : this.props.user.m_employee_id,
         request_date : moment().format("DD/MM/YYYY"),
-        created_by : userdata.username
+        created_by : this.props.user.m_employee_id
       },
       request_date : moment().format("DD/MM/YYYY"),
       statusCreated : null,
@@ -38,10 +38,14 @@ class CreateEvent extends React.Component{
     }
   }
 
+  componentDidMount(){
+    this.props.getEmployeeId(this.props.user.m_employee_id)
+  }
+
   componentWillReceiveProps(newProps){
-    let { currentEmployee, event } = newProps
+    let { event, employee } = newProps
     this.setState({
-      currentEmployee : currentEmployee,
+      currentEmployee: employee.myEmployeeId.first_name + " " + employee.myEmployeeId.last_name,
       statusCreated : event.statusCreated,
       messageCreated : event.idCreated,
     })
@@ -94,8 +98,26 @@ class CreateEvent extends React.Component{
       alert("Budget Is Invalid!")
     }else{
       this.props.createEvent(formdata)
-      // window.location.href = "/tevent";
-      this.props.getEvent()
+      let validate = {
+        validateEventName : "form-control",
+        validateEventPlace : "form-control",
+        validateEventStartDate : "form-control",
+        validateEventEndDate : "form-control",
+        validateBudget : "form-control",
+      }
+      let newFormdata = {
+        code : '',
+        event_name : '',
+        place : '',
+        start_date : '',
+        end_date : '',
+        budget : '',
+        request_by : this.props.user.m_employee_id,
+        request_date : moment().format("DD/MM/YYYY"),
+        created_by : this.props.user.m_employee_id,
+        note : ''
+      }
+      this.setState({validate: validate, formdata: newFormdata})
       this.props.closeHandler()
     }
   }
@@ -290,14 +312,18 @@ class CreateEvent extends React.Component{
 
 CreateEvent.propTypes = {
   createEvent: PropTypes.func.isRequired,
+  getEmployeeId: PropTypes.func.isRequired,
   event: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
   event: state.event,
   status : state.event.statusCreated,
+  user: state.auth.user,
+  employee: state.employee
 });
 
 export default connect(
-  mapStateToProps,{ createEvent }
+  mapStateToProps,{ createEvent, getEmployeeId }
   )(CreateEvent);

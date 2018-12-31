@@ -20,10 +20,10 @@ export const getAllEmployee = () => dispatch => {
     }
   })
     .then(res =>{
-          dispatch({
-            type: GET_EMPLOYEE,
-            payload: res.data.message
-          })}
+      dispatch({
+        type: GET_EMPLOYEE,
+        payload: res.data.message
+      })}
     )
     .catch(err =>
       dispatch({
@@ -72,7 +72,8 @@ export const createEmployee = (body) => dispatch => {
       dispatch({
         type: CREATE_EMPLOYEE,
         payload: res.data.message,
-        status: res.data.code
+        status: res.data.code,
+        created: res.data.message[res.data.message.length-1]
       });
     })
     .catch(error => {
@@ -82,7 +83,6 @@ export const createEmployee = (body) => dispatch => {
       });
     });
 };
-
 
 // Update Employee
 export const updateEmployee = (param, body) => dispatch => {
@@ -98,7 +98,7 @@ export const updateEmployee = (param, body) => dispatch => {
     .then(res => {
       dispatch({
         type: UPDATE_EMPLOYEE,
-        payload: body,
+        payload: res.data.message,
         status: res.data.code
       });
     })
