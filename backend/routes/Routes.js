@@ -18,16 +18,6 @@ module.exports = server => {
   // Root Route
   server.get("/", (req, res, next) => {});
 
-  // Master Menu Route
-  // Made By: Randika Alditia
-  server.get("/api/menu", authenticate, menuLogic.readMenuAlHandler);
-  server.get("/api/menusidebar", authenticate, menuLogic.readMenuSidebar);
-  server.get("/api/menu/:menuid", authenticate, menuLogic.readMenuOneById);
-  server.post("/api/menu", authenticate, menuLogic.createMenuHandler);
-  server.put("/api/menu/:menuid", authenticate, menuLogic.updateMenuHandler);
-  server.del("/api/menu/:menuid", authenticate, menuLogic.deleteMenuHandler);
-  //== End of Master Menu Route
-
   // Master Company Route
   // Made By: Deovani Anugrah
   server.get("/api/company", authenticate, companyLogic.readAllCompany);
@@ -64,6 +54,16 @@ module.exports = server => {
   server.get("/api/access/:id", authenticate, accessLogic.readOneAccess);
   server.put("/api/access/:id", authenticate, accessLogic.updateAccess);
   //== End of Master Access Menu Route
+
+  // Master Menu Route
+  // Made By: Deovani Anugrah
+  server.get("/api/menu", authenticate, menuLogic.readMenuAllHandler);
+  server.get("/api/menusidebar", authenticate, menuLogic.readMenuSidebar);
+  server.get("/api/menu/:menuid", authenticate, menuLogic.readMenuOneById);
+  server.post("/api/menu", authenticate, menuLogic.createMenuHandler);
+  server.put("/api/menu/:menuid", authenticate, menuLogic.updateMenuHandler);
+  server.del("/api/menu/:menuid", authenticate, menuLogic.deleteMenuHandler);
+  //== End of Master Menu Route
 
   // Master Souvenir Route
   // Made By: Dian Yuanda

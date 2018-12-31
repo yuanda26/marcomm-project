@@ -19,6 +19,7 @@ import DesignView from "./components/content/design/DesignView";
 import DesignEdit from "./components/content/design/DesignEdit";
 import TsouvenirList from "./components/content/tsouvenir/ReadTsouvenir";
 import TsouveniritemList from "./components/content/tsouveniritem/ReadTSouvenirRequest";
+import ListMenu from "./components/content/menu/ReadMenu";
 
 class RouteSwitcher extends Component {
   constructor(props) {
@@ -73,6 +74,8 @@ class RouteSwitcher extends Component {
         return ListRole;
       case "/accessmenu":
         return ListAccess;
+      case "/menu":
+        return ListMenu;
       case "/employee":
         return ListEmployee;
       case "/tsouvenir":

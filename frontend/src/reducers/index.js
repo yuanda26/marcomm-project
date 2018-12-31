@@ -4,6 +4,7 @@ import designReducer from "./designReducer";
 import souvenirReducer from "./souvenirReducer";
 import unitReducer from "./unitReducer";
 import productReducer from "./productReducers";
+import menuReducers from "./menuReducer";
 import employeeReducers from "./employee_reducers";
 import companyReducers from "./companyReducer";
 import roleReducers from "./roleReducers";
@@ -14,6 +15,8 @@ import tsouveniritemReducer from "./tsouveniritemReducer";
 export default combineReducers({
   auth: authReducer,
   roleData: roleReducers,
+  companyIndexReducer: companyReducers,
+  menu: menuReducers,
   design: designReducer,
   souvenir: souvenirReducer,
   units: unitReducer,

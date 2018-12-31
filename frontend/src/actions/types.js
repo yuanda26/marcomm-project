@@ -71,6 +71,12 @@ export const CREATE_COMPANY = "CREATE_COMPANY";
 export const EDIT_COMPANY = "EDIT_COMPANY";
 export const DELETE_COMPANY = "DELETE_COMPANY";
 
+// Menu Types
+export const GET_MENU = "GET_MENU";
+export const DEL_MENU = "DEL_MENU";
+export const ADD_MENU = "ADD_MENU";
+export const PUT_MENU = "PUT_MENU";
+
 // TSouvenir Types
 export const GET_TSOUVENIR = "GET_TSOUVENIR";
 export const CREATE_TSOUVENIR = "CREATE_TSOUVENIR";
