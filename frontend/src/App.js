@@ -22,6 +22,7 @@ import DesignEdit from "./components/content/design/DesignEdit";
 import SouvenirList from "./components/content/souvenir/SouvenirList";
 import UnitList from "./components/content/unit/UnitList";
 import EmployeeList from "./components/content/employee/ListEmployee";
+import MenuList from "./components/content/menu/ReadMenu";
 import CompanyList from "./components/content/company/ReadCompany";
 import TsouvenirList from "./components/content/tsouvenir/ReadTsouvenir";
 import TsouveniritemList from "./components/content/tsouveniritem/ReadTSouvenirRequest";
@@ -66,6 +67,7 @@ class App extends Component {
               <PrivateRoute exact path="/employee" component={EmployeeList} />
               <PrivateRoute exact path="/company" component={CompanyList} />
               <PrivateRoute exact path="/tsouvenir" component={TsouvenirList} />
+              <PrivateRoute exact path="/menu" component={MenuList} />
               <PrivateRoute
                 exact
                 path="/tsouveniritem"

@@ -1,6 +1,7 @@
 const authenticate = require("../helpers/Auth_Helper").checkToken;
 const companyLogic = require("../bisnislogics/M_Company_Logic");
 const userLogic = require("../bisnislogics/M_User_Logic");
+const menuLogic = require("../bisnislogics/M_Menu_Bisnis_Logic");
 const unitLogic = require("../bisnislogics/M_Unit_Logic");
 const souvenirLogic = require("../bisnislogics/M_Souvenir_Logic");
 const productLogic = require("../bisnislogics/M_Product_Logic");
@@ -35,6 +36,16 @@ module.exports = server => {
     companyLogic.deleteCompany
   );
   //== End of Company Route
+
+  // Master Menu Route
+  // Made By: Deovani Anugrah
+  server.get("/api/menu", authenticate, menuLogic.readMenuAlHandler);
+  server.get("/api/menusidebar", authenticate, menuLogic.readMenuSidebar);
+  server.get("/api/menu/:menuid", authenticate, menuLogic.readMenuOneById);
+  server.post("/api/menu", authenticate, menuLogic.createMenuHandler);
+  server.put("/api/menu/:menuid", authenticate, menuLogic.updateMenuHandler);
+  server.del("/api/menu/:menuid", authenticate, menuLogic.deleteMenuHandler);
+  //== End of Master Menu Route
 
   // Master Souvenir Route
   server.get("/api/souvenir", souvenirLogic.readAllSouvenir);
