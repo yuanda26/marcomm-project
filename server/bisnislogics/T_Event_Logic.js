@@ -41,7 +41,9 @@ const tEventBisnislogic = {
 			body.code = codeTEvent;
 			body.created_date = moment().format("DD/MM/YYYY")
 			dtl.createHandlerData(function(items, date) {
-				responseHelper.sendResponse(res, 200, items);
+				dtl.readAllHandlerData(function (callbackReadData) {
+					responseHelper.sendResponse(res, 200, callbackReadData);
+				});
 			}, body);
 		}, date)
 	},
@@ -72,13 +74,14 @@ const tEventBisnislogic = {
 			updated_date  : date,
 		}
 		dtl.updateHandlerData((items) => {
-			responseHelper.sendResponse(res, 200, items);
+			dtl.readAllHandlerData(function (callbackReadData) {
+				responseHelper.sendResponse(res, 200, callbackReadData);
+			});
 		}, param, body);
 	},
 
 	deleteHandler : (req, res, next) => {
 		let param = req.params.eventId;
-
 		dtl.deleteHandlerData((items) => {
 			responseHelper.sendResponse(res, 200, items);
 		}, param);

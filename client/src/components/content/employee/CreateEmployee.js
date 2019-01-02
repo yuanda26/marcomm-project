@@ -9,7 +9,6 @@ import { createEmployee, getAllCompany } from "../../../actions/employeeAction";
 class CreateEmployee extends React.Component{
   constructor (props){
     super(props)
-    let userdata = "purwanto"
     this.state={
       formdata:{
         employee_number: '',
@@ -17,7 +16,7 @@ class CreateEmployee extends React.Component{
         first_name:'',
         last_name:'',
         email:'',
-        created_by: userdata
+        created_by: ''
       },
       companyName: null,
       selectedCompany: '',
@@ -38,14 +37,7 @@ class CreateEmployee extends React.Component{
   changeHandler = (e) => {
     let { formdata, validate, regexEmail } = this.state
     let { name, value, id } = e.target
-    let companyName = null
-    if(name === "m_company_id"){
-      formdata[name] = value[0]
-      companyName = value[1]
-    }else{
-      formdata[name] = value
-    }
-    
+    formdata[name] = value
     if( name==="email" && regexEmail.test(value) && value !== '' ){
       validate[id] = "form-control is-valid"
     }else if(
@@ -61,7 +53,6 @@ class CreateEmployee extends React.Component{
     this.setState({
       formdata:formdata,
       validate: validate,
-      companyName: companyName
     })
   }
 
@@ -69,13 +60,13 @@ class CreateEmployee extends React.Component{
   submitHandler = () => {
     let { formdata,  regexEmail, companyName } = this.state
     let { email, first_name, m_company_id } = formdata
-    let emailJikaAda = ''
+    let emailJikaAda = null
     this.props.employee.myEmployee.forEach((ele)=>{
-        if(ele.email === email){
+        if(ele.email === email && ele.email !== ''){
           emailJikaAda = ele.email
         }
       })
-
+    formdata['created_by'] = this.props.user.m_employee_id
     if( m_company_id === "" ){
       alert( "Select Company!" )
     }else if( first_name === '' ){
@@ -88,7 +79,20 @@ class CreateEmployee extends React.Component{
       alert( "Email Incorrect!" )
     }else{
       this.props.createEmployee(formdata, companyName)
+      let validate = {
+        validateFirsname : "form-control", 
+        selectedCompany : "form-control",
+        validateEmail : "form-control",
+        validateCompany : "form-control"
+      }
+      let newFormdata = {
+        first_name : '',
+        last_name: '',
+        email: ''
+      } 
+      this.setState({validate: validate, formdata: newFormdata})
       this.props.closeHandler()
+
     }
   }
 
@@ -215,10 +219,12 @@ class CreateEmployee extends React.Component{
 CreateEmployee.propTypes = {
   createEmployee: PropTypes.func.isRequired,
   employee: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
   employee: state.employee,
+  user: state.auth.user
 });
 
 export default connect(

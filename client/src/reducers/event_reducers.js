@@ -7,12 +7,8 @@ import {
 
 const initialState = {
   myEvent: [],
-  idCreated : [],
-  idUpdated : [],
-  messageDeleted : [],
-  statusDeleted : null,
-  statusCreated : null,
-  statusUpdated : null
+  status: null,
+  _id : null
 };
 
 export default function(state = initialState, action) {
@@ -23,16 +19,17 @@ export default function(state = initialState, action) {
         myEvent: action.payload
       };
     case UPDATE_EVENT:
+    console.log(action.payload)
       return {
         ...state,
-        statusUpdated: action.status,
-        idUpdated: action.idUpdated,
+        myEvent: action.payload,
+        status: action.status
       };
     case CREATE_EVENT:
       return {
         ...state,
-        idCreated: action.idCreated,
-        statusCreated: action.status 
+        myEvent: action.payload,
+        _id: action.payload[action.payload.length-1].code
       };
     case DELETE_EVENT:
       return {

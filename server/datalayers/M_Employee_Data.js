@@ -14,7 +14,16 @@ const employeeDatalayer = {
 					foreignField : "code",
 					as : "compa"
 				}
-			}, {$unwind : "$compa"}, { $match : {is_delete : false}},
+			},
+			{ 
+				$lookup : {
+					from : "m_user",
+					localField : "created_by",
+					foreignField : "m_employee_id",
+					as : "user"
+				}
+			},
+			 { $match : {is_delete : false}},
 		  {
 			  $project : {
 			    "_id"             : "$_id",
@@ -25,7 +34,7 @@ const employeeDatalayer = {
 					"m_company_name"  : "$compa.name",
 					"email"           : "$email",
 					"is_delete"       : "$is_delete",
-					"created_by"      : "$created_by",
+					"created_by"      : "$user.username",
 					"created_date"    : "$created_date",
 					"updated_by"      : "$updated_by",
 					"updated_date"    : "$updated_date"

@@ -36,10 +36,7 @@ class ListEmployee extends React.Component {
       currentEmployee:{},
       alertData : {
         status : 0,
-        message : "",
-        action : "",
-        optional : "",
-        code : ""
+        message : ""
       },
       created_date : null,
     }
@@ -140,14 +137,11 @@ class ListEmployee extends React.Component {
     this.props.getAllCompany();
   }
 
-  modalStatus = (status, action, message, optional, code) => {
+  modalStatus = (status, message) => {
     this.setState({
       alertData: {
         status: status,
-        message: message,
-        action: action,
-        optional:optional,
-        code: code
+        message: message
       }
     });
   }
@@ -173,19 +167,13 @@ class ListEmployee extends React.Component {
                 <div>
                   {this.state.alertData.status === 1 ? (
                     <Alert color="success">
-                      <b>Data {this.state.alertData.action} !</b>
-                        {" " + this.state.alertData.message + " "} 
-                      <strong>{this.state.alertData.code}</strong>
-                        {this.state.alertData.optional}
+                      <b>{this.state.alertData.message} !</b>
                     </Alert>
                     ) : ("")
                     }
                     {this.state.alertData.status === 2 ? (
                       <Alert color="danger">
-                        <b>Data {this.state.alertData.action} !</b>
-                          {" " + this.state.alertData.message + " "} 
-                        <strong>{this.state.alertData.code}</strong>
-                          {this.state.alertData.optional}
+                        <b>{this.state.alertData.message} !</b>
                       </Alert>
                     ) : ("")
                     }
