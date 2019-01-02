@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { Switch } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
@@ -17,6 +17,7 @@ import DesignAdd from "./components/content/design/DesignAdd";
 import DesignList from "./components/content/design/DesignList";
 import DesignView from "./components/content/design/DesignView";
 import DesignEdit from "./components/content/design/DesignEdit";
+import DesignClose from "./components/content/design/DesignClose";
 import TsouvenirList from "./components/content/tsouvenir/ReadTsouvenir";
 import TsouveniritemList from "./components/content/tsouveniritem/ReadTSouvenirRequest";
 import ListMenu from "./components/content/menu/ReadMenu";
@@ -95,7 +96,7 @@ class RouteSwitcher extends Component {
         {this.state.dataAccess.map((content, index) => {
           if (content === "/design") {
             return (
-              <Switch>
+              <Fragment key={Date.now()}>
                 <PrivateRoute
                   exact
                   path={content}
@@ -112,11 +113,17 @@ class RouteSwitcher extends Component {
                   path="/design/edit/:code"
                   component={DesignEdit}
                 />
-              </Switch>
+                <PrivateRoute
+                  exact
+                  path="/design/close/:code"
+                  component={DesignClose}
+                />
+              </Fragment>
             );
           }
           return (
             <PrivateRoute
+              key={Date.now()}
               path={content}
               component={this.func(this.state.dataAccess[index])}
             />

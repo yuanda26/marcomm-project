@@ -2,6 +2,7 @@ const restify = require("restify");
 const morgan = require("morgan");
 const corsMidlleware = require("restify-cors-middleware");
 const databaseConnection = require("./models/Database");
+const multer = require("multer");
 
 // Connect to Database
 databaseConnection.connect((err, db) => {
@@ -25,8 +26,57 @@ databaseConnection.connect((err, db) => {
     // Morgan Middleware
     server.use(morgan("dev"));
 
+    // Multer Upload Config
+    // Set Storage Engine
+    const storage = multer.diskStorage({
+      destination: "./public/uploads/",
+      filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname.toLowerCase());
+      }
+    });
+
+    // Initialize Upload Method
+    const uploads = multer({
+      storage: storage,
+      limits: {
+        fileSize: 1000000
+      },
+      fileFilter: (req, file, callback) => {
+        checkFileType(file, callback);
+      }
+    }).array("uploads");
+
+    // Check File Type Function
+    checkFileType = (file, callback) => {
+      // Allowed Extentions
+      const filetypes = /jpeg|jpg|png|gif/;
+      // Check Extentions
+      const extname = filetypes.test(
+        path.extname(file.originalname).toLocaleLowerCase()
+      );
+      // Check MIME Types
+      const mimetype = filetypes.test(file.mimetype);
+
+      if (mimetype && extname) {
+        return callback(null, true);
+      } else {
+        callback("Error: Images Only!");
+      }
+    };
+
     // Route
     require("./routes/Routes")(server);
+
+    // Close Design Request - Upload Files
+    server.post("/api/design/upload_files", (req, res, next) => {
+      uploads(req, res, err => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.send(req.files);
+        }
+      });
+    });
 
     // Server Static Assets if in Production
     if (process.env.NODE_ENV === "production") {

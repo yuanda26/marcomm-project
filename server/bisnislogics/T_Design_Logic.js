@@ -140,7 +140,7 @@ const T_Design_Logic = {
     );
   },
   createDesignItemFile: (req, res, next) => {
-    let data = req.body.designItemFiles;
+    let data = req.body.data;
 
     designData.uploadItemFiles(items => {
       responseHelper.sendResponse(res, 200, items);
