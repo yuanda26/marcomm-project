@@ -11,11 +11,12 @@ import roleReducers from "./roleReducers";
 import eventReducers from "./event_reducers";
 import tsouvenirReducer from "./tsouvenirReducer";
 import tsouveniritemReducer from "./tsouveniritemReducer";
+import promotionReducers from "./promotionReducers";
+import accessMenuReducers from "./accessMenuReducers";
 
 export default combineReducers({
   auth: authReducer,
   roleData: roleReducers,
-  companyIndexReducer: companyReducers,
   menu: menuReducers,
   design: designReducer,
   souvenir: souvenirReducer,
@@ -25,5 +26,7 @@ export default combineReducers({
   event: eventReducers,
   companyIndexReducer: companyReducers,
   tsouvenirIndexReducer: tsouvenirReducer,
-  tsouveniritemIndexReducer: tsouveniritemReducer
+  tsouveniritemIndexReducer: tsouveniritemReducer,
+  accessMenuData: accessMenuReducers,
+  promot: promotionReducers
 });

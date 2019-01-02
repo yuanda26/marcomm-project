@@ -1,7 +1,8 @@
 import React from "react";
+import { putRole } from "../../../actions/roleActions";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
-import axios from "axios";
-
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 class EditRole extends React.Component {
   constructor(props) {
     super(props);
@@ -38,33 +39,16 @@ class EditRole extends React.Component {
   }
 
   submitHandler() {
-    if (this.state.formdata.name == "") {
+    if (this.state.formdata.name === "") {
       alert("Role name can't be null!!");
     } else {
-      let token = localStorage.token;
-      let option = {
-        url: "http://localhost:4000/api/role" + "/" + this.state.formdata.code,
-        method: "put",
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json"
-        },
-        data: this.state.formdata
-      };
-      axios(option)
-        .then(response => {
-          if (response.data.code === 200) {
-            this.props.modalStatus(
-              1,
-              "Data updated! " + this.state.formdata.code + " has been updated!"
-            );
-          } else {
-            alert(response.data.message);
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      this.props.putRole(this.state.formdata);
+      setTimeout(() => {
+        this.props.modalStatus(
+          1,
+          "Data updated! " + this.state.formdata.code + " has been updated!"
+        );
+      }, 0);
     }
   }
 
@@ -118,4 +102,14 @@ class EditRole extends React.Component {
     );
   }
 }
-export default EditRole;
+EditRole.propTypes = {
+  putRole: PropTypes.object.isRequired
+};
+const mapStateToProps = state => ({
+  theRole: state.roleData
+});
+
+export default connect(
+  mapStateToProps,
+  { putRole }
+)(EditRole);

@@ -15,6 +15,14 @@ const tEventDatalayer = {
 	        
 	        }
 	    }, {$unwind : "$employee"},
+	    { 
+	    	$lookup : {
+	        from : 'm_user',
+	        localField : "created_by",
+	        foreignField : "m_employee_id",
+	        as : 'user'
+	        }
+	    }, {$unwind : "$user"},
 	    {$match : { "is_delete" : false }},
 	    {
 	      $project : {
@@ -37,7 +45,7 @@ const tEventDatalayer = {
 			    "status" : "$status",
 			    "reject_reason" : "$reject_reason",
 			    "is_delete" : "$is_delete",
-			    "created_by" : "$created_by",
+			    "created_by" : "$user.username",
 			    "created_date" : "$created_date",
 			    "updated_by" : "$updated_by",
 			    "updated_date" : "$updated_date"

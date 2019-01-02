@@ -34,7 +34,6 @@ class App extends Component {
             <Navbar />
             <Route exact path="/" component={Login} />
             <RouteSwitcher />
-            {/* <Sidebar /> */}
           </div>
         </Router>
       </Provider>

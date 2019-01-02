@@ -29,9 +29,7 @@ class ListEvent extends React.Component {
 			},
 			created_date: null,
 			request_date:null,
-			hasil: [],
 			showCreateEvent:false,
-			event:[],
 			currentEvent:{},
 			alertData: {
 				status: 0,
@@ -46,7 +44,7 @@ class ListEvent extends React.Component {
 
 	viewModalHandler = (eventid) => {
 		let tmp = {};
-		this.state.event.forEach(ele => {
+		this.props.event.myEvent.forEach(ele => {
 			if (eventid === ele._id) {
 				tmp = ele;
 			}
@@ -59,7 +57,7 @@ class ListEvent extends React.Component {
 
 	editModalHandler = (eventid) => {
 		let tmp = {};
-		this.state.event.forEach(ele => {
+		this.props.event.myEvent.forEach(ele => {
 			if (eventid === ele._id) {
 				tmp = ele
 				this.setState({
@@ -108,7 +106,7 @@ class ListEvent extends React.Component {
 	}
 
 	SearchHandler = () => {
-		alert("beoom")
+		alert("beloom")
 	}
 
 	closeModalHandler = () => {
@@ -131,14 +129,6 @@ class ListEvent extends React.Component {
 		this.props.getAllEvent();
 	}
 
-	componentWillReceiveProps(newProp){
-		this.setState({
-			hasil : newProp.event.myEvent,
-			event : newProp.event.myEvent,
-		})
-		
-	}
-
 	modalStatus = (status, action, message, optional, code) => {
     this.setState({
       alertData: {
@@ -147,10 +137,7 @@ class ListEvent extends React.Component {
         action: action,
         optional:optional,
         code: code
-      },
-      viewEvent: false,
-      editEvent: false,
-      deleteEvent: false
+      }
     });
   }
 
@@ -293,7 +280,7 @@ class ListEvent extends React.Component {
 											</tr>
 										</thead>
 										<tbody>
-											{this.state.hasil.map((row,x)=>
+											{this.props.event.myEvent.map((row,x)=>
 											<tr key={row._id}>
 												<td>{x + 1}</td>
 												<td>{row.code}</td>

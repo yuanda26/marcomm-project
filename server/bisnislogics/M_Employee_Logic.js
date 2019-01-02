@@ -52,7 +52,9 @@ const mEmployeeBisnislogic = {
 				}	    
 
 				dtl.createHandlerData(function(items) {
-					responseHelper.sendResponse(res, 200, items);
+					dtl.readAllHandlerData(function (callbackReadData) {
+						responseHelper.sendResponse(res, 200, callbackReadData);
+					});
 				}, body);
 			}else{
 				responseHelper.sendResponse(res, 403, "Over Capasity, Try Again Next Day Ok!");
@@ -74,7 +76,9 @@ const mEmployeeBisnislogic = {
 		};
 
 		dtl.updateHandlerData((items) => {
-			responseHelper.sendResponse(res, 200, items);
+			dtl.readAllHandlerData(function (callbackReadData) {
+				responseHelper.sendResponse(res, 200, callbackReadData);
+			});
 		}, param, body);
 	},
 

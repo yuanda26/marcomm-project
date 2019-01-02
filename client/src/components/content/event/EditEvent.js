@@ -10,7 +10,6 @@ import { updateEvent } from "../../../actions/eventAction";
 class EditEvent extends React.Component {
   constructor (props) {
     super(props)
-    let userdata = "purwanto"
     super(props)
     this.state = {
       formdata : {
@@ -20,11 +19,10 @@ class EditEvent extends React.Component {
         start_date : '',
         end_date : '',
         budget : '',
-        request_by : userdata.m_employee_id,
+        request_by : '',
         request_date : '',
-        created_by : userdata.username
+        created_by : ''
       },
-      updated_by : userdata.username,
       readOnly : false,
       currentEmployee : '',
       statusUpdated : null,
@@ -83,10 +81,11 @@ class EditEvent extends React.Component {
   }
 
   submitHandler = () => {
-    let { formdata, regexBudget, updated_by } = this.state
-    let { _id, event_name, place,
-      start_date, end_date, budget } = formdata;
-    formdata["updated_by"] = updated_by
+    let { formdata, regexBudget } = this.state
+    let { 
+      _id, event_name, place, start_date, end_date, budget 
+    } = formdata;
+    formdata["updated_by"] = this.props.auth.user.m_employee_id
     if(event_name === ''){
       alert("Please Type Name!")
     }else if(place === ''){
@@ -322,10 +321,12 @@ class EditEvent extends React.Component {
 EditEvent.propTypes = {
   updateEvent: PropTypes.func.isRequired,
   event: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
   event: state.event,
+  user: state.auth.user
 });
 
 export default connect(

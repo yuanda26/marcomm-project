@@ -45,6 +45,13 @@ const T_Design_Item_Logic = {
         );
       }
     }, itemId);
+  },
+  //added by: randika alditia
+  readOne: (req, res, next) => {
+    let code = req.params.code;
+    designItemData.readOne(items => {
+      responseHelper.sendResponse(res, 200, items);
+    }, code);
   }
 };
 
