@@ -1,30 +1,36 @@
 import React from "react";
 import axios from "axios";
+import { connect } from "react-redux";
+import { getAllRoles } from "../../../actions/roleActions";
+// import {} from "../../../actions/accessActions";
 import { Link } from "react-router-dom";
 import { Alert } from "reactstrap";
-import CreateAccess from "./createAccess2";
+import apiConfig from "../../../config/Host_Config";
+import CreateAccess from "./createAccess";
 import DeleteAccess from "./deleteAccess";
-import ViewAccess from "./viewAccess2";
+import ViewAccess from "./viewAccess";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableFooter from "@material-ui/core/TableFooter";
-import TablePagination from "@material-ui/core/TablePagination";
-import IconButton from "@material-ui/core/IconButton";
+import {
+  withStyles,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableFooter,
+  TablePagination,
+  IconButton,
+  Paper,
+  Hidden,
+  Grid
+} from "@material-ui/core";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
-import Paper from "@material-ui/core/Paper";
-import Hidden from "@material-ui/core/Hidden";
 import SearchIcon from "@material-ui/icons/Search";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
-import Grid from "@material-ui/core/Grid";
 import moment from "moment";
 const actionsStyles = theme => ({
   root: {
@@ -176,11 +182,20 @@ class ListAccess extends React.Component {
   handleChangeRowsPerPage = event => {
     this.setState({ rowsPerPage: event.target.value });
   };
-
+  componentDidMount() {
+    this.props.getAllRoles();
+  }
+  componentWillReceiveProps(newProps) {
+    this.setState({
+      getAccess: newProps.getTheRole.rolan,
+      access: newProps.getTheRole.rolan,
+      hasil: newProps.getTheRole.rolan
+    });
+  }
   deleteModalHandler(accessid) {
     let tmp = {};
     this.state.access.map(ele => {
-      if (accessid == ele._id) {
+      if (accessid === ele._id) {
         tmp = ele;
       }
     });
@@ -193,7 +208,7 @@ class ListAccess extends React.Component {
   viewModalHandler(accessid) {
     let tmp = {};
     this.state.access.map(ele => {
-      if (accessid == ele._id) {
+      if (accessid === ele._id) {
         tmp = ele;
       }
     });
@@ -202,10 +217,11 @@ class ListAccess extends React.Component {
       viewAccess: true
     });
   }
+
   editModalHandler(accessid) {
     let tmp = {};
     this.state.access.map(ele => {
-      if (accessid == ele._id) {
+      if (accessid === ele._id) {
         tmp = {
           _id: ele._id,
           m_role_id: ele.m_role_id,
@@ -246,34 +262,8 @@ class ListAccess extends React.Component {
     this.setState({ showCreateAccess: false });
   }
 
-  getListAccess() {
-    let token = localStorage.token;
-    let option = {
-      url: "http://localhost:4000/api/access",
-      method: "get",
-      headers: {
-        Authorization: token //harus sama authorization  nya
-      }
-    };
-    axios(option)
-      .then(response => {
-        this.setState({
-          getAccess: response.data.message,
-          access: response.data.message,
-          hasil: response.data.message
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
-  componentDidMount() {
-    this.getListAccess();
-  }
-
   modalStatus(status, message, code) {
-    this.getListAccess();
+    this.props.getAllRoles();
     this.setState({
       alertData: {
         status: status,
@@ -291,14 +281,13 @@ class ListAccess extends React.Component {
       this.modalStatus(1, "Menu Access has been updated!", 200);
     }, 0);
     setTimeout(() => {
-      this.props.history.push("/");
-      this.props.history.push("/accessmenu");
+      window.location.href = "/accessmenu";
     }, 1000);
   }
   getTheAccess(code) {
     let token = localStorage.token;
     let option = {
-      url: "http://localhost:4000/api/access" + "/" + code,
+      url: `${apiConfig.host}/access/${code}`,
       method: "get",
       headers: {
         Authorization: token,
@@ -310,7 +299,7 @@ class ListAccess extends React.Component {
         this.setState({
           theAccess: response.data.message
             .map(a => a.controller)
-            .filter(b => b != false)
+            .filter(b => b !== false)
         });
       })
       .catch(error => {
@@ -368,7 +357,6 @@ class ListAccess extends React.Component {
   };
   render() {
     const { classes } = this.props;
-    const { rows, rowsPerPage, page } = this.state;
     return (
       <div className={classes.root}>
         <Grid container spacing={0}>
@@ -379,7 +367,7 @@ class ListAccess extends React.Component {
                   <a href="/dashboard">Home</a> <span class="divider">/</span>
                 </li>
                 <li>
-                  <a href="#">Master</a> <span class="divider">/</span>
+                  <li class="active">/Master</li>
                 </li>
                 <li class="active">List Access</li>
               </ul>
@@ -438,18 +426,21 @@ class ListAccess extends React.Component {
               </button>
             </div>
           </div>
+          <br />
+          <br />
           <Grid item xs={6}>
-            {this.state.alertData.status == 1 ? (
+            {this.state.alertData.status === 1 ? (
               <Alert color="success">{this.state.alertData.message}</Alert>
             ) : (
               ""
             )}
-            {this.state.alertData.status == 2 ? (
+            {this.state.alertData.status === 2 ? (
               <Alert color="danger">{this.state.alertData.message} </Alert>
             ) : (
               ""
             )}
           </Grid>
+          <br />
           <CreateAccess
             create={this.state.showCreateAccess}
             closeHandler={this.closeHandler}
@@ -555,9 +546,16 @@ class ListAccess extends React.Component {
     );
   }
 }
-
 ListAccess.propTypes = {
+  getAllRoles: PropTypes.func.isRequired,
+  getTheRole: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired
 };
-
-export default withStyles(styles)(ListAccess);
+const mapStateToProps = state => ({
+  getTheRole: state.roleData
+});
+let style = withStyles(styles)(ListAccess);
+export default connect(
+  mapStateToProps,
+  { getAllRoles }
+)(style);

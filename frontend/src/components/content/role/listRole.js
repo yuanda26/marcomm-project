@@ -8,13 +8,15 @@ import CreateRole from "./createRole";
 import { Alert } from "reactstrap";
 import DeleteRole from "./deleteRole";
 import ViewRole from "./viewRole";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
+import {
+  Grid,
+  Paper,
+  Table,
+  TableCell,
+  TableHead,
+  TableRow
+} from "@material-ui/core";
 import "react-datepicker/dist/react-datepicker.css";
-import Table from "@material-ui/core/Table";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
 import SearchIcon from "@material-ui/icons/Search";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
@@ -50,7 +52,7 @@ class ListRole extends React.Component {
   deleteModalHandler(roleid) {
     let tmp = {};
     this.state.role.map(ele => {
-      if (roleid == ele._id) {
+      if (roleid === ele._id) {
         tmp = ele;
       }
     });
@@ -63,7 +65,7 @@ class ListRole extends React.Component {
   viewModalHandler(roleid) {
     let tmp = {};
     this.state.role.map(ele => {
-      if (roleid == ele._id) {
+      if (roleid === ele._id) {
         tmp = ele;
       }
     });
@@ -76,7 +78,7 @@ class ListRole extends React.Component {
   editModalHandler(roleid) {
     let tmp = {};
     this.state.role.map(ele => {
-      if (roleid == ele._id) {
+      if (roleid === ele._id) {
         tmp = {
           _id: ele._id,
           code: ele.code,
@@ -167,7 +169,9 @@ class ListRole extends React.Component {
     });
   }
   modalStatus(status, message) {
-    this.props.getAllRoles();
+    setTimeout(() => {
+      this.props.getAllRoles();
+    }, 0);
     this.setState({
       alertData: {
         status: status,
@@ -189,9 +193,7 @@ class ListRole extends React.Component {
               <li>
                 <a href="/dashboard">Home</a> <span class="divider">/</span>
               </li>
-              <li>
-                <a href="#">Master</a> <span class="divider">/</span>
-              </li>
+              <li class="active">Master/</li>
               <li class="active">List Role</li>
             </ul>
           </Paper>
@@ -200,12 +202,12 @@ class ListRole extends React.Component {
         <div>
           <h4>List Role</h4>
 
-          {this.state.alertData.status == 1 ? (
+          {this.state.alertData.status === 1 ? (
             <Alert color="success"> {this.state.alertData.message} </Alert>
           ) : (
             ""
           )}
-          {this.state.alertData.status == 2 ? (
+          {this.state.alertData.status === 2 ? (
             <Alert color="danger"> {this.state.alertData.message} </Alert>
           ) : (
             ""
@@ -234,16 +236,6 @@ class ListRole extends React.Component {
             modalStatus={this.modalStatus}
           />
           <br />
-          <div class="form-row">
-            <div class="col-md-1">
-              <button onClick={this.showHandler} class="btn btn-primary">
-                Add Role
-              </button>
-            </div>
-            <br />
-            <br />
-            <br />
-          </div>
           <div class="form-row">
             <div class="col-md-2">
               <input
@@ -289,6 +281,11 @@ class ListRole extends React.Component {
             <div class="col-xs-1">
               <button onClick={this.refresh} class="btn btn-warning">
                 Refresh
+              </button>
+            </div>
+            <div class="col-xs-1">
+              <button onClick={this.showHandler} class="btn btn-primary">
+                Add Role
               </button>
             </div>
           </div>

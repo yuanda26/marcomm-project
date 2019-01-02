@@ -8,9 +8,13 @@ import employeeReducers from "./employee_reducers";
 import companyReducers from "./company_reducers";
 import eventReducers from "./event_reducers";
 import roleReducers from "./roleReducers";
+import promotionReducers from "./promotionReducers";
+import accessMenuReducers from "./accessMenuReducers";
 export default combineReducers({
   auth: authReducer,
   roleData: roleReducers,
+  accessMenuData: accessMenuReducers,
+  promot: promotionReducers,
   design: designReducer,
   souvenir: souvenirReducer,
   units: unitReducer,

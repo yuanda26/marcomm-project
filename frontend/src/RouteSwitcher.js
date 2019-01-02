@@ -3,10 +3,9 @@ import { connect } from "react-redux";
 import { Switch } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import PropTypes from "prop-types";
-import apiconfig from "./config/Host_Config";
+import { getListAccess } from "./actions/accessMenuActions";
 // import listUser from "./content/user/listUser";
-import axios from "axios";
-// import listPromotion from "./content/promotion/listPromotion";
+import listPromotion from "./components/content/promotion/listPromotion";
 import listRole from "./components/content/role/listRole";
 import listAccess from "./components/content/accessMenu/listAccess";
 import Dashboard from "./Dashboard";
@@ -18,55 +17,38 @@ import DesignEdit from "./components/content/design/DesignEdit";
 import SouvenirList from "./components/content/souvenir/SouvenirList";
 import UnitList from "./components/content/unit/UnitList";
 import EmployeeList from "./components/content/employee/ListEmployee";
-// import addPromotionND from "./content/promotion/addPromotionND";
-// import addPromotionD from "./content/promotion/addPromotionD";
-// import editPromotionD from "./content/promotion/editPromotionD";
-// import editPromotionND from "./content/promotion/editPromotionND";
+import addPromotionND from "./components/content/promotion/addPromotionND";
+import addPromotionD from "./components/content/promotion/addPromotionD";
+import editPromotionD from "./components/content/promotion/editPromotionD";
+import editPromotionND from "./components/content/promotion/editPromotionND";
+import { ContactPhoneSharp } from "@material-ui/icons";
 
 class RouteSwitcher extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataAccess: [],
-      the: [],
-      side: []
+      dataAccess: []
     };
   }
-  getListAccess = () => {
-    let theRole = this.props.data.user.m_role_id;
-    if (theRole !== undefined) {
-      let option = {
-        url: apiconfig.host + "/access" + "/" + theRole,
-        method: "get",
-        headers: {
-          Authorization: localStorage.token
-        }
-      };
-      console.log(option.headers.Authorization);
-      axios(option)
-        .then(response => {
-          console.log(response.data.message);
-          this.setState({
-            dataAccess: response.data.message.map(content => {
-              return content.controller;
-            })
-          });
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    }
-  };
   componentDidMount() {
-    this.getListAccess();
+    if (this.props.data.user.m_role_id !== undefined) {
+      this.props.getListAccess(this.props.data.user.m_role_id);
+    }
+  }
+  componentWillReceiveProps(propsData) {
+    this.setState({
+      dataAccess: propsData.theAccessData.dataAccess
+    });
   }
   func = inp => {
-    if (inp == "/role") {
+    if (inp === "/role") {
       return listRole;
-    } else if (inp == "/accessmenu") {
+    } else if (inp === "/accessmenu") {
       return listAccess;
-    } else if (inp == "/design") {
+    } else if (inp === "/design") {
       return DesignList;
+    } else if (inp === "/promotion") {
+      return listPromotion;
     }
   };
 
@@ -75,28 +57,40 @@ class RouteSwitcher extends React.Component {
       <Switch>
         <PrivateRoute path="/dashboard" component={Dashboard} />
         {this.state.dataAccess.map((content, index) => {
-          // if (content == "/promotion") {
-          //   return (
+          if (content === "/promotion") {
+            return (
+              <Switch>
+                <PrivateRoute
+                  path={content}
+                  component={this.func(this.state.dataAccess[index])}
+                />
+                <PrivateRoute path="/addpromot-nd" component={addPromotionND} />
+                <PrivateRoute path="/addpromot-d" component={addPromotionD} />
+                <PrivateRoute path="/editpromot-d" component={editPromotionD} />
+                <PrivateRoute
+                  path="/editpromot-nd"
+                  component={editPromotionND}
+                />
+              </Switch>
+            );
+          }
+          //silahkan ditambahkan dg format dibawah (tinggal diganti path dan komponen) jika satu path dapat mempengaruhi path lain
+          // else if(content === '/design'){
+          //   return(
           //     <Switch>
           //       <PrivateRoute
           //         path={content}
           //         component={this.func(this.state.dataAccess[index])}
           //       />
-          //       {/* <PrivateRoute
-          //         path="/addpromot-nd"
-          //         component={addPromotionND}
-          //       />
+          //       <PrivateRoute path="/addpromot-nd" component={addPromotionND} />
           //       <PrivateRoute path="/addpromot-d" component={addPromotionD} />
-          //       <PrivateRoute
-          //         path="/editpromot-d"
-          //         component={editPromotionD}
-          //       />
+          //       <PrivateRoute path="/editpromot-d" component={editPromotionD} />
           //       <PrivateRoute
           //         path="/editpromot-nd"
           //         component={editPromotionND}
-          //       /> */}
+          //       />
           //     </Switch>
-          //   );
+          //   )
           // }
           return (
             <PrivateRoute
@@ -111,9 +105,15 @@ class RouteSwitcher extends React.Component {
 }
 
 RouteSwitcher.propTypes = {
-  data: PropTypes.object.isRequired
+  data: PropTypes.object.isRequired,
+  getListAccess: PropTypes.func.isRequired,
+  theAccessData: PropTypes.object.isRequired
 };
 const mapStateToProps = state => ({
-  data: state.auth
+  data: state.auth,
+  theAccessData: state.accessMenuData
 });
-export default connect(mapStateToProps)(RouteSwitcher);
+export default connect(
+  mapStateToProps,
+  { getListAccess }
+)(RouteSwitcher);

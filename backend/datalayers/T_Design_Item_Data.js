@@ -68,6 +68,38 @@ const designDataItem = {
         callback(deleteItem);
       }
     );
+  },
+  // read by code design added by: randika alditia
+  readOne: (callback, code) => {
+    db.collection("t_design_item")
+      .aggregate([
+        {
+          $lookup: {
+            from: "m_product",
+            localField: "m_product_id",
+            foreignField: "code",
+            as: "product_doc"
+          }
+        },
+        { $unwind: "$product_doc" },
+        {
+          $project: {
+            t_design_id: "$t_design_id",
+            m_product_id: "$m_product_id",
+            product_name: "$product_doc.name",
+            description: "$product_doc.description",
+            title_item: "$title_item"
+          }
+        },
+        { $match: { t_design_id: code } }
+      ])
+      .toArray((err, docs) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(docs);
+        }
+      });
   }
 };
 
