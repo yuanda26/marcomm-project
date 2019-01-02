@@ -2,7 +2,8 @@ import {
   GET_EVENT,
   UPDATE_EVENT,
   CREATE_EVENT,
-  DELETE_EVENT
+  DELETE_EVENT,
+  SEARCH_EVENT
 } from "../actions/types";
 
 const initialState = {
@@ -19,7 +20,6 @@ export default function(state = initialState, action) {
         myEvent: action.payload
       };
     case UPDATE_EVENT:
-    console.log(action.payload)
       return {
         ...state,
         myEvent: action.payload,
@@ -35,6 +35,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         statusDeleted: action.status,
+      };
+    case SEARCH_EVENT:
+      return {
+        ...state,
+        myEvent: action.payload,
       };
     default:
       return state;
