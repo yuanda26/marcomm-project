@@ -1,11 +1,11 @@
 import axios from "axios";
 import { GET_ROLE, DEL_ROLE, ADD_ROLE, PUT_ROLE } from "./types"; //, CREATE_ROLE, DELETE_ROLE
-
+import apiConfig from "../config/Host_Config";
 let token = localStorage.token;
 
 export const getAllRoles = () => dispatch => {
   let options = {
-    url: "http://localhost:4000/api/role",
+    url: `${apiConfig.host}/role`,
     method: "get",
     headers: {
       Authorization: token
@@ -29,7 +29,7 @@ export const getAllRoles = () => dispatch => {
 
 export const delRole = param => dispatch => {
   let options = {
-    url: "http://localhost:4000/api/role" + "/" + param,
+    url: `${apiConfig.host}/role/${param}`,
     method: "delete",
     headers: {
       Authorization: token
@@ -56,7 +56,7 @@ export const delRole = param => dispatch => {
 export const createRole = body => dispatch => {
   let token = localStorage.token;
   let option = {
-    url: "http://localhost:4000/api/role",
+    url: `${apiConfig.host}/role`,
     method: "post",
     headers: {
       Authorization: token,
@@ -106,10 +106,9 @@ export const createRole = body => dispatch => {
 };
 
 export const putRole = body => dispatch => {
-  alert(JSON.stringify(body));
   let token = localStorage.token;
   let option = {
-    url: "http://localhost:4000/api/role" + "/" + body.code,
+    url: `${apiConfig.host}/role/${body.code}`,
     method: "put",
     headers: {
       Authorization: token,

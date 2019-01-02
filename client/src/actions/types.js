@@ -102,4 +102,20 @@ export const DEL_ROLE = "DEL_ROLE";
 export const ADD_ROLE = "ADD_ROLE";
 export const PUT_ROLE = "PUT_ROLE";
 
+//All Promotion
+export const GET_PROMOTION = "GET_PROMOTION"; //fetch
+export const DEL_PROMOTION = "DEL_PROMOTION"; //delete
+export const ADD_PROMOTION = "ADD_PROMOTION"; //add
+export const PUT_PROMOTION = "PUT_PROMOTION"; //update
+
+export const GET_P_ITEM = "GET_P_ITEM"; //fetch
+export const DEL_P_ITEM = "DEL_P_ITEM"; //delete
+export const ADD_P_ITEM = "ADD_P_ITEM"; //add
+export const PUT_P_ITEM = "PUT_P_ITEM"; //update
+
+export const GET_P_FILE = "GET_P_FILE"; //fetch
+export const DEL_P_FILE = "DEL_P_FILE"; //delete
+export const ADD_P_FILE = "ADD_P_FILE"; //add
+export const PUT_P_FILE = "PUT_P_FILE"; //update
+export const ADD_DATA_P = "ADD_DATA_P";
 //access menu Types

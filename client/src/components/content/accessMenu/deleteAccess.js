@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
 import axios from "axios";
-
+import apiConfig from "../../../config/Host_Config";
 class DeleteAccess extends React.Component {
   constructor(props) {
     super(props);
@@ -11,7 +11,7 @@ class DeleteAccess extends React.Component {
   deleteHandler() {
     let token = localStorage.token;
     let option = {
-      url: "http://localhost:4000/api/role" + "/" + this.props.access.code,
+      url: apiConfig.host + "/role" + "/" + this.props.access.code,
       method: "delete",
       headers: {
         Authorization: token

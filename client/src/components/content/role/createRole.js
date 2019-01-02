@@ -1,9 +1,8 @@
 import React from "react";
-import { connect } from "react-redux";
 import { createRole } from "../../../actions/roleActions";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
 import PropTypes from "prop-types";
-import axios from "axios";
+import { connect } from "react-redux";
 
 class CreateRole extends React.Component {
   constructor(props) {
@@ -15,7 +14,6 @@ class CreateRole extends React.Component {
         description: ""
       }
     };
-
     this.submitHandler = this.submitHandler.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
   }
@@ -32,41 +30,14 @@ class CreateRole extends React.Component {
     if (this.state.formdata.name === "") {
       return alert("All field must be Filled!");
     }
-    let token = localStorage.token;
-    let option = {
-      url: "http://localhost:4000/api/role",
-      method: "post",
-      headers: {
-        Authorization: token,
-        "Content-Type": "application/json"
-      },
-      data: this.state.formdata
-    };
-    axios(option)
-      .then(response => {
-        if (response.data.code === 200) {
-          const func = (prototype, digit, len) => {
-            let trueLen = digit - len.toString().length;
-            for (let i = 0; i < trueLen; i++) {
-              prototype += 0;
-            }
-            return (prototype += len);
-          };
-          this.props.closeHandler();
-          this.props.modalStatus(
-            1,
-            "Data Saved! New role has been add with code " +
-              func("RO", 4, response.data.message + 1) +
-              "!"
-          );
-          this.props.history.push("/role");
-        } else {
-          alert(response.data.message);
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    this.props.createRole(this.state.formdata);
+    this.props.closeHandler();
+    setTimeout(() => {
+      this.props.modalStatus(
+        1,
+        "Data Saved! New role with referential code has been added!"
+      );
+    }, 0);
   }
   render() {
     return (

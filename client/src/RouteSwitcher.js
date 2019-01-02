@@ -8,7 +8,7 @@ import axios from "axios";
 // Pages Components
 import Dashboard from "./Dashboard";
 import ListRole from "./components/content/role/listRole";
-import ListAccess from "./components/content/accessMenu/listAccess";
+import ListAccess from "./components/content/accessMenu/ListAccess";
 import SouvenirList from "./components/content/souvenir/SouvenirList";
 import UnitList from "./components/content/unit/UnitList";
 import ListEmployee from "./components/content/employee/ListEmployee";
