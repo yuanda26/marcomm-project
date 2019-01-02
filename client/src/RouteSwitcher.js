@@ -7,6 +7,7 @@ import HostConfig from "./config/Host_Config";
 import axios from "axios";
 // Pages Components
 import Dashboard from "./Dashboard";
+import ListCompany from "./components/content/company/ReadCompany";
 import ListRole from "./components/content/role/listRole";
 import ListAccess from "./components/content/accessMenu/listAccess";
 import SouvenirList from "./components/content/souvenir/SouvenirList";
@@ -62,6 +63,8 @@ class RouteSwitcher extends Component {
     switch (url) {
       case "/dashboard":
         return Dashboard;
+      case "/company":
+        return ListCompany;
       case "/design":
         return DesignList;
       case "/souvenir":

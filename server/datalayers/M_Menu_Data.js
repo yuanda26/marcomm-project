@@ -30,7 +30,11 @@ const menuData = {
             _id: 1
           }
         },
-        { $match: { is_delete: false } },
+        {
+          $match: {
+            $and: [{ is_delete: false }, { parent_id: { $ne: false } }]
+          }
+        },
         { $sort: { code: 1 } }
       ])
       .toArray((err, docs) => {
