@@ -366,7 +366,7 @@ class ListAccess extends React.Component {
                   <a href="/dashboard">Home</a> <span class="divider">/</span>
                 </li>
                 <li>
-                  <li class="active">/Master</li>
+                  <li class="active">Master/</li>
                 </li>
                 <li class="active">List Access</li>
               </ul>

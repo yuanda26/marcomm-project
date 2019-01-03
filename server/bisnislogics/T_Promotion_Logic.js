@@ -113,35 +113,58 @@ const T_Promotion_Logic = {
 
       let formdata = {
         code: newCode,
-        flag_design: req.body[0].flag_design,
-        title: req.body[0].title,
-        t_event_id: req.body[0].t_event_id,
-        t_design_id: req.body[0].t_design_id,
-        request_by: req.body[0].request_by,
-        request_date: today,
-        approved_by: req.body[0].approved_by,
-        approved_date: req.body[0].approved_date,
-        assign_to: req.body.assign_to,
-        close_date: req.body[0].close_date,
-        note: req.body[0].note,
+        flag_design: req.body.marketHeader.flag_design,
+        title: req.body.marketHeader.title,
+        t_event_id: req.body.marketHeader.t_event_id,
+        t_design_id: req.body.marketHeader.t_design_id,
+        request_by: req.body.marketHeader.request_by,
+        request_date: moment(req.body.marketHeader.request_date).format(
+          "DD/MM/YYYY"
+        ),
+        approved_by: null,
+        approved_date: null,
+        assign_to: null,
+        close_date: null,
+        note: req.body.marketHeader.note,
         status: 1,
-        reject_reason: req.body[0].reject_reason,
+        reject_reason: null,
         is_delete: false,
-        created_by: req.body[0].created_by,
+        created_by: req.body.marketHeader.created_by,
         created_date: today
       };
 
       promotionData.createData(items => {
         promotionData.readAllData(promotion => {
+          let theFile = req.body.file.map((content, index) => {
+            return {
+              t_promotion_id: newCode,
+              filename: content.filename,
+              size: content.size,
+              extention: content.extention,
+              start_date: null,
+              end_date: null,
+              request_due_date: moment(content.request_due_date).format(
+                "DD/MM/YYYY"
+              ),
+              qty: parseInt(content.qty),
+              todo: content.todo,
+              note: content.note,
+              is_delete: false,
+              created_by: content.created_by,
+              updated_by: null,
+              created_date: moment().format("DD/MM/YYYY"),
+              updated_date: null
+            };
+          });
           promotionItemFile.createData(data => {
             responseHelper.sendResponse(res, 200, newCode);
-          }, generatorFile(req.body[1], formdata.code));
+          }, theFile);
         });
       }, formdata);
     });
   },
 
-  updatePromotionHandler: (req, res, next) => {
+  updatePromotionHandler2: (req, res, next) => {
     const promotionId = req.params.promotionId;
     const today = moment().format("DD/MM/YYYY");
     const data = {
@@ -285,6 +308,254 @@ const T_Promotion_Logic = {
       responseHelper.sendResponse(res, 200, items);
     }, id);
   },
+  updatePromotionHandler: (req, res, next) => {
+    const promotionId = req.params.promotionId;
+    const today = moment().format("DD/MM/YYYY");
+    const data = {
+      title: req.body.marketHeader.title,
+      approved_by: req.body.marketHeader.approved_by,
+      approved_date: req.body.marketHeader.approved_date,
+      assign_to: req.body.marketHeader.assign_to,
+      close_date: req.body.marketHeader.close_date,
+      note: req.body.marketHeader.note,
+      status: req.body.marketHeader.status,
+      reject_reason: req.body.marketHeader.reject_reason,
+      is_delete: false,
+      updated_by: req.body.marketHeader.updated_by,
+      updated_date: today
+    };
+    promotionData.updateData(
+      items => {
+        if (req.body.designItem === null) {
+          promotionItemFile.readByPromotionData(lili => {
+            if (req.body.oldFile.length === 0) {
+              promotionItemFile.deleteData(lulu => {
+                let theFile = req.body.file.map((content, index) => {
+                  return {
+                    t_promotion_id: req.body.marketHeader.code,
+                    filename: content.filename,
+                    size: content.size,
+                    extention: content.extention,
+                    start_date: null,
+                    end_date: null,
+                    request_due_date: moment(content.request_due_date).format(
+                      "DD/MM/YYYY"
+                    ),
+                    qty: parseInt(content.qty),
+                    todo: content.todo,
+                    note: content.note,
+                    is_delete: false,
+                    created_by: content.created_by,
+                    updated_by: null,
+                    created_date: moment().format("DD/MM/YYYY"),
+                    updated_date: null
+                  };
+                });
+                // let theFile = generatorFile(
+                //   req.body.file,
+                //   req.body.marketHeader.code
+                // );
+                promotionItemFile.createData(samsul => {
+                  responseHelper.sendResponse(res, 200, lili);
+                }, theFile);
+              }, req.body.marketHeader.code);
+            } else {
+              let dataForItemFile = req.body.oldFile.map((content, index) => {
+                return {
+                  _id: new ObjectId(content._id),
+                  t_promotion_id: content.t_promotion_id,
+                  filename: content.filename,
+                  size: content.size,
+                  extention: content.extention,
+                  start_date: content.start_date,
+                  end_date: content.end_date,
+                  request_due_date: moment(content.request_due_date).format(
+                    "DD/MM/YYYY"
+                  ),
+                  qty: parseInt(content.qty),
+                  todo: content.todo,
+                  note: content.note,
+                  is_delete: false,
+                  created_by: content.created_by,
+                  created_date: content.created_date,
+                  updated_by: req.body.marketHeader.updated_by,
+                  updated_date: today
+                };
+              });
+              promotionItemFile.deleteData(lulu => {
+                promotionItemFile.createData(lele => {
+                  if (req.body.file.length == 0) {
+                    responseHelper.sendResponse(res, 200, lili);
+                  } else {
+                    let theFile = req.body.file.map((content, index) => {
+                      return {
+                        t_promotion_id: req.body.marketHeader.code,
+                        filename: content.filename,
+                        size: content.size,
+                        extention: content.extention,
+                        start_date: null,
+                        end_date: null,
+                        request_due_date: moment(
+                          content.request_due_date
+                        ).format("DD/MM/YYYY"),
+                        qty: parseInt(content.qty),
+                        todo: content.todo,
+                        note: content.note,
+                        is_delete: false,
+                        created_by: content.created_by,
+                        updated_by: null,
+                        created_date: moment().format("DD/MM/YYYY"),
+                        updated_date: null
+                      };
+                    });
+                    // let theFile = generatorFile(
+                    //   req.body.file,
+                    //   req.body.marketHeader.code
+                    // );
+                    promotionItemFile.createData(samsul => {
+                      responseHelper.sendResponse(res, 200, lili);
+                    }, theFile);
+                  }
+                }, dataForItemFile);
+              }, req.body.marketHeader.code);
+            }
+          }, req.body.marketHeader.code);
+        } else {
+          promotionItem.readByPromotionID(code => {
+            let newData = code.map((content, index) => {
+              let data = {
+                _id: new ObjectId(content._id),
+                t_promotion_id: content.t_promotion_id,
+                t_design_item_id: content.t_design_item_id,
+                m_product_id: content.m_product_id,
+                title: content.title,
+                request_pic: content.request_pic,
+                start_date: content.start_date,
+                end_date: content.end_date,
+                request_due_date: req.body.designItem[index].request_due_date,
+                qty: req.body.designItem[index].qty,
+                todo: req.body.designItem[index].todo,
+                note: req.body.designItem[index].note,
+                is_delete: false,
+                created_by: content.created_by,
+                created_date: content.created_date,
+                updated_by: req.body.marketHeader.updated_by,
+                updated_date: today
+              };
+              return data;
+            });
+            promotionItem.deleteData(lala => {
+              promotionItem.createManyData(theData => {
+                if (req.body.oldFile.length === 0) {
+                  promotionItemFile.deleteData(lulu => {
+                    if (req.body.file.length == 0) {
+                      responseHelper.sendResponse(res, 200, lulu);
+                    } else {
+                      let theFile = req.body.file.map((content, index) => {
+                        return {
+                          t_promotion_id: req.body.marketHeader.code,
+                          filename: content.filename,
+                          size: content.size,
+                          extention: content.extention,
+                          start_date: null,
+                          end_date: null,
+                          request_due_date: moment(
+                            content.request_due_date
+                          ).format("DD/MM/YYYY"),
+                          qty: parseInt(content.qty),
+                          todo: content.todo,
+                          note: content.note,
+                          is_delete: false,
+                          created_by: content.created_by,
+                          updated_by: null,
+                          created_date: moment().format("DD/MM/YYYY"),
+                          updated_date: null
+                        };
+                      });
+                      // let theFile = generatorFile(
+                      //   req.body.file,
+                      //   req.body.marketHeader.code
+                      // );
+                      promotionItemFile.createData(samsul => {
+                        responseHelper.sendResponse(res, 200, lulu);
+                      }, theFile);
+                    }
+                  }, req.body.marketHeader.code);
+                } else {
+                  promotionItemFile.readByPromotionData(lili => {
+                    let dataForItemFile = req.body.oldFile.map(
+                      (content, index) => {
+                        return {
+                          _id: new ObjectId(content._id),
+                          t_promotion_id: content.t_promotion_id,
+                          filename: content.filename,
+                          size: content.size,
+                          extention: content.extention,
+                          start_date: content.start_date,
+                          end_date: content.end_date,
+                          request_due_date: moment(
+                            content.request_due_date
+                          ).format("DD/MM/YYYY"),
+                          qty: parseInt(content.qty),
+                          todo: content.todo,
+                          note: content.note,
+                          is_delete: false,
+                          created_by: content.created_by,
+                          created_date: moment(content.created_date).format(
+                            "DD/MM/YYYY"
+                          ),
+                          updated_by: req.body.marketHeader.updated_by,
+                          updated_date: today
+                        };
+                      }
+                    );
+                    promotionItemFile.deleteData(lulu => {
+                      promotionItemFile.createData(lele => {
+                        if (req.body.file.length == 0) {
+                          responseHelper.sendResponse(res, 200, lili);
+                        } else {
+                          let theFile = req.body.file.map((content, index) => {
+                            return {
+                              t_promotion_id: req.body.marketHeader.code,
+                              filename: content.filename,
+                              size: content.size,
+                              extention: content.extention,
+                              start_date: null,
+                              end_date: null,
+                              request_due_date: moment(
+                                content.request_due_date
+                              ).format("DD/MM/YYYY"),
+                              qty: parseInt(content.qty),
+                              todo: content.todo,
+                              note: content.note,
+                              is_delete: false,
+                              created_by: content.created_by,
+                              updated_by: null,
+                              created_date: moment().format("DD/MM/YYYY"),
+                              updated_date: null
+                            };
+                          });
+                          // let theFile = generatorFile(
+                          //   req.body.file,
+                          //   req.body.marketHeader.code
+                          // );
+                          promotionItemFile.createData(samsul => {
+                            responseHelper.sendResponse(res, 200, lili);
+                          }, theFile);
+                        }
+                      }, dataForItemFile);
+                    }, req.body.marketHeader.code);
+                  }, req.body.marketHeader.code);
+                }
+              }, newData);
+            }, req.body.marketHeader.code);
+          }, req.body.marketHeader.code);
+        }
+      },
+      data,
+      promotionId
+    );
+  },
   handlerAddWithDesign: (req, res, next) => {
     promotionData.countData(len => {
       if (len > 0) {
@@ -345,7 +616,27 @@ const T_Promotion_Logic = {
           if (req.body.file == 0) {
             responseHelper.sendResponse(res, 200, newCode);
           } else {
-            let itemFileUpload = generatorFile(req.body.file, newCode);
+            let itemFileUpload = req.body.file.map((content, index) => {
+              return {
+                t_promotion_id: newCode,
+                filename: content.filename,
+                size: content.size,
+                extention: content.extention,
+                start_date: null,
+                end_date: null,
+                request_due_date: moment(content.request_due_date).format(
+                  "DD/MM/YYYY"
+                ),
+                qty: parseInt(content.qty),
+                todo: content.todo,
+                note: content.note,
+                is_delete: false,
+                created_by: content.created_by,
+                updated_by: null,
+                created_date: moment().format("DD/MM/YYYY"),
+                updated_date: null
+              };
+            });
             promotionItemFile.createData(data3 => {
               responseHelper.sendResponse(res, 200, newCode);
             }, itemFileUpload);

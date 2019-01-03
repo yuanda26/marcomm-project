@@ -1,15 +1,19 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
+import apiConfig from "../../../config/Host_Config";
 import PropTypes from "prop-types";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import { withStyles } from "@material-ui/core/styles";
+import {
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  withStyles,
+  Table,
+  TableCell,
+  TableRow,
+  TableFooter
+} from "@material-ui/core";
 import axios from "axios";
-import Table from "@material-ui/core/Table";
-import TableCell from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
-import TableFooter from "@material-ui/core/TableFooter";
+
 const styles = theme => ({
   container: {
     display: "flex",
@@ -40,7 +44,7 @@ class CreateAccess extends React.Component {
   getListMenu() {
     let token = localStorage.token;
     let option = {
-      url: "http://localhost:4000/api/menu",
+      url: `${apiConfig.host}/menu`,
       method: "get",
       headers: {
         Authorization: token
@@ -71,7 +75,7 @@ class CreateAccess extends React.Component {
   }
 
   getChecked = code => {
-    let data = this.props.theAccess.filter(a => a == code);
+    let data = this.props.theAccess.filter(a => a === code);
 
     if (data.length !== 0) {
       return true;
@@ -81,12 +85,9 @@ class CreateAccess extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
     return (
       <Modal isOpen={this.props.create} className={this.props.className}>
-        <ModalHeader>
-          {"View Access " + "(" + this.props.access[0] + ")"}{" "}
-        </ModalHeader>
+        <ModalHeader>{`View Access (${this.props.access[0]})`}</ModalHeader>
         <ModalBody>
           <Table>
             <TableFooter>

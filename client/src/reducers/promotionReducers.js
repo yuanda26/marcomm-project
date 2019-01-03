@@ -13,6 +13,10 @@ const initialState = {
   event: [],
   design: [],
   dataP: [],
+  one: [],
+  item: [],
+  file: [],
+  designOne: [],
   statusGET: "",
   statusDEL: "",
   statusADD: "",
@@ -72,6 +76,28 @@ export default function(state = initialState, action) {
         test: alert(JSON.stringify(action.payload))
       };
 
+    // case "GET_ONE":
+    //   return {
+    //     ...state,
+    //     one: action.payload
+    //   };
+
+    // case "GET_I_ONE":
+    //   return {
+    //     ...state,
+    //     item: action.payload
+    //   };
+    // case "GET_F_ONE":
+    //   return {
+    //     ...state,
+    //     file: action.payload
+    //   };
+
+    // case "GET_D_ONE":
+    //   return {
+    //     ...state,
+    //     designOne: action.payload
+    //   };
     default:
       return state;
   }
