@@ -82,6 +82,7 @@ class RouteSwitcher extends Component {
   };
 
   render() {
+    console.log(this.state.dataAccess);
     return (
       <Switch>
         <PrivateRoute path={"/dashboard"} component={Dashboard} />
@@ -108,26 +109,26 @@ class RouteSwitcher extends Component {
                 />
               </Switch>
             );
-          } else if (content === "/promotion") {
-            return (
-              <Switch>
-                <PrivateRoute
-                  path={content}
-                  component={this.func(this.state.dataAccess[index])}
-                />
-                <PrivateRoute path="/addpromot-nd" component={addPromotionND} />
-                <PrivateRoute path="/addpromot-d" component={addPromotionD} />
-                <PrivateRoute path="/editpromot-d" component={editPromotionD} />
-                <PrivateRoute
-                  path="/editpromot-nd"
-                  component={editPromotionND}
-                />
-                <PrivateRoute
-                  path="/viewpromotion/:flag/:code/:design"
-                  component={ViewPromotion}
-                />
-              </Switch>
-            );
+            // } else if (content === "/promotion") {
+            //   return (
+            //     <Switch>
+            //       <PrivateRoute
+            //         path={content}
+            //         component={this.func(this.state.dataAccess[index])}
+            //       />
+            //       <PrivateRoute path="/addpromot-nd" component={addPromotionND} />
+            //       <PrivateRoute path="/addpromot-d" component={addPromotionD} />
+            //       <PrivateRoute path="/editpromot-d" component={editPromotionD} />
+            //       <PrivateRoute
+            //         path="/editpromot-nd"
+            //         component={editPromotionND}
+            //       />
+            //       <PrivateRoute
+            //         path="/viewpromotion/:flag/:code/:design"
+            //         component={ViewPromotion}
+            //       />
+            //     </Switch>
+            //   );
           }
           return (
             <PrivateRoute

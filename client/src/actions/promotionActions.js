@@ -17,7 +17,7 @@ const ENDPOINTS = {
     PROMOTION: "/promotion",
     ITEM: "/promotionitem",
     FILE: "/prmotionfile",
-    EVENT: "/tevent",
+    EVENT: "/event",
     DESIGN: "/design",
     T_DESIGN_ITEM: "/t_design_item"
   }
