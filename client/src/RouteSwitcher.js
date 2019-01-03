@@ -5,6 +5,7 @@ import PrivateRoute from "./PrivateRoute";
 import PropTypes from "prop-types";
 // Pages Components
 import Dashboard from "./Dashboard";
+import ListCompany from "./components/content/company/CompanyList";
 import ListRole from "./components/content/role/listRole";
 import ListAccess from "./components/content/accessMenu/ListAccess";
 import SouvenirList from "./components/content/souvenir/SouvenirList";
@@ -15,9 +16,9 @@ import DesignAdd from "./components/content/design/DesignAdd";
 import DesignList from "./components/content/design/DesignList";
 import DesignView from "./components/content/design/DesignView";
 import DesignEdit from "./components/content/design/DesignEdit";
-import TsouvenirList from "./components/content/tsouvenir/ReadTsouvenir";
-import TsouveniritemList from "./components/content/tsouveniritem/ReadTSouvenirRequest";
-import ListMenu from "./components/content/menu/ReadMenu";
+import TsouvenirList from "./components/content/tsouvenir/TSouvenirList";
+import TsouveniritemList from "./components/content/tsouveniritem/TSouvenirRequestList";
+import ListMenu from "./components/content/menu/MenuList";
 import ListPromotion from "./components/content/promotion/ListPromotion";
 import addPromotionND from "./components/content/promotion/addPromotionND";
 import addPromotionD from "./components/content/promotion/addPromotionD";
@@ -49,6 +50,8 @@ class RouteSwitcher extends Component {
     switch (url) {
       case "/dashboard":
         return Dashboard;
+      case "/company":
+        return ListCompany;
       case "/design":
         return DesignList;
       case "/souvenir":
@@ -79,6 +82,7 @@ class RouteSwitcher extends Component {
   };
 
   render() {
+    console.log(this.state.dataAccess);
     return (
       <Switch>
         <PrivateRoute path={"/dashboard"} component={Dashboard} />
@@ -105,26 +109,26 @@ class RouteSwitcher extends Component {
                 />
               </Switch>
             );
-          } else if (content === "/promotion") {
-            return (
-              <Switch>
-                <PrivateRoute
-                  path={content}
-                  component={this.func(this.state.dataAccess[index])}
-                />
-                <PrivateRoute path="/addpromot-nd" component={addPromotionND} />
-                <PrivateRoute path="/addpromot-d" component={addPromotionD} />
-                <PrivateRoute path="/editpromot-d" component={editPromotionD} />
-                <PrivateRoute
-                  path="/editpromot-nd"
-                  component={editPromotionND}
-                />
-                <PrivateRoute
-                  path="/viewpromotion/:flag/:code/:design"
-                  component={ViewPromotion}
-                />
-              </Switch>
-            );
+            // } else if (content === "/promotion") {
+            //   return (
+            //     <Switch>
+            //       <PrivateRoute
+            //         path={content}
+            //         component={this.func(this.state.dataAccess[index])}
+            //       />
+            //       <PrivateRoute path="/addpromot-nd" component={addPromotionND} />
+            //       <PrivateRoute path="/addpromot-d" component={addPromotionD} />
+            //       <PrivateRoute path="/editpromot-d" component={editPromotionD} />
+            //       <PrivateRoute
+            //         path="/editpromot-nd"
+            //         component={editPromotionND}
+            //       />
+            //       <PrivateRoute
+            //         path="/viewpromotion/:flag/:code/:design"
+            //         component={ViewPromotion}
+            //       />
+            //     </Switch>
+            //   );
           }
           return (
             <PrivateRoute

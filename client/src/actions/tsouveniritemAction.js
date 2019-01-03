@@ -254,7 +254,7 @@ export const putCloseOrder = tsouveniritem => dispatch => {
 
 export const getEvent = () => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/tevent`,
+    url: `${ApiConfig.host}/event`,
     method: "get",
     headers: {
       Authorization: localStorage.token
