@@ -12,7 +12,7 @@ class DeleteAccess extends React.Component {
   deleteHandler() {
     let token = localStorage.token;
     let option = {
-      url: apiConfig.host + "/role" + "/" + this.props.access.code,
+      url: `${apiConfig.host}/role/${this.props.access.code}`,
       method: "delete",
       headers: {
         Authorization: token
@@ -21,7 +21,7 @@ class DeleteAccess extends React.Component {
 
     axios(option)
       .then(response => {
-        if (response.data.code == 200) {
+        if (response.data.code === 200) {
           this.props.modalStatus(
             1,
             "Data deleted!, Data role with code " +

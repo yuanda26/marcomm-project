@@ -156,7 +156,7 @@ class CreateAccess extends React.Component {
                 <Table>
                   <TableFooter>
                     {half.map((content, id) => {
-                      return id == 0 ? (
+                      return id === 0 ? (
                         <TableCell>
                           {this.state.menu.map((row, index) =>
                             index < this.state.menu.length / 2 ? (
@@ -209,10 +209,8 @@ class CreateAccess extends React.Component {
           </div>
         </ModalBody>
         <ModalFooter>
-          {this.state.alertData.status == true ? (
+          {this.state.alertData.status === true && (
             <Alert color="danger">{this.state.alertData.message} </Alert>
-          ) : (
-            ""
           )}
           <Button
             variant="contained"

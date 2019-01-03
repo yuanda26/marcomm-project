@@ -26,7 +26,6 @@ import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import Gavel from "@material-ui/icons/Gavel";
 import Assignment from "@material-ui/icons/Assignment";
-import SearchIcon from "@material-ui/icons/Search";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import moment from "moment";
 
@@ -200,9 +199,9 @@ class ListPromotion extends React.Component {
 
   editModalHandler(data) {
     localStorage.setItem("MARKETING-HEADER-PROMOTION", JSON.stringify(data));
-    if (data.flag_design == 1) {
+    if (data.flag_design === 1) {
       window.location.href = "/editpromot-d";
-    } else if (data.flag_design == 0) {
+    } else if (data.flag_design === 0) {
       window.location.href = "/editpromot-nd";
     }
   }
@@ -502,17 +501,17 @@ class ListPromotion extends React.Component {
                           <TableCell>{row.created_date}</TableCell>
                           <TableCell>{row.created_by}</TableCell>
                           <TableCell>
-                            <Link to="#">
+                            <Link to="#!">
                               <CreateOutlinedIcon
                                 onClick={() => {
                                   this.editModalHandler(row);
                                 }}
                               />
                             </Link>
-                            <a href="#">
+                            <a href="#!">
                               <Gavel />
                             </a>
-                            <a href="#">
+                            <a href="#!">
                               <Assignment />
                             </a>
                           </TableCell>
