@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
 import axios from "axios";
 import apiConfig from "../../../config/Host_Config";
+
 class DeleteAccess extends React.Component {
   constructor(props) {
     super(props);
