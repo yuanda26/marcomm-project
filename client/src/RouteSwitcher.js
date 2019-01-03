@@ -7,7 +7,7 @@ import HostConfig from "./config/Host_Config";
 import axios from "axios";
 // Pages Components
 import Dashboard from "./Dashboard";
-import ListCompany from "./components/content/company/ReadCompany";
+import ListCompany from "./components/content/company/CompanyList";
 import ListRole from "./components/content/role/listRole";
 import ListAccess from "./components/content/accessMenu/ListAccess";
 import SouvenirList from "./components/content/souvenir/SouvenirList";
@@ -18,9 +18,9 @@ import DesignAdd from "./components/content/design/DesignAdd";
 import DesignList from "./components/content/design/DesignList";
 import DesignView from "./components/content/design/DesignView";
 import DesignEdit from "./components/content/design/DesignEdit";
-import TsouvenirList from "./components/content/tsouvenir/ReadTsouvenir";
-import TsouveniritemList from "./components/content/tsouveniritem/ReadTSouvenirRequest";
-import ListMenu from "./components/content/menu/ReadMenu";
+import TsouvenirList from "./components/content/tsouvenir/TSouvenirList";
+import TsouveniritemList from "./components/content/tsouveniritem/TSouvenirRequestList";
+import ListMenu from "./components/content/menu/MenuList";
 
 class RouteSwitcher extends Component {
   constructor(props) {

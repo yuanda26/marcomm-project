@@ -1,7 +1,12 @@
 {
   "local": {
+    "host": "mongodb://marcomm-project-user:ayamgoreng176@ds041178.mlab.com",
+    "port": 41178,
+    "name": "marcomm-project-dev"
+  },
+  "localhost": {
     "host": "mongodb://localhost",
     "port": 27017,
-    "name": "marcomm-project"
+    "name": "backend"
   }
 }
