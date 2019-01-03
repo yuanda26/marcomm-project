@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { Switch } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
@@ -26,20 +26,20 @@ import editPromotionD from "./components/content/promotion/editPromotionD";
 import editPromotionND from "./components/content/promotion/editPromotionND";
 import ViewPromotion from "./components/content/promotion/viewPromotion/viewPromotion";
 import ListUser from "./components/content/users/ListUser";
+// Actions
 import { getListAccess } from "./actions/accessMenuActions";
 
 class RouteSwitcher extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      dataAccess: []
-    };
-  }
+  state = {
+    dataAccess: []
+  };
+
   componentDidMount() {
     if (this.props.data.user.m_role_id !== undefined) {
       this.props.getListAccess(this.props.data.user.m_role_id);
     }
   }
+
   componentWillReceiveProps(propsData) {
     this.setState({
       dataAccess: propsData.theAccessData.dataAccess
@@ -82,15 +82,42 @@ class RouteSwitcher extends Component {
   };
 
   render() {
-    console.log(this.state.dataAccess);
     return (
-      <Switch>
-        <PrivateRoute path={"/dashboard"} component={Dashboard} />
-        {/* Private Route with Access Control  */}
+      <Fragment>
+        {/* General Routes */}
+        <Switch>
+          <PrivateRoute path={"/dashboard"} component={Dashboard} />
+        </Switch>
+
+        {/* Private Routes with Access Control  */}
         {this.state.dataAccess.map((content, index) => {
+          // Routes for Transaction Promotion
+          if (content === "/promotion") {
+            return (
+              <Switch key={index + Date.now()}>
+                <PrivateRoute
+                  path={content}
+                  component={this.func(this.state.dataAccess[index])}
+                />
+                <PrivateRoute path="/addpromot-nd" component={addPromotionND} />
+                <PrivateRoute path="/addpromot-d" component={addPromotionD} />
+                <PrivateRoute path="/editpromot-d" component={editPromotionD} />
+                <PrivateRoute
+                  path="/editpromot-nd"
+                  component={editPromotionND}
+                />
+                <PrivateRoute
+                  path="/viewpromotion/:flag/:code/:design"
+                  component={ViewPromotion}
+                />
+              </Switch>
+            );
+          }
+
+          // Routes for Transasction Design
           if (content === "/design") {
             return (
-              <Switch>
+              <Switch key={index + Date.now()}>
                 <PrivateRoute
                   exact
                   path={content}
@@ -109,35 +136,18 @@ class RouteSwitcher extends Component {
                 />
               </Switch>
             );
-            // } else if (content === "/promotion") {
-            //   return (
-            //     <Switch>
-            //       <PrivateRoute
-            //         path={content}
-            //         component={this.func(this.state.dataAccess[index])}
-            //       />
-            //       <PrivateRoute path="/addpromot-nd" component={addPromotionND} />
-            //       <PrivateRoute path="/addpromot-d" component={addPromotionD} />
-            //       <PrivateRoute path="/editpromot-d" component={editPromotionD} />
-            //       <PrivateRoute
-            //         path="/editpromot-nd"
-            //         component={editPromotionND}
-            //       />
-            //       <PrivateRoute
-            //         path="/viewpromotion/:flag/:code/:design"
-            //         component={ViewPromotion}
-            //       />
-            //     </Switch>
-            //   );
           }
+
           return (
-            <PrivateRoute
-              path={content}
-              component={this.func(this.state.dataAccess[index])}
-            />
+            <Switch key={index + Date.now()}>
+              <PrivateRoute
+                path={content}
+                component={this.func(this.state.dataAccess[index])}
+              />
+            </Switch>
           );
         })}
-      </Switch>
+      </Fragment>
     );
   }
 }
