@@ -113,7 +113,7 @@ export const getCode = () => dispatch => {
 // Get Event List
 export const getEvent = () => dispatch => {
   axios({
-    url: `${ApiConfig.host}/tevent`,
+    url: `${ApiConfig.host}/event`,
     method: "get",
     headers: {
       Authorization: localStorage.token

@@ -3,8 +3,6 @@ import { connect } from "react-redux";
 import { Switch } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import PropTypes from "prop-types";
-import HostConfig from "./config/Host_Config";
-import axios from "axios";
 // Pages Components
 import Dashboard from "./Dashboard";
 import ListCompany from "./components/content/company/CompanyList";
@@ -21,42 +19,31 @@ import DesignEdit from "./components/content/design/DesignEdit";
 import TsouvenirList from "./components/content/tsouvenir/TSouvenirList";
 import TsouveniritemList from "./components/content/tsouveniritem/TSouvenirRequestList";
 import ListMenu from "./components/content/menu/MenuList";
+import ListPromotion from "./components/content/promotion/ListPromotion";
+import addPromotionND from "./components/content/promotion/addPromotionND";
+import addPromotionD from "./components/content/promotion/addPromotionD";
+import editPromotionD from "./components/content/promotion/editPromotionD";
+import editPromotionND from "./components/content/promotion/editPromotionND";
+import ViewPromotion from "./components/content/promotion/viewPromotion/viewPromotion";
+import ListUser from "./components/content/users/ListUser";
+import { getListAccess } from "./actions/accessMenuActions";
 
 class RouteSwitcher extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataAccess: [],
-      the: [],
-      side: []
+      dataAccess: []
     };
   }
-
-  getListAccess = () => {
-    let theRole = this.props.data.user.m_role_id;
-    if (theRole !== undefined) {
-      axios({
-        url: `${HostConfig.host}/access/${theRole}`,
-        method: "get",
-        headers: {
-          Authorization: localStorage.token
-        }
-      })
-        .then(res => {
-          this.setState({
-            dataAccess: res.data.message.map(content => {
-              return content.controller;
-            })
-          });
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    }
-  };
-
   componentDidMount() {
-    this.getListAccess();
+    if (this.props.data.user.m_role_id !== undefined) {
+      this.props.getListAccess(this.props.data.user.m_role_id);
+    }
+  }
+  componentWillReceiveProps(propsData) {
+    this.setState({
+      dataAccess: propsData.theAccessData.dataAccess
+    });
   }
 
   func = url => {
@@ -85,7 +72,10 @@ class RouteSwitcher extends Component {
         return TsouvenirList;
       case "/tsouveniritem":
         return TsouveniritemList;
-
+      case "/promotion":
+        return ListPromotion;
+      case "/user":
+        return ListUser;
       default:
         return Dashboard;
     }
@@ -94,6 +84,7 @@ class RouteSwitcher extends Component {
   render() {
     return (
       <Switch>
+        <PrivateRoute path={"/dashboard"} component={Dashboard} />
         {/* Private Route with Access Control  */}
         {this.state.dataAccess.map((content, index) => {
           if (content === "/design") {
@@ -117,6 +108,26 @@ class RouteSwitcher extends Component {
                 />
               </Switch>
             );
+          } else if (content === "/promotion") {
+            return (
+              <Switch>
+                <PrivateRoute
+                  path={content}
+                  component={this.func(this.state.dataAccess[index])}
+                />
+                <PrivateRoute path="/addpromot-nd" component={addPromotionND} />
+                <PrivateRoute path="/addpromot-d" component={addPromotionD} />
+                <PrivateRoute path="/editpromot-d" component={editPromotionD} />
+                <PrivateRoute
+                  path="/editpromot-nd"
+                  component={editPromotionND}
+                />
+                <PrivateRoute
+                  path="/viewpromotion/:flag/:code/:design"
+                  component={ViewPromotion}
+                />
+              </Switch>
+            );
           }
           return (
             <PrivateRoute
@@ -131,11 +142,17 @@ class RouteSwitcher extends Component {
 }
 
 RouteSwitcher.propTypes = {
-  data: PropTypes.object.isRequired
+  data: PropTypes.object.isRequired,
+  getListAccess: PropTypes.func.isRequired,
+  theAccessData: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  data: state.auth
+  data: state.auth,
+  theAccessData: state.accessMenuData
 });
 
-export default connect(mapStateToProps)(RouteSwitcher);
+export default connect(
+  mapStateToProps,
+  { getListAccess }
+)(RouteSwitcher);

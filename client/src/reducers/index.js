@@ -13,7 +13,7 @@ import tsouvenirReducer from "./tsouvenirReducer";
 import tsouveniritemReducer from "./tsouveniritemReducer";
 import promotionReducers from "./promotionReducers";
 import accessMenuReducers from "./accessMenuReducers";
-
+import userReducers from "./userReducers";
 export default combineReducers({
   auth: authReducer,
   roleData: roleReducers,
@@ -28,5 +28,6 @@ export default combineReducers({
   tsouvenirIndexReducer: tsouvenirReducer,
   tsouveniritemIndexReducer: tsouveniritemReducer,
   accessMenuData: accessMenuReducers,
-  promot: promotionReducers
+  promot: promotionReducers,
+  userData: userReducers
 });
