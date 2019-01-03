@@ -24,20 +24,20 @@ class viewClose extends React.Component {
   }
 
   forStatus(status) {
-    if (status == 0) return "Reject";
-    if (status == 1) return "Submited";
-    if (status == 2) return "In Progress";
-    if (status == 3) return "Done";
+    if (status === 0) return "Reject";
+    if (status === 1) return "Submited";
+    if (status === 2) return "In Progress";
+    if (status === 3) return "Done";
   }
   forTodo(todo) {
-    if (todo == 1) return "Print";
-    if (todo == 2) return "Post to Social Media";
-    if (todo == 3) return "Post to Company Profile Website";
-    if (todo == 4) return "Other";
+    if (todo === 1) return "Print";
+    if (todo === 2) return "Post to Social Media";
+    if (todo === 3) return "Post to Company Profile Website";
+    if (todo === 4) return "Other";
   }
 
   changeDateFormat = tanggal => {
-    if (tanggal == null) {
+    if (tanggal === null) {
       return "";
     } else {
       return moment(tanggal).format("DD/MM/YYYY");

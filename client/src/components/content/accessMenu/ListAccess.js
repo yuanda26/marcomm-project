@@ -193,7 +193,7 @@ class ListAccess extends React.Component {
   }
   deleteModalHandler(accessid) {
     let tmp = {};
-    this.state.access.map(ele => {
+    this.state.access.forEach(ele => {
       if (accessid === ele._id) {
         tmp = ele;
       }
@@ -206,7 +206,7 @@ class ListAccess extends React.Component {
 
   viewModalHandler(accessid) {
     let tmp = {};
-    this.state.access.map(ele => {
+    this.state.access.forEach(ele => {
       if (accessid === ele._id) {
         tmp = ele;
       }
@@ -219,7 +219,7 @@ class ListAccess extends React.Component {
 
   editModalHandler(accessid) {
     let tmp = {};
-    this.state.access.map(ele => {
+    this.state.access.forEach(ele => {
       if (accessid === ele._id) {
         tmp = {
           _id: ele._id,

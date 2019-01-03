@@ -145,7 +145,7 @@ class CreatePromotion extends React.Component {
     const designOptions = event => {
       return design
         .map(row => {
-          if (row.t_event_id == event) {
+          if (row.t_event_id === event) {
             return {
               value: row.code,
               label: row.code

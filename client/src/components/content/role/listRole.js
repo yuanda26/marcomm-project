@@ -52,7 +52,7 @@ class ListRole extends React.Component {
   //for delete action
   deleteModalHandler(roleid) {
     let tmp = {};
-    this.state.role.map(ele => {
+    this.state.role.forEach(ele => {
       if (roleid === ele._id) {
         tmp = ele;
       }
@@ -65,7 +65,7 @@ class ListRole extends React.Component {
   //for view action
   viewModalHandler(roleid) {
     let tmp = {};
-    this.state.role.map(ele => {
+    this.state.role.forEach(ele => {
       if (roleid === ele._id) {
         tmp = ele;
       }
@@ -78,7 +78,7 @@ class ListRole extends React.Component {
   //for update action
   editModalHandler(roleid) {
     let tmp = {};
-    this.state.role.map(ele => {
+    this.state.role.forEach(ele => {
       if (roleid === ele._id) {
         tmp = {
           _id: ele._id,

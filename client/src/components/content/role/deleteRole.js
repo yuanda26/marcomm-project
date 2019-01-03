@@ -1,7 +1,8 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
 import axios from "axios";
-import apiConfig from "../../../config/Host_Config";
+import HostConfig from "../../../config/Host_Config";
+
 class DeleteRole extends React.Component {
   constructor(props) {
     super(props);
@@ -11,7 +12,7 @@ class DeleteRole extends React.Component {
   deleteHandler() {
     let token = localStorage.token;
     let option = {
-      url: apiConfig.host + "/role" + "/" + this.props.role.code,
+      url: `${HostConfig.host}/role/${this.props.role.code}`,
       method: "delete",
       headers: {
         Authorization: token
@@ -19,7 +20,7 @@ class DeleteRole extends React.Component {
     };
     axios(option)
       .then(response => {
-        if (response.data.code == 200) {
+        if (response.data.code === 200) {
           this.props.modalStatus(
             1,
             "Data deleted!, Data role with code " +
