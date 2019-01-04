@@ -45,7 +45,8 @@ const tEventDatalayer = {
 			    "status" : "$status",
 			    "reject_reason" : "$reject_reason",
 			    "is_delete" : "$is_delete",
-			    "created_by" : "$user.username",
+			    "created_by" : "$created_by",
+			    "created_by_employee" : "$user.username",
 			    "created_date" : "$created_date",
 			    "updated_by" : "$updated_by",
 			    "updated_date" : "$updated_date"
@@ -117,16 +118,6 @@ const tEventDatalayer = {
 
 	// code, request_by, request_date, status, created_date, created_by
 	searchHandlerData : (callback, code, request_by, request_date, status, created_date, created_by) => {
-		let newStatus = ""
-		if( ("Submitted" || "SUBMITTED" || "submitted") === status ){
-			newStatus = "1"
-		}else if( ("In Progress" || "in progress" || "IN PROGRESS") === status ){
-			newStatus = "2"
-		}else if( ("Done" || "done" || "DONE") === status ){
-			newStatus = "3"
-		}else if( ("Rejected" || "rejected" || "REJECTED") === status ){
-			newStatus = "0"
-		}
 		db.collection('t_event').aggregate([
 			{
 	    	$lookup : {
@@ -149,7 +140,7 @@ const tEventDatalayer = {
 					code : new RegExp(code),
 					request_by : new RegExp(request_by), 
 					request_date : new RegExp(request_date),
-					status : new RegExp(newStatus), 
+					status : new RegExp(status), 
 					created_date : new RegExp(created_date),
 					created_by : new RegExp(created_by), 
 					is_delete : false
@@ -176,7 +167,8 @@ const tEventDatalayer = {
 			    "status" : "$status",
 			    "reject_reason" : "$reject_reason",
 			    "is_delete" : "$is_delete",
-			    "created_by" : "$user.username",
+			    "created_by" : "$created_by",
+			    "created_by_employee" : "$user.username",
 			    "created_date" : "$created_date",
 			    "updated_by" : "$updated_by",
 			    "updated_date" : "$updated_date"

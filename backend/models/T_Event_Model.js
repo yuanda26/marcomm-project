@@ -19,6 +19,7 @@ function tEvent(t_event_data) {
 	this.reject_reason = t_event_data.reject_reason;
 	this.is_delete     = t_event_data.false;
 	this.created_by    = t_event_data.created_by;
+	this.created_by_employee =  t_event_data.created_by_employee;
 	this.created_date  = t_event_data.created_date;
 	this.updated_by    = t_event_data.updated_by;
 	this.updated_date  = t_event_data.updated_date;	
@@ -46,6 +47,7 @@ tEvent.prototype.getData = function() {
 		reject_reason : this.reject_reason,
 		is_delete     : this.false,
 		created_by    : this.created_by,
+		created_by_employee : this.created_by_employee,
 		created_date  : this.created_date,
 		updated_by    : this.updated_by,
 		updated_date  : this.updated_date,

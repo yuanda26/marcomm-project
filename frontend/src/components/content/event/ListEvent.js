@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Alert } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import { connect } from "react-redux";
-import { getAllEvent, searchEvent } from "../../../actions/eventAction";
+import { getAllEvent, searchEvent, eraseStatus } from "../../../actions/eventAction";
 
 import EditEvent from './EditEvent'
 import CreateEvent from './CreateEvent'
@@ -33,12 +33,15 @@ class ListEvent extends React.Component {
 			currentEvent:{},
 			alertData: {
 				status: 0,
-        message: "",
-        action:"",
-        optional:"",
-        code: ""
+        message: "bebas"
 			},
-      createdDate : null
+      createdDate : null,
+      status: [
+      	{ _id: "4sv8e%7qjhd6", name: "Submitted", code: 1},
+      	{ _id: "tgsr62%fdsd1", name: "In Progress", code: 2},
+      	{ _id: "byw235%3bhty", name: "Done", code: 3},
+      	{ _id: "sdf64%fgre3#", name: "Rejected", code: 0},
+      ]
 		}
 	}
 
@@ -116,7 +119,7 @@ class ListEvent extends React.Component {
 		this.setState({
 			viewEvent: false,
 			editEvent: false,
-			deleteEvent: false
+			deleteEvent: false,
 		});
 	}
 
@@ -125,24 +128,46 @@ class ListEvent extends React.Component {
 	}
 
 	closeHandler = () => {
-		this.setState({ showCreateEvent: false });
+		this.setState({ showCreateEvent: false});
 	}
 
 	componentDidMount = () => {
 		this.props.getAllEvent();
 	}
 
-	modalStatus = (status, action, message, optional, code) => {
+	modalStatus = (status, message) => {
+		this.props.eraseStatus()
     this.setState({
       alertData: {
         status: status,
-        message: message,
-        action: action,
-        optional:optional,
-        code: code
+        message: message
+      }
+    });
+    setTimeout(()=>{
+    	this.setState({
+      alertData: {
+        status: 0,
+        message: ""
+      }
+    });
+    }, 3000)
+  }
+
+  closeAlert=()=>{
+  	this.setState({
+      alertData: {
+        status: 0,
+        message: ""
       }
     });
   }
+
+  componentDidUpdate(prevProps) {
+	  // Typical usage (don't forget to compare props):
+	  if (this.props.statusCreate !== prevProps.statusCreate) {
+	    this.props.eraseStatus()
+	  }
+	}
 
 	render() {
 		return (
@@ -163,20 +188,30 @@ class ListEvent extends React.Component {
 								</div>
 								<div>
 									{this.state.alertData.status === 1 ? (
-			              <Alert color="success">
-			                <b>Data {this.state.alertData.action} !</b>
-			                	{" " + this.state.alertData.message + " "} 
-			                <strong>{this.state.alertData.code}</strong>
-			                	{this.state.alertData.optional}
+			              <Alert className="alert alert-succes alert-dismissible fade show">
+			                <b>{this.state.alertData.message}</b>
+			                <button 
+			                	type="button" 
+			                	className="close" 
+			                	data-dismiss="alert"
+			                	onClick={this.closeAlert} 
+			                	aria-label="Close">
+							          <span>&times;</span>
+							        </button>
 			              </Alert>
 			            ) : ("")
 									}
 									{this.state.alertData.status === 2 ? (
-			              <Alert color="danger">
-			                <b>Data {this.state.alertData.action} !</b>
-			                	{" " + this.state.alertData.message + " "} 
-			                <strong>{this.state.alertData.code}</strong>
-			                	{this.state.alertData.optional}
+			              <Alert className="alert alert-danger alert-dismissible fade show">
+			                <b>{this.state.alertData.message}</b>
+			                <button 
+			                	type="button" 
+			                	className="close" 
+			                	data-dismiss="alert" 
+			                	aria-label="Close"
+			                	onClick={this.closeAlert}>
+						          <span>&times;</span>
+						        </button>
 			              </Alert>
 			            ) : ("")
 									}
@@ -234,13 +269,20 @@ class ListEvent extends React.Component {
 					              />
 											</div>
 											<div className='col-md'>
-												<input 
-													placeholder="Status" 
-													className="form-control" 
-													name="status"
-													onChange={this.changeHandler}
-												/>
-											</div>
+                        <select
+                          name="status"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                          defaultValue=""
+                        >
+                        <option value="" >Status...</option>
+                          {this.state.status.map((row,x) => {
+                            return (
+                              <option key={row._id} value={row.code}>{row.name}</option>
+                          )})}
+                        </select>
+                       </div>
+											
 											<div className='col-md'>
 												<DatePicker
 					                className="form-control"
@@ -292,7 +334,7 @@ class ListEvent extends React.Component {
 												<td>{row.request_date}</td>
 												<td>{row.status}</td>
 												<td>{row.created_date}</td>
-												<td>{row.created_by}</td>
+												<td>{row.created_by_employee}</td>
 												<td>
 													<Link to="#">
 			                      <Search
@@ -326,14 +368,16 @@ class ListEvent extends React.Component {
 ListEvent.propTypes = {
   getAllEvent: PropTypes.func.isRequired,
   searchEvent: PropTypes.func.isRequired,
+  eraseStatus: PropTypes.func.isRequired,
   event: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   event: state.event,
-  employee: state.employee
+  employee: state.employee,
+  status: state.event.status
 });
 
 export default connect(
-	mapStateToProps,{ getAllEvent, searchEvent }
+	mapStateToProps,{ getAllEvent, searchEvent, eraseStatus }
 	)( ListEvent );

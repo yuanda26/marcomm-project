@@ -3,13 +3,15 @@ import {
   UPDATE_EVENT,
   CREATE_EVENT,
   DELETE_EVENT,
-  SEARCH_EVENT
+  SEARCH_EVENT,
+  ERASE_STATUS
 } from "../actions/types";
 
 const initialState = {
   myEvent: [],
-  status: null,
-  _id : null
+  statusUpdate: null,
+  statusCreate: null,
+  code : null
 };
 
 export default function(state = initialState, action) {
@@ -23,13 +25,14 @@ export default function(state = initialState, action) {
       return {
         ...state,
         myEvent: action.payload,
-        status: action.status
+        statusUpdate: action.status
       };
     case CREATE_EVENT:
       return {
         ...state,
         myEvent: action.payload,
-        _id: action.payload[action.payload.length-1].code
+        code: action.payload[action.payload.length-1].code,
+        statusCreate: action.status
       };
     case DELETE_EVENT:
       return {
@@ -40,6 +43,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         myEvent: action.payload,
+      };
+    case ERASE_STATUS:
+      return {
+        ...state,
+        status: action.payload,
       };
     default:
       return state;
