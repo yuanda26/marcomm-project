@@ -226,11 +226,8 @@ class SouvenirList extends Component {
     let souvenirLabel;
     let souvenirList;
 
-    // Inline Table Style
-    const columnWidth = { width: "100%" };
-    const rowWidth = { width: "15%" };
+    // Inline Table Style]
     const capitalize = { textTransform: "capitalize" };
-    const width = { width: "5%" };
 
     if (souvenirs.length > 0) {
       souvenirList = souvenirs.map((souvenir, index) => (
@@ -268,13 +265,13 @@ class SouvenirList extends Component {
       ));
 
       souvenirLabel = (
-        <tr className="text-center font-weight-bold" style={columnWidth}>
+        <tr className="text-center font-weight-bold">
           <td>No</td>
-          <td style={rowWidth}>Souvenir Code</td>
-          <td style={rowWidth}>Souvenir Name</td>
-          <td style={rowWidth}>Unit</td>
-          <td style={rowWidth}>Created Date</td>
-          <td style={rowWidth}>Created By</td>
+          <td>Souvenir Code</td>
+          <td>Souvenir Name</td>
+          <td>Unit</td>
+          <td>Created Date</td>
+          <td>Created By</td>
           <td>Action</td>
         </tr>
       );
@@ -409,7 +406,7 @@ class SouvenirList extends Component {
                                 onChange={this.onSearch}
                               />
                             </td>
-                            <td nowrap="true" style={width}>
+                            <td nowrap="true">
                               <div className="form-group">
                                 {this.state.search === true ? (
                                   <button
@@ -442,11 +439,12 @@ class SouvenirList extends Component {
                   {status === 3 && (
                     <div className="mt-2 alert alert-danger">{message}</div>
                   )}
-
-                  <table className="table table-responsive table-stripped">
-                    <thead>{souvenirLabel}</thead>
-                    <tbody>{souvenirList}</tbody>
-                  </table>
+                  <div className="table-responsive">
+                    <table className="table table-stripped">
+                      <thead>{souvenirLabel}</thead>
+                      <tbody>{souvenirList}</tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

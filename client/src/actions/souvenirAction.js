@@ -7,12 +7,14 @@ import {
   DELETE_SOUVENIR,
   ERRORS
 } from "./types";
-import ApiConfig from "../config/Host_Config";
+// Import Config
+import HostConfig from "../config/Host_Config";
+import ApiConfig from "../config/Api_Config";
 
 // Get All Units
 export const getUnits = () => dispatch => {
   axios({
-    url: `${ApiConfig.host}/unit`,
+    url: `${HostConfig}/${ApiConfig.unit}`,
     method: "get",
     headers: {
       authorization: localStorage.token
@@ -35,7 +37,7 @@ export const getUnits = () => dispatch => {
 // Get All Souvenirs
 export const getAllSouvenir = () => dispatch => {
   axios({
-    url: `${ApiConfig.host}/souvenir`,
+    url: `${HostConfig}/${ApiConfig.souvenir}`,
     method: "get",
     headers: {
       authorization: localStorage.token
@@ -58,7 +60,7 @@ export const getAllSouvenir = () => dispatch => {
 // Add New Master Souvenir
 export const createSouvenir = souvenirData => dispatch => {
   axios({
-    url: `${ApiConfig.host}/souvenir`,
+    url: `${HostConfig}/${ApiConfig.souvenir}`,
     method: "post",
     headers: {
       authorization: localStorage.token
@@ -83,7 +85,7 @@ export const createSouvenir = souvenirData => dispatch => {
 // Update Master Souvenir
 export const updateSouvenir = (souvenirId, souvenirUpdate) => dispatch => {
   axios({
-    url: `${ApiConfig.host}/souvenir/${souvenirId}`,
+    url: `${HostConfig}/${ApiConfig.souvenir}/${souvenirId}`,
     method: "put",
     headers: {
       authorization: localStorage.token
@@ -109,7 +111,7 @@ export const updateSouvenir = (souvenirId, souvenirUpdate) => dispatch => {
 // Delete Master Souvenir
 export const deleteSouvenir = (code, deleteData) => dispatch => {
   axios({
-    url: `${ApiConfig.host}/souvenir/${code}`,
+    url: `${HostConfig}/${ApiConfig.souvenir}/${code}`,
     method: "delete",
     headers: {
       authorization: localStorage.token

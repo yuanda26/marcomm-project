@@ -183,8 +183,6 @@ class DesignList extends Component {
 
     let designList;
     let designLabel;
-    // Inline Table Style
-    const columnWidth = { width: "100%" };
 
     if (designs.length > 0) {
       designList = designs.map((design, index) => (
@@ -210,7 +208,7 @@ class DesignList extends Component {
       ));
 
       designLabel = (
-        <tr className="text-center font-weight-bold" style={columnWidth}>
+        <tr className="text-center font-weight-bold">
           <td>No</td>
           <td>Transaction Code</td>
           <td>Event Name</td>
@@ -265,7 +263,7 @@ class DesignList extends Component {
                   <div className="text-left">
                     <Link to="/design/add">
                       <button className="btn btn-primary" type="button">
-                        Add
+                        Add Design
                       </button>
                     </Link>
                   </div>
@@ -365,10 +363,12 @@ class DesignList extends Component {
                   {status === 2 && (
                     <div className="mt-2 alert alert-primary">{message}</div>
                   )}
-                  <table className="table table-responsive table-stripped">
-                    <thead>{designLabel}</thead>
-                    <tbody>{designList}</tbody>
-                  </table>
+                  <div className="table-responsive">
+                    <table className="table table-stripped">
+                      <thead>{designLabel}</thead>
+                      <tbody>{designList}</tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

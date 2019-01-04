@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import { Alert } from "reactstrap";
 import { Search, CreateOutlined, DeleteOutlined } from "@material-ui/icons";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 // Redux actions
 import { getUnits } from "../../../actions/unitAction";
 import { getStaff, getEmployee } from "../../../actions/designAction";
@@ -16,6 +15,7 @@ import UnitDelete from "./UnitDelete";
 import UnitAdd from "./UnitAdd";
 // Form Components
 import Spinner from "../../common/Spinner";
+import "react-datepicker/dist/react-datepicker.css";
 
 class UnitList extends Component {
   constructor(props) {
@@ -135,7 +135,9 @@ class UnitList extends Component {
     });
   };
 
-  SearchHandler = () => {
+  SearchHandler = e => {
+    e.preventDefault();
+
     let { code, name, created_by, created_date } = this.state.initialSearch;
 
     code = new RegExp(code, "i");
@@ -225,7 +227,7 @@ class UnitList extends Component {
     if (unitData.length > 0) {
       unitList = result.map((row, index) => (
         <tr key={row._id} className="text-center">
-          <td>{index + Date.now()}</td>
+          <td>{index + 1}</td>
           <td>{row.code}</td>
           <td>{row.name}</td>
           <td>{row.created_date}</td>
@@ -257,7 +259,7 @@ class UnitList extends Component {
       ));
 
       unitLabel = (
-        <tr className="text-center text-bold">
+        <tr className="text-center font-weight-bold">
           <td>No</td>
           <td>Unit Code</td>
           <td>Unit Name</td>
@@ -324,84 +326,92 @@ class UnitList extends Component {
                       <li className="breadcrumb-item active">
                         <Link to="/">Home </Link>
                       </li>
-                      <li className="breadcrumb-item ">Unit</li>
+                      <li className="breadcrumb-item ">Master Unit</li>
                     </ol>
                   </nav>
-                  {/* Search Form */}
-                  <form>
-                    <div className="form-group col-md-3">
-                      <select
-                        name="code"
-                        className="form-control "
-                        onChange={this.changeHandler}
-                      >
-                        <option key="empty" value="">
-                          -Select Unit Code-
-                        </option>
-                        {unit.map(row => {
-                          return (
-                            <option key={row.code} value={row.code}>
-                              {row.code}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
-                    <div className="form-group col-md-3">
-                      <select
-                        name="name"
-                        className="form-control "
-                        onChange={this.changeHandler}
-                      >
-                        <option key="empty" value="">
-                          -Select Unit Name-
-                        </option>
-                        {unit.map(row => {
-                          return (
-                            <option key={row.code} value={row.name}>
-                              {row.name}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
-                    <div className="col-md-2">
-                      <DatePicker
-                        className="form-control"
-                        placeholderText="Created"
-                        name="created_date"
-                        selected={this.state.created_date}
-                        onChange={this.handleChangeCreatedDate}
-                      />
-                    </div>
-                    <div className="col-md-2">
-                      <input
-                        placeholder="Created By"
-                        name="created_by"
-                        className="form-control"
-                        onChange={this.changeHandler}
-                      />
-                    </div>
-                    <Link to="#">
-                      <button
-                        onClick={this.SearchHandler}
-                        className="btn btn-primary col-md-auto"
-                        type="button"
-                      >
-                        Search
-                      </button>
-                    </Link>
-                  </form>
-                  <div className="text-left mb-4">
+                  <div className="text-left mt-3">
                     <Link to="#">
                       <button
                         onClick={this.addModalHandler}
-                        className="btn btn-warning ml-2 col-md-auto"
+                        className="btn btn-primary ml-2 col-md-auto"
                         type="button"
                       >
                         Add Unit
                       </button>
                     </Link>
+                  </div>
+                  {/* Search Form */}
+                  <div className="mt-2">
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <form onSubmit={this.SearchHandler}>
+                              <td>
+                                <select
+                                  name="code"
+                                  className="form-control "
+                                  onChange={this.changeHandler}
+                                >
+                                  <option key="empty" value="">
+                                    -Select Unit Code-
+                                  </option>
+                                  {unit.map(row => {
+                                    return (
+                                      <option key={row.code} value={row.code}>
+                                        {row.code}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </td>
+                              <td>
+                                <select
+                                  name="name"
+                                  className="form-control "
+                                  onChange={this.changeHandler}
+                                >
+                                  <option key="empty" value="">
+                                    -Select Unit Name-
+                                  </option>
+                                  {unit.map(row => {
+                                    return (
+                                      <option key={row.code} value={row.name}>
+                                        {row.name}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </td>
+                              <td>
+                                <DatePicker
+                                  className="form-control"
+                                  placeholderText="Created"
+                                  name="created_date"
+                                  selected={this.state.created_date}
+                                  onChange={this.handleChangeCreatedDate}
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  placeholder="Created By"
+                                  name="created_by"
+                                  className="form-control"
+                                  onChange={this.changeHandler}
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="submit"
+                                  value="Search"
+                                  className="btn btn-block btn-warning"
+                                />
+                              </td>
+                            </form>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                   {status === 1 && (
                     <Alert color="success">
@@ -419,7 +429,7 @@ class UnitList extends Component {
                       {message3}
                     </Alert>
                   )}
-                  <div className="table-responsive">
+                  <div className="table-responsive mt-4">
                     <table className="table table-stripped ">
                       <thead>{unitLabel}</thead>
                       <tbody>{unitList}</tbody>

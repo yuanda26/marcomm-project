@@ -18,11 +18,12 @@ import {
   ERRORS
 } from "./types";
 import HostConfig from "../config/Host_Config";
+import ApiConfig from "../config/Api_Config";
 
 // Get All Designs
 export const getAllDesign = () => dispatch => {
   axios({
-    url: `${HostConfig.host}/design`,
+    url: `${HostConfig}/${ApiConfig.design}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -45,7 +46,7 @@ export const getAllDesign = () => dispatch => {
 // Get Single Design
 export const getDesign = code => dispatch => {
   axios({
-    url: `${HostConfig.host}/design/${code}`,
+    url: `${HostConfig}/${ApiConfig.design}/${code}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -68,7 +69,7 @@ export const getDesign = code => dispatch => {
 // Get Design Items
 export const getItems = code => dispatch => {
   axios({
-    url: `${HostConfig.host}/design/item/${code}`,
+    url: `${HostConfig}/${ApiConfig.design_item}/${code}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -91,7 +92,7 @@ export const getItems = code => dispatch => {
 // Get Generated Design Code
 export const getCode = () => dispatch => {
   axios({
-    url: `${HostConfig.host}/design/code`,
+    url: `${HostConfig}/${ApiConfig.design_code}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -114,7 +115,7 @@ export const getCode = () => dispatch => {
 // Get Event List
 export const getEvent = () => dispatch => {
   axios({
-    url: `${HostConfig.host}/event`,
+    url: `${HostConfig}/${ApiConfig.event}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -137,7 +138,7 @@ export const getEvent = () => dispatch => {
 // Get Product List
 export const getProduct = () => dispatch => {
   axios({
-    url: `${HostConfig.host}/product`,
+    url: `${HostConfig}/${ApiConfig.product}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -160,7 +161,7 @@ export const getProduct = () => dispatch => {
 // Get PIC User that Has Role as "Requester"
 export const getRequester = () => dispatch => {
   axios({
-    url: `${HostConfig.host}/design/requester`,
+    url: `${HostConfig}/${ApiConfig.design_requester}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -183,7 +184,7 @@ export const getRequester = () => dispatch => {
 // Get Assign To Name
 export const getAssignToName = () => dispatch => {
   axios({
-    url: `${HostConfig.host}/employee`,
+    url: `${HostConfig}/${ApiConfig.employee}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -206,7 +207,7 @@ export const getAssignToName = () => dispatch => {
 // Add New Design Request
 export const createDesign = (designData, history) => dispatch => {
   axios({
-    url: `${HostConfig.host}/design`,
+    url: `${HostConfig}/${ApiConfig.design}`,
     method: "post",
     headers: {
       Authorization: localStorage.token
@@ -231,7 +232,7 @@ export const createDesign = (designData, history) => dispatch => {
 // Add New Design Item Request
 export const createDesignItem = (designItemData, history) => dispatch => {
   axios({
-    url: `${HostConfig.host}/design/item`,
+    url: `${HostConfig}/${ApiConfig.design_item}`,
     method: "post",
     headers: {
       Authorization: localStorage.token
@@ -255,7 +256,7 @@ export const createDesignItem = (designItemData, history) => dispatch => {
 // Update Design Request
 export const updateDesign = (code, designUpdate, history) => dispatch => {
   axios({
-    url: `${HostConfig.host}/design/${code}`,
+    url: `${HostConfig}/${ApiConfig.design}/${code}`,
     method: "put",
     headers: {
       Authorization: localStorage.token
@@ -281,7 +282,7 @@ export const updateDesign = (code, designUpdate, history) => dispatch => {
 // Update Design Request
 export const updateDesignItem = (designItemUpdate, history) => dispatch => {
   axios({
-    url: `${HostConfig.host}/design/item`,
+    url: `${HostConfig}/${ApiConfig.design_item}`,
     method: "put",
     headers: { Authorization: localStorage.token },
     data: { designItemUpdate }
@@ -304,7 +305,7 @@ export const updateDesignItem = (designItemUpdate, history) => dispatch => {
 // Get User has Staff Role
 export const getStaff = () => dispatch => {
   axios({
-    url: `${HostConfig.host}/design/staff`,
+    url: `${HostConfig}/${ApiConfig.design_staff}`,
     method: "get",
     headers: { Authorization: localStorage.token }
   })
@@ -325,7 +326,7 @@ export const getStaff = () => dispatch => {
 // Get All Employee
 export const getEmployee = () => dispatch => {
   axios({
-    url: `${HostConfig.host}/employee`,
+    url: `${HostConfig}/${ApiConfig.employee}`,
     method: "get",
     headers: { Authorization: localStorage.token }
   })
@@ -347,7 +348,7 @@ export const getEmployee = () => dispatch => {
 export const uploadFiles = formdata => dispatch => {
   axios({
     method: "post",
-    url: `${HostConfig.host}/design/upload_files`,
+    url: `${HostConfig}/${ApiConfig.design_files}`,
     data: formdata
   })
     .then(res => console.log(res))

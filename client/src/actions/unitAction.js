@@ -7,11 +7,12 @@ import {
   ERRORS
 } from "./types";
 import HostConfig from "../config/Host_Config";
+import ApiConfig from "../config/Api_Config";
 
 // Get All Units
 export const getUnits = () => dispatch => {
   axios({
-    url: `${HostConfig.host}/unit`,
+    url: `${HostConfig}/${ApiConfig.unit}`,
     method: "get",
     headers: { Authorization: localStorage.token }
   })
@@ -32,7 +33,7 @@ export const getUnits = () => dispatch => {
 // Create Unit
 export const createUnit = param => dispatch => {
   axios({
-    url: `${HostConfig.host}/unit`,
+    url: `${HostConfig}/${ApiConfig.unit}`,
     method: "post",
     headers: {
       Authorization: localStorage.token,
@@ -59,7 +60,7 @@ export const createUnit = param => dispatch => {
 // Update Unit
 export const updateUnit = (unitId, data) => dispatch => {
   axios({
-    url: `${HostConfig.host}/unit/${unitId}`,
+    url: `${HostConfig}/${ApiConfig.unit}/${unitId}`,
     method: "put",
     headers: {
       Authorization: localStorage.token,
@@ -86,7 +87,7 @@ export const updateUnit = (unitId, data) => dispatch => {
 // Delete Unit
 export const deleteUnit = unitId => dispatch => {
   axios({
-    url: `${HostConfig.host}/unit/${unitId}`,
+    url: `${HostConfig}/${ApiConfig.unit}/${unitId}`,
     method: "delete",
     headers: {
       Authorization: localStorage.token
