@@ -2,17 +2,14 @@ import {
   GET_EVENT,
   UPDATE_EVENT,
   CREATE_EVENT,
-  DELETE_EVENT
+  DELETE_EVENT,
+  SEARCH_EVENT
 } from "../actions/types";
 
 const initialState = {
   myEvent: [],
-  idCreated : [],
-  idUpdated : [],
-  messageDeleted : [],
-  statusDeleted : null,
-  statusCreated : null,
-  statusUpdated : null
+  status: null,
+  _id : null
 };
 
 export default function(state = initialState, action) {
@@ -25,19 +22,24 @@ export default function(state = initialState, action) {
     case UPDATE_EVENT:
       return {
         ...state,
-        statusUpdated: action.status,
-        idUpdated: action.idUpdated,
+        myEvent: action.payload,
+        status: action.status
       };
     case CREATE_EVENT:
       return {
         ...state,
-        idCreated: action.idCreated,
-        statusCreated: action.status 
+        myEvent: action.payload,
+        _id: action.payload[action.payload.length-1].code
       };
     case DELETE_EVENT:
       return {
         ...state,
         statusDeleted: action.status,
+      };
+    case SEARCH_EVENT:
+      return {
+        ...state,
+        myEvent: action.payload,
       };
     default:
       return state;

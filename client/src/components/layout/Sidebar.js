@@ -38,7 +38,7 @@ class Sidebar extends React.Component {
   }
   render() {
     return (
-      <nav className="col-md-2 d-none d-md-block bg-light sidebar">
+      <nav className="col-md-2 d-none d-md-block sidebar">
         <div className="sidebar-sticky">
           <h5 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
             <span>Master</span>

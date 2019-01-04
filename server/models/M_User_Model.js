@@ -6,6 +6,7 @@ function M_User(mUserData) {
   this.m_employee_id = mUserData.m_employee_id;
   this.role_name = mUserData.role_name;
   this.name = mUserData.name;
+  this.company_name = mUserData.company_name;
   this.is_delete = mUserData.is_delete;
   this.created_by = mUserData.created_by;
   this.created_date = mUserData.created_date;
@@ -22,6 +23,7 @@ M_User.prototype.getData = function() {
     m_employee_id: this.m_employee_id,
     role_name: this.role_name,
     name: this.name,
+    company_name: this.company_name,
     is_delete: this.is_delete,
     created_by: this.created_by,
     created_date: this.created_date,

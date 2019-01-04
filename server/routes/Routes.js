@@ -13,6 +13,9 @@ const tDesignLogic = require("../bisnislogics/T_Design_Logic");
 const tDesignItemLogic = require("../bisnislogics/T_Design_Item_Logic.js");
 const tSouvenirLogic = require("../bisnislogics/T_Souvenir_Logic");
 const tSouvenirItemLogic = require("../bisnislogics/T_Souvenir_Item_Logic");
+const promotionLogic = require("../bisnislogics/T_Promotion_Logic");
+const promotionItemLogic = require("../bisnislogics/T_Promotion_Item_Logic");
+const promotionFileLogic = require("../bisnislogics/T_Promotion_Item_File_Logic");
 
 module.exports = server => {
   // Root Route
@@ -186,8 +189,17 @@ module.exports = server => {
   //== End of T Event Route
 
   // Master User Route - Login Process
-  // Made By: Dian Yuanda
+  // Made By: Hanif Al Baaits (Edited by: Randika Alditia)
   server.post("/api/user/login", userLogic.loginUserHandler);
+  server.put("/api/user/repass/:userid", authenticate, userLogic.rePassword);
+  server.put("/api/user/forgot/:userid", userLogic.forgotPassword);
+  // Master User Route - CRUD - ADMIN
+  server.get("/api/useremployee", authenticate, userLogic.readEmployeeFromUser);
+  server.get("/api/user", authenticate, userLogic.readUserAllHandler);
+  server.get("/api/user/:userid", authenticate, userLogic.readUserByUsername);
+  server.post("/api/user", authenticate, userLogic.createUserHandler);
+  server.put("/api/user/:id", userLogic.updateUserById);
+  server.del("/api/user/:id", authenticate, userLogic.deleteUserHandler);
   //== End of T Event Route
 
   // Transaction Souvenir Route
@@ -263,5 +275,101 @@ module.exports = server => {
     "/api/tsouveniritem/colseorder/:souvenirId",
     authenticate,
     tSouvenirItemLogic.closeOrderHandler
+  );
+
+  // Transaction Promotion Route
+  // Made By: Randika Alditia
+  server.get(
+    "/api/promotion",
+    authenticate,
+    promotionLogic.readAllPromotionHandler
+  );
+  server.get(
+    "/api/promotion/:promotionId",
+    authenticate,
+    promotionLogic.readByIdHandler
+  );
+  //Edited By: Randika Alditia
+  server.post(
+    "/api/promotion",
+    authenticate,
+    promotionLogic.createPromotionHandler
+  );
+  //== End of edit
+  server.put(
+    "/api/promotion/:promotionId",
+    authenticate,
+    promotionLogic.updatePromotionHandler
+  );
+  server.del(
+    "/api/promotion/:promotionId",
+    authenticate,
+    promotionLogic.deletePromotionHandler
+  );
+
+  server.get(
+    "/api/promotionitem",
+    authenticate,
+    promotionItemLogic.readAllPromotionHandler
+  );
+  server.get(
+    "/api/promotionitem/:promotionId",
+    authenticate,
+    promotionItemLogic.readByIdHandler
+  );
+  //edited by: randika alditia
+  server.get(
+    "/api/promotion_item/:code/:designCode",
+    authenticate,
+    promotionLogic.readByPromotionID
+  );
+  server.post(
+    "/api/promotionitem",
+    authenticate,
+    promotionItemLogic.createPromotionHandler
+  );
+  server.put(
+    "/api/promotionitem/:promotionId",
+    authenticate,
+    promotionItemLogic.updatePromotionHandler
+  );
+  server.del(
+    "/api/promotionitem/:promotionId",
+    authenticate,
+    promotionItemLogic.deletePromotionHandler
+  );
+
+  server.get(
+    "/api/promotionfile",
+    authenticate,
+    promotionFileLogic.readAllPromotionHandler
+  );
+  server.get(
+    "/api/promotionfile/:promotionId",
+    authenticate,
+    promotionFileLogic.readByIdHandler
+  );
+  server.post(
+    "/api/promotionfile",
+    authenticate,
+    promotionFileLogic.createPromotionHandler
+  );
+  server.put(
+    "/api/promotionfile/:promotionId",
+    authenticate,
+    promotionFileLogic.updatePromotionHandler
+  );
+  server.del(
+    "/api/promotionfile/:promotionId",
+    authenticate,
+    promotionFileLogic.deletePromotionHandler
+  );
+  //== End of Transaction Promotion Route
+  //get design information item by t_design_id created_by: Randika
+  server.get("/api/t_design_item/:code", tDesignItemLogic.readOne);
+  server.post(
+    "/api/promotion_design",
+    authenticate,
+    promotionLogic.handlerAddWithDesign
   );
 };

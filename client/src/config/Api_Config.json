@@ -1,0 +1,17 @@
+{
+    "EndPoints" : {
+        "company" : "company",
+        "employee" : "employee",
+        "user" : "user",
+        "role" : "role",
+        "menu" : "menu",
+        "access" : "access",
+        "souvenir" : "souvenir",
+        "product" : "product",
+        "design" : "design",
+        "event" : "event",
+        "promotion" : "promotion",
+        "tsouvenir" : "tsouvenir",
+        "tsouveniritem" : "tsouveniritem"
+    }
+}

@@ -18,14 +18,29 @@ const tEventBisnislogic = {
 
 	searchHandler : (req, res, next) => {
 		let code = req.params.code;
-		let request_by = req.params.request_by;
-		let request_date = req.params.request_date;
 		let status = req.params.status;
-		let created_date = req.params.created_date;
-		let created_by = req.params.created_by;
-		dtl.searchHandlerData((items) => {
-			responseHelper.sendResponse(res, 200, items);
-		}, code, request_by, request_date, status, created_date, created_by);
+		let request_date = "";
+		let created_date = "";
+		let paramUser = req.params.created_by;
+		let paramEmployee = req.params.request_by;
+
+		if( req.params.request_date !== "" ){
+			request_date = moment(req.params.request_date).format("DD/MM/YYYY");
+		}
+		if( req.params.created_date !== "" ){
+			created_date = moment(req.params.created_date).format("DD/MM/YYYY");
+		}
+		dtl.getUser((user) => {
+			let created_by = "";
+			user === null ? ( created_by = "" ) : ( created_by = user.m_employee_id )
+				dtl.getEmployee((employee)=>{
+					let request_by = "";
+					employee === null ? ( request_by = "" ) : ( request_by = employee.employee_number )
+					dtl.searchHandlerData((items) => {
+						responseHelper.sendResponse(res, 200, items);
+					}, code, request_by, request_date, status, created_date, created_by);
+				}, paramEmployee)
+			}, paramUser)
 	},
 
 	createHandler  : (req, res, next) => {
@@ -41,7 +56,9 @@ const tEventBisnislogic = {
 			body.code = codeTEvent;
 			body.created_date = moment().format("DD/MM/YYYY")
 			dtl.createHandlerData(function(items, date) {
-				responseHelper.sendResponse(res, 200, items);
+				dtl.readAllHandlerData(function (callbackReadData) {
+					responseHelper.sendResponse(res, 200, callbackReadData);
+				});
 			}, body);
 		}, date)
 	},
@@ -63,7 +80,7 @@ const tEventBisnislogic = {
 			assign_to     : req.body.assign_to,
 			closed_date   : req.body.closed_date,
 			note          : req.body.note,
-			status        : 1,
+			status        : "1",
 			reject_reason : req.body.reject_reason,
 			is_delete     : false,
 			created_by    : req.body.created_by,
@@ -72,13 +89,14 @@ const tEventBisnislogic = {
 			updated_date  : date,
 		}
 		dtl.updateHandlerData((items) => {
-			responseHelper.sendResponse(res, 200, items);
+			dtl.readAllHandlerData(function (callbackReadData) {
+				responseHelper.sendResponse(res, 200, callbackReadData);
+			});
 		}, param, body);
 	},
 
 	deleteHandler : (req, res, next) => {
 		let param = req.params.eventId;
-
 		dtl.deleteHandlerData((items) => {
 			responseHelper.sendResponse(res, 200, items);
 		}, param);

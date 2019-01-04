@@ -41,3 +41,32 @@ export const logoutUser = () => dispatch => {
   });
   window.location.href = "/";
 };
+//Forgot Password
+export const ForgotPassword = body => dispatch => {
+  let option = {
+    url: `${ApiConfig.host}/user/forgot/${body.username}`,
+    method: "put",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    data: body
+  };
+  axios(option)
+    .then(res => {
+      dispatch({
+        type: "FORGOT_USER",
+        status: res.data.code
+      });
+      alert(
+        "Perubahan password berhasil disimpan, silahkan login kembali dengan password baru!"
+      );
+      window.location.href = "/";
+    })
+    .catch(err => {
+      dispatch({
+        type: "FORGOT_USER",
+        status: 404,
+        payload: null
+      });
+    });
+};

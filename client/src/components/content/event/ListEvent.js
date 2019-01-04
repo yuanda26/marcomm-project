@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Alert } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import { connect } from "react-redux";
-import { getAllEvent } from "../../../actions/eventAction";
+import { getAllEvent, searchEvent } from "../../../actions/eventAction";
 
 import EditEvent from './EditEvent'
 import CreateEvent from './CreateEvent'
@@ -20,18 +20,16 @@ class ListEvent extends React.Component {
 		super(props)
 		this.state={
 			initialSearch:{
-				code : /(?:)/,
-				request_by : /(?:)/,
-				request_date : /(?:)/,
-				status : /(?:)/,
-				created_date : /(?:)/,
-				created_by: /(?:)/
+				code : "",
+				request_by : "",
+				request_date : "",
+				status : "",
+				created_date : "",
+				created_by: ""
 			},
 			created_date: null,
 			request_date:null,
-			hasil: [],
 			showCreateEvent:false,
-			event:[],
 			currentEvent:{},
 			alertData: {
 				status: 0,
@@ -46,7 +44,7 @@ class ListEvent extends React.Component {
 
 	viewModalHandler = (eventid) => {
 		let tmp = {};
-		this.state.event.forEach(ele => {
+		this.props.event.myEvent.forEach(ele => {
 			if (eventid === ele._id) {
 				tmp = ele;
 			}
@@ -59,7 +57,7 @@ class ListEvent extends React.Component {
 
 	editModalHandler = (eventid) => {
 		let tmp = {};
-		this.state.event.forEach(ele => {
+		this.props.event.myEvent.forEach(ele => {
 			if (eventid === ele._id) {
 				tmp = ele
 				this.setState({
@@ -73,10 +71,9 @@ class ListEvent extends React.Component {
 	handleChangeCreatedDate = date => {
 		let { initialSearch } = this.state
 		if(date){
-	    let newDate = moment(date).format("DD/MM/YYYY")
-	    initialSearch["created_date"] = new RegExp(newDate)
+	    initialSearch["created_date"] = moment(date).format("YYYY-MM-DD")
     }else{
-    	initialSearch["created_date"] = /(?:)/
+    	initialSearch["created_date"] = ""
     }
     this.setState({
   		initialSearch: initialSearch,
@@ -87,10 +84,9 @@ class ListEvent extends React.Component {
 	handleChangeRequestDate = date => {
 		let { initialSearch } = this.state
 		if(date){
-	    let newDate = moment(date).format("DD/MM/YYYY")
-	    initialSearch["request_date"] = new RegExp(newDate)
+	    initialSearch["request_date"] = moment(date).format("YYYY-MM-DD")
     }else{
-    	initialSearch["request_date"] = /(?:)/
+    	initialSearch["request_date"] = ""
     }
     this.setState({
   		initialSearch : initialSearch,
@@ -101,14 +97,19 @@ class ListEvent extends React.Component {
 	changeHandler = (event) => {
 		let { value, name } = event.target;
 		let { initialSearch } = this.state
-		initialSearch[name] = new RegExp(value.toLowerCase())
+		initialSearch[name] = value
     this.setState({
       initialSearch : initialSearch
     });
 	}
 
 	SearchHandler = () => {
-		alert("beoom")
+		let {
+			code,request_by,request_date,status,created_date,created_by
+		} = this.state.initialSearch
+		this.props.searchEvent(
+			code, request_by, request_date, status, created_date, created_by
+		)
 	}
 
 	closeModalHandler = () => {
@@ -131,14 +132,6 @@ class ListEvent extends React.Component {
 		this.props.getAllEvent();
 	}
 
-	componentWillReceiveProps(newProp){
-		this.setState({
-			hasil : newProp.event.myEvent,
-			event : newProp.event.myEvent,
-		})
-		
-	}
-
 	modalStatus = (status, action, message, optional, code) => {
     this.setState({
       alertData: {
@@ -147,10 +140,7 @@ class ListEvent extends React.Component {
         action: action,
         optional:optional,
         code: code
-      },
-      viewEvent: false,
-      editEvent: false,
-      deleteEvent: false
+      }
     });
   }
 
@@ -293,7 +283,7 @@ class ListEvent extends React.Component {
 											</tr>
 										</thead>
 										<tbody>
-											{this.state.hasil.map((row,x)=>
+											{this.props.event.myEvent.map((row,x)=>
 											<tr key={row._id}>
 												<td>{x + 1}</td>
 												<td>{row.code}</td>
@@ -335,6 +325,7 @@ class ListEvent extends React.Component {
 
 ListEvent.propTypes = {
   getAllEvent: PropTypes.func.isRequired,
+  searchEvent: PropTypes.func.isRequired,
   event: PropTypes.object.isRequired,
 };
 
@@ -344,5 +335,5 @@ const mapStateToProps = state => ({
 });
 
 export default connect(
-	mapStateToProps,{ getAllEvent }
+	mapStateToProps,{ getAllEvent, searchEvent }
 	)( ListEvent );

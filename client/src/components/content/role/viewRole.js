@@ -5,11 +5,11 @@ class ViewRole extends React.Component {
   render() {
     return (
       <Modal isOpen={this.props.view} className={this.props.className}>
-        <ModalHeader> View Unit</ModalHeader>
+        <ModalHeader> View Role</ModalHeader>
         <ModalBody>
           <form class="form-inline">
             <div class="input-group mb-3 input-group-sm">
-              <label for="text"> *Role Code : </label>
+              <label for="text"> Role Code </label>
               <input
                 type="text"
                 class="form-control"
@@ -18,7 +18,7 @@ class ViewRole extends React.Component {
                 value={this.props.role.code}
                 onChange={this.changeHandler}
               />
-              <label for="text"> *Role Name : </label>
+              <label for="text"> Role Name </label>
               <input
                 type="text"
                 class="form-control"
@@ -30,7 +30,7 @@ class ViewRole extends React.Component {
               />
             </div>
             <div class="input-group mb-3 input-group-sm">
-              <label for="text"> description : </label>
+              <label for="text"> Description </label>
               <input
                 type="text"
                 class="form-control"

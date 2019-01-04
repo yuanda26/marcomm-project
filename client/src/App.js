@@ -11,6 +11,7 @@ import RouteSwitcher from "./RouteSwitcher";
 // Layout Components
 import Login from "./components/content/users/Login";
 import Navbar from "./components/layout/Navbar";
+import Forgot from "./components/content/users/ForgotPassword";
 
 // Check for Token
 if (localStorage.token) {
@@ -33,6 +34,7 @@ class App extends Component {
           <div className="App">
             <Navbar />
             <Route exact path="/" component={Login} />
+            <Route exact path="/forgot_password" component={Forgot} />
             <RouteSwitcher />
           </div>
         </Router>

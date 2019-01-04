@@ -1,10 +1,7 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-//import axios from "axios";
-//import apiconfig from "../../../configs/api.config.json";
+import { withStyles, Grid } from "@material-ui/core";
 
 const styles = theme => ({
   root: {
@@ -16,7 +13,7 @@ const styles = theme => ({
   }
 });
 
-class ViewCompany extends React.Component {
+class ViewUser extends React.Component {
   render() {
     const { classes } = this.props;
     return (
@@ -24,39 +21,48 @@ class ViewCompany extends React.Component {
         <ModalHeader> View Unit</ModalHeader>
         <ModalBody>
           <div>
-            <h3>{this.props.company.name} </h3>
+            <h3>{this.props.user.name} </h3>
+            <h5>{this.props.user.m_employee_id} </h5>
           </div>
           <div className={classes.root}>
             <Grid container spacing={24}>
               <Grid item xs={6}>
-                Company Code
+                User Name
+                <br />
+                User Role ID
+                <br />
+                Name Role
+                <br />
+                User Employee ID
                 <br />
                 Company Name
                 <br />
-                Company Email
+                Created By
                 <br />
-                Phone Number
+                Created Date
                 <br />
-                Company Address
-                {/* <br />
-                Province
+                Updated By
                 <br />
-                City */}
+                Updated Date
               </Grid>
               <Grid item xs={6}>
-                {this.props.company.code}
+                {this.props.user.username}
                 <br />
-                {this.props.company.name}
+                {this.props.user.m_role_id}
                 <br />
-                {this.props.company.email}
+                {this.props.user.role_name}
                 <br />
-                {this.props.company.phone}
+                {this.props.user.m_employee_id}
                 <br />
-                {this.props.company.address}
-                {/* <br />
-                {this.props.company.province}
+                {this.props.user.company_name}
                 <br />
-                {this.props.company.city} */}
+                {this.props.user.created_by}
+                <br />
+                {this.props.user.created_date}
+                <br />
+                {this.props.user.updated_by}
+                <br />
+                {this.props.user.updated_date}
               </Grid>
             </Grid>
           </div>
@@ -71,8 +77,8 @@ class ViewCompany extends React.Component {
   }
 }
 
-ViewCompany.propTypes = {
+ViewUser.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(ViewCompany);
+export default withStyles(styles)(ViewUser);

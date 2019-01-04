@@ -1,18 +1,23 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
+import { connect } from "react-redux";
+import { createAccessMenu } from "../../../actions/accessMenuActions";
 import { Alert } from "reactstrap";
 import PropTypes from "prop-types";
-import FormLabel from "@material-ui/core/FormLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import { withStyles } from "@material-ui/core/styles";
+import {
+  FormLabel,
+  FormControl,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  withStyles,
+  Table,
+  TableCell,
+  TableRow,
+  TableFooter
+} from "@material-ui/core";
 import axios from "axios";
-import Table from "@material-ui/core/Table";
-import TableCell from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
-import TableFooter from "@material-ui/core/TableFooter";
+import apiConfig from "../../../config/Host_Config";
 const styles = theme => ({
   container: {
     display: "flex",
@@ -36,13 +41,13 @@ class CreateAccess extends React.Component {
         name_role: "",
         m_menu_id: []
       },
+      accessData: "",
       theAccess: [],
       alertData: {
         status: false,
         message: ""
       },
       labelWidth: 0,
-      role: [],
       menu: [],
       samsul: [],
       checkedOne: false,
@@ -64,12 +69,15 @@ class CreateAccess extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
   componentDidMount() {
-    this.getListRole();
     this.getListMenu();
+  }
+  componentWillReceiveProps(propsData) {
+    this.setState({
+      accessData: propsData.accessData
+    });
   }
   changeHandler(e) {
     let tmp = this.state.formdata;
-    //alert(e.target.value);
     tmp[e.target.name] = e.target.value;
     this.setState({
       alertData: {
@@ -80,29 +88,10 @@ class CreateAccess extends React.Component {
     });
   }
 
-  getListRole() {
-    let token = localStorage.token;
-    let option = {
-      url: "http://localhost:4000/api/role",
-      method: "get",
-      headers: {
-        Authorization: token
-      }
-    };
-    axios(option)
-      .then(response => {
-        this.setState({
-          role: response.data.message
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
   getListMenu() {
     let token = localStorage.token;
     let option = {
-      url: "http://localhost:4000/api/menu",
+      url: `${apiConfig.host}/menu`,
       method: "get",
       headers: {
         Authorization: token
@@ -122,32 +111,10 @@ class CreateAccess extends React.Component {
 
   submitHandler() {
     this.state.formdata.m_role_id = this.props.access[1];
-    let token = localStorage.token;
     this.state.formdata.m_menu_id = this.state.nilai2;
-    if (this.state.formdata.m_menu_id != "") {
-      let option = {
-        url:
-          "http://localhost:4000/api/access" +
-          "/" +
-          this.state.formdata.m_role_id,
-        method: "put",
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json"
-        },
-        data: this.state.formdata.m_menu_id
-      };
-      axios(option)
-        .then(response => {
-          this.state.nilai2 = this.state.nilai3 = [];
-          this.props.modalStatus2();
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    } else {
-      alert("Fill the Role!!");
-    }
+    this.props.createAccessMenu(this.state.formdata);
+    this.state.nilai2 = this.state.nilai3 = [];
+    this.props.modalStatus2();
   }
 
   handleChange = name => event => {
@@ -155,10 +122,10 @@ class CreateAccess extends React.Component {
     let index = parseInt(event.target.value);
     if (event.target.checked) {
       this.state.nilai3[index] = this.state.menu[index].code;
-      this.state.nilai2 = this.state.nilai3.filter(e => e != 0);
+      this.state.nilai2 = this.state.nilai3.filter(e => e !== 0);
     } else {
       this.state.nilai3[index] = 0;
-      this.state.nilai2 = this.state.nilai3.filter(e => e != 0);
+      this.state.nilai2 = this.state.nilai3.filter(e => e !== 0);
     }
   };
 
@@ -168,14 +135,6 @@ class CreateAccess extends React.Component {
 
   handleOpen = () => {
     this.setState({ open: true });
-  };
-  getChecked = code => {
-    let data = this.props.theAccess.filter(a => a == code);
-    if (data.length !== 0) {
-      return true;
-    } else {
-      return false;
-    }
   };
 
   render() {
@@ -197,7 +156,7 @@ class CreateAccess extends React.Component {
                 <Table>
                   <TableFooter>
                     {half.map((content, id) => {
-                      return id == 0 ? (
+                      return id === 0 ? (
                         <TableCell>
                           {this.state.menu.map((row, index) =>
                             index < this.state.menu.length / 2 ? (
@@ -250,10 +209,8 @@ class CreateAccess extends React.Component {
           </div>
         </ModalBody>
         <ModalFooter>
-          {this.state.alertData.status == true ? (
+          {this.state.alertData.status === true && (
             <Alert color="danger">{this.state.alertData.message} </Alert>
-          ) : (
-            ""
           )}
           <Button
             variant="contained"
@@ -271,11 +228,17 @@ class CreateAccess extends React.Component {
   }
 }
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  accessData: state.accessMenuData
 });
 CreateAccess.propTypes = {
+  createAccessMenu: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  accessData: PropTypes.object.isRequired
 };
-
-export default withStyles(styles)(CreateAccess);
+const style = withStyles(styles)(CreateAccess);
+export default connect(
+  mapStateToProps,
+  { createAccessMenu }
+)(style);

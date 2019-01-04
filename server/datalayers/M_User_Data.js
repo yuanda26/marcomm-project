@@ -24,8 +24,17 @@ const userData = {
             as: "key2"
           }
         },
+        {
+          $lookup: {
+            from: "m_company",
+            localField: "key2.m_company_id",
+            foreignField: "code",
+            as: "key3"
+          }
+        },
         { $unwind: "$key1" },
         { $unwind: "$key2" },
+        { $unwind: "$key3" },
         {
           $project: {
             _id: 1,
@@ -38,7 +47,8 @@ const userData = {
             updated_by: 1,
             updated_date: 1,
             role_name: "$key1.name",
-            name: { $concat: ["$key2.first_name", " ", "$key2.last_name"] }
+            name: { $concat: ["$key2.first_name", " ", "$key2.last_name"] },
+            company_name: "$key3.name"
           }
         }
       ])
