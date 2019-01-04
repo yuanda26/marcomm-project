@@ -25,10 +25,8 @@ const dt = {
             as: "creater"
           }
         },
-        //{ $lookup: {from: "m_employee", localField: "approved_by", foreignField: "employee_number", as: "approver"}},
-        //{ $lookup: {from: "m_employee", localField: "updated_by", foreignField: "employee_number", as: "updater"}},
         { $unwind: "$employee" },
-        { $unwind: "$creater" }, //{ $unwind: "$approver" }, { $unwind: "$updater" },
+        { $unwind: "$creater" },
         {
           $project: {
             code: "$code",
@@ -39,7 +37,6 @@ const dt = {
             },
             request_date: "$request_date",
             request_due_date: "$request_due_date",
-            //"approved_by":{$concat:["$approver.first_name"," ","$approver.last_name"]},
             approved_by: "$approved_by",
             approved_date: "$approved_date",
             note: "$note",
@@ -124,74 +121,83 @@ const dt = {
   //POST TRANSACTION SOUVENIR
   createHandler: (callback, data) => {
     db.collection("t_souvenir").insert(data, (err, docs) => {
-      callback(docs);
+      if (err) {
+        callback(err);
+      } else {
+        callback(data);
+      }
     });
   },
 
   //POST TRANSACTION SOUVENIR ITEM
   createItem: (callback, data) => {
-    //console.log("ini dari datalayer yang benar", data);
     const func = input => {
       return input.map(content => {
         return content;
       });
     };
     db.collection("t_souvenir_item").insertMany(func(data), (err, docs) => {
-      callback(docs);
-    });
-  },
-
-  //DELETE TRANSACTION SOUVENIR ITEM
-  deleteHandler: (callback, id) => {
-    db.collection("t_souvenir_item").updateOne(
-      { code: id },
-      { $set: { is_delete: true } },
-      (err, docs) => {
-        callback(docs);
+      if (err) {
+        callback(err);
+      } else {
+        callback(data);
       }
-    );
+    });
   },
 
   deleteData: (callback, id) => {
     db.collection("t_souvenir_item").remove(
       { t_souvenir_id: id },
       (err, docs) => {
-        callback(docs);
+        if (err) {
+          callback(err);
+        } else {
+          callback(id);
+        }
       }
     );
   },
 
   //EDIT TRANSACTION SOUVENIR ITEM
   updateHandler: (callback, data, id) => {
-    //console.log(data);
     db.collection("t_souvenir").updateOne(
       { code: id },
       { $set: data },
       (err, docs) => {
-        callback(docs);
+        if (err) {
+          callback(err);
+        } else {
+          callback(data);
+        }
       }
     );
   },
 
   //APPROVE TRANSACTION SOUVENIR ITEM
   approveHandler: (callback, data, id) => {
-    //console.log(data);
     db.collection("t_souvenir").updateOne(
       { code: id },
       { $set: data },
       (err, docs) => {
-        callback(docs);
+        if (err) {
+          callback(err);
+        } else {
+          callback(data);
+        }
       }
     );
   },
 
   rejectHandler: (callback, data, id) => {
-    //console.log(data);
     db.collection("t_souvenir").updateOne(
       { code: id },
       { $set: data },
       (err, docs) => {
-        callback(docs);
+        if (err) {
+          callback(err);
+        } else {
+          callback(data);
+        }
       }
     );
   },
@@ -202,7 +208,11 @@ const dt = {
       { code: id },
       { $set: data },
       (err, docs) => {
-        callback(docs);
+        if (err) {
+          callback(err);
+        } else {
+          callback(data);
+        }
       }
     );
   },
@@ -213,7 +223,11 @@ const dt = {
       { code: id },
       { $set: data },
       (err, docs) => {
-        callback(docs);
+        if (err) {
+          callback(err);
+        } else {
+          callback(data);
+        }
       }
     );
   },
@@ -225,7 +239,6 @@ const dt = {
     const func = data => {
       return data.map();
     };
-    //db.collectiondb.('m_souvenir').find({$or:[{name:'Pulpen'},{name:'Buku'}]})
     a.nilai.map((row, index) => {
       let kodeDua = a.kode[index];
       // console.log("ini nilai " + row)
@@ -246,7 +259,11 @@ const dt = {
       { code: id },
       { $set: data },
       (err, docs) => {
-        callback(docs);
+        if (err) {
+          callback(err);
+        } else {
+          callback(data);
+        }
       }
     );
   },
@@ -257,7 +274,11 @@ const dt = {
       { code: id },
       { $set: data },
       (err, docs) => {
-        callback(docs);
+        if (err) {
+          callback(err);
+        } else {
+          callback(data);
+        }
       }
     );
   }

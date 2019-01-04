@@ -9,7 +9,6 @@ export const GET_ASSIGN = "GET_ASSIGN";
 export const ADD_DESIGN = "ADD_DESIGN";
 export const UPDATE_DESIGN = "UPDATE_DESIGN";
 export const GET_STAFF = "GET_STAFF";
-export const GET_EMPLOYEE = "GET_EMPLOYEE";
 
 // Transaction Design Item
 export const GET_DESIGN_ITEM = "GET_DESIGN_ITEM";
@@ -52,6 +51,7 @@ export const DEL_PRODUCT = "DEL_PRODUCT";
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 
 // Employee Types
+export const GET_EMPLOYEE = "GET_EMPLOYEE";
 export const CREATE_EMPLOYEE = "CREATE_EMPLOYEE";
 export const SEARCH_EMPLOYEE = "SEARCH_EMPLOYEE";
 export const GET_ID_EMPLOYEE = "GET_ID_EMPLOYEE";
@@ -67,4 +67,56 @@ export const SEARCH_EVENT = "SEARCH_EVENT";
 export const ERASE_STATUS = "ERASE_STATUS";
 
 // Company Types
-export const GET_COMPANY = "GET_COMPANY";
+export const GET_COMPANIES = "GET_COMPANIES";
+export const CREATE_COMPANY = "CREATE_COMPANY";
+export const EDIT_COMPANY = "EDIT_COMPANY";
+export const DELETE_COMPANY = "DELETE_COMPANY";
+
+// Menu Types
+export const GET_MENU = "GET_MENU";
+export const DEL_MENU = "DEL_MENU";
+export const ADD_MENU = "ADD_MENU";
+export const PUT_MENU = "PUT_MENU";
+
+// TSouvenir Types
+export const GET_TSOUVENIR = "GET_TSOUVENIR";
+export const CREATE_TSOUVENIR = "CREATE_TSOUVENIR";
+export const PUT_TSOUVENIR = "PUT_TSOUVENIR";
+export const DEL_TSOUVENIR = "DEL_TSOUVENIR";
+
+// TSouveniItem Types
+export const GET_TSOUVENIR_ITEM = "GET_TSOUVENIR_ITEM";
+export const GET_TSOUVENIR_ITEM_DETIL = "GET_TSOUVENIR_ITEM_DETIL";
+export const CREATE_TSOUVENIR_ITEM = "CREATE_TSOUVENIR_ITEM";
+export const PUT_TSOUVENIR_ITEM = "PUT_TSOUVENIR_ITEM";
+export const DEL_TSOUVENIR_ITEM = "DEL_TSOUVENIR_ITEM";
+export const REQUEST_APPROVE = "REQUEST_APPROVE";
+export const REQUEST_REJECT = "REQUEST_REJECT";
+export const TSOUVENIR_RECEIVED = "TSOUVENIR_RECEIVED";
+export const TSOUVENIR_SETTLEMENT = "TSOUVENIR_SETTLEMENT";
+export const SETTLEMENT_APPROVE = "SETTLEMENT_APPROVE";
+export const CLOSE_ORDER = "CLOSE_ORDER";
+
+//Role Types
+export const GET_ROLE = "GET_ROLE";
+export const DEL_ROLE = "DEL_ROLE";
+export const ADD_ROLE = "ADD_ROLE";
+export const PUT_ROLE = "PUT_ROLE";
+
+//All Promotion
+export const GET_PROMOTION = "GET_PROMOTION"; //fetch
+export const DEL_PROMOTION = "DEL_PROMOTION"; //delete
+export const ADD_PROMOTION = "ADD_PROMOTION"; //add
+export const PUT_PROMOTION = "PUT_PROMOTION"; //update
+
+export const GET_P_ITEM = "GET_P_ITEM"; //fetch
+export const DEL_P_ITEM = "DEL_P_ITEM"; //delete
+export const ADD_P_ITEM = "ADD_P_ITEM"; //add
+export const PUT_P_ITEM = "PUT_P_ITEM"; //update
+
+export const GET_P_FILE = "GET_P_FILE"; //fetch
+export const DEL_P_FILE = "DEL_P_FILE"; //delete
+export const ADD_P_FILE = "ADD_P_FILE"; //add
+export const PUT_P_FILE = "PUT_P_FILE"; //update
+export const ADD_DATA_P = "ADD_DATA_P";
+//access menu Types

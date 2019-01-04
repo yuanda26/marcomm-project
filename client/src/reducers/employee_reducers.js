@@ -1,18 +1,18 @@
-import {  
-  GET_EMPLOYEE, 
-  UPDATE_EMPLOYEE, 
+import {
+  GET_EMPLOYEE,
+  UPDATE_EMPLOYEE,
   CREATE_EMPLOYEE,
-  DELETE_EMPLOYEE, 
-  GET_ID_EMPLOYEE, 
+  DELETE_EMPLOYEE,
+  GET_ID_EMPLOYEE,
   SEARCH_EMPLOYEE,
-  GET_COMPANY
+  GET_COMPANIES
 } from "../actions/types";
 
 const initialState = {
   myEmployee: [],
   myCompany: [],
   myEmployeeId: null,
-  status : null,
+  status: null,
   employee_number: null
 };
 
@@ -27,19 +27,19 @@ export default function(state = initialState, action) {
       return {
         ...state,
         myEmployee: action.payload,
-        status : action.status
+        status: action.status
       };
     case CREATE_EMPLOYEE:
       return {
         ...state,
         myEmployee: action.payload,
         status: action.status,
-        employee_number : action.created.employee_number
+        employee_number: action.created.employee_number
       };
     case SEARCH_EMPLOYEE:
       return {
         ...state,
-        myEmployee: action.payload,
+        myEmployee: action.payload
       };
     case DELETE_EMPLOYEE:
       return {
@@ -50,12 +50,12 @@ export default function(state = initialState, action) {
     case GET_ID_EMPLOYEE:
       return {
         ...state,
-        myEmployeeId: action.payload,
+        myEmployeeId: action.payload
       };
-    case GET_COMPANY:
+    case GET_COMPANIES:
       return {
         ...state,
-        myCompany: action.payload,
+        myCompany: action.payload
       };
     default:
       return state;
