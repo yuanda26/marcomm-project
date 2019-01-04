@@ -15,7 +15,7 @@ import UnitEdit from "./UnitEdit";
 import UnitDelete from "./UnitDelete";
 import UnitAdd from "./UnitAdd";
 // Form Components
-import SpinnerTable from "../../common/SpinnerTable";
+import Spinner from "../../common/Spinner";
 
 class UnitList extends Component {
   constructor(props) {
@@ -222,209 +222,216 @@ class UnitList extends Component {
       result = coba;
     }
 
-    if (unitData === null) {
-      unitList = <SpinnerTable />;
-    } else {
-      if (unitData.length > 0) {
-        unitList = result.map((row, index) => (
-          <tr key={row._id} className="text-center">
-            <td>{index + 1}</td>
-            <td>{row.code}</td>
-            <td>{row.name}</td>
-            <td>{row.created_date}</td>
-            <td>{this.rename(row.created_by)}</td>
-            <td nowrap="true">
-              <Link to="#">
-                <Search
-                  onClick={() => {
-                    this.viewModalHandler(row.code);
-                  }}
-                />
-              </Link>
-              <Link to="#">
-                <CreateOutlined
-                  onClick={() => {
-                    this.editModalHandler(row.code);
-                  }}
-                />
-              </Link>
-              <Link to="#">
-                <DeleteOutlined
-                  onClick={() => {
-                    this.deleteModalHandler(row.code);
-                  }}
-                />
-              </Link>
-            </td>
-          </tr>
-        ));
+    if (unitData.length > 0) {
+      unitList = result.map((row, index) => (
+        <tr key={row._id} className="text-center">
+          <td>{index + Date.now()}</td>
+          <td>{row.code}</td>
+          <td>{row.name}</td>
+          <td>{row.created_date}</td>
+          <td>{this.rename(row.created_by)}</td>
+          <td nowrap="true">
+            <Link to="#">
+              <Search
+                onClick={() => {
+                  this.viewModalHandler(row.code);
+                }}
+              />
+            </Link>
+            <Link to="#">
+              <CreateOutlined
+                onClick={() => {
+                  this.editModalHandler(row.code);
+                }}
+              />
+            </Link>
+            <Link to="#">
+              <DeleteOutlined
+                onClick={() => {
+                  this.deleteModalHandler(row.code);
+                }}
+              />
+            </Link>
+          </td>
+        </tr>
+      ));
 
-        unitLabel = (
-          <tr className="text-center text-bold">
-            <td>No</td>
-            <td>Unit Code</td>
-            <td>Unit Name</td>
-            <td>Created Date</td>
-            <td>Created By</td>
-            <td>Action</td>
-          </tr>
-        );
-      } else {
-        unitList = (
-          <tr className="text-center">
-            <td>Oops, Unit Not Found!</td>
-          </tr>
-        );
-      }
+      unitLabel = (
+        <tr className="text-center text-bold">
+          <td>No</td>
+          <td>Unit Code</td>
+          <td>Unit Name</td>
+          <td>Created Date</td>
+          <td>Created By</td>
+          <td>Action</td>
+        </tr>
+      );
+    } else {
+      unitList = (
+        <tr className="text-center">
+          <td>Oops, Unit Not Found!</td>
+        </tr>
+      );
     }
 
-    return (
-      <div className="container">
-        <div className="row">
-          <UnitView
-            view={this.state.viewUnit}
-            unit={this.state.currentData}
-            closeModal={this.closeModalHandler}
-            modalStatus={this.modalStatus}
-          />
-          <UnitAdd
-            userdata={user}
-            create={this.state.addUnit}
-            alertData={this.state.alertData}
-            closeModal={this.closeModalHandler}
-            modalStatus={this.modalStatus}
-          />
-          <UnitEdit
-            edit={this.state.editUnit}
-            unit={this.state.currentData}
-            alertData={this.state.alertData}
-            closeModal={this.closeModalHandler}
-            modalStatus={this.modalStatus}
-          />
-          <UnitDelete
-            delete={this.state.deleteUnit}
-            unit={this.state.currentData}
-            closeModal={this.closeModalHandler}
-            modalStatus={this.modalStatus}
-          />
-
-          <div className="col-md-12">
-            <div className="card border-primary mb-3">
-              <div className="card-header lead">Unit List</div>
-              <div className="card-body ">
-                {/* Breadcrumb Navigation */}
-                <nav aria-label="breadcrumb">
-                  <ol className="breadcrumb">
-                    <li className="breadcrumb-item active">
-                      <Link to="/">Home </Link>
-                    </li>
-                    <li className="breadcrumb-item ">Unit</li>
-                  </ol>
-                </nav>
-                {/* Search Form */}
-                <form>
-                  <div className="form-group col-md-3">
-                    <select
-                      name="code"
-                      className="form-control "
-                      onChange={this.changeHandler}
-                    >
-                      <option key="empty" value="">
-                        -Select Unit Code-
-                      </option>
-                      {unit.map(row => {
-                        return (
-                          <option key={row.code} value={row.code}>
-                            {row.code}
-                          </option>
-                        );
-                      })}
-                    </select>
+    if (unitData.length === 0) {
+      return (
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <Spinner />
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <UnitView
+                view={this.state.viewUnit}
+                unit={this.state.currentData}
+                closeModal={this.closeModalHandler}
+                modalStatus={this.modalStatus}
+              />
+              <UnitAdd
+                userdata={user}
+                create={this.state.addUnit}
+                alertData={this.state.alertData}
+                closeModal={this.closeModalHandler}
+                modalStatus={this.modalStatus}
+              />
+              <UnitEdit
+                edit={this.state.editUnit}
+                unit={this.state.currentData}
+                alertData={this.state.alertData}
+                closeModal={this.closeModalHandler}
+                modalStatus={this.modalStatus}
+              />
+              <UnitDelete
+                delete={this.state.deleteUnit}
+                unit={this.state.currentData}
+                closeModal={this.closeModalHandler}
+                modalStatus={this.modalStatus}
+              />
+              <div className="card border-primary mb-3">
+                <div className="card-header lead">Unit List</div>
+                <div className="card-body ">
+                  {/* Breadcrumb Navigation */}
+                  <nav aria-label="breadcrumb">
+                    <ol className="breadcrumb">
+                      <li className="breadcrumb-item active">
+                        <Link to="/">Home </Link>
+                      </li>
+                      <li className="breadcrumb-item ">Unit</li>
+                    </ol>
+                  </nav>
+                  {/* Search Form */}
+                  <form>
+                    <div className="form-group col-md-3">
+                      <select
+                        name="code"
+                        className="form-control "
+                        onChange={this.changeHandler}
+                      >
+                        <option key="empty" value="">
+                          -Select Unit Code-
+                        </option>
+                        {unit.map(row => {
+                          return (
+                            <option key={row.code} value={row.code}>
+                              {row.code}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <div className="form-group col-md-3">
+                      <select
+                        name="name"
+                        className="form-control "
+                        onChange={this.changeHandler}
+                      >
+                        <option key="empty" value="">
+                          -Select Unit Name-
+                        </option>
+                        {unit.map(row => {
+                          return (
+                            <option key={row.code} value={row.name}>
+                              {row.name}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <div className="col-md-2">
+                      <DatePicker
+                        className="form-control"
+                        placeholderText="Created"
+                        name="created_date"
+                        selected={this.state.created_date}
+                        onChange={this.handleChangeCreatedDate}
+                      />
+                    </div>
+                    <div className="col-md-2">
+                      <input
+                        placeholder="Created By"
+                        name="created_by"
+                        className="form-control"
+                        onChange={this.changeHandler}
+                      />
+                    </div>
+                    <Link to="#">
+                      <button
+                        onClick={this.SearchHandler}
+                        className="btn btn-primary col-md-auto"
+                        type="button"
+                      >
+                        Search
+                      </button>
+                    </Link>
+                  </form>
+                  <div className="text-left mb-4">
+                    <Link to="#">
+                      <button
+                        onClick={this.addModalHandler}
+                        className="btn btn-warning ml-2 col-md-auto"
+                        type="button"
+                      >
+                        Add Unit
+                      </button>
+                    </Link>
                   </div>
-                  <div className="form-group col-md-3">
-                    <select
-                      name="name"
-                      className="form-control "
-                      onChange={this.changeHandler}
-                    >
-                      <option key="empty" value="">
-                        -Select Unit Name-
-                      </option>
-                      {unit.map(row => {
-                        return (
-                          <option key={row.code} value={row.name}>
-                            {row.name}
-                          </option>
-                        );
-                      })}
-                    </select>
+                  {status === 1 && (
+                    <Alert color="success">
+                      <b>{message1}</b>
+                      {message2}
+                      <b>{code}</b>
+                      {message3}
+                    </Alert>
+                  )}
+                  {status === 2 && (
+                    <Alert color="danger">
+                      <b>{message1}</b>
+                      {message2}
+                      <b>{code}</b>
+                      {message3}
+                    </Alert>
+                  )}
+                  <div className="table-responsive">
+                    <table className="table table-stripped ">
+                      <thead>{unitLabel}</thead>
+                      <tbody>{unitList}</tbody>
+                    </table>
                   </div>
-                  <div className="col-md-2">
-                    <DatePicker
-                      className="form-control"
-                      placeholderText="Created"
-                      name="created_date"
-                      selected={this.state.created_date}
-                      onChange={this.handleChangeCreatedDate}
-                    />
-                  </div>
-                  <div className="col-md-2">
-                    <input
-                      placeholder="Created By"
-                      name="created_by"
-                      className="form-control"
-                      onChange={this.changeHandler}
-                    />
-                  </div>
-                  <Link to="#">
-                    <button
-                      onClick={this.SearchHandler}
-                      className="btn btn-primary col-md-auto"
-                      type="button"
-                    >
-                      Search
-                    </button>
-                  </Link>
-                </form>
-                <div className="text-left mb-4">
-                  <Link to="#">
-                    <button
-                      onClick={this.addModalHandler}
-                      className="btn btn-warning ml-2 col-md-auto"
-                      type="button"
-                    >
-                      Add Unit
-                    </button>
-                  </Link>
-                </div>
-                {status === 1 && (
-                  <Alert color="success">
-                    <b>{message1}</b>
-                    {message2}
-                    <b>{code}</b>
-                    {message3}
-                  </Alert>
-                )}
-                {status === 2 && (
-                  <Alert color="danger">
-                    <b>{message1}</b>
-                    {message2}
-                    <b>{code}</b>
-                    {message3}
-                  </Alert>
-                )}
-                <div className="table-responsive">
-                  <table className="table table-stripped ">
-                    <thead>{unitLabel}</thead>
-                    <tbody>{unitList}</tbody>
-                  </table>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 }
 

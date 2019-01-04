@@ -13,7 +13,7 @@ import DeleteSouvenir from "./DeleteSouvenir";
 import { getAllSouvenir, getUnits } from "../../../actions/souvenirAction";
 import { getAssignToName } from "../../../actions/designAction";
 // Search Form Components
-import Spinner from "../../common/SpinnerTable";
+import Spinner from "../../common/Spinner";
 import TextField from "../../common/TextField";
 import SelectList from "../../common/SelectList";
 
@@ -232,8 +232,8 @@ class SouvenirList extends Component {
     const capitalize = { textTransform: "capitalize" };
     const width = { width: "5%" };
 
-    if (this.state.souvenirs.length > 0) {
-      souvenirList = this.state.souvenirs.map((souvenir, index) => (
+    if (souvenirs.length > 0) {
+      souvenirList = souvenirs.map((souvenir, index) => (
         <tr key={souvenir._id} className="text-center">
           <td>{index + 1}</td>
           <td>{souvenir.code}</td>
@@ -286,8 +286,16 @@ class SouvenirList extends Component {
       );
     }
 
-    if (souvenirs === null || units === null) {
-      return <Spinner />;
+    if (souvenirs.length === 0 && units.length === 0) {
+      return (
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <Spinner />
+            </div>
+          </div>
+        </div>
+      );
     } else {
       return (
         <div className="container">
