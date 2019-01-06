@@ -106,14 +106,15 @@ class CreateAccess extends React.Component {
       .catch(error => {
         console.log(error);
       });
-    this.state.nilai3 = this.state.nilai(this.state.menu.length);
+      this.setState({
+        nilai3: this.state.nilai(this.state.menu.length)
+      });
   }
 
   submitHandler() {
     this.state.formdata.m_role_id = this.props.access[1];
     this.state.formdata.m_menu_id = this.state.nilai2;
     this.props.createAccessMenu(this.state.formdata);
-    this.state.nilai2 = this.state.nilai3 = [];
     this.props.modalStatus2();
   }
 
@@ -121,9 +122,29 @@ class CreateAccess extends React.Component {
     this.setState({ [name]: event.target.checked });
     let index = parseInt(event.target.value);
     if (event.target.checked) {
+      // this.setState({
+      //   nilai3:this.state.nilai3.map((content, ind) => {
+      //     if(ind === index) return this.state.menu[index].code;
+      //     return content
+      //   }),
+      //   nilai2:this.state.nilai3.map((content, ind) => {
+      //     if(ind === index) return this.state.menu[index].code;
+      //     return content
+      //   }).filter(e=>e!==0)
+      // })
       this.state.nilai3[index] = this.state.menu[index].code;
       this.state.nilai2 = this.state.nilai3.filter(e => e !== 0);
     } else {
+      // this.setState({
+      //   nilai3:this.state.nilai3.map((content, ind) => {
+      //     if(ind === index) return 0;
+      //     return content;
+      //   }), 
+      //   nilai2:this.state.nilai3.map((content, ind) => {
+      //     if(ind === index) return 0;
+      //     return content;
+      //   }).filter(e => e !== 0)
+      // })
       this.state.nilai3[index] = 0;
       this.state.nilai2 = this.state.nilai3.filter(e => e !== 0);
     }

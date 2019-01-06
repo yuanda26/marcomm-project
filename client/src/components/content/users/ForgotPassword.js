@@ -87,6 +87,16 @@ class Forgot extends React.Component {
     return (
       <div className="text-center">
         <form className="form-signin">
+          {this.state.status === 404 ? (
+            <Alert color="danger">{this.state.message} </Alert>
+          ) : (
+            ""
+          )}
+          {this.state.alertData.status === true ? (
+            <Alert color="danger">{this.state.alertData.message} </Alert>
+          ) : (
+            ""
+          )}
           <h1 className="h3 mb-3 font-weight-normal">Forgot Password</h1>
           <label for="inputEmail" className="sr-only">
             Username
@@ -125,16 +135,6 @@ class Forgot extends React.Component {
             value={this.state.formdata.repassword}
             onChange={this.textChanged}
           />
-          {this.state.status === 404 ? (
-            <Alert color="danger">{this.state.message} </Alert>
-          ) : (
-            ""
-          )}
-          {this.state.alertData.status === true ? (
-            <Alert color="danger">{this.state.alertData.message} </Alert>
-          ) : (
-            ""
-          )}
           <button
             className="btn btn-lg btn-primary btn-block"
             disabled={this.state.isRequest}

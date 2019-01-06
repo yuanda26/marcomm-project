@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { Switch } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
@@ -80,8 +80,10 @@ class RouteSwitcher extends Component {
 
   render() {
     return (
-      <Switch>
+      <Fragment>
+        <Switch>
         <PrivateRoute path={"/dashboard"} component={Dashboard} />
+        </Switch>
         {/* Private Route with Access Control  */}
         {this.state.dataAccess.map((content, index) => {
           if (content === "/design") {
@@ -127,13 +129,15 @@ class RouteSwitcher extends Component {
             );
           }
           return (
+            <Switch>
             <PrivateRoute
               path={content}
               component={this.func(this.state.dataAccess[index])}
             />
+              </Switch>
           );
         })}
-      </Switch>
+      </Fragment>
     );
   }
 }
