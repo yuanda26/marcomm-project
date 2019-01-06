@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { CURRENT_USER } from "./actions/types";
 import store from "./store";
-import jwt_decode from "jwt-decode";
+import jwt from "jsonwebtoken";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 // Private Route
@@ -12,17 +12,31 @@ import RouteSwitcher from "./RouteSwitcher";
 import Login from "./components/content/users/Login";
 import Navbar from "./components/layout/Navbar";
 import Forgot from "./components/content/users/ForgotPassword";
+// Config File
+import AuthConfig from "./config/Auth_Config.json";
 
 // Check for Token
 if (localStorage.token) {
-  // Decode Token and Get User Info and Expiration
-  const decoded = jwt_decode(localStorage.token);
-  // Remove Password Property
-  delete decoded.password;
-  // Set User and Authenticated
-  store.dispatch({
-    type: CURRENT_USER,
-    payload: decoded
+  // Verify Token Expiration
+  jwt.verify(localStorage.token, AuthConfig.secretKey, (err, decoded) => {
+    if (err) {
+      localStorage.clear();
+      // Set Current User to {}
+      // Which will Set isAuthenticated to False
+      store.dispatch({
+        type: CURRENT_USER,
+        payload: {}
+      });
+      window.location.href = "/";
+    } else {
+      // Remove Password Property
+      delete decoded.password;
+      // Set User and Authenticated
+      store.dispatch({
+        type: CURRENT_USER,
+        payload: decoded
+      });
+    }
   });
 }
 

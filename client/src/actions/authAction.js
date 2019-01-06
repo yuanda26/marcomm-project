@@ -1,12 +1,12 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { CURRENT_USER, ERRORS } from "./types";
-import ApiConfig from "../config/Host_Config";
+import HostConfig from "../config/Host_Config";
 
 // Login User Action
 export const loginUser = userData => dispatch => {
   axios
-    .post(`${ApiConfig.host}/user/login`, userData)
+    .post(`${HostConfig.host}/user/login`, userData)
     .then(res => {
       // Set Token to localStorage
       const { token } = res.data.message;
@@ -44,7 +44,7 @@ export const logoutUser = () => dispatch => {
 //Forgot Password
 export const ForgotPassword = body => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/user/forgot/${body.username}`,
+    url: `${HostConfig.host}/user/forgot/${body.username}`,
     method: "put",
     headers: {
       "Content-Type": "application/json"
