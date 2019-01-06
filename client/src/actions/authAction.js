@@ -2,11 +2,12 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { CURRENT_USER, ERRORS } from "./types";
 import HostConfig from "../config/Host_Config";
+import ApiConfig from "../config/Api_Config";
 
 // Login User Action
 export const loginUser = userData => dispatch => {
   axios
-    .post(`${HostConfig.host}/user/login`, userData)
+    .post(`${HostConfig}/${ApiConfig.user_login}`, userData)
     .then(res => {
       // Set Token to localStorage
       const { token } = res.data.message;
@@ -41,10 +42,11 @@ export const logoutUser = () => dispatch => {
   });
   window.location.href = "/";
 };
+
 //Forgot Password
 export const ForgotPassword = body => dispatch => {
   let option = {
-    url: `${HostConfig.host}/user/forgot/${body.username}`,
+    url: `${HostConfig}/${ApiConfig.user_forgot}/${body.username}`,
     method: "put",
     headers: {
       "Content-Type": "application/json"

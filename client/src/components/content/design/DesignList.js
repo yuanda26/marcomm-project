@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { Search, CreateOutlined } from "@material-ui/icons";
 // Redux Actions
@@ -12,7 +12,7 @@ import {
 } from "../../../actions/designAction";
 
 // Form Components
-import Spinner from "../../common/SpinnerTable";
+import Spinner from "../../common/Spinner";
 import TextField from "../../common/TextField";
 import SelectList from "../../common/SelectList";
 
@@ -35,7 +35,7 @@ class DesignList extends Component {
     };
   }
 
-  componentDidMount() { 
+  componentDidMount() {
     this.props.getAllDesign();
     this.props.getAssignToName();
     this.props.getEvent();
@@ -94,9 +94,7 @@ class DesignList extends Component {
 
   // Handle Search Change
   onSearch = e => {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   // Handle Submit Search
@@ -176,7 +174,7 @@ class DesignList extends Component {
     // Define Options for Assign to Dropdown
     const options = [];
     options.push({ label: "~Assign To~", value: "" });
-    this.state.employee.forEach(staff =>
+    assign.forEach(staff =>
       options.push({
         label: staff.first_name + " " + staff.last_name,
         value: staff.employee_number
@@ -185,57 +183,63 @@ class DesignList extends Component {
 
     let designList;
     let designLabel;
-    // Inline Table Style
-    const columnWidth = { width: "100%" };
 
-    if (designs === null || assign === null) {
-      return (designList = <Spinner />);
+    if (designs.length > 0) {
+      designList = designs.map((design, index) => (
+        <tr key={design._id} className="text-center">
+          <td>{index + 1}</td>
+          <td>{design.code}</td>
+          <td>{this.getEvent(design.t_event_id)}</td>
+          <td>{this.getEmployee(design.request_by)}</td>
+          <td>{design.request_date}</td>
+          <td>{this.getEmployee(design.assign_to)}</td>
+          <td nowrap="true">{this.designStatus(design.status)}</td>
+          <td>{design.created_date}</td>
+          <td>{this.getEmployee(design.created_by)}</td>
+          <td nowrap="true">
+            <Link to={`/design/view/${design.code}`}>
+              <Search />
+            </Link>
+            <Link to={`/design/edit/${design.code}`}>
+              <CreateOutlined />
+            </Link>
+          </td>
+        </tr>
+      ));
+
+      designLabel = (
+        <tr className="text-center font-weight-bold">
+          <td>No</td>
+          <td>Transaction Code</td>
+          <td>Event Name</td>
+          <td>Request By</td>
+          <td nowrap="true">Request Date</td>
+          <td nowrap="true">Assign To</td>
+          <td>Status</td>
+          <td nowrap="true">Created Date</td>
+          <td nowrap="true">Created By</td>
+          <td>Action</td>
+        </tr>
+      );
     } else {
-      if (this.state.designs.length > 0) {
-        designList = this.state.designs.map((design, index) => (
-          <tr key={design._id} className="text-center">
-            <td>{index + 1}</td>
-            <td>{design.code}</td>
-            <td>{this.getEvent(design.t_event_id)}</td>
-            <td>{this.getEmployee(design.request_by)}</td>
-            <td>{design.request_date}</td>
-            <td>{this.getEmployee(design.assign_to)}</td>
-            <td nowrap="true">{this.designStatus(design.status)}</td>
-            <td>{design.created_date}</td>
-            <td>{this.getEmployee(design.created_by)}</td>
-            <td nowrap="true">
-              <Link to={`/design/view/${design.code}`}>
-                <Search />
-              </Link>
-              <Link to={`/design/edit/${design.code}`}>
-                <CreateOutlined />
-              </Link>
-            </td>
-          </tr>
-        ));
+      designList = (
+        <tr className="text-center">
+          <td>Oops, No Design List Found!</td>
+        </tr>
+      );
+    }
 
-        designLabel = (
-          <tr className="text-center font-weight-bold" style={columnWidth}>
-            <td>No</td>
-            <td>Transaction Code</td>
-            <td>Event Name</td>
-            <td>Request By</td>
-            <td nowrap="true">Request Date</td>
-            <td nowrap="true">Assign To</td>
-            <td>Status</td>
-            <td nowrap="true">Created Date</td>
-            <td nowrap="true">Created By</td>
-            <td>Action</td>
-          </tr>
-        );
-      } else {
-        designList = (
-          <tr className="text-center">
-            <td>Oops, No Design List Found!</td>
-          </tr>
-        );
-      }
-
+    if (designs.length === 0 && assign.length === 0) {
+      return (
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <Spinner />
+            </div>
+          </div>
+        </div>
+      );
+    } else {
       return (
         <div className="container">
           <div className="row">
@@ -246,7 +250,7 @@ class DesignList extends Component {
                   <nav aria-label="breadcrumb mb-4">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item">
-                        <Link to="/">Home</Link>
+                        <Link to="/dashboard">Home</Link>
                       </li>
                       <li
                         className="breadcrumb-item active"
@@ -259,7 +263,7 @@ class DesignList extends Component {
                   <div className="text-left">
                     <Link to="/design/add">
                       <button className="btn btn-primary" type="button">
-                        Add
+                        Add Design
                       </button>
                     </Link>
                   </div>
@@ -359,10 +363,12 @@ class DesignList extends Component {
                   {status === 2 && (
                     <div className="mt-2 alert alert-primary">{message}</div>
                   )}
-                  <table className="table table-responsive table-stripped">
-                    <thead>{designLabel}</thead>
-                    <tbody>{designList}</tbody>
-                  </table>
+                  <div className="table-responsive">
+                    <table className="table table-stripped">
+                      <thead>{designLabel}</thead>
+                      <tbody>{designList}</tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -384,7 +390,9 @@ const mapStateToProps = state => ({
   design: state.design
 });
 
-export default connect(
-  mapStateToProps,
-  { getAllDesign, getAssignToName, getEvent }
-)(DesignList);
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { getAllDesign, getAssignToName, getEvent }
+  )(DesignList)
+);

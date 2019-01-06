@@ -16,6 +16,7 @@ import DesignAdd from "./components/content/design/DesignAdd";
 import DesignList from "./components/content/design/DesignList";
 import DesignView from "./components/content/design/DesignView";
 import DesignEdit from "./components/content/design/DesignEdit";
+import DesignClose from "./components/content/design/DesignClose";
 import TsouvenirList from "./components/content/tsouvenir/TSouvenirList";
 import TsouveniritemList from "./components/content/tsouveniritem/TSouvenirRequestList";
 import ListMenu from "./components/content/menu/MenuList";
@@ -133,6 +134,11 @@ class RouteSwitcher extends Component {
                   exact
                   path="/design/edit/:code"
                   component={DesignEdit}
+                />
+                <PrivateRoute
+                  exact
+                  path="/design/close/:code"
+                  component={DesignClose}
                 />
               </Switch>
             );

@@ -13,7 +13,7 @@ import DeleteSouvenir from "./DeleteSouvenir";
 import { getAllSouvenir, getUnits } from "../../../actions/souvenirAction";
 import { getAssignToName } from "../../../actions/designAction";
 // Search Form Components
-import Spinner from "../../common/SpinnerTable";
+import Spinner from "../../common/Spinner";
 import TextField from "../../common/TextField";
 import SelectList from "../../common/SelectList";
 
@@ -222,232 +222,236 @@ class SouvenirList extends Component {
       })
     );
 
+    // Table Vars
     let souvenirLabel;
     let souvenirList;
-    // Inline Table Style
-    const columnWidth = { width: "100%" };
-    const rowWidth = { width: "15%" };
 
-    if (souvenirs === null || units === null) {
-      souvenirList = <Spinner />;
+    // Inline Table Style]
+    const capitalize = { textTransform: "capitalize" };
+
+    if (souvenirs.length > 0) {
+      souvenirList = souvenirs.map((souvenir, index) => (
+        <tr key={souvenir._id} className="text-center">
+          <td>{index + 1}</td>
+          <td>{souvenir.code}</td>
+          <td style={capitalize}>{souvenir.name}</td>
+          <td>{this.getUnits(souvenir.m_unit_id)}</td>
+          <td>{souvenir.created_date}</td>
+          <td>{this.getEmployee(souvenir.created_by)}</td>
+          <td nowrap="true">
+            <Link to="#">
+              <Search
+                onClick={() => {
+                  this.onViewModal(souvenir._id);
+                }}
+              />
+            </Link>
+            <Link to="#">
+              <CreateOutlined
+                onClick={() => {
+                  this.onEditModal(souvenir._id);
+                }}
+              />
+            </Link>
+            <Link to="#">
+              <DeleteOutlined
+                onClick={() => {
+                  this.onDeleteModal(souvenir.code);
+                }}
+              />
+            </Link>
+          </td>
+        </tr>
+      ));
+
+      souvenirLabel = (
+        <tr className="text-center font-weight-bold">
+          <td>No</td>
+          <td>Souvenir Code</td>
+          <td>Souvenir Name</td>
+          <td>Unit</td>
+          <td>Created Date</td>
+          <td>Created By</td>
+          <td>Action</td>
+        </tr>
+      );
     } else {
-      // Style for Souvenir Name
-      const capitalize = {
-        textTransform: "capitalize"
-      };
-
-      if (this.state.souvenirs.length > 0) {
-        souvenirList = this.state.souvenirs.map((souvenir, index) => (
-          <tr key={souvenir._id} className="text-center">
-            <td>{index + 1}</td>
-            <td>{souvenir.code}</td>
-            <td style={capitalize}>{souvenir.name}</td>
-            <td>{this.getUnits(souvenir.m_unit_id)}</td>
-            <td>{souvenir.created_date}</td>
-            <td>{this.getEmployee(souvenir.created_by)}</td>
-            <td nowrap="true">
-              <Link to="#">
-                <Search
-                  onClick={() => {
-                    this.onViewModal(souvenir._id);
-                  }}
-                />
-              </Link>
-              <Link to="#">
-                <CreateOutlined
-                  onClick={() => {
-                    this.onEditModal(souvenir._id);
-                  }}
-                />
-              </Link>
-              <Link to="#">
-                <DeleteOutlined
-                  onClick={() => {
-                    this.onDeleteModal(souvenir.code);
-                  }}
-                />
-              </Link>
-            </td>
-          </tr>
-        ));
-
-        souvenirLabel = (
-          <tr className="text-center font-weight-bold" style={columnWidth}>
-            <td>No</td>
-            <td style={rowWidth}>Souvenir Code</td>
-            <td style={rowWidth}>Souvenir Name</td>
-            <td style={rowWidth}>Unit</td>
-            <td style={rowWidth}>Created Date</td>
-            <td style={rowWidth}>Created By</td>
-            <td>Action</td>
-          </tr>
-        );
-      } else {
-        souvenirLabel = (
-          <tr className="text-center">
-            <td>Oops, No Souvenir List Found!</td>
-          </tr>
-        );
-      }
+      souvenirLabel = (
+        <tr className="text-center">
+          <td>Oops, No Souvenir List Found!</td>
+        </tr>
+      );
     }
 
-    const width = {
-      width: "5%"
-    };
+    if (souvenirs.length === 0 && units.length === 0) {
+      return (
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <Spinner />
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              {/* Create Souvenir Modal */}
+              <CreateSouvenir
+                m_employee_id={user.m_employee_id}
+                units={units}
+                create={this.state.showCreate}
+                closeHandler={this.closeHandler}
+                closeModal={this.closeModal}
+                errorName={this.state.errorName}
+                errorUnit={this.state.errorUnit}
+              />
+              {/* Update Souvenir Modal */}
+              <UpdateSouvenir
+                m_employee_id={user.m_employee_id}
+                units={units}
+                update={this.state.editModal}
+                souvenir={this.state.currentSouvenir}
+                closeModal={this.closeModal}
+                errorName={this.state.errorName}
+                errorUnit={this.state.errorUnit}
+              />
+              {/* View Souvenir Modal */}
+              <ReadSouvenir
+                units={units}
+                view={this.state.viewModal}
+                souvenir={this.state.currentSouvenir}
+                closeModal={this.closeModal}
+              />
+              {/* Delete Souvenir Modal */}
+              <DeleteSouvenir
+                m_employee_id={user.m_employee_id}
+                delete={this.state.deleteModal}
+                souvenir={this.state.currentSouvenir}
+                closeModal={this.closeModal}
+              />
 
-    return (
-      <div className="container">
-        <div className="row">
-          <div className="col-md-12">
-            {/* Create Souvenir Modal */}
-            <CreateSouvenir
-              m_employee_id={user.m_employee_id}
-              units={units}
-              create={this.state.showCreate}
-              closeHandler={this.closeHandler}
-              closeModal={this.closeModal}
-              errorName={this.state.errorName}
-              errorUnit={this.state.errorUnit}
-            />
-            {/* Update Souvenir Modal */}
-            <UpdateSouvenir
-              m_employee_id={user.m_employee_id}
-              units={units}
-              update={this.state.editModal}
-              souvenir={this.state.currentSouvenir}
-              closeModal={this.closeModal}
-              errorName={this.state.errorName}
-              errorUnit={this.state.errorUnit}
-            />
-            {/* View Souvenir Modal */}
-            <ReadSouvenir
-              units={units}
-              view={this.state.viewModal}
-              souvenir={this.state.currentSouvenir}
-              closeModal={this.closeModal}
-            />
-            {/* Delete Souvenir Modal */}
-            <DeleteSouvenir
-              m_employee_id={user.m_employee_id}
-              delete={this.state.deleteModal}
-              souvenir={this.state.currentSouvenir}
-              closeModal={this.closeModal}
-            />
-
-            <div className="card border-primary mb-2">
-              <div className="card-header lead">List Souvenir</div>
-              <div className="card-body">
-                <nav aria-label="breadcrumb mb-4">
-                  <ol className="breadcrumb">
-                    <li className="breadcrumb-item">
-                      <Link to="/">Home</Link>
-                    </li>
-                    <li className="breadcrumb-item active" aria-current="page">
-                      Master Souvenir
-                    </li>
-                  </ol>
-                </nav>
-                <div className="text-left">
-                  <button
-                    onClick={this.showHandler}
-                    type="button"
-                    className="btn btn-primary"
-                  >
-                    Add Souvenir
-                  </button>
-                </div>
-                <div className="mt-2">
-                  <form onSubmit={this.submitSearch}>
-                    <table>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <TextField
-                              placeholder="Souvenir Code"
-                              name="searchCode"
-                              value={this.state.searchCode}
-                              onChange={this.onSearch}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              placeholder="Souvenir Name"
-                              name="searchName"
-                              value={this.state.searchName}
-                              onChange={this.onSearch}
-                            />
-                          </td>
-                          <td>
-                            <SelectList
-                              placeholder="*Select Unit Name"
-                              name="searchUnit"
-                              value={this.state.searchUnit}
-                              onChange={this.onSearch}
-                              options={options}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              type="date"
-                              min="2018-01-01"
-                              max={moment().format("YYYY-MM-DD")}
-                              name="searchDate"
-                              value={this.state.searchDate}
-                              onChange={this.onSearch}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              placeholder="Created By"
-                              name="searchCreated"
-                              value={this.state.searchCreated}
-                              onChange={this.onSearch}
-                            />
-                          </td>
-                          <td nowrap="true" style={width}>
-                            <div className="form-group">
-                              {this.state.search === true ? (
-                                <button
-                                  className="btn btn-block btn-default"
-                                  onClick={this.onRestore}
-                                >
-                                  Refresh!
-                                </button>
-                              ) : (
-                                <input
-                                  type="submit"
-                                  value="Search"
-                                  className="btn btn-block btn-warning"
-                                />
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
+              <div className="card border-primary mb-2">
+                <div className="card-header lead">List Souvenir</div>
+                <div className="card-body">
+                  <nav aria-label="breadcrumb mb-4">
+                    <ol className="breadcrumb">
+                      <li className="breadcrumb-item">
+                        <Link to="/">Home</Link>
+                      </li>
+                      <li
+                        className="breadcrumb-item active"
+                        aria-current="page"
+                      >
+                        Master Souvenir
+                      </li>
+                    </ol>
+                  </nav>
+                  <div className="text-left">
+                    <button
+                      onClick={this.showHandler}
+                      type="button"
+                      className="btn btn-primary"
+                    >
+                      Add Souvenir
+                    </button>
+                  </div>
+                  <div className="mt-2">
+                    <form onSubmit={this.submitSearch}>
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <TextField
+                                placeholder="Souvenir Code"
+                                name="searchCode"
+                                value={this.state.searchCode}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                placeholder="Souvenir Name"
+                                name="searchName"
+                                value={this.state.searchName}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <SelectList
+                                placeholder="*Select Unit Name"
+                                name="searchUnit"
+                                value={this.state.searchUnit}
+                                onChange={this.onSearch}
+                                options={options}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                type="date"
+                                min="2018-01-01"
+                                max={moment().format("YYYY-MM-DD")}
+                                name="searchDate"
+                                value={this.state.searchDate}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                placeholder="Created By"
+                                name="searchCreated"
+                                value={this.state.searchCreated}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <div className="form-group">
+                                {this.state.search === true ? (
+                                  <button
+                                    className="btn btn-block btn-default"
+                                    onClick={this.onRestore}
+                                  >
+                                    Refresh!
+                                  </button>
+                                ) : (
+                                  <input
+                                    type="submit"
+                                    value="Search"
+                                    className="btn btn-block btn-warning"
+                                  />
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </form>
+                  </div>
+                  {/* Alert Messages */}
+                  {status === 1 && (
+                    <div className="mt-2 alert alert-success">{message}</div>
+                  )}
+                  {status === 2 && (
+                    <div className="mt-2 alert alert-primary">{message}</div>
+                  )}
+                  {status === 3 && (
+                    <div className="mt-2 alert alert-danger">{message}</div>
+                  )}
+                  <div className="table-responsive">
+                    <table className="table table-stripped">
+                      <thead>{souvenirLabel}</thead>
+                      <tbody>{souvenirList}</tbody>
                     </table>
-                  </form>
+                  </div>
                 </div>
-                {/* Alert Messages */}
-                {status === 1 && (
-                  <div className="mt-2 alert alert-success">{message}</div>
-                )}
-                {status === 2 && (
-                  <div className="mt-2 alert alert-primary">{message}</div>
-                )}
-                {status === 3 && (
-                  <div className="mt-2 alert alert-danger">{message}</div>
-                )}
-
-                <table className="table table-responsive table-stripped">
-                  <thead>{souvenirLabel}</thead>
-                  <tbody>{souvenirList}</tbody>
-                </table>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 }
 
