@@ -3,7 +3,7 @@ import moment from 'moment'
 import PropTypes from "prop-types"
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from 'reactstrap'
 import { connect } from "react-redux";
-import { createEvent } from "../../../actions/eventAction";
+import { createEvent, eraseStatus } from "../../../actions/eventAction";
 import { getEmployeeId } from "../../../actions/employeeAction";
 
 class CreateEvent extends React.Component{
@@ -22,8 +22,7 @@ class CreateEvent extends React.Component{
         created_by : this.props.user.m_employee_id
       },
       request_date : moment().format("DD/MM/YYYY"),
-      statusCreated : null,
-      messageCreated : null,
+      status : null,
       startDate : null,
       endDate : null,
       currentEmployee : null,
@@ -43,12 +42,21 @@ class CreateEvent extends React.Component{
   }
 
   componentWillReceiveProps(newProps){
-    let { event, employee } = newProps
-    this.setState({
-      currentEmployee: employee.myEmployeeId.first_name + " " + employee.myEmployeeId.last_name,
-      statusCreated : event.statusCreated,
-      messageCreated : event.idCreated,
-    })
+    let { employee, statusCreate } = newProps
+    if( employee !== null ){
+      let fullName = employee.first_name + " " + employee.last_name
+      this.setState({
+        currentEmployee: fullName
+      })
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.statusCreate !== prevProps.statusCreate) {
+      this.props.statusCreate === 200 ? (this.props.modalStatus(1, `Succes, event with code ${this.props.tCode} has been created`)) : (this.props.modalStatus(0, `Succes, event with code ${this.props.tCode} has been created`))
+      prevProps.eraseStatus()
+    }
   }
 
   changeHandler = (e) => {
@@ -98,6 +106,7 @@ class CreateEvent extends React.Component{
       alert("Budget Is Invalid!")
     }else{
       this.props.createEvent(formdata)
+      this.props.closeHandler() 
       let validate = {
         validateEventName : "form-control",
         validateEventPlace : "form-control",
@@ -117,8 +126,7 @@ class CreateEvent extends React.Component{
         created_by : this.props.user.m_employee_id,
         note : ''
       }
-      this.setState({validate: validate, formdata: newFormdata})
-      this.props.closeHandler()
+      this.setState({validate: validate, formdata: newFormdata})       
     }
   }
 
@@ -228,7 +236,7 @@ class CreateEvent extends React.Component{
                     <label htmlFor="validateBudget" className="col-sm-5 col-form-label text-right">* Budget (Rp)</label>
                     <div>
                       <input
-                        type="text"
+                        type="number"
                         id="validateBudget"
                         placeholder="Type Budget"
                         className={this.state.validate.validateBudget}
@@ -313,17 +321,19 @@ class CreateEvent extends React.Component{
 CreateEvent.propTypes = {
   createEvent: PropTypes.func.isRequired,
   getEmployeeId: PropTypes.func.isRequired,
+  eraseStatus: PropTypes.func.isRequired,
   event: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
   event: state.event,
-  status : state.event.statusCreated,
+  statusCreate : state.event.statusCreate,
   user: state.auth.user,
-  employee: state.employee
+  employee: state.employee.myEmployeeId,
+  tCode: state.event.code
 });
 
 export default connect(
-  mapStateToProps,{ createEvent, getEmployeeId }
+  mapStateToProps,{ createEvent, getEmployeeId, eraseStatus }
   )(CreateEvent);

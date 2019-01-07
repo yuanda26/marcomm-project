@@ -4,7 +4,8 @@ import {
   GET_ID_EVENT,
   CREATE_EVENT,
   UPDATE_EVENT,
-  SEARCH_EVENT
+  SEARCH_EVENT,
+  ERASE_STATUS
 } from "./types";
 import ApiConfig from "../config/Host_Config";
 
@@ -76,7 +77,7 @@ export const createEvent = (body, companyName) => dispatch => {
     .catch(error => {
       dispatch({
         type: CREATE_EVENT,
-        status: "Over Capasity, Try Again Next Day Ok!"
+        status: 403
       });
     });
 };
@@ -131,4 +132,11 @@ export const searchEvent = ( param1, param2, param3, param4, param5, param6 ) =>
         payload: null
       });
     });
+};
+
+export const eraseStatus = () => dispatch => {
+  dispatch({
+    type: ERASE_STATUS,
+    payload: null
+  });
 };

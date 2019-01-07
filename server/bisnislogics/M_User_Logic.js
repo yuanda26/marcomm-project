@@ -10,7 +10,6 @@ const M_user_Logic = {
       username: req.body.username,
       password: req.body.password
     };
-
     userData.readUserByUsername(user => {
       if (user) {
         if (bcrypt.compareSync(userdata.password, user.password)) {
@@ -97,7 +96,6 @@ const M_user_Logic = {
       updated_by: req.body.updated_by,
       updated_date: new Date().toDateString()
     };
-
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(data.password, salt, (err, hash) => {
         data.password = hash;

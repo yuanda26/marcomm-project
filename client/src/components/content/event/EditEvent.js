@@ -10,7 +10,6 @@ import { updateEvent } from "../../../actions/eventAction";
 class EditEvent extends React.Component {
   constructor (props) {
     super(props)
-    super(props)
     this.state = {
       formdata : {
         code : '',
@@ -25,8 +24,6 @@ class EditEvent extends React.Component {
       },
       readOnly : false,
       currentEmployee : '',
-      statusUpdated : null,
-      messageUpdated : null,
       startDate : null,
       endDate : null,
       validate : {
@@ -41,17 +38,15 @@ class EditEvent extends React.Component {
   }
 
   componentWillReceiveProps(newProps){
-    let { event, currentEvent } = newProps
+    let { currentEvent } = newProps
     let { readOnly } = this.state
     let { request_by_first_name, request_by_last_name } = currentEvent
     if( currentEvent.status === "Submitted" ){
       readOnly = false
     }else{
       readOnly = true
-    } 
+    }
     this.setState({
-      statusUpdated : event.statusUpdated,
-      messageUpdated : event.idUpdated,
       formdata : currentEvent,
       readOnly: readOnly,
       currentEmployee : request_by_first_name + " " + request_by_last_name
@@ -85,7 +80,7 @@ class EditEvent extends React.Component {
     let { 
       _id, event_name, place, start_date, end_date, budget 
     } = formdata;
-    formdata["updated_by"] = this.props.auth.user.m_employee_id
+    formdata["updated_by"] = this.props.user.m_employee_id
     if(event_name === ''){
       alert("Please Type Name!")
     }else if(place === ''){
@@ -225,7 +220,7 @@ class EditEvent extends React.Component {
                     <label htmlFor="validateBudget" className="col-sm-5 col-form-label text-right">* Budget (Rp)</label>
                     <div>
                       <input
-                        type="text"
+                        type="number"
                         id="validateBudget"
                         className={this.state.validate.validateBudget}
                         placeholder="Type Event Budget" 
@@ -326,7 +321,8 @@ EditEvent.propTypes = {
 
 const mapStateToProps = state => ({
   event: state.event,
-  user: state.auth.user
+  user: state.auth.user,
+  statusUpdate: state.event.statusUpdate
 });
 
 export default connect(
