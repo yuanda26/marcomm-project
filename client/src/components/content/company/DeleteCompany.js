@@ -1,6 +1,5 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
-import host from "../../../config/Host_Dev.json";
 import { deleteCompany } from "../../../actions/companyAction";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -10,22 +9,23 @@ class DeleteCompany extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: ""
+      status: "",
+      userdata: {}
     };
     this.deleteHandler = this.deleteHandler.bind(this);
   }
 
   componentWillReceiveProps(newProps) {
     this.setState({
-      status: newProps.companyReducer.statusDEL
+      status: newProps.companyReducer.statusDEL,
+      userdata: newProps.auth.user
     });
   }
 
   deleteHandler() {
-    let userdata = JSON.parse(localStorage.getItem(host.LS.USERDATA));
     const formdata = {
       code: this.props.company_del.code,
-      updated_by: userdata.m_employee_id,
+      updated_by: this.state.userdata.m_employee_id,
       updated_date: moment().format("YYYY-MM-DD"),
       is_delete: true
     };
@@ -73,7 +73,8 @@ DeleteCompany.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  companyReducer: state.companyIndexReducer
+  companyReducer: state.companyIndexReducer,
+  auth: state.auth
 });
 
 export default connect(

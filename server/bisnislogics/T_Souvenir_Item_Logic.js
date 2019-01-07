@@ -28,6 +28,8 @@ const T_Souvenir_Data = {
 
   // SOUVENIR ITEM
   createHandlerItem: (req, res, next) => {
+    const data = req.body;
+    let newDate = "TRSV" + moment().format("DDMMYY");
     let CD = moment().format("YYYY-MM-DD");
     dtl.countCode(
       count => {
