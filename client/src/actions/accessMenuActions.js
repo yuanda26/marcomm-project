@@ -1,10 +1,11 @@
 import axios from "axios";
-import apiConfig from "../config/Host_Config";
+// Import Config
+import HostConfig from "../config/Host_Config";
 const token = localStorage.token;
 
 export const createAccessMenu = body => dispatch => {
   let option = {
-    url: `${apiConfig.host}/access/${body.m_role_id}`,
+    url: `${HostConfig}/access/${body.m_role_id}`,
     method: "put",
     headers: {
       Authorization: token,
@@ -26,9 +27,10 @@ export const createAccessMenu = body => dispatch => {
       });
     });
 };
+
 export const getListAccess = role => dispatch => {
   let option = {
-    url: `${apiConfig.host}/access/${role}`,
+    url: `${HostConfig}/access/${role}`,
     method: "get",
     headers: {
       Authorization: token

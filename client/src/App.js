@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Provider } from "react-redux";
 import { CURRENT_USER } from "./actions/types";
 import store from "./store";
-import jwt_decode from "jwt-decode";
+import jwt from "jsonwebtoken";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 
@@ -11,6 +11,7 @@ import "bootstrap/dist/js/bootstrap.min.js";
 import PrivateRoute from "./PrivateRoute";
 // Layout Components
 import Navbar from "./components/layout/Navbar";
+<<<<<<< HEAD
 
 // Import Components
 import Dashboard from "./Dashboard";
@@ -24,17 +25,34 @@ import UnitList from "./components/content/unit/UnitList";
 import EmployeeList from "./components/content/employee/ListEmployee";
 import ListEvent from "./components/content/event/ListEvent";
 import ListProduct from "./components/content/product/listProduct";
+=======
+import Forgot from "./components/content/users/ForgotPassword";
+// Config File
+import AuthConfig from "./config/Auth_Config.json";
+>>>>>>> 8fc312c78a7e0f4ac4be8b449008e9eb6311bb75
 
 // Check for Token
 if (localStorage.token) {
-  // Decode Token and Get User Info and Expiration
-  const decoded = jwt_decode(localStorage.token);
-  // Remove Password Property
-  delete decoded.password;
-  // Set User and Authenticated
-  store.dispatch({
-    type: CURRENT_USER,
-    payload: decoded
+  // Verify Token Expiration
+  jwt.verify(localStorage.token, AuthConfig.secretKey, (err, decoded) => {
+    if (err) {
+      localStorage.clear();
+      // Set Current User to {}
+      // Which will Set isAuthenticated to False
+      store.dispatch({
+        type: CURRENT_USER,
+        payload: {}
+      });
+      window.location.href = "/";
+    } else {
+      // Remove Password Property
+      delete decoded.password;
+      // Set User and Authenticated
+      store.dispatch({
+        type: CURRENT_USER,
+        payload: decoded
+      });
+    }
   });
 }
 

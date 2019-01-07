@@ -114,11 +114,6 @@ module.exports = server => {
     authenticate,
     tDesignLogic.closeReqHandler
   );
-  server.post(
-    "/api/design/upload_files",
-    authenticate,
-    tDesignLogic.createDesignItemFile
-  );
   server.get(
     "/api/design/files/:itemId",
     authenticate,

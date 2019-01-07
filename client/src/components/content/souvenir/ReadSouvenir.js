@@ -34,28 +34,28 @@ class ViewSouvenir extends Component {
           <form>
             <TextField
               label="Souvenir Code"
-              placeholder={this.props.souvenir.code}
+              value={this.props.souvenir.code}
               disabled={true}
             />
             <TextField
               label="Souvenir Name"
-              placeholder={this.props.souvenir.name}
+              value={this.props.souvenir.name}
               disabled={true}
             />
             <TextField
               label="Unit Name"
-              placeholder={this.getUnits(this.props.souvenir.m_unit_id)}
+              value={this.getUnits(this.props.souvenir.m_unit_id)}
               disabled={true}
             />
             <TextField
               label="Description"
-              placeholder={this.props.souvenir.description}
+              value={this.props.souvenir.description}
               disabled={true}
             />
             <div className="form-group text-right">
               <button
                 type="button"
-                className="btn btn-default"
+                className="btn btn-warning"
                 onClick={this.props.closeModal}
               >
                 Close
