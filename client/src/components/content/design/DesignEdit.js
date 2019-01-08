@@ -21,7 +21,7 @@ import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import Spinner from "../../common/Spinner";
 import TextFieldGroup from "../../common/TextFieldGroup";
 import TextField from "../../common/TextField";
-import TextArea from "../../common/TextArea";
+import TextAreaGroup from "../../common/TextAreaGroup";
 import SelectList from "../../common/SelectList";
 import SelectListGroup from "../../common/SelectListGroup";
 import isEmpty from "../../../validation/isEmpty";
@@ -453,7 +453,7 @@ class DesignEdit extends Component {
                     <a href="/design">Transaction Design</a>
                   </li>
                   <li className="breadcrumb-item active" aria-current="page">
-                    Edit
+                    Edit Design Request
                   </li>
                 </ol>
               </nav>
@@ -510,8 +510,9 @@ class DesignEdit extends Component {
                           value={this.state.request_date}
                           disabled={true}
                         />
-                        <TextArea
+                        <TextAreaGroup
                           label="Note"
+                          rows="3"
                           placeholder="Type Note"
                           name="note"
                           value={this.state.note}

@@ -125,7 +125,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         design: { ...state.design, ...action.payload },
-        status: 2,
+        status: 4,
         message: `Design Rejected! Transaction Design Request with Code ${
           action.code
         } Has Been Updated!`

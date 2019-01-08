@@ -12,6 +12,7 @@ import {
 // Design Components
 import DesignApprove from "./DesignApprove";
 import DesignClose from "./DesignClose";
+import DesignRead from "./DesignRead";
 // Import Form Components
 import Spinner from "../../common/Spinner";
 
@@ -98,7 +99,17 @@ class DesignView extends Component {
           />
         );
       } else {
-        return (window.location.href = "/design");
+        return (
+          <DesignRead
+            title={this.pageTitle(design.status)}
+            code={code}
+            design={design}
+            items={items}
+            employee={assign}
+            product={product}
+            requester={requester}
+          />
+        );
       }
     }
   }
