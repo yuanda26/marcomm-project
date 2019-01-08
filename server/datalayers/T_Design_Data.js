@@ -73,7 +73,21 @@ const designData = {
         }
       });
   },
-  approveStatus: (callback, data, code) => {
+  approveDesign: (callback, data, code) => {
+    db.collection("t_design").updateOne(
+      { code: code },
+      { $set: data },
+      (err, docs) => {
+        // Return Data to Callback
+        if (err) {
+          callback(err);
+        } else {
+          callback(data);
+        }
+      }
+    );
+  },
+  rejectDesign: (callback, data, code) => {
     db.collection("t_design").updateOne(
       { code: code },
       { $set: data },

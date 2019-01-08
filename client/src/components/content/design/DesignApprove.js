@@ -1,13 +1,24 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import moment from "moment";
 // Redux Actions
 import { connect } from "react-redux";
+import { approveDesign, rejectDesign } from "../../../actions/designAction";
 // Forms Components
+import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import TextFieldGroup from "../../common/TextFieldGroup";
+import SelectListGroup from "../../common/SelectListGroup";
+import TextArea from "../../common/TextArea";
+// Form Validation
+import isEmpty from "../../../validation/isEmpty";
 
-class DesignClose extends Component {
+class DesignApprove extends Component {
   state = {
-    assign_to: ""
+    assign_to: "",
+    reject_reason: "",
+    rejectModal: false,
+    errorAssign: "",
+    errorReason: ""
   };
 
   // Function to Get User with 'Requester' Role
@@ -79,24 +90,72 @@ class DesignClose extends Component {
     }
   }
 
+  // Function to Get Page Title
+  pageTitle(status) {
+    switch (status) {
+      case 0:
+        return "Rejected Design Request";
+      case 1:
+        return "Approve Design Request";
+      case 2:
+        return "Close Design Request";
+      default:
+        return "Done Design Request";
+    }
+  }
+
   onChange = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  onClose = e => {
-    e.preventDefault();
+  onApprove = () => {
+    if (isEmpty(this.state.assign_to)) {
+      this.setState({ errorAssign: "This Field is Required!" });
+    }
 
-    console.log(this.state.assign_to);
+    if (!isEmpty(this.state.assign_to)) {
+      this.props.approveDesign(this.props.code, {
+        status: 2,
+        assign_to: this.state.assign_to,
+        approved_by: this.props.user.m_employee_id,
+        approved_date: moment().format("DD/MM/YYYY"),
+        updated_by: this.props.user.m_employee_id,
+        updated_date: moment().format("DD/MM/YYYY")
+      });
+    }
   };
 
-  onCancel = e => {
+  onReject = () => {
+    this.setState({ rejectModal: true });
+  };
+
+  submitReject = e => {
     e.preventDefault();
+
+    if (isEmpty(this.state.reject_reason)) {
+      this.setState({ errorReason: "This Field is Required!" });
+    }
+
+    if (!isEmpty(this.state.reject_reason)) {
+      this.props.rejectDesign(this.props.code, {
+        status: 0,
+        reject_reason: this.state.reject_reason,
+        updated_by: this.props.user.m_employee_id,
+        updated_date: moment().format("DD/MM/YYYY")
+      });
+    }
+  };
+
+  onCancel = () => {
     window.location.href = "/design";
+  };
+
+  closeModal = () => {
+    this.setState({ rejectModal: false, reject_reason: "", errorReason: "" });
   };
 
   render() {
     const { design, items, staff, code, title } = this.props;
-    const { status, message } = this.props.design;
 
     // Set Assign to Options
     const staffOptions = [];
@@ -125,14 +184,42 @@ class DesignClose extends Component {
                 </li>
               </ol>
             </nav>
-            {status === 2 && (
-              <div className="mb-4 alert alert-success">{message}</div>
-            )}
             <div className="card border-info mb-3">
               <div className="card-header lead">
                 {title}: {code}
               </div>
               <div className="card-body">
+                <Modal isOpen={this.state.rejectModal}>
+                  <ModalHeader>
+                    <div className="lead">Reject Design Request?</div>
+                  </ModalHeader>
+                  <ModalBody>
+                    <form onSubmit={this.submitReject}>
+                      <TextArea
+                        label="Reject Reason"
+                        name="reject_reason"
+                        placeholder="Input Reject Reason"
+                        onChange={this.onChange}
+                        value={this.state.reject_reason}
+                        errors={this.state.errorReason}
+                      />
+                      <div className="form-group text-right">
+                        <input
+                          type="submit"
+                          className="btn btn-danger mr-2"
+                          value="Reject"
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-warning"
+                          onClick={this.closeModal}
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </form>
+                  </ModalBody>
+                </Modal>
                 <form>
                   <div className="row">
                     <div className="col-md-6">
@@ -156,11 +243,14 @@ class DesignClose extends Component {
                         value={this.designStatus(design.status)}
                         disabled={true}
                       />
-                      <TextFieldGroup
+                      <SelectListGroup
                         label="*Assign to"
+                        placeholder="*Assign to"
                         name="assign_to"
-                        value={this.assignToName(design.assign_to)}
-                        disabled={true}
+                        value={this.state.assign_to}
+                        options={staffOptions}
+                        onChange={this.onChange}
+                        errors={this.state.errorAssign}
                       />
                     </div>
                     <div className="col-md-6">
@@ -298,22 +388,29 @@ class DesignClose extends Component {
                       </table>
                     </div>
                     <div className="col-md-12 text-right">
-                      {design.status === 1 && (
-                        <div className="form-group">
-                          <button
-                            onClick={this.onClose}
-                            className="btn btn-primary mr-2"
-                          >
-                            Close Request
-                          </button>
-                          <button
-                            onClick={this.onCancel}
-                            className="btn btn-warning mr-2"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      )}
+                      <div className="form-group">
+                        <button
+                          type="button"
+                          onClick={this.onApprove}
+                          className="btn btn-primary mr-2"
+                        >
+                          Approved
+                        </button>
+                        <button
+                          type="button"
+                          onClick={this.onReject}
+                          className="btn btn-danger  mr-2"
+                        >
+                          Reject
+                        </button>
+                        <button
+                          type="button"
+                          onClick={this.onCancel}
+                          className="btn btn-warning mr-2"
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </form>
@@ -326,7 +423,7 @@ class DesignClose extends Component {
   }
 }
 
-DesignClose.propTypes = {
+DesignApprove.propTypes = {
   title: PropTypes.string.isRequired,
   code: PropTypes.string.isRequired,
   design: PropTypes.object.isRequired,
@@ -334,14 +431,16 @@ DesignClose.propTypes = {
   employee: PropTypes.array.isRequired,
   product: PropTypes.array.isRequired,
   staff: PropTypes.array.isRequired,
-  requester: PropTypes.array.isRequired
+  requester: PropTypes.array.isRequired,
+  approveDesign: PropTypes.func.isRequired,
+  rejectDesign: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  design: state.design
+  user: state.auth.user
 });
 
 export default connect(
   mapStateToProps,
-  {}
-)(DesignClose);
+  { approveDesign, rejectDesign }
+)(DesignApprove);

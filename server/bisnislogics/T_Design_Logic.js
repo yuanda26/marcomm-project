@@ -118,9 +118,21 @@ const T_Design_Logic = {
   },
   approveHandler: (req, res, next) => {
     const code = req.params.code;
-    const data = { status: 2, assign_to: req.body.assign_to };
+    const data = req.body;
 
-    designData.approveStatus(
+    designData.approveDesign(
+      items => {
+        responseHelper.sendResponse(res, 200, items);
+      },
+      data,
+      code
+    );
+  },
+  rejectHandler: (req, res, next) => {
+    const code = req.params.code;
+    const data = req.body;
+
+    designData.rejectDesign(
       items => {
         responseHelper.sendResponse(res, 200, items);
       },
