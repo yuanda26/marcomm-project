@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
-import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import {
   getDesign,
@@ -448,10 +447,10 @@ class DesignEdit extends Component {
               <nav aria-label="breadcrumb mb-4">
                 <ol className="breadcrumb">
                   <li className="breadcrumb-item">
-                    <Link to="/">Home</Link>
+                    <a href="/">Home</a>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to="/design">List Design</Link>
+                    <a href="/design">Transaction Design</a>
                   </li>
                   <li className="breadcrumb-item active" aria-current="page">
                     Edit
@@ -677,14 +676,14 @@ class DesignEdit extends Component {
                         />
                       </div>
                       <div className="col-md-2">
-                        <Link to="/design">
+                        <a href="/design">
                           <button
                             className="btn btn-default btn-block mt-1"
                             type="button"
                           >
                             Cancel
                           </button>
-                        </Link>
+                        </a>
                       </div>
                     </div>
                   </form>

@@ -13,6 +13,8 @@ import {
   UPDATE_DESIGN_ITEM,
   GET_STAFF,
   GET_EMPLOYEE,
+  APPROVE_DESIGN,
+  REJECT_DESIGN,
   ERRORS
 } from "../actions/types";
 
@@ -110,6 +112,25 @@ export default function(state = initialState, action) {
         ...state,
         employee: action.payload
       };
+    case APPROVE_DESIGN:
+      return {
+        ...state,
+        design: { ...state.design, ...action.payload },
+        status: 2,
+        message: `Design Approved! Transaction Design Request with Code ${
+          action.code
+        } Has Been Updated!`
+      };
+    case REJECT_DESIGN:
+      return {
+        ...state,
+        design: { ...state.design, ...action.payload },
+        status: 2,
+        message: `Design Rejected! Transaction Design Request with Code ${
+          action.code
+        } Has Been Updated!`
+      };
+
     case ERRORS:
       return {
         ...state,

@@ -17,6 +17,7 @@
     "design_code": "design/code",
     "design_file": "design/file",
     "design_approve": "design/approve",
+    "design_reject": "design/reject",
     "design_close": "design/close",
     "design_files": "design/files",
     "design_requester": "design/requester",

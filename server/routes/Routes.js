@@ -121,6 +121,11 @@ module.exports = server => {
   );
   server.get("/api/design/requester", authenticate, tDesignLogic.getRequester);
   server.get("/api/design/staff", authenticate, tDesignLogic.getStaff);
+  server.put(
+    "/api/design/reject/:code",
+    authenticate,
+    tDesignLogic.rejectHandler
+  );
   //== End of Transaction Design Route
 
   // Transaction Design Item Route

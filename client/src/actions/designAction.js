@@ -14,7 +14,8 @@ import {
   ADD_DESIGN,
   UPDATE_DESIGN,
   UPDATE_DESIGN_ITEM,
-  CLOSE_DESIGN,
+  APPROVE_DESIGN,
+  REJECT_DESIGN,
   ERRORS
 } from "./types";
 import HostConfig from "../config/Host_Config";
@@ -258,9 +259,7 @@ export const updateDesign = (code, designUpdate, history) => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.design}/${code}`,
     method: "put",
-    headers: {
-      Authorization: localStorage.token
-    },
+    headers: { Authorization: localStorage.token },
     data: designUpdate
   })
     .then(res => {
@@ -358,4 +357,50 @@ export const uploadFiles = formdata => dispatch => {
         payload: err.response.data
       })
     );
+};
+
+// Approve Design Request
+export const approveDesign = (code, formdata) => dispatch => {
+  axios({
+    method: "put",
+    url: `${HostConfig}/${ApiConfig.design_approve}/${code}`,
+    headers: { Authorization: localStorage.token },
+    data: formdata
+  })
+    .then(res => {
+      dispatch({
+        type: APPROVE_DESIGN,
+        payload: res.data.message,
+        code: code
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: ERRORS,
+        payload: err.response.data
+      });
+    });
+};
+
+// Reject Design Request
+export const rejectDesign = (code, formdata) => dispatch => {
+  axios({
+    method: "put",
+    url: `${HostConfig}/${ApiConfig.design_reject}/${code}`,
+    headers: { Authorization: localStorage.token },
+    data: formdata
+  })
+    .then(res => {
+      dispatch({
+        type: REJECT_DESIGN,
+        payload: res.data.message,
+        code: code
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: ERRORS,
+        payload: err.response.data
+      });
+    });
 };

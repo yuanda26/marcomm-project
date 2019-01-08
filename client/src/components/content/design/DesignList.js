@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
-import { Link, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { Search, CreateOutlined } from "@material-ui/icons";
 // Redux Actions
@@ -197,12 +196,12 @@ class DesignList extends Component {
           <td>{design.created_date}</td>
           <td>{this.getEmployee(design.created_by)}</td>
           <td nowrap="true">
-            <Link to={`/design/view/${design.code}`}>
+            <a href={`/design/view/${design.code}`}>
               <Search />
-            </Link>
-            <Link to={`/design/edit/${design.code}`}>
+            </a>
+            <a href={`/design/edit/${design.code}`}>
               <CreateOutlined />
-            </Link>
+            </a>
           </td>
         </tr>
       ));
@@ -250,22 +249,22 @@ class DesignList extends Component {
                   <nav aria-label="breadcrumb mb-4">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item">
-                        <Link to="/dashboard">Home</Link>
+                        <a href="/dashboard">Home</a>
                       </li>
                       <li
                         className="breadcrumb-item active"
                         aria-current="page"
                       >
-                        List Design
+                        Transaction Design
                       </li>
                     </ol>
                   </nav>
                   <div className="text-left">
-                    <Link to="/design/add">
+                    <a href="/design/add">
                       <button className="btn btn-primary" type="button">
                         Add Design
                       </button>
-                    </Link>
+                    </a>
                   </div>
                   {/* Search Form */}
                   <div className="mt-3">
@@ -390,9 +389,7 @@ const mapStateToProps = state => ({
   design: state.design
 });
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    { getAllDesign, getAssignToName, getEvent }
-  )(DesignList)
-);
+export default connect(
+  mapStateToProps,
+  { getAllDesign, getAssignToName, getEvent }
+)(DesignList);
