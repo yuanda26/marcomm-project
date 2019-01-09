@@ -8,11 +8,11 @@ import {
   getEvent,
   getProduct,
   getRequester,
+  getAssignToName,
   createDesign,
   createDesignItem,
   updateDesign,
-  updateDesignItem,
-  getAssignToName
+  updateDesignItem
 } from "../../../actions/designAction";
 import { CreateOutlined, DeleteOutlined } from "@material-ui/icons";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
@@ -58,12 +58,11 @@ class DesignEdit extends Component {
     this.props.getAssignToName();
   }
 
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(props, state) {
     const newItems = [];
-    newProps.design.items.map(item =>
+    props.design.items.map(item =>
       newItems.push({
         ...item,
-        readOnly: true,
         disabled: true,
         errorProduct: "",
         errorTitle: "",
@@ -74,13 +73,13 @@ class DesignEdit extends Component {
 
     this.setState({
       items: newItems,
-      code: newProps.design.design.code,
-      eventCode: newProps.design.design.t_event_id,
-      designTitle: newProps.design.design.title_header,
-      request_by: newProps.design.design.request_by,
-      request_date: newProps.design.design.request_date,
-      note: newProps.design.design.note,
-      employee: newProps.design.assign
+      code: props.design.design.code,
+      eventCode: props.design.design.t_event_id,
+      designTitle: props.design.design.title_header,
+      request_by: props.design.design.request_by,
+      request_date: props.design.design.request_date,
+      note: props.design.design.note,
+      employee: props.design.assign
     });
   }
 
@@ -141,9 +140,8 @@ class DesignEdit extends Component {
           request_due_date: "",
           note: "",
           is_delete: false,
-          created_by: this.props.auth.user.m_employee_id,
+          created_by: this.props.user.m_employee_id,
           created_date: moment().format("DD/MM/YYYY"),
-          readOnly: true,
           disabled: true,
           errorProduct: "",
           errorTitle: "",
@@ -154,7 +152,8 @@ class DesignEdit extends Component {
     });
   };
 
-  handleRemoveModal = () => {
+  handleRemoveModal = e => {
+    e.preventDefault();
     this.setState({ deleteModal: true });
   };
 
@@ -181,7 +180,7 @@ class DesignEdit extends Component {
 
     // Updating Items State
     this.setState({
-      items: this.state.items.filter((item, sidx) => item.is_delete === false)
+      items: this.state.items.filter(item => item.is_delete === false)
     });
     // Close Modal After Removing & Updating State
     this.closeModal();
@@ -212,11 +211,12 @@ class DesignEdit extends Component {
     this.setState({ items: newItems });
   };
 
-  handleReadonly = idx => e => {
+  handleDisabled = idx => e => {
+    e.preventDefault();
     const newItems = this.state.items.map((item, sidx) => {
       if (idx !== sidx) return item;
 
-      return { ...item, readOnly: !item.readOnly, disabled: !item.disabled };
+      return { ...item, disabled: !item.disabled };
     });
 
     this.setState({ items: newItems });
@@ -300,7 +300,6 @@ class DesignEdit extends Component {
         if (JSON.stringify(item) !== JSON.stringify(originalData[index])) {
           if (item._id !== false) {
             // Delete Some Property
-            delete item.readOnly;
             delete item.disabled;
             delete item.errorDueDate;
             delete item.errorPIC;
@@ -309,7 +308,7 @@ class DesignEdit extends Component {
 
             designItemUpdate.push({
               ...item,
-              updated_by: this.props.auth.user.m_employee_id,
+              updated_by: this.props.user.m_employee_id,
               updated_date: moment().format("DD/MM/YYYY")
             });
           }
@@ -321,7 +320,6 @@ class DesignEdit extends Component {
       this.state.items.forEach(item => {
         if (item._id === false) {
           // Delete Some Property
-          delete item.readOnly;
           delete item.disabled;
           delete item.errorDueDate;
           delete item.errorPIC;
@@ -338,7 +336,7 @@ class DesignEdit extends Component {
         designItemDelete.push({
           _id: rows.item._id,
           is_delete: true,
-          updated_by: this.props.auth.user.m_employee_id,
+          updated_by: this.props.user.m_employee_id,
           updated_date: moment().format("DD/MM/YYYY")
         });
       });
@@ -356,7 +354,7 @@ class DesignEdit extends Component {
         t_event_id: this.state.eventCode,
         title_header: this.state.designTitle,
         note: this.state.note,
-        updated_by: this.props.auth.user.m_employee_id,
+        updated_by: this.props.user.m_employee_id,
         updated_date: moment().format("DD/MM/YYYY")
       };
 
@@ -370,20 +368,30 @@ class DesignEdit extends Component {
           newItem.push({ ...item });
         });
         // Save New Item to Database
-        this.props.createDesignItem(newItem, this.props.history);
+        this.props.createDesignItem(newItem);
       }
       // Update Design Item when it's length greater than 0
       if (designItemUpdate.length > 0) {
-        this.props.updateDesignItem(designItemUpdate, this.props.history);
+        this.props.updateDesignItem(designItemUpdate);
       }
       // Update Design Data
-      this.props.updateDesign(this.state.code, designData, this.props.history);
+      this.props.updateDesign(this.state.code, designData);
     }
   };
 
   render() {
-    const { design, event, product, requester, assign } = this.props.design;
-    const { user } = this.props.auth;
+    const {
+      design,
+      event,
+      product,
+      requester,
+      assign,
+      designStatus,
+      designMessage,
+      itemsStatus,
+      itemsMessage
+    } = this.props.design;
+    const user = this.props.user;
 
     // Set PIC Options
     const staffOptions = [];
@@ -457,6 +465,19 @@ class DesignEdit extends Component {
                   </li>
                 </ol>
               </nav>
+              {/* Alert Messages */}
+              {designStatus === 2 && (
+                <div className="alert alert-success">
+                  <span className="font-weight-bold">Data Updated! </span>
+                  {designMessage}
+                </div>
+              )}
+              {itemsStatus === 1 && (
+                <div className="alert alert-success">
+                  <span className="font-weight-bold">Data Saved! </span>
+                  {itemsMessage}
+                </div>
+              )}
               <div className="card border-info mb-3">
                 <div className="card-header lead">
                   Edit Design Request: {design.code}
@@ -467,7 +488,6 @@ class DesignEdit extends Component {
                       <div className="col-md-6">
                         <TextFieldGroup
                           label="*Transaction Code"
-                          placeholder={design.code}
                           name="code"
                           value={this.state.code}
                           disabled={true}
@@ -491,10 +511,9 @@ class DesignEdit extends Component {
                         />
                         <TextFieldGroup
                           label="*Status"
-                          placeholder="Design Status"
                           name="designStatus"
                           value={this.designStatus(design.status)}
-                          onChange={this.onChange}
+                          disabled={true}
                         />
                       </div>
                       <div className="col-md-6">
@@ -576,7 +595,7 @@ class DesignEdit extends Component {
                                       placeholder="Type Title"
                                       name="title_item"
                                       value={item.title_item}
-                                      readOnly={item.readOnly}
+                                      disabled={item.disabled}
                                       onChange={this.handleItemChange(idx)}
                                       errors={item.errorTitle}
                                     />
@@ -598,7 +617,7 @@ class DesignEdit extends Component {
                                       name="request_due_date"
                                       min={moment().format("YYYY-MM-DD")}
                                       value={item.request_due_date}
-                                      readOnly={item.readOnly}
+                                      disabled={item.disabled}
                                       onChange={this.handleItemChange(idx)}
                                       errors={item.errorDueDate}
                                     />
@@ -620,19 +639,23 @@ class DesignEdit extends Component {
                                       name="note"
                                       placeholder="Note"
                                       value={item.note}
-                                      readOnly={item.readOnly}
+                                      disabled={item.disabled}
                                       onChange={this.handleItemChange(idx)}
                                     />
                                   </td>
                                   <td nowrap="true">
-                                    <CreateOutlined
-                                      color="primary"
-                                      onClick={this.handleReadonly(idx)}
-                                    />
-                                    <DeleteOutlined
-                                      color="primary"
-                                      onClick={this.handleRemoveModal}
-                                    />
+                                    <a href="#!">
+                                      <CreateOutlined
+                                        color="primary"
+                                        onClick={this.handleDisabled(idx)}
+                                      />
+                                    </a>
+                                    <a href="#!">
+                                      <DeleteOutlined
+                                        color="primary"
+                                        onClick={this.handleRemoveModal}
+                                      />
+                                    </a>
                                     {/* Delete Design Modal */}
                                     <Modal isOpen={this.state.deleteModal}>
                                       <ModalHeader>
@@ -649,7 +672,7 @@ class DesignEdit extends Component {
                                                 idx
                                               )}
                                             >
-                                              Delete
+                                              Delete {idx}
                                             </button>
                                             <button
                                               type="button"
@@ -710,12 +733,12 @@ DesignEdit.propTypes = {
   updateDesignItem: PropTypes.func.isRequired,
   getAssignToName: PropTypes.func.isRequired,
   design: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired
+  user: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
   design: state.design,
-  auth: state.auth
+  user: state.auth.user
 });
 
 export default connect(

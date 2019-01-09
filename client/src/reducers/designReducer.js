@@ -31,8 +31,10 @@ const initialState = {
   staff: [],
   employee: [],
   errors: {},
-  status: 0,
-  message: ""
+  designStatus: 0,
+  designMessage: "",
+  itemsStatus: 0,
+  itemsMessage: ""
 };
 
 export default function(state = initialState, action) {
@@ -76,14 +78,19 @@ export default function(state = initialState, action) {
       return {
         ...state,
         designs: [...state.designs, action.payload],
-        status: 1,
-        message: `Data Saved! Transaction Souvenir Request Has Been Added with Code ${
+        designStatus: 1,
+        designMessage: `Transaction Design Request Has Been Added with Code ${
           action.payload.code
         }!`
       };
     case ADD_DESIGN_ITEM:
       return {
-        ...state
+        ...state,
+        items: [...state.items, ...action.payload],
+        itemsStatus: 1,
+        itemsMessage: `New Design Item with Title: ${
+          action.payload[0].title_item
+        } Successfully Added!`
       };
     case GET_DESIGN_ITEM:
       return {
@@ -93,8 +100,9 @@ export default function(state = initialState, action) {
     case UPDATE_DESIGN:
       return {
         ...state,
-        status: 2,
-        message: `Data Updated! Transaction Design Request with Code ${
+        design: { ...state.design, ...action.payload },
+        designStatus: 2,
+        designMessage: `Transaction Design Request with Code ${
           action.code
         } Has Been Updated!`
       };
@@ -116,8 +124,8 @@ export default function(state = initialState, action) {
       return {
         ...state,
         design: { ...state.design, ...action.payload },
-        status: 2,
-        message: `Design Approved! Transaction Design Request with Code ${
+        designStatus: 2,
+        designMessage: `Design Approved! Transaction Design Request with Code ${
           action.code
         } Has Been Updated!`
       };
@@ -125,8 +133,8 @@ export default function(state = initialState, action) {
       return {
         ...state,
         design: { ...state.design, ...action.payload },
-        status: 4,
-        message: `Design Rejected! Transaction Design Request with Code ${
+        designStatus: 4,
+        designMessage: `Design Rejected! Transaction Design Request with Code ${
           action.code
         } Has Been Updated!`
       };
