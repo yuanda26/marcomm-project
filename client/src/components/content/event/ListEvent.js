@@ -7,13 +7,120 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Alert } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import { connect } from "react-redux";
-import { getAllEvent, searchEvent, eraseStatus } from "../../../actions/eventAction";
+import { withStyles } from "@material-ui/core/styles";
 
 import EditEvent from './EditEvent'
 import CreateEvent from './CreateEvent'
 import ViewEvent from './ViewEvent'
 
-import { Search, CreateOutlined } from "@material-ui/icons";
+import { 
+	getAllEvent, 
+	searchEvent, 
+	eraseStatus 
+} from "../../../actions/eventAction";
+
+import {
+  TableRow,
+  TableFooter,
+  TablePagination,
+  IconButton
+} from "@material-ui/core";
+
+import {
+  FirstPage,
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  LastPage,
+  Search,
+  CreateOutlined
+} from "@material-ui/icons";
+
+const actionsStyles = theme => ({
+  root: {
+    flexShrink: 0,
+    color: theme.palette.text.secondary,
+    marginLeft: theme.spacing.unit * 2.5
+  }
+});
+
+class TablePaginationActions extends React.Component {
+  handleFirstPageButtonClick = event => {
+    this.props.onChangePage(event, 0);
+  };
+
+  handleBackButtonClick = event => {
+    this.props.onChangePage(event, this.props.page - 1);
+  };
+
+  handleNextButtonClick = event => {
+    this.props.onChangePage(event, this.props.page + 1);
+  };
+
+  handleLastPageButtonClick = event => {
+    this.props.onChangePage(
+      event,
+      Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1)
+    );
+  };
+
+  render() {
+    const { classes, count, page, rowsPerPage, theme } = this.props;
+
+    return (
+      <div className={classes.root}>
+        <IconButton
+          onClick={this.handleFirstPageButtonClick}
+          disabled={page === 0}
+          aria-label="First Page"
+        >
+          {theme.direction === "rtl" ? <LastPage /> : <FirstPage />}
+        </IconButton>
+        <IconButton
+          onClick={this.handleBackButtonClick}
+          disabled={page === 0}
+          aria-label="Previous Page"
+        >
+          {theme.direction === "rtl" ? (
+            <KeyboardArrowRight />
+          ) : (
+            <KeyboardArrowLeft />
+          )}
+        </IconButton>
+        <IconButton
+          onClick={this.handleNextButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="Next Page"
+        >
+          {theme.direction === "rtl" ? (
+            <KeyboardArrowLeft />
+          ) : (
+            <KeyboardArrowRight />
+          )}
+        </IconButton>
+        <IconButton
+          onClick={this.handleLastPageButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="Last Page"
+        >
+          {theme.direction === "rtl" ? <FirstPage /> : <LastPage />}
+        </IconButton>
+      </div>
+    );
+  }
+}
+
+TablePaginationActions.propTypes = {
+  classes: PropTypes.object.isRequired,
+  count: PropTypes.number.isRequired,
+  onChangePage: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+  theme: PropTypes.object.isRequired
+};
+
+const TablePaginationActionsWrapped = withStyles(actionsStyles, {
+  withTheme: true
+})(TablePaginationActions);
 
 class ListEvent extends React.Component {
 	constructor(props){
@@ -37,13 +144,23 @@ class ListEvent extends React.Component {
 			},
       createdDate : null,
       status: [
-      	{ _id: "4sv8e%7qjhd6", name: "Submitted", code: 1},
-      	{ _id: "tgsr62%fdsd1", name: "In Progress", code: 2},
-      	{ _id: "byw235%3bhty", name: "Done", code: 3},
-      	{ _id: "sdf64%fgre3#", name: "Rejected", code: 0},
-      ]
+      	{ _id: "4sv8e%7qjhd6", name: "Submitted", code: "1"},
+      	{ _id: "tgsr62%fdsd1", name: "In Progress", code: "2"},
+      	{ _id: "byw235%3bhty", name: "Done", code: "3"},
+      	{ _id: "sdf64%fgre3#", name: "Rejected", code: "0"},
+      ],
+      page: 0,
+      rowsPerPage: 5
 		}
 	}
+
+	handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = event => {
+    this.setState({ rowsPerPage: event.target.value });
+  };
 
 	viewModalHandler = (eventid) => {
 		let tmp = {};
@@ -116,6 +233,7 @@ class ListEvent extends React.Component {
 	}
 
 	closeModalHandler = () => {
+		this.props.eraseStatus()
 		this.setState({
 			viewEvent: false,
 			editEvent: false,
@@ -128,6 +246,7 @@ class ListEvent extends React.Component {
 	}
 
 	closeHandler = () => {
+		this.props.eraseStatus()
 		this.setState({ showCreateEvent: false});
 	}
 
@@ -161,13 +280,6 @@ class ListEvent extends React.Component {
       }
     });
   }
-
-  componentDidUpdate(prevProps) {
-	  // Typical usage (don't forget to compare props):
-	  if (this.props.statusCreate !== prevProps.statusCreate) {
-	    this.props.eraseStatus()
-	  }
-	}
 
 	render() {
 		return (
@@ -325,9 +437,15 @@ class ListEvent extends React.Component {
 											</tr>
 										</thead>
 										<tbody>
-											{this.props.event.myEvent.map((row,x)=>
+											{this.props.event.myEvent
+                      .slice(
+                        this.state.page * this.state.rowsPerPage,
+                        this.state.page * this.state.rowsPerPage +
+                          this.state.rowsPerPage
+                      )
+                      .map((row,x)=>
 											<tr key={row._id}>
-												<td>{x + 1}</td>
+												<td>{ x + 1 + this.state.page * this.state.rowsPerPage }</td>
 												<td>{row.code}</td>
 												<td>{row.request_by_first_name + " " 
 													+ row.request_by_last_name }</td>
@@ -354,6 +472,18 @@ class ListEvent extends React.Component {
 											</tr>
 											)}
 										 </tbody>
+										 <TableFooter>
+                    <TableRow>
+                      <TablePagination
+                        count={this.props.event.myEvent.length}
+                        rowsPerPage={this.state.rowsPerPage}
+                        page={this.state.page}
+                        onChangePage={this.handleChangePage}
+                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                        ActionsComponent={TablePaginationActionsWrapped}
+                      />
+                    </TableRow>
+                  </TableFooter>
 						      </table>
 								</div>
 							</div>
@@ -375,7 +505,6 @@ ListEvent.propTypes = {
 const mapStateToProps = state => ({
   event: state.event,
   employee: state.employee,
-  status: state.event.status
 });
 
 export default connect(

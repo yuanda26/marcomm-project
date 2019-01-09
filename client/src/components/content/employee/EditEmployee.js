@@ -7,14 +7,12 @@ import { updateEmployee, getAllCompany } from "../../../actions/employeeAction";
 class EditEmployee extends React.Component {
   constructor (props) {
     super(props)
-    super(props)
     this.state = {
       formdata: {},
       currentEmployee: null,
       companyname: null,
       first_name : '',
       last_name: '',
-      statusUpdated : null,
       validate : {
         validateFirsname : "form-control", 
         selectedCompany : "form-control",
@@ -30,14 +28,17 @@ class EditEmployee extends React.Component {
   }
 
   componentWillReceiveProps(newProps){
-    let { employee, currentEmployee } = newProps  
+    let { currentEmployee, statusUpdated, modalStatus } = newProps  
     this.setState({
-      statusUpdated : employee.statusUpdated,
-      messageUpdated : employee.idUpdated,
       formdata : currentEmployee,
       first_name : currentEmployee.first_name,
       last_name : currentEmployee.last_name
     })
+    if (statusUpdated) {
+      if(statusUpdated === 200){
+        modalStatus(1, `Succes, Employee with code ${currentEmployee.employee_number} has been updated`)
+      }
+    }
   }
 
   changeHandler = (e) => {
@@ -222,7 +223,8 @@ EditEmployee.propTypes = {
 
 const mapStateToProps = state => ({
   employee: state.employee,
-  user: state.auth.user
+  user: state.auth.user,
+  statusUpdated: state.employee.statusUpdated
 });
 
 export default connect(

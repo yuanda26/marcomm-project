@@ -38,7 +38,7 @@ class EditEvent extends React.Component {
   }
 
   componentWillReceiveProps(newProps){
-    let { currentEvent } = newProps
+    let { currentEvent, statusUpdate, modalStatus } = newProps
     let { readOnly } = this.state
     let { request_by_first_name, request_by_last_name } = currentEvent
     if( currentEvent.status === "Submitted" ){
@@ -51,6 +51,11 @@ class EditEvent extends React.Component {
       readOnly: readOnly,
       currentEmployee : request_by_first_name + " " + request_by_last_name
     })
+    if(statusUpdate){
+      if(statusUpdate === 200){
+        modalStatus(1, `Succes, Event with code ${currentEvent.code} has been updated`)
+      }
+    }
   }
 
   changeHandler = (e) => {

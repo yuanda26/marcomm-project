@@ -8,9 +8,6 @@ import PropTypes from "prop-types";
 class DeleteProduct extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      status: ""
-    };
     this.deleteHandler = this.deleteHandler.bind(this);
   }
 
@@ -19,10 +16,12 @@ class DeleteProduct extends React.Component {
     this.props.closeModalHandler();
   }
 
-  componentWillReceiveProps(newStatus) {
-    this.setState({
-      status: newStatus.product.statusDEL
-    });
+  componentWillReceiveProps(newProps){
+    if (newProps.statusDeleted) {
+      if(newProps.statusDeleted === 200){
+        newProps.modalStatus(1, "Deleted")
+      }
+    }
   }
 
   render() {
@@ -53,7 +52,8 @@ DeleteProduct.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  product: state.product
+  product: state.product,
+  statusDeleted: state.product.statusDeleted
 });
 
 export default connect(

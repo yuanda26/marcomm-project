@@ -5,17 +5,14 @@ import { connect } from "react-redux";
 import { deleteEmployee } from "../../../actions/employeeAction";
 
 class DeleteCompany extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      statusDeleted : null
-    }
-  }
-
   componentWillReceiveProps(newProps){
-    this.setState({
-      statusDeleted : newProps.employee.statusDeleted,
-    })
+    if (newProps.statusDeleted) {
+      if(newProps.statusDeleted === 200){
+        newProps.modalStatus(1, "Deleted")
+      }else if(newProps.statusDeleted === 403){
+        newProps.modalStatus(2, `Failed, Data Employee with Employee ID  ${newProps.currentEmployee.employee_number} has been Relation With User!`)
+      }
+    }
   }
 
   deleteHandler = () => {   
@@ -52,6 +49,7 @@ DeleteCompany.propTypes = {
 
 const mapStateToProps = state => ({
   employee: state.employee,
+  statusDeleted: state.employee.statusDeleted
 });
 
 export default connect(

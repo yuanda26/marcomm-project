@@ -7,12 +7,12 @@ import {
   SEARCH_EVENT,
   ERASE_STATUS
 } from "./types";
-import ApiConfig from "../config/Host_Config";
-
+import HostConfig from "../config/Host_Config";
+import ApiConfig from "../config/Api_Config";
 // Get All EVENT
 export const getAllEvent = () => dispatch => {
   axios({
-    url: `${ApiConfig.host}/event`,
+    url: `${HostConfig}/${ApiConfig.event}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -35,7 +35,7 @@ export const getAllEvent = () => dispatch => {
 // Get Single Emloye
 export const getEventId = (param) => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/event/${param}`,
+    url: `${HostConfig}/${ApiConfig.event}/${param}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -59,7 +59,7 @@ export const getEventId = (param) => dispatch => {
 // Add New EVENT
 export const createEvent = (body, companyName) => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/event`,
+    url: `${HostConfig}/${ApiConfig.event}`,
     method: "post",
     headers: {
       Authorization: localStorage.token
@@ -71,7 +71,7 @@ export const createEvent = (body, companyName) => dispatch => {
       dispatch({
         type: CREATE_EVENT,
         payload: res.data.message,
-        status: res.data.code
+        status: res.data.code,
       });
     })
     .catch(error => {
@@ -86,7 +86,7 @@ export const createEvent = (body, companyName) => dispatch => {
 // Update EVENT
 export const updateEvent = (param, body) => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/event/${param}`,
+    url: `${HostConfig}/${ApiConfig.event}/${param}`,
     method: "put",
     headers: {
       Authorization: localStorage.token
@@ -113,7 +113,7 @@ export const updateEvent = (param, body) => dispatch => {
 // Search EVENT
 export const searchEvent = ( param1, param2, param3, param4, param5, param6 ) => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/event/${param1}/${param2}/${param3}/${param4}/${param5}/${param6}`,
+    url: `${HostConfig}/${ApiConfig.event}/${param1}/${param2}/${param3}/${param4}/${param5}/${param6}`,
     method: "get",
     headers: {
       Authorization: localStorage.token

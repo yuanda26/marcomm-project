@@ -6,14 +6,16 @@ import {
   UPDATE_EMPLOYEE,
   DELETE_EMPLOYEE,
   SEARCH_EMPLOYEE,
-  GET_COMPANIES
+  GET_COMPANIES,
+  ERASE_STATUS
 } from "./types";
-import ApiConfig from "../config/Host_Config";
+import HostConfig from "../config/Host_Config";
+import ApiConfig from "../config/Api_Config";
 
 // Get All EMPLOYEE
 export const getAllEmployee = () => dispatch => {
   axios({
-    url: `${ApiConfig.host}/employee`,
+    url: `${HostConfig}/${ApiConfig.employee}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -36,7 +38,7 @@ export const getAllEmployee = () => dispatch => {
 // Get Single Emloye
 export const getEmployeeId = param => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/employee/${param}`,
+    url: `${HostConfig}/${ApiConfig.employee}/${param}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -60,7 +62,7 @@ export const getEmployeeId = param => dispatch => {
 // Add New Employee
 export const createEmployee = body => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/employee`,
+    url: `${HostConfig}/${ApiConfig.employee}`,
     method: "post",
     headers: {
       Authorization: localStorage.token
@@ -87,7 +89,7 @@ export const createEmployee = body => dispatch => {
 // Update Employee
 export const updateEmployee = (param, body) => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/employee/${param}`,
+    url: `${HostConfig}/${ApiConfig.employee}/${param}`,
     method: "put",
     headers: {
       Authorization: localStorage.token
@@ -114,7 +116,7 @@ export const updateEmployee = (param, body) => dispatch => {
 // delete employee
 export const deleteEmployee = param => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/employee/${param}`,
+    url: `${HostConfig}/${ApiConfig.employee}/${param}`,
     method: "delete",
     headers: {
       Authorization: localStorage.token
@@ -146,8 +148,8 @@ export const searchEmployee = (
 ) => dispatch => {
   let options = {
     url: `${
-      ApiConfig.host
-    }/employee/${param1}/${param2}/${param3}/${param4}/${param5}`,
+      HostConfig
+    }/${ApiConfig.employee}/${param1}/${param2}/${param3}/${param4}/${param5}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -171,7 +173,7 @@ export const searchEmployee = (
 // Get All EMPLOYEE
 export const getAllCompany = () => dispatch => {
   axios({
-    url: `${ApiConfig.host}/company`,
+    url: `${HostConfig}/${ApiConfig.company}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -189,4 +191,11 @@ export const getAllCompany = () => dispatch => {
         payload: err.response.data
       })
     );
+};
+
+export const eraseStatus = () => dispatch => {
+  dispatch({
+    type: ERASE_STATUS,
+    payload: null
+  });
 };

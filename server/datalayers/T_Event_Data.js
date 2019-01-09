@@ -24,6 +24,7 @@ const tEventDatalayer = {
 	        }
 	    }, {$unwind : "$user"},
 	    {$match : { "is_delete" : false }},
+	    { $sort : { code : 1 } },
 	    {
 	      $project : {
 	        "_id" : "$_id",

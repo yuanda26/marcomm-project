@@ -27,6 +27,7 @@ import editPromotionD from "./components/content/promotion/editPromotionD";
 import editPromotionND from "./components/content/promotion/editPromotionND";
 import ViewPromotion from "./components/content/promotion/viewPromotion/viewPromotion";
 import ListUser from "./components/content/users/ListUser";
+import ListProduct from "./components/content/product/listProduct";
 // Actions
 import { getListAccess } from "./actions/accessMenuActions";
 
@@ -77,6 +78,8 @@ class RouteSwitcher extends Component {
         return ListPromotion;
       case "/user":
         return ListUser;
+      case "/product":
+        return ListProduct;
       default:
         return Dashboard;
     }

@@ -4,14 +4,16 @@ import moment from "moment"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { Alert } from 'reactstrap'
-import { Link } from 'react-router-dom'
+import { Alert } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import { connect } from "react-redux";
+import { withStyles } from "@material-ui/core/styles";
 
 import { 
   getAllEmployee, 
   searchEmployee, 
-  getAllCompany 
+  getAllCompany,
+  eraseStatus 
 } from "../../../actions/employeeAction";
 
 import EditEmployee from './EditEmployee'
@@ -19,7 +21,109 @@ import CreateEmployee from './CreateEmployee'
 import DeleteEmployee from './DeleteEmployee'
 import ViewEmployee from './ViewEmployee'
 
-import { Search, DeleteOutlined, CreateOutlined } from "@material-ui/icons";
+import {
+  TableRow,
+  TableFooter,
+  TablePagination,
+  IconButton
+} from "@material-ui/core";
+
+import {
+  FirstPage,
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  LastPage,
+  Search,
+  CreateOutlined,
+  DeleteOutlined
+} from "@material-ui/icons";
+
+const actionsStyles = theme => ({
+  root: {
+    flexShrink: 0,
+    color: theme.palette.text.secondary,
+    marginLeft: theme.spacing.unit * 2.5
+  }
+});
+
+class TablePaginationActions extends React.Component {
+  handleFirstPageButtonClick = event => {
+    this.props.onChangePage(event, 0);
+  };
+
+  handleBackButtonClick = event => {
+    this.props.onChangePage(event, this.props.page - 1);
+  };
+
+  handleNextButtonClick = event => {
+    this.props.onChangePage(event, this.props.page + 1);
+  };
+
+  handleLastPageButtonClick = event => {
+    this.props.onChangePage(
+      event,
+      Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1)
+    );
+  };
+
+  render() {
+    const { classes, count, page, rowsPerPage, theme } = this.props;
+
+    return (
+      <div className={classes.root}>
+        <IconButton
+          onClick={this.handleFirstPageButtonClick}
+          disabled={page === 0}
+          aria-label="First Page"
+        >
+          {theme.direction === "rtl" ? <LastPage /> : <FirstPage />}
+        </IconButton>
+        <IconButton
+          onClick={this.handleBackButtonClick}
+          disabled={page === 0}
+          aria-label="Previous Page"
+        >
+          {theme.direction === "rtl" ? (
+            <KeyboardArrowRight />
+          ) : (
+            <KeyboardArrowLeft />
+          )}
+        </IconButton>
+        <IconButton
+          onClick={this.handleNextButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="Next Page"
+        >
+          {theme.direction === "rtl" ? (
+            <KeyboardArrowLeft />
+          ) : (
+            <KeyboardArrowRight />
+          )}
+        </IconButton>
+        <IconButton
+          onClick={this.handleLastPageButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="Last Page"
+        >
+          {theme.direction === "rtl" ? <FirstPage /> : <LastPage />}
+        </IconButton>
+      </div>
+    );
+  }
+}
+
+TablePaginationActions.propTypes = {
+  classes: PropTypes.object.isRequired,
+  count: PropTypes.number.isRequired,
+  onChangePage: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+  theme: PropTypes.object.isRequired
+};
+
+const TablePaginationActionsWrapped = withStyles(actionsStyles, {
+  withTheme: true
+})(TablePaginationActions);
 
 class ListEmployee extends React.Component {
   constructor(props){
@@ -39,8 +143,18 @@ class ListEmployee extends React.Component {
         message : ""
       },
       created_date : null,
+      page: 0,
+      rowsPerPage: 5
     }
   }
+
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = event => {
+    this.setState({ rowsPerPage: event.target.value });
+  };
 
   deleteModalHandler = (employeeid) => {
     let tmp = {};
@@ -117,6 +231,7 @@ class ListEmployee extends React.Component {
   }
 
   closeModalHandler = () => {
+    this.props.eraseStatus()
     this.setState({
       viewEmployee: false,
       editEmployee: false,
@@ -129,6 +244,7 @@ class ListEmployee extends React.Component {
   }
 
   closeHandler = () => {
+    this.props.eraseStatus()
     this.setState({ showCreateEmployee: false });
   }
 
@@ -138,10 +254,28 @@ class ListEmployee extends React.Component {
   }
 
   modalStatus = (status, message) => {
+    this.props.eraseStatus()
     this.setState({
       alertData: {
         status: status,
         message: message
+      }
+    });
+    setTimeout(()=>{
+      this.setState({
+      alertData: {
+        status: 0,
+        message: ""
+      }
+    });
+    }, 3000)
+  }
+
+  closeAlert=()=>{
+    this.setState({
+      alertData: {
+        status: 0,
+        message: ""
       }
     });
   }
@@ -166,17 +300,33 @@ class ListEmployee extends React.Component {
                 </div>
                 <div>
                   {this.state.alertData.status === 1 ? (
-                    <Alert color="success">
-                      <b>{this.state.alertData.message} !</b>
+                    <Alert className="alert alert-succes alert-dismissible fade show">
+                      <b>{this.state.alertData.message}</b>
+                      <button 
+                        type="button" 
+                        className="close" 
+                        data-dismiss="alert"
+                        onClick={this.closeAlert} 
+                        aria-label="Close">
+                        <span>&times;</span>
+                      </button>
                     </Alert>
-                    ) : ("")
-                    }
-                    {this.state.alertData.status === 2 ? (
-                      <Alert color="danger">
-                        <b>{this.state.alertData.message} !</b>
-                      </Alert>
-                    ) : ("")
-                    }
+                  ) : ("")
+                  }
+                  {this.state.alertData.status === 2 ? (
+                    <Alert className="alert alert-danger alert-dismissible fade show">
+                      <b>{this.state.alertData.message}</b>
+                      <button 
+                        type="button" 
+                        className="close" 
+                        data-dismiss="alert" 
+                        aria-label="Close"
+                        onClick={this.closeAlert}>
+                      <span>&times;</span>
+                    </button>
+                    </Alert>
+                  ) : ("")
+                  }
                   <button 
                     type="button" 
                     className="btn btn-primary float-right"
@@ -280,7 +430,13 @@ class ListEmployee extends React.Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {employee.myEmployee.map((row,x)=>
+                      {employee.myEmployee
+                      .slice(
+                        this.state.page * this.state.rowsPerPage,
+                        this.state.page * this.state.rowsPerPage +
+                          this.state.rowsPerPage
+                      )
+                      .map((row,x)=>
                       <tr key={row._id}>
                         <td>{x + 1}</td>
                         <td>{row.employee_number}</td>
@@ -310,6 +466,18 @@ class ListEmployee extends React.Component {
                       </tr>
                       )}
                      </tbody>
+                     <TableFooter>
+                      <TableRow>
+                        <TablePagination
+                          count={employee.myEmployee.length}
+                          rowsPerPage={this.state.rowsPerPage}
+                          page={this.state.page}
+                          onChangePage={this.handleChangePage}
+                          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                          ActionsComponent={TablePaginationActionsWrapped}
+                        />
+                      </TableRow>
+                    </TableFooter>
                   </table>
                 </div>
               </div>
@@ -325,13 +493,14 @@ ListEmployee.propTypes = {
   getAllEmployee: PropTypes.func.isRequired,
   getAllCompany: PropTypes.func.isRequired,
   searchEmployee: PropTypes.func.isRequired,
+  eraseStatus: PropTypes.func.isRequired,
   employee: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
-  employee: state.employee,
+  employee: state.employee
 });
 
 export default connect(
-  mapStateToProps,{ getAllEmployee, searchEmployee, getAllCompany }
+  mapStateToProps,{ getAllEmployee, searchEmployee, getAllCompany, eraseStatus }
   )(ListEmployee);

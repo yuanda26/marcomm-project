@@ -1,5 +1,14 @@
 import React from "react";
-import { Modal, ModalBody, ModalFooter, ModalHeader, Button, Input, Label, FormGroup } from "reactstrap";
+import {
+  Modal, 
+  ModalBody, 
+  ModalFooter, 
+  ModalHeader, 
+  Button, 
+  Input, 
+  Label, 
+  FormGroup 
+} from "reactstrap";
 import { Alert } from "reactstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -7,15 +16,13 @@ import { createProduct } from "../../../actions/productAction";
 
 class CreateProduct extends React.Component {
   constructor(props) {
-    super(props);
-    let userdata = "purwanto";
-    
+    super(props);    
     this.state = {
       code: "",
       name: "",
       description: "",
-      created_by: userdata,
-      update_by:  userdata,
+      created_by: this.props.user.m_employee_id,
+      update_by: "",
       alertData: {
         status: "",
         message: ""
@@ -38,6 +45,13 @@ class CreateProduct extends React.Component {
     });
   }
 
+  componentWillReceiveProps(newProps){
+    if (newProps.statusCreated) {
+      if(newProps.statusCreated === 200){
+        newProps.modalStatus(1, `Succes, New Product with code ${newProps.productCode} has been add`)
+      }
+    }
+  }
 
   submitHandler(){
     if(this.state.name === "" && this.state.description === " "){
@@ -92,12 +106,14 @@ class CreateProduct extends React.Component {
       }
       if(func(this.props.dataValidation, this.state.name) === true) {
         this.props.createProduct(formdata);
-        this.props.modalStatus(1, "Created!", this.state.name);
-
+        let eraseAlertData = {
+            status: false,
+            message: ""
+          }
         this.setState({
-          code : "",
           name : "",
-          description : ""
+          description : "",
+          alertData: eraseAlertData
         })
         this.props.closeHandler();
       }
@@ -149,7 +165,10 @@ CreateProduct.propTypes = {
   };
   
   const mapStateToProps = state => ({
-    product: state.product
+    product: state.product,
+    user: state.auth.user, 
+    statusCreated: state.product.statusCreated,
+    productCode: state.product.code
   });
   
   export default connect(

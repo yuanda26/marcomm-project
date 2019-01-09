@@ -5,14 +5,17 @@ import {
   DELETE_EMPLOYEE,
   GET_ID_EMPLOYEE,
   SEARCH_EMPLOYEE,
-  GET_COMPANIES
+  GET_COMPANIES,
+  ERASE_STATUS
 } from "../actions/types";
 
 const initialState = {
   myEmployee: [],
   myCompany: [],
   myEmployeeId: null,
-  status: null,
+  statusCreated: null,
+  statusUpdated: null,
+  statusDeleted: null,
   employee_number: null
 };
 
@@ -27,13 +30,13 @@ export default function(state = initialState, action) {
       return {
         ...state,
         myEmployee: action.payload,
-        status: action.status
+        statusUpdated: action.status
       };
     case CREATE_EMPLOYEE:
       return {
         ...state,
         myEmployee: action.payload,
-        status: action.status,
+        statusCreated: action.status,
         employee_number: action.created.employee_number
       };
     case SEARCH_EMPLOYEE:
@@ -45,7 +48,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         myEmployee: state.myEmployee.filter(row => row._id !== action.payload),
-        status: action.status
+        statusDeleted: action.status
       };
     case GET_ID_EMPLOYEE:
       return {
@@ -56,6 +59,13 @@ export default function(state = initialState, action) {
       return {
         ...state,
         myCompany: action.payload
+      };
+    case ERASE_STATUS:
+      return {
+        ...state,
+        statusCreated: action.payload,
+        statusUpdated: action.payload,
+        statusDeleted: action.payload,
       };
     default:
       return state;

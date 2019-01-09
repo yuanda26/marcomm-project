@@ -42,20 +42,17 @@ class CreateEvent extends React.Component{
   }
 
   componentWillReceiveProps(newProps){
-    let { employee, statusCreate } = newProps
+    let { employee, statusCreate, modalStatus, tCode } = newProps
     if( employee !== null ){
       let fullName = employee.first_name + " " + employee.last_name
       this.setState({
         currentEmployee: fullName
       })
     }
-  }
-
-  componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    if (this.props.statusCreate !== prevProps.statusCreate) {
-      this.props.statusCreate === 200 ? (this.props.modalStatus(1, `Succes, event with code ${this.props.tCode} has been created`)) : (this.props.modalStatus(0, `Succes, event with code ${this.props.tCode} has been created`))
-      prevProps.eraseStatus()
+    if(statusCreate){
+      if(statusCreate === 200){
+        modalStatus(1, `Succes, New Employee with code ${tCode} has been add`)
+      }
     }
   }
 

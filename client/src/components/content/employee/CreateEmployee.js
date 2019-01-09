@@ -34,6 +34,14 @@ class CreateEmployee extends React.Component{
     this.props.getAllCompany()
   }
 
+  componentWillReceiveProps(newProps){
+    if (newProps.statusCreated) {
+      if(newProps.statusCreated === 200){
+        newProps.modalStatus(1, `Succes, New Employee with code ${newProps.empNumber} has been add`)
+      }
+    }
+  }
+
   changeHandler = (e) => {
     let { formdata, validate, regexEmail } = this.state
     let { name, value, id } = e.target
@@ -110,7 +118,7 @@ class CreateEmployee extends React.Component{
                 <input
                   type="text" 
                   className="form-control" 
-                  placeholder="" 
+                  placeholder="Auto Generated" 
                   readOnly
                   name="code" 
                   value={this.state.formdata.employee_number} 
@@ -224,7 +232,9 @@ CreateEmployee.propTypes = {
 
 const mapStateToProps = state => ({
   employee: state.employee,
-  user: state.auth.user
+  user: state.auth.user,
+  statusCreated: state.employee.statusCreated,
+  empNumber: state.employee.employee_number
 });
 
 export default connect(

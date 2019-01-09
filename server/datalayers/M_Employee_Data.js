@@ -24,6 +24,7 @@ const employeeDatalayer = {
 				}
 			},
 			 { $match : {is_delete : false}},
+			 { $sort : { employee_number : 1 } },
 		  {
 			  $project : {
 			    "_id"             : "$_id",

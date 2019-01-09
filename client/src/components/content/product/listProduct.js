@@ -1,7 +1,7 @@
 import React from "react";
+import moment from "moment";
+
 import { Link } from "react-router-dom";
-import { Alert, Button } from "reactstrap";
-import { getAllProduct, searchProduct } from "../../../actions/productAction";
 import { connect } from "react-redux";
 
 import EditProduct from "./editProduct";
@@ -9,27 +9,36 @@ import CreateProduct from "./createProduct";
 import DeleteProduct from "./deleteProduct";
 import ViewProduct from "./viewProduct";
 
+import { 
+  Alert, 
+  Button 
+} from "reactstrap";
+
+import {
+  getAllProduct,
+  searchProduct,
+  eraseStatus
+} from "../../../actions/productAction";
+
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableFooter from "@material-ui/core/TableFooter";
-import TablePagination from "@material-ui/core/TablePagination";
-import IconButton from "@material-ui/core/IconButton";
-import FirstPageIcon from "@material-ui/icons/FirstPage";
-import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
-import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
-import LastPageIcon from "@material-ui/icons/LastPage";
-import Paper from "@material-ui/core/Paper";
-import Hidden from "@material-ui/core/Hidden";
-import SearchIcon from "@material-ui/icons/Search";
-import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
-import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
-import Grid from "@material-ui/core/Grid";
-import moment from "moment";
+
+import {
+  TableRow,
+  TableFooter,
+  TablePagination,
+  IconButton
+} from "@material-ui/core";
+
+import {
+  FirstPage,
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  LastPage,
+  Search,
+  DeleteOutlined,
+  CreateOutlined
+} from "@material-ui/icons";
 
 const actionsStyles = theme => ({
   root: {
@@ -69,7 +78,7 @@ class TablePaginationActions extends React.Component {
           disabled={page === 0}
           aria-label="First Page"
         >
-          {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
+          {theme.direction === "rtl" ? <LastPage /> : <FirstPage />}
         </IconButton>
         <IconButton
           onClick={this.handleBackButtonClick}
@@ -98,7 +107,7 @@ class TablePaginationActions extends React.Component {
           disabled={page >= Math.ceil(count / rowsPerPage) - 1}
           aria-label="Last Page"
         >
-          {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
+          {theme.direction === "rtl" ? <FirstPage /> : <LastPage />}
         </IconButton>
       </div>
     );
@@ -156,7 +165,6 @@ class ListProduct extends React.Component {
       alertData: {
         status: 0,
         message: "",
-        code: ""
       },
       hasil: [],
       page: 0,
@@ -243,32 +251,6 @@ class ListProduct extends React.Component {
     });
   };
 
-    change = () => {
-      const {
-        code,
-        name,
-        description,
-        created_by,
-        created_date
-      } = this.state.initialSearch;
-      let temp = [];
-      this.state.result.forEach(ele => {
-      if (
-        code.test(ele.code.toLowerCase()) &&
-        name.test(ele.name.toLowerCase()) &&
-        description.test(ele.description.toLowerCase()) &&
-        created_by.test(ele.created_by.toLowerCase()) &&
-        created_date.test(ele.created_date.toLowerCase())
-      ) {
-        temp.push(ele);
-      }
-      return temp;
-    });
-    this.setState({
-      hasil: temp
-    });
-  };
-
   SearchHandler = () => {
     const {
       code, name, description, created_date, created_by 
@@ -305,227 +287,242 @@ class ListProduct extends React.Component {
     });
   }
 
-  modalStatus(status, message, code) {
+  modalStatus = (status, message) => {
+    this.props.eraseStatus()
     this.setState({
       alertData: {
         status: status,
-        message: message,
-        code: code
+        message: message
+      }
+    });
+    setTimeout(()=>{
+      this.setState({
+      alertData: {
+        status: 0,
+        message: ""
+      }
+    });
+    }, 3000)
+  }
+
+  closeAlert=()=>{
+    this.setState({
+      alertData: {
+        status: 0,
+        message: ""
       }
     });
   }
 
   render() {
-    const { classes } = this.props
     return (
       <div className="container">
         <div className="row">
           <div className="col-md-12">
-          <Grid container spacing={0}>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <ul className="breadcrumb">
-                  <li>
-                    <a href="/dashboard">Home</a> <span className="divider">/</span>
-                  </li>
-                  <li>
-                    <a href="/dashboard">Master</a> <span className="divider">/</span>
-                  </li>
-                  <li className="active">List Product</li>
-                </ul>
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <h4>List Product</h4>
-            </Grid>
-            
-            <form>
-              <div className="form-row align-items-center">
-                <div className='col-md-2'>
-                  <input 
-                    placeholder="Code" 
-                    className="form-control" 
-                    name="code"
-                    onChange={this.changeHandler}
-                  />
+            <div className='card border-primary'>
+              <div className="card-header bg-primary text-white"><h4>List Product</h4></div>
+              <div className="card-body">
+                <div className="col">
+                  <nav aria-label="breadcrumb">
+                    <ul className="breadcrumb">
+                      <li className="breadcrumb-item"><a href="/dashboard" >Home</a></li>
+                      <li className="breadcrumb-item"><a href="/dashboard">Master</a></li>
+                      <li className="breadcrumb-item active" aria-current="page">List Product</li>
+                    </ul>
+                  </nav>
                 </div>
-                <div className='col-md-2'>
-                  <input 
-                    placeholder="Name" 
-                    className="form-control" 
-                    name="name"
-                    onChange={this.changeHandler}
+                <div>
+                  {this.state.alertData.status === 1 ? (
+                    <Alert className="alert alert-succes alert-dismissible fade show">
+                      <b>{this.state.alertData.message}</b>
+                      <button 
+                        type="button" 
+                        className="close" 
+                        data-dismiss="alert"
+                        onClick={this.closeAlert} 
+                        aria-label="Close">
+                        <span>&times;</span>
+                      </button>
+                    </Alert>
+                  ) : ("")
+                  }
+                  {this.state.alertData.status === 2 ? (
+                    <Alert className="alert alert-danger alert-dismissible fade show">
+                      <b>{this.state.alertData.message}</b>
+                      <button 
+                        type="button" 
+                        className="close" 
+                        data-dismiss="alert" 
+                        aria-label="Close"
+                        onClick={this.closeAlert}>
+                      <span>&times;</span>
+                    </button>
+                    </Alert>
+                  ) : ("")
+                  }
+                  <DeleteProduct
+                    delete={this.state.deleteProduct}
+                    product_del={this.state.currentProduct}
+                    closeModalHandler={this.closeModalHandler}
+                    modalStatus={this.modalStatus}
                   />
-                </div>
-                <div className='col-md-2'>
-                  <input 
-                    placeholder="Description" 
-                    className="form-control" 
-                    name="description"
-                    onChange={this.changeHandler}
+                  <ViewProduct
+                    view={this.state.viewProduct}
+                    closeModalHandler={this.closeModalHandler}
+                    product={this.state.currentProduct}
                   />
-                 </div>
-                <div className='col-md'>
-                  <input
-                    type="date"
-                    className="form-control" 
-                    placeholder="Search Created Date"
-                    name="created_date"
-                    onChange={this.changeHandler}
+                 <CreateProduct
+                    create={this.state.showCreateProduct}
+                    closeHandler={this.closeHandler}
+                    getAllProduct = {this.props.getAllProduct}
+                    modalStatus={this.modalStatus}
+                    dataValidation = {(this.props.product.production.map(content=>content.name))}
                   />
-                </div>
-                <div className='col-md-2'>
-                  <input 
-                    placeholder="Created By" 
-                    name="created_by"
-                    className="form-control" 
-                    onChange={this.changeHandler}
+                   <EditProduct
+                    edit={this.state.editProduct}
+                    closeModalHandler={this.closeModalHandler}
+                    product_test={this.state.currentProduct}
+                    getAllProduct = {this.props.getAllProduct}
+                    modalStatus={this.modalStatus}
+                    dataValidation = {(this.props.product.production.map(content=>content.name))}
                   />
-                </div>
-                <div className='col-md'>
-                  <button 
-                    type="button" 
-                    className="btn btn-warning float-right"
-                    onClick ={this.SearchHandler}
-                  >Search
-                  </button>
-                </div>
-                <div className='col-md'>
-                  <Button 
-                    variant="contained" 
-                    color="primary" 
-                    size="small" 
-                    onClick={this.showHandler}>
-                    Add
-                  </Button>
+                  <form>
+                    <div className="form-row align-items-center">
+                      <div className='col-md-2'>
+                        <input 
+                          placeholder="Code" 
+                          className="form-control" 
+                          name="code"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className='col-md-2'>
+                        <input 
+                          placeholder="Name" 
+                          className="form-control" 
+                          name="name"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className='col-md-2'>
+                        <input 
+                          placeholder="Description" 
+                          className="form-control" 
+                          name="description"
+                          onChange={this.changeHandler}
+                        />
+                       </div>
+                      <div className='col-md'>
+                        <input
+                          type="date"
+                          className="form-control" 
+                          placeholder="Search Created Date"
+                          name="created_date"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className='col-md-2'>
+                        <input 
+                          placeholder="Created By" 
+                          name="created_by"
+                          className="form-control" 
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className='col-md'>
+                        <button 
+                          type="button" 
+                          className="btn btn-warning float-right"
+                          onClick ={this.SearchHandler}
+                        >Search
+                        </button>
+                      </div>
+                      <div className='col-md'>
+                        <Button 
+                          variant="contained" 
+                          color="primary" 
+                          size="small" 
+                          onClick={this.showHandler}>
+                          Add
+                        </Button>
+                      </div>
+                    </div>
+                </form>
+                <br/>
+                <table id="mytable" className="table table table-hover">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Product Code</th>
+                      <th>Product Name</th>
+                      <th>Description</th>
+                      <th>Created By</th>
+                      <th>Created Date</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.props.product.production
+                      .slice(
+                        this.state.page * this.state.rowsPerPage,
+                        this.state.page * this.state.rowsPerPage +
+                          this.state.rowsPerPage
+                      )
+                      .map((row, index) => {
+                        return (
+                          <tr key={row._id}>
+                            <td>{ index + 1 + this.state.page * this.state.rowsPerPage }</td>
+                            <td>{row.code}</td>
+                            <td>{row.name}</td>
+                            <td>{row.description}</td>
+                            <td>{row.created_by}</td>
+                            <td>{this.chanegeDate(row.created_date)}</td>
+                            <td>
+                              <Link to="#">
+                                <Search
+                                  onClick={() => {
+                                    this.viewModalHandler(row._id);
+                                  }}
+                                />
+                              </Link>
+                              <Link to="#">
+                                <CreateOutlined
+                                  onClick={() => {
+                                    this.editModalHandler(row._id);
+                                  }}
+                                />
+                              </Link>
+                              <Link to="#">
+                                <DeleteOutlined
+                                  onClick={() => {
+                                    this.deleteModalHandler(row._id);
+                                  }}
+                                />
+                              </Link>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                  <TableFooter>
+                    <TableRow>
+                      <TablePagination
+                        count={this.state.hasil.length}
+                        rowsPerPage={this.state.rowsPerPage}
+                        page={this.state.page}
+                        onChangePage={this.handleChangePage}
+                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                        ActionsComponent={TablePaginationActionsWrapped}
+                      />
+                    </TableRow>
+                  </TableFooter>
+                </table>
                 </div>
               </div>
-            </form>
-            <DeleteProduct
-              delete={this.state.deleteProduct}
-              product_del={this.state.currentProduct}
-              closeModalHandler={this.closeModalHandler}
-              modalStatus={this.modalStatus}
-            />
-            <ViewProduct
-              view={this.state.viewProduct}
-              closeModalHandler={this.closeModalHandler}
-              product={this.state.currentProduct}
-            />
-           <CreateProduct
-              create={this.state.showCreateProduct}
-              closeHandler={this.closeHandler}
-              getAllProduct = {this.props.getAllProduct}
-              modalStatus={this.modalStatus}
-              dataValidation = {(this.props.product.production.map(content=>content.name))}
-            />
-             <EditProduct
-              edit={this.state.editProduct}
-              closeModalHandler={this.closeModalHandler}
-              product_test={this.state.currentProduct}
-              getAllProduct = {this.props.getAllProduct}
-              modalStatus={this.modalStatus}
-              dataValidation = {(this.props.product.production.map(content=>content.name))}
-            />
-            <Grid item xs={12}>
-              <Hidden>
-                <br />
-                <Paper>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>No</TableCell>
-                        <TableCell>Product Code</TableCell>
-                        <TableCell>Product Name</TableCell>
-                        <TableCell>Description</TableCell>
-                        <TableCell>Created By</TableCell>
-                        <TableCell>Created Date</TableCell>
-                        <TableCell>Action</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {this.props.product.production
-                        .slice(
-                          this.state.page * this.state.rowsPerPage,
-                          this.state.page * this.state.rowsPerPage +
-                            this.state.rowsPerPage
-                        )
-                        .map((row, index) => {
-                          return (
-                            <TableRow key={row._id}>
-                              <TableCell>{index+1+this.state.page * this.state.rowsPerPage}</TableCell>
-                              <TableCell component="th" scope="row">
-                                {row.code}
-                              </TableCell>
-                              <TableCell>{row.name}</TableCell>
-                              <TableCell>{row.description}</TableCell>
-                              <TableCell>{row.created_by}</TableCell>
-                              <TableCell>{this.chanegeDate(row.created_date)}</TableCell>
-                              <TableCell>
-                                <Link to="#">
-                                  <SearchIcon
-                                    onClick={() => {
-                                      this.viewModalHandler(row._id);
-                                    }}
-                                  />
-                                </Link>
-                                <Link to="#">
-                                  <CreateOutlinedIcon
-                                    onClick={() => {
-                                      this.editModalHandler(row._id);
-                                    }}
-                                  />
-                                </Link>
-                                <Link to="#">
-                                  <DeleteOutlinedIcon
-                                    onClick={() => {
-                                      this.deleteModalHandler(row._id);
-                                    }}
-                                  />
-                                </Link>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                    </TableBody>
-                    <TableFooter>
-                      <TableRow>
-                        <TablePagination
-                          colSpan={3}
-                          count={this.state.hasil.length}
-                          rowsPerPage={this.state.rowsPerPage}
-                          page={this.state.page}
-                          onChangePage={this.handleChangePage}
-                          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                          ActionsComponent={TablePaginationActionsWrapped}
-                        />
-                      </TableRow>
-                    </TableFooter>
-                  </Table>
-                </Paper>
-              </Hidden>
-            </Grid>
-          </Grid>
-          <br />
-            <Grid>
-              {this.state.alertData.status === 1 ? (
-                <Alert color="success">
-                  <b>Data {this.state.alertData.message}</b> Data Product with
-                  referential code <strong>{this.state.alertData.code} </strong>
-                  has been {this.state.alertData.message}
-                </Alert>
-              ) : (
-                ""
-              )}
-              {this.state.alertData.status === 2 ? (
-                <Alert color="danger">{this.state.alertData.message} </Alert>
-              ) : (
-                ""
-              )}
-            </Grid>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
     );
   }
 }
@@ -534,6 +531,7 @@ class ListProduct extends React.Component {
 ListProduct.propTypes = {
   getAllProduct: PropTypes.func.isRequired,
   searchProduct: PropTypes.func.isRequired,
+  eraseStatus: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired
 };
 
@@ -543,5 +541,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getAllProduct, searchProduct}
+  { getAllProduct, searchProduct, eraseStatus}
 )( withStyles(styles)(ListProduct) );

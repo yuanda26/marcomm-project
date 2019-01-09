@@ -1,5 +1,14 @@
 import React from "react";
-import { Modal, ModalBody, ModalFooter, ModalHeader, Button, Input, Label, FormGroup } from "reactstrap";
+import {
+  Modal, 
+  ModalBody, 
+  ModalFooter, 
+  ModalHeader, 
+  Button, 
+  Input, 
+  Label, 
+  FormGroup
+} from "reactstrap";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 

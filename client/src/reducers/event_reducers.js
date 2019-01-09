@@ -2,7 +2,6 @@ import {
   GET_EVENT,
   UPDATE_EVENT,
   CREATE_EVENT,
-  DELETE_EVENT,
   SEARCH_EVENT,
   ERASE_STATUS
 } from "../actions/types";
@@ -34,11 +33,6 @@ export default function(state = initialState, action) {
         code: action.payload[action.payload.length-1].code,
         statusCreate: action.status
       };
-    case DELETE_EVENT:
-      return {
-        ...state,
-        statusDeleted: action.status,
-      };
     case SEARCH_EVENT:
       return {
         ...state,
@@ -47,7 +41,8 @@ export default function(state = initialState, action) {
     case ERASE_STATUS:
       return {
         ...state,
-        status: action.payload,
+        statusCreate: action.payload,
+        statusUpdate: action.payload
       };
     default:
       return state;

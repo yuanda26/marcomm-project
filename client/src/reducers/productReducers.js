@@ -4,15 +4,17 @@ import {
   DEL_PRODUCT,
   CREATE_PRODUCT, 
   UPDATE_PRODUCT, 
-  SEARCH_PRODUCT 
+  SEARCH_PRODUCT,
+  ERASE_STATUS
 } from "../actions/types";
 
 const initialState = {
   production: [], //nilai awal masih kosong (array kosong) bebas variabel
   statusGET: "",
-  statusDEL: "",
-  statusADD: "",
-  statusPUT: ""
+  statusDeleted: "",
+  statusCreated: "",
+  statusUpdated: "",
+  code: null
 };
 
 export default function(state = initialState, action) {
@@ -34,14 +36,15 @@ export default function(state = initialState, action) {
       return {
         ...state,
         production: state.production.filter(production => production.code !== action.payload),
-        statusDEL: action.status
+        statusDeleted: action.status
       };
 
     case CREATE_PRODUCT:
       return {
         ...state,
         production: [...state.production, action.payload],
-        statusADD: action.status
+        statusCreated: action.status,
+        code: action.payload.code
       };
 
       case UPDATE_PRODUCT:
@@ -54,7 +57,15 @@ export default function(state = initialState, action) {
                 }
                 return row
               }),
-        statusPUT: action.status
+        statusUpdated: action.status
+      };
+
+    case ERASE_STATUS:
+      return {
+        ...state,
+        statusCreated: action.status,
+        statusUpdated: action.status,
+        statusDeleted: action.status
       };
 
     default:
