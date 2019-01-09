@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
-import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import {
   getDesign,
@@ -22,7 +21,7 @@ import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import Spinner from "../../common/Spinner";
 import TextFieldGroup from "../../common/TextFieldGroup";
 import TextField from "../../common/TextField";
-import TextArea from "../../common/TextArea";
+import TextAreaGroup from "../../common/TextAreaGroup";
 import SelectList from "../../common/SelectList";
 import SelectListGroup from "../../common/SelectListGroup";
 import isEmpty from "../../../validation/isEmpty";
@@ -448,13 +447,13 @@ class DesignEdit extends Component {
               <nav aria-label="breadcrumb mb-4">
                 <ol className="breadcrumb">
                   <li className="breadcrumb-item">
-                    <Link to="/">Home</Link>
+                    <a href="/">Home</a>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to="/design">List Design</Link>
+                    <a href="/design">Transaction Design</a>
                   </li>
                   <li className="breadcrumb-item active" aria-current="page">
-                    Edit
+                    Edit Design Request
                   </li>
                 </ol>
               </nav>
@@ -511,8 +510,9 @@ class DesignEdit extends Component {
                           value={this.state.request_date}
                           disabled={true}
                         />
-                        <TextArea
+                        <TextAreaGroup
                           label="Note"
+                          rows="3"
                           placeholder="Type Note"
                           name="note"
                           value={this.state.note}
@@ -677,14 +677,14 @@ class DesignEdit extends Component {
                         />
                       </div>
                       <div className="col-md-2">
-                        <Link to="/design">
+                        <a href="/design">
                           <button
                             className="btn btn-default btn-block mt-1"
                             type="button"
                           >
                             Cancel
                           </button>
-                        </Link>
+                        </a>
                       </div>
                     </div>
                   </form>
