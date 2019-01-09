@@ -14,13 +14,14 @@ import PropTypes from "prop-types";
 import {
   getAllTSouvenirItemDetil,
   getAllTSouvenirItem,
-  adminRequestApprove
+  adminRequestApprove,
+  adminApproveSettlement
 } from "../../../actions/tsouveniritemAction";
 import { connect } from "react-redux";
-import AdminRejectRequest from "./AdminRequestReject";
+import AdminRejectRequest from "./AdminReject";
 import moment from "moment";
 
-class AdminApprove extends React.Component {
+class AdminHandler extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -28,7 +29,8 @@ class AdminApprove extends React.Component {
       result: [],
       item: [],
       currentTsouveniritem: {},
-      status: "",
+      statusRA: "",
+      statusSA: "",
       userdata: {}
     };
   }
@@ -42,7 +44,8 @@ class AdminApprove extends React.Component {
     this.setState({
       item: newProps.tsouveniritemdetilReducer.tsv,
       result: newProps.tsouveniritemReducer.ts,
-      status: newProps.tsouveniritemReducer.statusRA,
+      statusRA: newProps.tsouveniritemReducer.statusRA,
+      statusSA: newProps.tsouveniritemReducer.statusSA,
       userdata: newProps.auth.user
     });
   }
@@ -87,6 +90,17 @@ class AdminApprove extends React.Component {
     this.props.closeModalHandler();
   };
 
+  approveSettlementHandler = () => {
+    const formdata = {
+      code: this.props.tsouveniritem.code,
+      settlement_approved_by: this.state.userdata.m_employee_id,
+      settlement_approved_date: moment().format("YYYY-MM-DD"),
+      status: 5
+    };
+    this.props.adminApproveSettlement(formdata);
+    this.props.closeModalHandler();
+  };
+
   rejectModalHandler = tsouveniritemid => {
     let tmp = {};
     this.state.result.forEach(ele => {
@@ -111,25 +125,44 @@ class AdminApprove extends React.Component {
   };
 
   render() {
-    if (this.state.status === 200) {
+    this.state.statusRA === 200 &&
       this.props.modalStatus(1, "Approved", this.props.tsouveniritem.code);
-    } else if (this.state.status === 400) {
+    this.state.statusRA === 400 &&
       this.props.modalStatus(
         2,
         "Data Rejected! Transaction souvenir request with code " +
           this.props.tsouveniritem.code +
           " is rejected by Administrator!"
       );
-    } else {
-      console.log("");
-    }
+
+    this.state.statusSA === 200 &&
+      this.props.modalStatus(
+        1,
+        "Settlement Approved",
+        this.props.tsouveniritem.code
+      );
+    this.state.statusSA === 400 &&
+      this.props.modalStatus(
+        2,
+        "Settlement Rejected! Transaction souvenir settlement with code " +
+          this.props.tsouveniritem.code +
+          " is rejected by Administrator!"
+      );
 
     return (
-      <Modal isOpen={this.props.approve} className={this.props.className}>
-        <ModalHeader>
-          {" "}
-          Approve Souvenir Request - {this.props.tsouveniritem.code}
-        </ModalHeader>
+      <Modal isOpen={this.props.adminHandler} className={this.props.className}>
+        {this.props.tsouveniritem.status === 1 && (
+          <ModalHeader>
+            {" "}
+            Approve Souvenir Request - {this.props.tsouveniritem.code}
+          </ModalHeader>
+        )}
+        {this.props.tsouveniritem.status === 4 && (
+          <ModalHeader>
+            {" "}
+            Approve Settlement Request - {this.props.tsouveniritem.code}
+          </ModalHeader>
+        )}
         <ModalBody>
           <AdminRejectRequest
             reject={this.state.rejectRequest}
@@ -212,58 +245,124 @@ class AdminApprove extends React.Component {
           <div>
             <h5>Souvenir Item </h5>
           </div>
-          <Table>
-            <thead>
-              <tr>
-                <th>M Souvenir ID</th>
-                <th>Qty</th>
-                <th>Note</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.func(this.state.item).length === 0 ? (
-                <div>Item Null</div>
-              ) : (
-                this.func(this.state.item).map(ele => (
-                  <tr>
-                    <td>
-                      <Input
-                        type="text"
-                        name="note"
-                        placeholder={ele.m_souvenir_id}
-                        value={ele.m_souvenir_id}
-                        readOnly
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        type="text"
-                        name="note"
-                        placeholder={ele.qty}
-                        value={ele.qty}
-                        readOnly
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        type="text"
-                        name="note"
-                        placeholder={ele.note}
-                        value={ele.note}
-                        readOnly
-                      />
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </Table>
+          {this.props.tsouveniritem.status === 1 && (
+            <Table>
+              <thead>
+                <tr>
+                  <th>M Souvenir ID</th>
+                  <th>Qty</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.func(this.state.item).length === 0 ? (
+                  <div>Item Null</div>
+                ) : (
+                  this.func(this.state.item).map(ele => (
+                    <tr>
+                      <td>
+                        <Input
+                          type="text"
+                          name="note"
+                          placeholder={ele.m_souvenir_id}
+                          value={ele.m_souvenir_id}
+                          readOnly
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          type="text"
+                          name="note"
+                          placeholder={ele.qty}
+                          value={ele.qty}
+                          readOnly
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          type="text"
+                          name="note"
+                          placeholder={ele.note}
+                          value={ele.note}
+                          readOnly
+                        />
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </Table>
+          )}
+          {this.props.tsouveniritem.status === 4 && (
+            <Table>
+              <thead>
+                <tr>
+                  <th>M Souvenir ID</th>
+                  <th>Qty</th>
+                  <th>Qty Actual</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.func(this.state.item).length === 0 ? (
+                  <div>Item Null</div>
+                ) : (
+                  this.func(this.state.item).map(ele => (
+                    <tr>
+                      <td>
+                        <Input
+                          type="text"
+                          name="m_souvenir_id"
+                          placeholder={ele.m_souvenir_id}
+                          value={ele.m_souvenir_id}
+                          readOnly
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          type="text"
+                          name="qty"
+                          placeholder={ele.qty}
+                          value={ele.qty}
+                          readOnly
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          type="text"
+                          name="qty_actual"
+                          placeholder={ele.qty_actual}
+                          value={ele.qty_actual}
+                          readOnly
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          type="text"
+                          name="note"
+                          placeholder={ele.note}
+                          value={ele.note}
+                          readOnly
+                        />
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </Table>
+          )}
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={this.approveHandler}>
-            Approve
-          </Button>
-          {/* {this.state.result.map((ele) => ( */}
+          {this.props.tsouveniritem.status === 1 && (
+            <Button color="primary" onClick={this.approveHandler}>
+              Approve
+            </Button>
+          )}
+          {this.props.tsouveniritem.status === 4 && (
+            <Button color="primary" onClick={this.approveSettlementHandler}>
+              Approve
+            </Button>
+          )}
           <Button
             color="danger"
             onClick={() => {
@@ -272,7 +371,6 @@ class AdminApprove extends React.Component {
           >
             Reject
           </Button>
-          {/* )}} */}
           <Button color="warning" onClick={this.props.closeModalHandler}>
             Close
           </Button>
@@ -282,11 +380,12 @@ class AdminApprove extends React.Component {
   }
 }
 
-AdminApprove.propTypes = {
+AdminHandler.propTypes = {
   classes: PropTypes.object.isRequired,
   getAllTSouvenirItemDetil: PropTypes.func.isRequired,
   getAllTSouvenirItem: PropTypes.func.isRequired,
-  adminRequestApprove: PropTypes.func.isRequired
+  adminRequestApprove: PropTypes.func.isRequired,
+  adminApproveSettlement: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -300,6 +399,7 @@ export default connect(
   {
     getAllTSouvenirItemDetil,
     getAllTSouvenirItem,
-    adminRequestApprove
+    adminRequestApprove,
+    adminApproveSettlement
   }
-)(AdminApprove);
+)(AdminHandler);

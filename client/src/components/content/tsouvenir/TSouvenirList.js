@@ -291,6 +291,7 @@ class ListTsouvenir extends React.Component {
   };
 
   render() {
+    const columnWidth = { width: "100%" };
     return (
       <div className="container">
         <div className="row">
@@ -393,7 +394,10 @@ class ListTsouvenir extends React.Component {
                 <div className="table responsive">
                   <table className="table  table-stripped">
                     <thead>
-                      <tr>
+                      <tr
+                        className="text-center font-weight-bold"
+                        style={columnWidth}
+                      >
                         <td>No.</td>
                         <td>Souvenir Code</td>
                         <td>Received By</td>
@@ -411,7 +415,7 @@ class ListTsouvenir extends React.Component {
                             this.state.rowsPerPage
                         )
                         .map((tsouvenir, index) => (
-                          <tr key={tsouvenir._id}>
+                          <tr className="text-center" key={tsouvenir._id}>
                             <td>
                               {index +
                                 1 +

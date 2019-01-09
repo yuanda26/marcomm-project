@@ -254,6 +254,7 @@ class ListMenu extends React.Component {
   };
 
   render() {
+    const columnWidth = { width: "100%" };
     return (
       <div className="container">
         <div className="row">
@@ -356,7 +357,10 @@ class ListMenu extends React.Component {
                 <div className="table responsive">
                   <table className="table  table-stripped">
                     <thead>
-                      <tr>
+                      <tr
+                        className="text-center font-weight-bold"
+                        style={columnWidth}
+                      >
                         <td>No.</td>
                         <td>Menu Code</td>
                         <td>Menu Name</td>
@@ -373,7 +377,7 @@ class ListMenu extends React.Component {
                             this.state.rowsPerPage
                         )
                         .map((menu, index) => (
-                          <tr key={menu._id}>
+                          <tr className="text-center" key={menu._id}>
                             <td>
                               {index +
                                 1 +
