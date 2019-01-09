@@ -25,14 +25,10 @@ import { withStyles } from "@material-ui/core/styles";
 import { getAllTSouvenirItem } from "../../../actions/tsouveniritemAction";
 
 import CreateTsouveniritem from "./CreateTSouvenirRequest";
-import EditTsouveniritem from "./UpdateTSouvenirRequest";
 import ViewTsouveniritem from "./ReadTSouvenirRequest";
-import AdminApproveRequest from "./AdminRequestApprove";
-import AdminApproveSettlement from "./AdminSettlementApprove";
-//import AdminRejectRequest from "./AdminRejectRequest";
-import ReceivedSouvenirRequest from "./ReceivedSouvenirItem";
-import SettlementSouvenir from "./SettlementSouvenirItem";
-import CloseOrder from "./CloseOrder";
+import EditTsouveniritem from "./UpdateTSouvenirRequest";
+import AdminHandler from "./AdminHandler";
+import RequesterHandler from "./RequesterHandler";
 
 const actionsStyles = theme => ({
   root: {
@@ -236,7 +232,7 @@ class ListTsouveniritem extends React.Component {
     } else if (tmp.status === 1) {
       this.setState({
         currentTsouveniritem: tmp,
-        adminApprove: true
+        adminHandler: true
       });
     } else if (tmp.status === 2) {
       this.modalStatus(2, "Request Approved, not received by requester yet");
@@ -248,7 +244,7 @@ class ListTsouveniritem extends React.Component {
     } else if (tmp.status === 4) {
       this.setState({
         currentTsouveniritem: tmp,
-        approveSettlement: true
+        adminHandler: true
       });
     } else if (tmp.status === 5) {
       this.modalStatus(2, "Settlement already approved");
@@ -311,19 +307,19 @@ class ListTsouveniritem extends React.Component {
         } else if (tmp.status === 2) {
           this.setState({
             currentTsouveniritem: tmp,
-            receivedSouvenir: true
+            requesterHandler: true
           });
         } else if (tmp.status === 3) {
           this.setState({
             currentTsouveniritem: tmp,
-            settlementSouvenir: true
+            requesterHandler: true
           });
         } else if (tmp.status === 4) {
           this.modalStatus(2, "Settlement not yet approved by admin");
         } else if (tmp.status === 5) {
           this.setState({
             currentTsouveniritem: tmp,
-            closeOrderSouvenir: true
+            requesterHandler: true
           });
         } else {
           this.modalStatus(2, "Request Closed");
@@ -379,13 +375,9 @@ class ListTsouveniritem extends React.Component {
     this.setState({
       viewTsouveniritem: false,
       editTsouveniritem: false,
-      deleteTsouveniritem: false,
-      adminApprove: false,
       rejectRequest: false,
-      receivedSouvenir: false,
-      approveSettlement: false,
-      closeOrderSouvenir: false,
-      settlementSouvenir: false
+      adminHandler: false,
+      requesterHandler: false
     });
   }
 
@@ -398,9 +390,8 @@ class ListTsouveniritem extends React.Component {
       },
       viewTsouveniritem: false,
       editTsouveniritem: false,
-      deleteTsouveniritem: false,
-      adminApprove: false,
-      approveSettlement: false
+      adminHandler: false,
+      requesterHandler: false
     });
     this.props.getAllTSouvenirItem();
     setTimeout(() => {
@@ -413,6 +404,7 @@ class ListTsouveniritem extends React.Component {
   };
 
   render() {
+    const columnWidth = { width: "100%" };
     const { m_role_id } = this.props.auth.user;
     if (m_role_id) {
       if (m_role_id === "RO0001") {
@@ -454,21 +446,8 @@ class ListTsouveniritem extends React.Component {
                       closeModalHandler={this.closeModalHandler}
                       tsouveniritem={this.state.currentTsouveniritem}
                     />
-                    <AdminApproveRequest
-                      approve={this.state.adminApprove}
-                      closeModalHandler={this.closeModalHandler}
-                      tsouveniritem={this.state.currentTsouveniritem}
-                      modalStatus={this.modalStatus}
-                      getlist={this.props.getAllTSouvenirItem}
-                    />
-                    {/* <AdminRejectRequest
-                      closeModalHandler1={this.closeModalHandler}
-                      tsouveniritem={this.state.currentTsouveniritem}
-                      modalStatus={this.modalStatus}
-                      getlist={this.props.getAllTSouvenirItem}
-                    /> */}
-                    <AdminApproveSettlement
-                      approve={this.state.approveSettlement}
+                    <AdminHandler
+                      adminHandler={this.state.adminHandler}
                       closeModalHandler={this.closeModalHandler}
                       tsouveniritem={this.state.currentTsouveniritem}
                       modalStatus={this.modalStatus}
@@ -547,12 +526,15 @@ class ListTsouveniritem extends React.Component {
                     <div className="table responsive">
                       <table className="table  table-stripped">
                         <thead>
-                          <tr>
+                          <tr
+                            className="text-center font-weight-bold"
+                            style={columnWidth}
+                          >
                             <td>No.</td>
                             <td>Transaction Code</td>
                             <td>Request By</td>
                             <td>Request Date</td>
-                            <td>Request Dute Date</td>
+                            <td>Request Due Date</td>
                             <td>Status</td>
                             <td>Created By</td>
                             <td>Created Date</td>
@@ -567,7 +549,10 @@ class ListTsouveniritem extends React.Component {
                                 this.state.rowsPerPage
                             )
                             .map((tsouveniritem, index) => (
-                              <tr key={tsouveniritem._id}>
+                              <tr
+                                className="text-center"
+                                key={tsouveniritem._id}
+                              >
                                 <td>
                                   {index +
                                     1 +
@@ -620,7 +605,7 @@ class ListTsouveniritem extends React.Component {
                         <TableFooter>
                           <TableRow>
                             <TablePagination
-                              colSpan={4}
+                              colSpan={6}
                               count={this.state.hasil.length}
                               rowsPerPage={this.state.rowsPerPage}
                               page={this.state.page}
@@ -691,25 +676,12 @@ class ListTsouveniritem extends React.Component {
                       getlist={this.props.getAllTSouvenirItem}
                       getAllItem={this.state.getitem}
                     />
-                    <ReceivedSouvenirRequest
-                      approve={this.state.receivedSouvenir}
+                    <RequesterHandler
+                      requesterHandler={this.state.requesterHandler}
                       closeModalHandler={this.closeModalHandler}
                       tsouveniritem={this.state.currentTsouveniritem}
                       modalStatus={this.modalStatus}
                       getlist={this.props.getAllTSouvenirItem}
-                    />
-                    <SettlementSouvenir
-                      approve={this.state.settlementSouvenir}
-                      closeModalHandler={this.closeModalHandler}
-                      tsouveniritem={this.state.currentTsouveniritem}
-                      modalStatus={this.modalStatus}
-                      getlist={this.props.getAllTSouvenirItem}
-                    />
-                    <CloseOrder
-                      approve={this.state.closeOrderSouvenir}
-                      closeModalHandler={this.closeModalHandler}
-                      tsouveniritem={this.state.currentTsouveniritem}
-                      modalStatus={this.modalStatus}
                     />
                     <div className="form-row">
                       <div className="col-md-2">
@@ -784,12 +756,15 @@ class ListTsouveniritem extends React.Component {
                     <div className="table responsive">
                       <table className="table  table-stripped">
                         <thead>
-                          <tr>
+                          <tr
+                            className="text-center font-weight-bold"
+                            style={columnWidth}
+                          >
                             <td>No.</td>
                             <td>Transaction Code</td>
                             <td>Request By</td>
                             <td>Request Date</td>
-                            <td>Request Dute Date</td>
+                            <td>Request Due Date</td>
                             <td>Status</td>
                             <td>Created By</td>
                             <td>Created Date</td>
@@ -804,7 +779,10 @@ class ListTsouveniritem extends React.Component {
                                 this.state.rowsPerPage
                             )
                             .map((tsouveniritem, index) => (
-                              <tr key={tsouveniritem._id}>
+                              <tr
+                                className="text-center"
+                                key={tsouveniritem._id}
+                              >
                                 <td>
                                   {index +
                                     1 +
@@ -858,7 +836,7 @@ class ListTsouveniritem extends React.Component {
                         <TableFooter>
                           <TableRow>
                             <TablePagination
-                              colSpan={4}
+                              colSpan={6}
                               count={this.state.hasil.length}
                               rowsPerPage={this.state.rowsPerPage}
                               page={this.state.page}

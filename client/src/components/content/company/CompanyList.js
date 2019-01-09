@@ -302,6 +302,7 @@ class ListCompany extends React.Component {
   };
 
   render() {
+    const columnWidth = { width: "100%" };
     return (
       <div className="container">
         <div className="row">
@@ -403,7 +404,10 @@ class ListCompany extends React.Component {
                 <div className="table responsive">
                   <table className="table  table-stripped">
                     <thead>
-                      <tr>
+                      <tr
+                        className="text-center font-weight-bold"
+                        style={columnWidth}
+                      >
                         <td>No.</td>
                         <td>Company Code</td>
                         <td>Company Name</td>
@@ -420,7 +424,7 @@ class ListCompany extends React.Component {
                             this.state.rowsPerPage
                         )
                         .map((company, index) => (
-                          <tr key={company._id}>
+                          <tr className="text-center" key={company._id}>
                             <td>
                               {index +
                                 1 +
