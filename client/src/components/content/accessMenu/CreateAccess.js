@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
 import { connect } from "react-redux";
 import { createAccessMenu } from "../../../actions/accessMenuActions";
+import { getAllMenu } from "../../../actions/menuActions";
 import { Alert } from "reactstrap";
 import PropTypes from "prop-types";
 import {
@@ -16,8 +17,6 @@ import {
   TableRow,
   TableFooter
 } from "@material-ui/core";
-import axios from "axios";
-import apiConfig from "../../../config/Host_Config";
 const styles = theme => ({
   container: {
     display: "flex",
@@ -54,11 +53,11 @@ class CreateAccess extends React.Component {
       theRole: "",
       open: false,
       nilai: len => {
-        let samsul = [];
+        let arr = [];
         for (let i = 0; i < len; i++) {
-          samsul.push(0);
+          arr.push(0);
         }
-        return samsul;
+        return arr;
       },
       nilai2: [],
       nilai3: []
@@ -69,11 +68,13 @@ class CreateAccess extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
   componentDidMount() {
-    this.getListMenu();
+    this.props.getAllMenu();
   }
-  componentWillReceiveProps(propsData) {
+  UNSAFE_componentWillReceiveProps(propsData) {
     this.setState({
-      accessData: propsData.accessData
+      accessData: propsData.accessData,
+      menu: propsData.menuData.menuArr,
+      nilai3: this.state.nilai(propsData.menuData.menuArr.length)
     });
   }
   changeHandler(e) {
@@ -88,32 +89,14 @@ class CreateAccess extends React.Component {
     });
   }
 
-  getListMenu() {
-    let token = localStorage.token;
-    let option = {
-      url: `${apiConfig.host}/menu`,
-      method: "get",
-      headers: {
-        Authorization: token
-      }
-    };
-    axios(option)
-      .then(response => {
-        this.setState({
-          menu: response.data.message
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    this.state.nilai3 = this.state.nilai(this.state.menu.length);
-  }
-
   submitHandler() {
-    this.state.formdata.m_role_id = this.props.access[1];
-    this.state.formdata.m_menu_id = this.state.nilai2;
+    let temp = this.state.formdata;
+    temp.m_role_id = this.props.access[1];
+    temp.m_menu_id = this.state.nilai2;
+    this.setState({
+      formdata: temp
+    });
     this.props.createAccessMenu(this.state.formdata);
-    this.state.nilai2 = this.state.nilai3 = [];
     this.props.modalStatus2();
   }
 
@@ -121,11 +104,23 @@ class CreateAccess extends React.Component {
     this.setState({ [name]: event.target.checked });
     let index = parseInt(event.target.value);
     if (event.target.checked) {
-      this.state.nilai3[index] = this.state.menu[index].code;
-      this.state.nilai2 = this.state.nilai3.filter(e => e !== 0);
+      let old = this.state.nilai3.map((content, ind) => {
+        if (ind === index) return this.state.menu[index].code;
+        return content;
+      });
+      this.setState({
+        nilai3: old.map(content => content),
+        nilai2: old.filter(e => e !== 0)
+      });
     } else {
-      this.state.nilai3[index] = 0;
-      this.state.nilai2 = this.state.nilai3.filter(e => e !== 0);
+      let old = this.state.nilai3.map((content, ind) => {
+        if (ind === index) return 0;
+        return content;
+      });
+      this.setState({
+        nilai3: old.map(content => content),
+        nilai2: old.filter(e => e !== 0)
+      });
     }
   };
 
@@ -136,7 +131,6 @@ class CreateAccess extends React.Component {
   handleOpen = () => {
     this.setState({ open: true });
   };
-
   render() {
     const { classes } = this.props;
     const half = ["test1", "test2"];
@@ -157,7 +151,7 @@ class CreateAccess extends React.Component {
                   <TableFooter>
                     {half.map((content, id) => {
                       return id === 0 ? (
-                        <TableCell>
+                        <TableCell key={content._id}>
                           {this.state.menu.map((row, index) =>
                             index < this.state.menu.length / 2 ? (
                               <TableRow>
@@ -209,8 +203,10 @@ class CreateAccess extends React.Component {
           </div>
         </ModalBody>
         <ModalFooter>
-          {this.state.alertData.status === true && (
+          {this.state.alertData.status === true ? (
             <Alert color="danger">{this.state.alertData.message} </Alert>
+          ) : (
+            ""
           )}
           <Button
             variant="contained"
@@ -229,16 +225,19 @@ class CreateAccess extends React.Component {
 }
 const mapStateToProps = state => ({
   auth: state.auth,
-  accessData: state.accessMenuData
+  accessData: state.accessMenuData,
+  menuData: state.menu
 });
 CreateAccess.propTypes = {
   createAccessMenu: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
-  accessData: PropTypes.object.isRequired
+  accessData: PropTypes.object.isRequired,
+  getAllMenu: PropTypes.func.isRequired,
+  menuData: PropTypes.object.isRequired
 };
 const style = withStyles(styles)(CreateAccess);
 export default connect(
   mapStateToProps,
-  { createAccessMenu }
+  { createAccessMenu, getAllMenu }
 )(style);

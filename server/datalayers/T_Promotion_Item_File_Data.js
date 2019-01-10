@@ -45,9 +45,12 @@ const promotionData = {
     );
   },
   deleteData: (callback, id) => {
-    db.collection("t_promotion_item_file").remove({t_promotion_id: id}, (err, docs) => {
+    db.collection("t_promotion_item_file").remove(
+      { t_promotion_id: id },
+      (err, docs) => {
         callback(docs);
-      });
+      }
+    );
   }
 };
 

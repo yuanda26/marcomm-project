@@ -1,9 +1,8 @@
 import React from "react";
 import { Alert } from "reactstrap";
-import { Link } from "react-router-dom";
 import {
   getAllPromotion,
-  putPromotion,
+  closePromotion,
   getDesignByCode
 } from "../../../actions/promotionActions";
 import { getDesignItem } from "../../../actions/promotionItemActions";
@@ -12,8 +11,9 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import SaveOutlinedIcon from "@material-ui/icons/SaveAltOutlined";
-import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import moment from "moment";
+import { getAllEmployee } from "../../../actions/employeeAction";
+import ModalClosePromotion from "./ModalClosePromotion";
 class addPromotionD extends React.Component {
   constructor(props) {
     super(props);
@@ -22,15 +22,15 @@ class addPromotionD extends React.Component {
     this.t_event_id = data.t_event_id;
     this.t_design_id = data.t_design_id;
     this.state = {
-      dataOldFile: [],
-      shareholders: [],
-      dataNewFile: [],
+      showReject: false,
+      assign_to: "",
       marketHeader: {
         _id: data._id,
         code: data.code,
         t_event_id: this.t_event_id,
         request_by: data.request_by,
         request_date: data.request_date,
+        assign_to: data.assign_to,
         title: data.title,
         note: data.note,
         flag_design: data.flag_design,
@@ -41,7 +41,6 @@ class addPromotionD extends React.Component {
       },
       designHeader: {},
       designItem: [],
-      designItem2: [],
       oldFile: [],
       alertData: {
         status: 0,
@@ -56,30 +55,31 @@ class addPromotionD extends React.Component {
     this.props.getDesignByCode(this.t_design_id);
     this.props.getDesignItem(this.state.marketHeader.code, this.t_design_id);
     this.props.getFile(this.state.marketHeader.code);
+    this.props.getAllEmployee();
   }
   UNSAFE_componentWillReceiveProps(newProps) {
     this.setState({
       designHeader: newProps.ambil.designOne,
       designItem: newProps.promotionItem.promotItem,
-      oldFile: newProps.promotionFile.promotFile,
-      dataOldFile: newProps.promotionFile.promotFile.map(
-        content => content.filename
-      )
+      oldFile: newProps.promotionFile.promotFile
     });
   }
-  modalStatus(status, message, code) {
+  modalStatus(status, message, code = 200) {
     this.setState({
       alertData: {
         status: status,
         message: message,
         code: code
       },
-      viewPromotion: false,
-      editPromotion: false,
-      deletePromotion: false
+      showReject: false
     });
   }
-  //<<-----------------Setting of MARKETING HEADER------------------>>>
+  closeHandler = () => {
+    this.setState({
+      showReject: false
+    });
+  };
+
   changeHandler(event) {
     let tmp = this.state.marketHeader;
     tmp[event.target.name] = event.target.value;
@@ -91,189 +91,85 @@ class addPromotionD extends React.Component {
       marketHeader: tmp
     });
   }
-  //<<----------------End of Setting MARKETING HEADER---------------->>>
-
-  //<<--------------Setting of shareholder (UPLOAD FILE)------------->>>
-  // when name change
-  changeByIndex = (idx, flag = "file") => evt => {
-    if (flag === "item") {
+  changeByIndex = (index, item = true) => evt => {
+    if (item) {
       let item2 = this.state.designItem.map((shareholder, sidx) => {
-        if (idx !== sidx) return shareholder;
+        if (index !== sidx) return shareholder;
         return {
           ...shareholder,
           [evt.target.name]: evt.target.value
         };
       });
       this.setState({ designItem: item2 });
-    } else if (flag === "oldFile") {
-      let item2 = this.state.oldFile.map((shareholder, sidx) => {
-        if (idx !== sidx) return shareholder;
-        if (evt.target.name === "filename") {
-          return {
-            ...shareholder,
-            [evt.target.name]: evt.target.files[0].name,
-            size: evt.target.files[0].size / 1024.0 + " kb",
-            extention: evt.target.files[0].type
-          };
-        }
-        return {
-          ...shareholder,
-          [evt.target.name]: evt.target.value
-        };
-      });
-      let item3 = this.state.dataOldFile.map((content, index) => {
-        if (idx !== index) return content;
-        if (evt.target.name === "filename") {
-          return {
-            ...content,
-            [evt.target.name]: evt.target.files[0].name,
-            size: evt.target.files[0].size / 1024.0 + " kb",
-            extention: evt.target.files[0].type
-          };
-        }
-        return {
-          ...content,
-          [evt.target.name]: evt.target.value
-        };
-      });
-      this.setState({
-        oldFile: item2,
-        dataOldFile: item3
-      });
     } else {
-      let item2 = this.state.shareholders.map((shareholder, sidx) => {
-        if (idx !== sidx) return shareholder;
-        if (evt.target.name === "filename") {
-          return {
-            ...shareholder,
-            [evt.target.name]: evt.target.files[0].name,
-            size: evt.target.files[0].size / 1024.0 + " kb",
-            extention: evt.target.files[0].type
-          };
-        }
+      let item2 = this.state.oldFile.map((shareholder, sidx) => {
+        if (index !== sidx) return shareholder;
         return {
           ...shareholder,
           [evt.target.name]: evt.target.value
         };
       });
-      this.setState({
-        shareholders: item2
-      });
+      this.setState({ oldFile: item2 });
     }
   };
-  // when add item
-  handleAddShareholder = () => {
-    this.setState({
-      shareholders: this.state.shareholders.concat([
-        {
-          filename: null,
-          size: null,
-          extention: null,
-          qty: null,
-          todo: "null",
-          request_due_date: null,
-          note: null,
-          created_by: this.username
-        }
-      ]),
-      dataNewFile: this.state.dataNewFile.concat([
-        {
-          filename: null,
-          qty: null,
-          todo: "null",
-          request_due_date: null,
-          note: null,
-          created_by: this.username
-        }
-      ])
-    });
-  };
-  //when remove one item
-  handleRemoveShareholder = (idx, flag = "item") => () => {
-    if (flag === "item") {
+  reject = () => {
+    const validate = (item, file) => {
+      let data = item
+        .map(content => {
+          if (
+            moment(content.start_date).subtract(1, "days") <
+              moment(content.end_date) &&
+            content.start_date !== undefined &&
+            content.end_date !== undefined
+          ) {
+            return true;
+          }
+          return false;
+        })
+        .filter(a => a === false);
+      let data2 = [];
+      if (file.length !== 0) {
+        data2 = file
+          .map(content => {
+            if (
+              moment(content.start_date).subtract(1, "days") <
+              moment(content.end_date)
+            ) {
+              return true;
+            }
+            return false;
+          })
+          .filter(a => a === false);
+      }
+      if (data.length === 0 && data2.length === 0) return true;
+      return false;
+    };
+    if (validate(this.state.designItem, this.state.oldFile)) {
       this.setState({
-        shareholders: this.state.shareholders.filter((s, sidx) => idx !== sidx),
-        dataNewFile: this.state.dataNewFile.filter((s, sidx) => idx !== sidx)
+        showReject: true
       });
     } else {
-      this.setState({
-        oldFile: this.state.oldFile.filter((s, sidx) => idx !== sidx),
-        dataOldFile: this.state.dataOldFile.filter((s, sidx) => idx !== sidx)
-      });
+      this.modalStatus(2, `Please type Correctly!`);
+      setTimeout(() => {
+        this.modalStatus(0, "");
+      }, 3000);
     }
   };
 
   // when submit
   submitHandler = () => {
-    const validate = (marketHeader, designItem, oldFile, newFile) => {
-      const validateDesignItem = designItem
-        .map(content => {
-          if (typeof parseInt(content.qty) !== "number") return false;
-          else if (
-            content.request_due_date === "" ||
-            moment(content.request_due_date) < moment().subtract(1, "days")
-          )
-            return false;
-          else return true;
-        })
-        .filter(a => a !== true);
-      let validateNewFile = true;
-      if (newFile.length !== 0) {
-        let test = newFile
-          .map(content => {
-            console.log(
-              moment(content.request_due_date) < moment().subtract(1, "days")
-            );
-            // console.log(moment().subtract(1, "days"))
-
-            if (content.filename === "") return false;
-            else if (typeof parseInt(content) !== "number") return false;
-            else if (content.todo === "null") return false;
-            else if (
-              content.request_due_date === null ||
-              moment(content.request_due_date) < moment().subtract(1, "days")
-            )
-              return false;
-            else return true;
-          })
-          .filter(a => a !== true);
-        if (test.length !== 0) {
-          validateNewFile = false;
-        }
-      }
-
-      // const validateOdlFile = file => {
-      //   if (file.length === 0) return true;
-      //   else {
-      //     // validateFile = file.map(content => {
-      //     //   return true;
-      //     // });
-      //   }
-      // }
-      if (
-        marketHeader.title === "" ||
-        marketHeader.note === "" ||
-        validateDesignItem.length !== 0 ||
-        validateNewFile === false
-      ) {
-        return false;
-      } else return true;
-    };
+    let temp = this.state.marketHeader;
+    temp.status = 3;
+    this.setState({
+      marketHeader: temp
+    });
     let data = {
       marketHeader: this.state.marketHeader,
       designHeader: this.state.designHeader,
       designItem: this.state.designItem,
-      oldFile: this.state.oldFile,
-      file: this.state.shareholders
+      oldFile: this.state.oldFile
     };
-    if (
-      validate(data.marketHeader, data.designItem, data.oldFile, data.file) ===
-      false
-    ) {
-      this.modalStatus(2, "Something Wrong, please type correctly!!");
-    } else {
-      this.props.putPromotion(data, this.modalStatus, true);
-    }
+    this.props.closePromotion(data, this.modalStatus);
   };
   //<<----------------End of Setting UPLOAD FILE-------------->>>
 
@@ -304,11 +200,15 @@ class addPromotionD extends React.Component {
                 <a href="/promotion">List Marketing Promotion</a>{" "}
                 <span className="divider">/</span>
               </li>
-              <li className="active">Add Marketing Promotion</li>
+              <li className="active">{`Close Marketing Promotion ${
+                this.state.marketHeader.code
+              }`}</li>
             </ul>
           </Grid>
           <Grid item xs={12}>
-            <h4>Add Marketing Promotion</h4>
+            <h4>{`Close Marketing Promotion ${
+              this.state.marketHeader.code
+            }`}</h4>
           </Grid>
         </Grid>
         {/* <<-------------End Link to back--------------->> */}
@@ -402,12 +302,11 @@ class addPromotionD extends React.Component {
                   </label>
                   <div class="col-8">
                     <input
-                      name="title"
-                      value={this.state.marketHeader.title}
+                      placeholder={this.state.marketHeader.title}
                       type="text"
                       class="form-control"
                       id="titleheader"
-                      onChange={this.changeHandler}
+                      disabled
                     />
                   </div>
                 </div>
@@ -437,9 +336,21 @@ class addPromotionD extends React.Component {
                     <textarea
                       class="form-control"
                       aria-label="With textarea"
-                      name="note"
-                      value={this.state.marketHeader.note}
-                      onChange={this.changeHandler}
+                      placeholder={this.state.marketHeader.note}
+                      disabled
+                    />
+                  </div>
+                </div>
+                <div class="form-group col-md-6 row">
+                  <label for="note" class="col-4 col-form-label text-right">
+                    * Assign To
+                  </label>
+                  <div class="col-8">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeHolder={this.state.marketHeader.assign_to}
+                      disabled
                     />
                   </div>
                 </div>
@@ -451,7 +362,9 @@ class addPromotionD extends React.Component {
           {/* Render of DESIGN HEADER INFORMATION */}
           <div class="card mb-3">
             <div class="card-body">
-              <h6 class="card-title">DESIGN HEADER INFORMATION</h6>
+              <h6 class="card-title">{`DESIGN HEADER INFORMATION - ${
+                this.state.designHeader.code
+              }`}</h6>
               <hr />
               <div class="form-row">
                 <div class="form-group col-md-6 row">
@@ -547,12 +460,14 @@ class addPromotionD extends React.Component {
           {/* Render of DESIGN ITEM INFORMATION */}
           <div class="card mb-3">
             <div class="card-body">
-              <h6 class="card-title">DESIGN ITEM INFORMATION</h6>
+              <h6 class="card-title">{`DESIGN ITEM INFORMATION - ${
+                this.state.designHeader.code
+              }`}</h6>
               <hr />
               <div class="table-responsive">
                 <table class="table-borderless table-sm">
                   <thead>
-                    <tr>
+                    <tr className="text-center">
                       <th>Product Name</th>
                       <th>Descripton</th>
                       <th>Title</th>
@@ -571,9 +486,7 @@ class addPromotionD extends React.Component {
                         <input
                           type="text"
                           class="form-control"
-                          id="product_name"
-                          name="product_name"
-                          value={content.product_name}
+                          placeholder={content.product_name}
                           disabled
                         />
                       </td>
@@ -581,9 +494,7 @@ class addPromotionD extends React.Component {
                         <input
                           type="text"
                           class="form-control"
-                          id="productdescription"
-                          name="description"
-                          value={content.description}
+                          placeholder={content.description}
                           disabled
                         />
                       </td>
@@ -591,9 +502,7 @@ class addPromotionD extends React.Component {
                         <input
                           type="text"
                           class="form-control"
-                          id="title"
-                          name="title"
-                          value={content.title_item}
+                          placeholder={content.title_item}
                           disabled
                         />
                       </td>
@@ -601,35 +510,24 @@ class addPromotionD extends React.Component {
                         <input
                           type="text"
                           class="form-control"
-                          id="qty"
-                          name="qty"
-                          value={content.qty}
-                          onChange={this.changeByIndex(index, "item")}
+                          placeholder={content.qty}
+                          disabled
                         />
                       </td>
                       <td>
-                        <select
-                          name="todo"
-                          id="todo"
+                        <input
+                          type="text"
                           class="form-control"
-                          value={content.todo}
-                          onChange={this.changeByIndex(index, "item")}
-                        >
-                          <option selected value={content.todo} disabled>
-                            {content.todo}
-                          </option>
-                          <option value="PRINT"> Print </option>
-                          <option value="UPLOAD SOSMED"> Upload Sosmed </option>
-                        </select>
+                          placeholder={content.todo}
+                          disabled
+                        />
                       </td>
                       <td>
                         <input
-                          type="date"
+                          type="text"
                           class="form-control"
-                          name="request_due_date"
-                          value={content.request_due_date}
-                          onChange={this.changeByIndex(index, "item", "date")}
-                          id="duedate"
+                          placeholder={content.request_due_date}
+                          disabled
                         />
                       </td>
                       <td>
@@ -637,7 +535,9 @@ class addPromotionD extends React.Component {
                           type="date"
                           class="form-control"
                           id="startdate"
-                          disabled
+                          value={content.start_date}
+                          name="start_date"
+                          onChange={this.changeByIndex(index)}
                         />
                       </td>
                       <td>
@@ -645,17 +545,17 @@ class addPromotionD extends React.Component {
                           type="date"
                           class="form-control"
                           id="enddate"
-                          disabled
+                          value={content.end_date}
+                          name="end_date"
+                          onChange={this.changeByIndex(index)}
                         />
                       </td>
                       <td>
-                        <textarea
+                        <input
                           type="text"
                           class="form-control"
-                          id="note"
-                          name="note"
-                          value={content.note}
-                          onChange={this.changeByIndex(index, "item")}
+                          placeholder={content.note}
+                          disabled
                         />
                       </td>
                       <td>
@@ -681,24 +581,13 @@ class addPromotionD extends React.Component {
             <div class="card-body">
               <h6 class="card-title">UPLOAD FILE</h6>
               <hr />
-              <div class="form-group row">
-                <div class="col">
-                  <button
-                    type="button"
-                    onClick={this.handleAddShareholder}
-                    class="btn btn-primary"
-                  >
-                    Add Item
-                  </button>
-                </div>
-              </div>
               <div class="table-responsive">
                 <table class="table table-borderless table-sm">
                   {this.state.oldFile.length === 0 ? (
                     <div />
                   ) : (
                     <thead>
-                      <tr>
+                      <tr className="text-center">
                         <th>File Name</th>
                         <th>Qty</th>
                         <th>Todo</th>
@@ -713,53 +602,35 @@ class addPromotionD extends React.Component {
                           <td colspan="1">
                             <div class="custom-file">
                               <input
-                                type="file"
-                                id="customFile"
-                                class="custom-file-input"
-                                name="filename"
-                                onChange={this.changeByIndex(index, "oldFile")}
+                                type="text"
+                                class="form-control"
+                                placeholder={content.filename}
+                                disabled
                               />
-                              <label class="custom-file-label" for="customFile">
-                                {content.filename}
-                              </label>
                             </div>
                           </td>
                           <td>
                             <input
                               type="text"
                               class="form-control"
-                              name="qty"
-                              id="qty"
-                              value={content.qty}
-                              onChange={this.changeByIndex(index, "oldFile")}
+                              placeholder={content.qty}
+                              disabled
                             />
                           </td>
                           <td>
-                            <select
-                              name="todo"
-                              id="todo"
+                            <input
+                              type="text"
                               class="form-control"
-                              value={content.todo}
-                              onChange={this.changeByIndex(index, "oldFile")}
-                            >
-                              <option value={content.todo}>
-                                {content.todo}
-                              </option>
-                              <option value="PRINT"> Print </option>
-                              <option value="UPLOAD SOSMED">
-                                {" "}
-                                Upload Sosmed{" "}
-                              </option>
-                            </select>
+                              placeholder={content.todo}
+                              disabled
+                            />
                           </td>
                           <td>
                             <input
-                              type="date"
+                              type="text"
                               class="form-control"
-                              name="request_due_date"
-                              value={content.request_due_date}
-                              onChange={this.changeByIndex(index, "oldFile")}
-                              id="duedate"
+                              placeholder={content.request_due_date}
+                              disabled
                             />
                           </td>
                           <td>
@@ -767,7 +638,9 @@ class addPromotionD extends React.Component {
                               type="date"
                               class="form-control"
                               id="startdate"
-                              disabled
+                              value={content.start_date}
+                              name="start_date"
+                              onChange={this.changeByIndex(index, false)}
                             />
                           </td>
                           <td>
@@ -775,40 +648,18 @@ class addPromotionD extends React.Component {
                               type="date"
                               class="form-control"
                               id="enddate"
-                              disabled
+                              value={content.end_date}
+                              name="end_date"
+                              onChange={this.changeByIndex(index, false)}
                             />
                           </td>
                           <td>
-                            <textarea
+                            <input
                               type="text"
                               class="form-control"
-                              id="note"
-                              name="note"
-                              value={content.note}
-                              onChange={this.changeByIndex(index, "oldFile")}
                               placeholder={content.note}
+                              disabled
                             />
-                          </td>
-                          <td>
-                            <Link to="#">
-                              <DeleteOutlinedIcon
-                                onClick={this.handleRemoveShareholder(
-                                  index,
-                                  "oldFile"
-                                )}
-                              />
-                            </Link>
-                            {/* <button
-                              type="button"
-                              color="primary"
-                              onClick={this.handleRemoveShareholder(
-                                index,
-                                "oldFile"
-                              )}
-                              class="btn btn-danger"
-                            >
-                              {"X"}
-                            </button> */}
                           </td>
                           <td>
                             <button
@@ -826,109 +677,9 @@ class addPromotionD extends React.Component {
                   )}
                 </table>
               </div>
-              <div class="table-responsive">
-                <table class="table table-borderless table-sm">
-                  {this.state.shareholders.map((shareholder, idx) => (
-                    <div className="shareholder">
-                      <tr>
-                        <td colspan="1">
-                          <div class="custom-file">
-                            <input
-                              type="file"
-                              class="custom-file-input"
-                              id="customFile"
-                              name="filename"
-                              onChange={this.changeByIndex(idx)}
-                            />
-                            <label class="custom-file-label" for="customFile">
-                              {shareholder.filename}
-                            </label>
-                          </div>
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="qty"
-                            placeholder="qty"
-                            name="qty"
-                            value={shareholder.qty}
-                            onChange={this.changeByIndex(idx)}
-                          />
-                        </td>
-                        <td>
-                          <select
-                            name="todo"
-                            value={shareholder.todo}
-                            onChange={this.changeByIndex(idx)}
-                            class="form-control"
-                          >
-                            <option value="PRINT">Print</option>
-                            <option value="UPLOAD SOSMED">Upload Sosmed</option>
-                            <option value="null" disabled>
-                              {"-Select Option-"}
-                            </option>
-                          </select>
-                        </td>
-                        <td>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="duedate"
-                            name="request_due_date"
-                            value={shareholder.request_due_date}
-                            onChange={this.changeByIndex(idx)}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="startdate"
-                            disabled
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="enddate"
-                            disabled
-                          />
-                        </td>
-                        <td>
-                          <textarea
-                            type="text"
-                            class="form-control"
-                            id="note"
-                            placeholder="Type Note"
-                            name="note"
-                            value={shareholder.note}
-                            onChange={this.changeByIndex(idx)}
-                          />
-                        </td>
-                        <td>
-                          <Link to="#">
-                            <DeleteOutlinedIcon
-                              onClick={this.handleRemoveShareholder(idx)}
-                            />
-                          </Link>
-                          {/* <button
-                            type="button"
-                            color="primary"
-                            onClick={this.handleRemoveShareholder(idx)}
-                            class="btn btn-danger"
-                          >
-                            {"X"}
-                          </button> */}
-                        </td>
-                      </tr>
-                    </div>
-                  ))}
-                </table>
-              </div>
             </div>
           </div>
+
           {/* <<----------End of Render UPLOAD FILE ------->>*/}
           {/* Alert Setting */}
           <Grid item xs={6}>
@@ -948,11 +699,11 @@ class addPromotionD extends React.Component {
           <div class="form-group row">
             <div class="col d-flex justify-content-end">
               <button
-                onClick={this.submitHandler}
+                onClick={this.reject}
                 type="button"
                 class="btn btn-primary float-right mr-1"
               >
-                Save
+                Close Request
               </button>
               <button
                 type="button"
@@ -967,6 +718,11 @@ class addPromotionD extends React.Component {
           </div>
           {/* <<-----End of Render Submit and Cancel Button------>>*/}
         </form>
+        <ModalClosePromotion
+          isReject={this.state.showReject}
+          closeHandler={this.closeHandler}
+          submit={this.submitHandler}
+        />
       </div>
     );
   }
@@ -976,20 +732,30 @@ addPromotionD.propTypes = {
   getAllPromotion: PropTypes.func.isRequired,
   ambil: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired,
-  putPromotion: PropTypes.func.isRequired,
+  closePromotion: PropTypes.func.isRequired,
   getDesignByCode: PropTypes.func.isRequired,
   getDesignItem: PropTypes.func.isRequired,
-  getFile: PropTypes.func.isRequired
+  getFile: PropTypes.func.isRequired,
+  getAllEmployee: PropTypes.func.isRequired,
+  employee: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
   ambil: state.promot,
   promotionItem: state.promotItem,
   promotionFile: state.promotFile,
-  data: state.auth
+  data: state.auth,
+  employee: state.employee
 });
 
 export default connect(
   mapStateToProps,
-  { getAllPromotion, putPromotion, getDesignByCode, getDesignItem, getFile }
+  {
+    getAllPromotion,
+    closePromotion,
+    getDesignByCode,
+    getDesignItem,
+    getFile,
+    getAllEmployee
+  }
 )(addPromotionD);

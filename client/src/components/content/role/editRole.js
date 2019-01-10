@@ -23,7 +23,7 @@ class EditRole extends React.Component {
     this.changeHandler = this.changeHandler.bind(this);
   }
 
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(newProps) {
     this.setState({
       formdata: newProps.roletest,
       oldData: newProps.roletest
@@ -42,13 +42,7 @@ class EditRole extends React.Component {
     if (this.state.formdata.name === "") {
       alert("Role name can't be null!!");
     } else {
-      this.props.putRole(this.state.formdata);
-      setTimeout(() => {
-        this.props.modalStatus(
-          1,
-          "Data updated! " + this.state.formdata.code + " has been updated!"
-        );
-      }, 0);
+      this.props.putRole(this.state.formdata, this.props.modalStatus);
     }
   }
 
@@ -103,7 +97,7 @@ class EditRole extends React.Component {
   }
 }
 EditRole.propTypes = {
-  putRole: PropTypes.object.isRequired
+  putRole: PropTypes.func.isRequired
 };
 const mapStateToProps = state => ({
   theRole: state.roleData

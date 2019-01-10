@@ -8,55 +8,6 @@ const multer = require("multer");
 const path = require("path");
 const ObjectId = require("mongodb").ObjectID;
 
-class getFile {
-  constructor(input, separator) {
-    this.input = input;
-    this.separator = separator;
-    this.func = (a, b) => {
-      return a.split(b);
-    };
-  }
-  get getExtension() {
-    let stepOne = this.func(this.input, this.separator);
-    let stepTwo = stepOne[stepOne.length - 1];
-    let extension = stepTwo.split(".");
-    return extension[extension.length - 1];
-  }
-  get getName() {
-    let stepOne = this.func(this.input, this.separator);
-    let stepTwo = stepOne[stepOne.length - 1];
-    return stepTwo.split("." + this.getExtension)[0];
-  }
-  get getAddress() {
-    return this.func(this.input, this.separator)
-      .filter(a => a !== this.getName + "." + this.getExtension)
-      .join("\\");
-  }
-}
-
-const generatorFile = (input, code) => {
-  return input.map(content => {
-    let theFile = new getFile(content.fileName, "\\");
-    let item = {
-      t_promotion_id: code,
-      filename: theFile.getName,
-      size: "30kb",
-      extention: theFile.getExtension,
-      start_date: null,
-      end_date: null,
-      request_due_date: content.dueDate,
-      qty: content.qty,
-      todo: content.todo,
-      note: content.note,
-      is_delete: false,
-      created_by: content.created_by,
-      created_date: moment().format("DD/MM/YYYY"),
-      updated_by: null,
-      updated_date: null
-    };
-    return item;
-  });
-};
 const T_Promotion_Logic = {
   readAllPromotionHandler: (req, res, next) => {
     promotionData.readAllData(promotion => {
@@ -164,13 +115,13 @@ const T_Promotion_Logic = {
     });
   },
 
-  deletePromotionHandler: (req, res, next) => {
+  deletePromotionHandler: (req, res) => {
     let id = req.params.promotionId;
     promotionData.deleteData(items => {
       responseHelper.sendResponse(res, 200, items);
     }, id);
   },
-  updatePromotionHandler: (req, res, next) => {
+  updatePromotionHandler: (req, res) => {
     const promotionId = req.params.promotionId;
     const today = moment().format("DD/MM/YYYY");
     const data = {
@@ -418,7 +369,7 @@ const T_Promotion_Logic = {
       promotionId
     );
   },
-  handlerAddWithDesign: (req, res, next) => {
+  handlerAddWithDesign: (req, res) => {
     promotionData.countData(len => {
       if (len > 0) {
         const protoCode = lent => {
@@ -443,7 +394,7 @@ const T_Promotion_Logic = {
         request_date: today,
         approved_by: req.body.designHeader.approved_by,
         approved_date: req.body.designHeader.approved_date,
-        assign_to: req.body.designHeader.assign_to,
+        assign_to: null,
         close_date: req.body.designHeader.close_date,
         note: req.body.marketHeader.note,
         status: 1,
@@ -461,7 +412,7 @@ const T_Promotion_Logic = {
           request_pic: req.body.marketHeader.request_by,
           start_date: null,
           end_date: null,
-          request_due_date: content.dueDate,
+          request_due_date: content.request_due_date,
           qty: content.qty,
           todo: content.todo,
           note: content.note,
@@ -506,6 +457,114 @@ const T_Promotion_Logic = {
         }, dataDesignItem);
       }, dataMarketHeader);
     });
+  },
+  approvePromotionHandler: (req, res) => {
+    data = {
+      title: req.body.marketHeader.title,
+      approved_by: req.body.marketHeader.approved_by,
+      approved_date: moment(new Date().toDateString()).format("DD/MM/YYYY"),
+      assign_to: req.body.marketHeader.assign_to,
+      note: req.body.marketHeader.note,
+      reject_reason: req.body.marketHeader.reject_reason,
+      status: req.body.marketHeader.status
+    };
+    promotionData.updateData(
+      item => {
+        responseHelper.sendResponse(res, 200, item);
+      },
+      data,
+      req.body.marketHeader._id
+    );
+  },
+  closePromotionHandler: (req, res) => {
+    dataMarketHeader = {
+      reject_reason: req.body.marketHeader.reject_reason,
+      status: req.body.marketHeader.status
+    };
+    dataForItem = {
+      start_date: req.body.designItem
+    };
+    promotionData.updateData(
+      item => {
+        if (req.body.designItem.length === 0) {
+          promotionItemFile.readByPromotionData(itemFileRead => {
+            let dataItemFile = itemFileRead.map((content, index) => {
+              return {
+                ...content,
+                start_date: req.body.oldFile[index].start_date,
+                end_date: req.body.oldFile[index].start_date
+              };
+            });
+            promotionItemFile.deleteData(itemFileDelete => {
+              promotionItemFile.createData(itemFileCreate => {
+                responseHelper.sendResponse(res, 200, {
+                  marketHeader: item,
+                  oldFile: {
+                    create: itemFileCreate,
+                    read: itemFileRead,
+                    delete: itemFileDelete
+                  }
+                });
+              }, dataItemFile);
+            }, req.body.marketHeader.code);
+          }, req.body.marketHeader.code);
+        } else {
+          promotionItem.readByPromotionID(itemPromotion => {
+            let dataPromotionItem = itemPromotion.map((content, index) => {
+              return {
+                ...content,
+                start_date: req.body.designItem[index].start_date,
+                end_date: req.body.designItem[index].end_date
+              };
+            });
+            promotionItem.deleteData(itemDelete => {
+              promotionItem.createManyData(itemCreate => {
+                if (req.body.oldFile.length === 0) {
+                  responseHelper.sendResponse(res, 200, {
+                    marketHeader: item,
+                    designItem: {
+                      create: itemCreate,
+                      read: itemPromotion,
+                      delete: itemDelete
+                    },
+                    oldFile: "None"
+                  });
+                } else {
+                  promotionItemFile.readByPromotionData(itemFileRead => {
+                    let dataItemFile = itemFileRead.map((content, index) => {
+                      return {
+                        ...content,
+                        start_date: req.body.oldFile[index].start_date,
+                        end_date: req.body.oldFile[index].start_date
+                      };
+                    });
+                    promotionItemFile.deleteData(itemFileDelete => {
+                      promotionItemFile.createData(itemFileCreate => {
+                        responseHelper.sendResponse(res, 200, {
+                          marketHeader: item,
+                          designItem: {
+                            create: itemCreate,
+                            read: itemPromotion,
+                            delete: itemDelete
+                          },
+                          oldFile: {
+                            create: itemFileCreate,
+                            read: itemFileRead,
+                            delete: itemFileDelete
+                          }
+                        });
+                      }, dataItemFile);
+                    }, req.body.marketHeader.code);
+                  }, req.body.marketHeader.code);
+                }
+              }, dataPromotionItem);
+            }, req.body.marketHeader.code);
+          }, req.body.marketHeader.code);
+        }
+      },
+      dataMarketHeader,
+      req.body.marketHeader._id
+    );
   }
 };
 module.exports = T_Promotion_Logic;

@@ -14,6 +14,8 @@ import tsouveniritemReducer from "./tsouveniritemReducer";
 import promotionReducers from "./promotionReducers";
 import accessMenuReducers from "./accessMenuReducers";
 import userReducers from "./userReducers";
+import promotionItemReducers from "./promotionItemReducers";
+import promotionItemFileReducers from "./promotionFileReducers";
 
 export default combineReducers({
   auth: authReducer,
@@ -31,4 +33,6 @@ export default combineReducers({
   accessMenuData: accessMenuReducers,
   promot: promotionReducers,
   userData: userReducers,
+  promotItem: promotionItemReducers,
+  promotFile: promotionItemFileReducers
 });

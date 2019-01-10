@@ -1,24 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Alert } from "reactstrap";
 import { getAllPromotion } from "../../../actions/promotionActions";
 import { connect } from "react-redux";
 import CreatePromotion from "./createPromotion";
 import PropTypes from "prop-types";
 import {
   withStyles,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
   TableRow,
   TableFooter,
   TablePagination,
   IconButton,
-  Paper,
-  Input,
-  Button,
-  Grid
+  Button
 } from "@material-ui/core";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
@@ -138,6 +130,7 @@ class ListPromotion extends React.Component {
         code: ""
       },
       hasil: [],
+      number: true,
       page: 0,
       rowsPerPage: 5
     };
@@ -162,7 +155,7 @@ class ListPromotion extends React.Component {
     this.props.getAllPromotion();
   }
 
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(newProps) {
     this.setState({
       allPromotion: newProps.ambil.promotion,
       hasil: newProps.ambil.promotion
@@ -205,7 +198,22 @@ class ListPromotion extends React.Component {
       window.location.href = "/editpromot-nd";
     }
   }
-
+  approval = data => {
+    localStorage.setItem("MARKETING-HEADER-PROMOTION", JSON.stringify(data));
+    if (data.flag_design === 1) {
+      window.location.href = "/approvepromot-d";
+    } else if (data.flag_design === 0) {
+      window.location.href = "/approvepromot-nd";
+    }
+  };
+  closePromot = data => {
+    localStorage.setItem("MARKETING-HEADER-PROMOTION", JSON.stringify(data));
+    if (data.flag_design === 1) {
+      window.location.href = "/closepromot-d";
+    } else if (data.flag_design === 0) {
+      window.location.href = "/closepromot-nd";
+    }
+  };
   changeHandler(e) {
     let temp = this.state.search;
     if (e.target.value === "") {
@@ -260,7 +268,8 @@ class ListPromotion extends React.Component {
       })
       .filter(a => a !== false);
     this.setState({
-      hasil: newResult
+      hasil: newResult,
+      number: false
     });
   };
 
@@ -304,239 +313,225 @@ class ListPromotion extends React.Component {
   }
   render() {
     return (
-      <div>
-        <Grid container spacing={8}>
-          {/* <<------------------Render the Header--------------->> */}
-          <Grid item xs={12}>
-            <br />
-            <ul className="breadcrumb">
-              <li>
-                <a href="/dashboard">Home</a> <span className="divider">/</span>
-              </li>
-              <li>
-                <a href="/dashboard">Transaction</a>{" "}
-                <span className="divider">/</span>
-              </li>
-              <li className="active">List Marketing Promotion</li>
-            </ul>
-          </Grid>
-          {/* <<----------------End Render header------------------->> */}
-          {/* <<------------------Search and Add render------------->> */}
-          <Grid item xs={12}>
-            <h4>List Marketing Promotion</h4>
-            <br />
-          </Grid>
-          <Grid item xs={1.5}>
-            <Input
-              placeholder="Transaction Code"
-              name="code"
-              onChange={this.changeHandler}
-              onKeyPress={this.keyHandler}
-            />
-          </Grid>
-          <Grid item xs={1.5}>
-            <Input
-              placeholder="Request By"
-              name="request_by"
-              onChange={this.changeHandler}
-              onKeyPress={this.keyHandler}
-            />
-          </Grid>
-          <Grid item xs={1.5}>
-            <Input
-              placeholder="Request Date"
-              name="request_date"
-              type="date"
-              onChange={this.changeHandler}
-              onKeyPress={this.keyHandler}
-            />
-          </Grid>
-          <Grid item xs={1}>
-            <Input
-              placeholder="Assign to"
-              name="assign_to"
-              onChange={this.changeHandler}
-              onKeyPress={this.keyHandler}
-            />
-          </Grid>
-          <Grid item xs={1}>
-            <Input
-              placeholder="Status"
-              type="text"
-              name="status"
-              onChange={this.changeHandler}
-              onKeyPress={this.keyHandler}
-            />
-          </Grid>
-          <Grid item xs={1.5}>
-            <Input
-              placeholder="Created Date"
-              type="date"
-              name="created_date"
-              onChange={this.changeHandler}
-              onKeyPress={this.keyHandler}
-            />
-          </Grid>
-          <Grid item xs={1.5}>
-            <Input
-              placeholder="Created By"
-              type="text"
-              name="created_by"
-              onChange={this.changeHandler}
-              onKeyPress={this.keyHandler}
-            />
-          </Grid>
-          <Grid item xs={0.5}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={this.search}
-            >
-              Search
-            </Button>
-          </Grid>
-          <Grid item xs={0.5}>
-            <Button
-              variant="contained"
-              color="warning"
-              size="small"
-              onClick={() => {
-                this.setState({ hasil: this.state.allPromotion });
-              }}
-            >
-              Refresh
-            </Button>
-          </Grid>
-          <Grid item xs={2}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={this.showHandler}
-            >
-              Add Promotion
-            </Button>
-          </Grid>
-          {/* <<----------------End Render thesearch and ADD----------------->> */}
-          {/* <<----------------Render alert------------------>> */}
-          <Grid item xs={6}>
-            {this.state.alertData.status === 1 ? (
-              <Alert color="success">
-                <b>Data {this.state.alertData.message}</b>
-                Data promotion with referential promotionname{" "}
-                <strong>{this.state.alertData.code} </strong>
-                has been {this.state.alertData.message}
-              </Alert>
-            ) : (
-              ""
-            )}
-            {this.state.alertData.status === 2 ? (
-              <Alert color="danger">{this.state.alertData.message} </Alert>
-            ) : (
-              ""
-            )}
-          </Grid>
-          {/* <<--------------End render alert------------->> */}
-          {/* <<--------------CRUD Render---------------->> */}
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+            <div className="card border-primary mb-3">
+              <div className="card-header lead">List Marketing Promotion</div>
+              <div className="card-body">
+                <nav aria-label="breadcrumb mb-4">
+                  <ol className="breadcrumb">
+                    <li className="breadcrumb-item">
+                      <Link to="/">Home</Link>
+                    </li>
+                    <li className="breadcrumb-item active" aria-current="page">
+                      List Promotion
+                    </li>
+                  </ol>
+                </nav>
+
+                {this.props.data.user.m_role_id !== "RO0001" ? (
+                  <div className="col-xs-1 mb-2">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      onClick={this.showHandler}
+                    >
+                      Add Promotion
+                    </Button>
+                  </div>
+                ) : (
+                  <div />
+                )}
+                <div className="table-responsive mb-2">
+                  <table className="table table-borderless">
+                    <tr>
+                      <td>
+                        <input
+                          class="form-control"
+                          placeholder="Transaction Code"
+                          name="code"
+                          onChange={this.changeHandler}
+                          onKeyPress={this.keyHandler}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="form-control"
+                          placeholder="Request By"
+                          name="request_by"
+                          onChange={this.changeHandler}
+                          onKeyPress={this.keyHandler}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="form-control"
+                          placeholder="Request Date"
+                          name="request_date"
+                          type="date"
+                          onChange={this.changeHandler}
+                          onKeyPress={this.keyHandler}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="form-control"
+                          placeholder="Assign to"
+                          name="assign_to"
+                          onChange={this.changeHandler}
+                          onKeyPress={this.keyHandler}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="form-control"
+                          placeholder="Created Date"
+                          type="date"
+                          name="created_date"
+                          onChange={this.changeHandler}
+                          onKeyPress={this.keyHandler}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="form-control"
+                          placeholder="Created By"
+                          type="text"
+                          name="created_by"
+                          onChange={this.changeHandler}
+                          onKeyPress={this.keyHandler}
+                        />
+                      </td>
+                      <td>
+                        {this.state.number ? (
+                          <button
+                            className="btn btn-warning btn-block"
+                            onClick={this.search}
+                          >
+                            Search
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-warning btn-block"
+                            onClick={() => {
+                              this.setState({
+                                hasil: this.state.allPromotion,
+                                number: true
+                              });
+                            }}
+                          >
+                            Refresh
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                {this.state.hasil.length === 0 ? (
+                  <h5>Loading Data, Please Wait...</h5>
+                ) : (
+                  <div className="table-responsive">
+                    <table className="table">
+                      <thead>
+                        <tr className="text-center font-weight-bold">
+                          <td>Transaction Code</td>
+                          <td>Request By</td>
+                          <td>Request Date</td>
+                          <td>Assign To</td>
+                          <td>Status</td>
+                          <td>Created Date</td>
+                          <td>Created By</td>
+                          <td>Action</td>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {this.state.hasil
+                          .slice(
+                            this.state.page * this.state.rowsPerPage,
+                            this.state.page * this.state.rowsPerPage +
+                              this.state.rowsPerPage
+                          )
+                          .map((row, index) => {
+                            return (
+                              <tr key={row._id} className="text-center">
+                                <td>{row.code}</td>
+                                <td>{row.request_by}</td>
+                                <td>{row.request_date}</td>
+                                <td>{this.showAssign(row.assign_to)}</td>
+                                <td>{this.showstatus(row.status)}</td>
+                                <td>{row.created_date}</td>
+                                <td>{row.created_by}</td>
+                                <td>
+                                  {this.props.data.user.m_employee_id ===
+                                    row.created_by && row.status === 1 ? (
+                                    <Link to="#">
+                                      <CreateOutlinedIcon
+                                        onClick={() => {
+                                          this.editModalHandler(row);
+                                        }}
+                                      />
+                                    </Link>
+                                  ) : (
+                                    <div />
+                                  )}
+                                  {this.props.data.user.m_role_id ===
+                                    "RO0001" && parseInt(row.status) === 1 ? (
+                                    <Link to="#">
+                                      <Gavel
+                                        onClick={() => {
+                                          this.approval(row);
+                                        }}
+                                      />
+                                    </Link>
+                                  ) : (
+                                    <div />
+                                  )}
+                                  {this.props.data.user.m_role_id ===
+                                    "RO0006" && parseInt(row.status) === 2 ? (
+                                    <Link to="#">
+                                      <Assignment
+                                        onClick={() => {
+                                          this.closePromot(row);
+                                        }}
+                                      />
+                                    </Link>
+                                  ) : (
+                                    <div />
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                      <TableFooter>
+                        <TableRow>
+                          <TablePagination
+                            colSpan={5}
+                            count={this.state.hasil.length}
+                            rowsPerPage={this.state.rowsPerPage}
+                            page={this.state.page}
+                            onChangePage={this.handleChangePage}
+                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                            ActionsComponent={TablePaginationActionsWrapped}
+                          />
+                        </TableRow>
+                      </TableFooter>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
           <CreatePromotion
             create={this.state.showCreatePromotion}
             closeHandler={this.closeHandler}
             modalStatus={this.modalStatus}
           />
-          {/* <ViewPromotion
-            view={this.state.viewPromotion}
-            closeModalHandler={this.closeModalHandler}
-            promotion={this.state.currentPromotion}
-          />
-          <DeletePromotion
-            delete={this.state.deletePromotion}
-            promotion={this.state.currentPromotion}
-            closeModalHandler={this.closeModalHandler}
-            modalStatus={this.modalStatus}
-          />
-          <EditPromotion
-            edit={this.state.editPromotion}
-            closeModalHandler={this.closeModalHandler}
-            currentPromotion={this.state.currentPromotion}
-            promotionname={this.state.currentPromotion.promotionname}
-            modalStatus={this.modalStatus}
-            allPromotion={this.state.allPromotion}
-          /> */}
-          {/* <<--------End of CRUD Render--------------->> */}
-          {/* <<---------------Table render------------------>> */}
-          <Grid item xs={12}>
-            <br />
-            <Paper>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Transaction Code</TableCell>
-                    <TableCell>Request By</TableCell>
-                    <TableCell>Request Date</TableCell>
-                    <TableCell>Assign to</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Created Date</TableCell>
-                    <TableCell>Created By</TableCell>
-                    <TableCell>Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {this.state.hasil
-                    .slice(
-                      this.state.page * this.state.rowsPerPage,
-                      this.state.page * this.state.rowsPerPage +
-                        this.state.rowsPerPage
-                    )
-                    .map((row, index) => {
-                      return (
-                        <TableRow key={row._id}>
-                          <TableCell>{row.code}</TableCell>
-                          <TableCell>{row.request_by}</TableCell>
-                          <TableCell>{row.request_date}</TableCell>
-                          <TableCell>
-                            {this.showAssign(row.assign_to)}
-                          </TableCell>
-                          <TableCell>{this.showstatus(row.status)}</TableCell>
-                          <TableCell>{row.created_date}</TableCell>
-                          <TableCell>{row.created_by}</TableCell>
-                          <TableCell>
-                            <Link to="#!">
-                              <CreateOutlinedIcon
-                                onClick={() => {
-                                  this.editModalHandler(row);
-                                }}
-                              />
-                            </Link>
-                            <a href="#!">
-                              <Gavel />
-                            </a>
-                            <a href="#!">
-                              <Assignment />
-                            </a>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TablePagination
-                      colSpan={4}
-                      count={this.state.hasil.length}
-                      rowsPerPage={this.state.rowsPerPage}
-                      page={this.state.page}
-                      onChangePage={this.handleChangePage}
-                      onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                      ActionsComponent={TablePaginationActionsWrapped}
-                    />
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </Paper>
-          </Grid>
-        </Grid>
-        {/* <<---------End Table render---------->> */}
+        </div>
       </div>
     );
   }

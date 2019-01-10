@@ -9,7 +9,7 @@ import {
   ADD_DATA_P
 } from "./types"; //, CREATE_PROMOTION, DELETE_PROMOTION
 
-import ApiConfig from "../config/Host_Config"; //localhost:4000/api
+import HostConfig from "../config/Host_Config"; //localhost:4000/api
 
 const token = localStorage.token;
 const ENDPOINTS = {
@@ -25,7 +25,7 @@ const ENDPOINTS = {
 //<<--------------------------Get API from t_promotion--------------------------->>
 export const getAllPromotion = () => dispatch => {
   let options = {
-    url: ApiConfig.host + ENDPOINTS.PROMOTION.PROMOTION,
+    url: HostConfig + ENDPOINTS.PROMOTION.PROMOTION,
     method: "get",
     headers: {
       Authorization: token
@@ -49,7 +49,7 @@ export const getAllPromotion = () => dispatch => {
 
 export const delPromotion = param => dispatch => {
   let options = {
-    url: ApiConfig.host + ENDPOINTS.PROMOTION.PROMOTION + "/" + param,
+    url: HostConfig + ENDPOINTS.PROMOTION.PROMOTION + "/" + param,
     method: "delete",
     headers: {
       Authorization: token
@@ -72,55 +72,234 @@ export const delPromotion = param => dispatch => {
     );
 };
 
-export const createPromotion = body => dispatch => {
-  let option = {
-    url: ApiConfig.host + ENDPOINTS.PROMOTION.PROMOTION,
-    method: "post",
-    headers: {
-      Authorization: token,
-      "Content-Type": "application/json"
-    },
-    data: body
-  };
-  axios(option)
-    .then(res => {
-      dispatch({
-        type: ADD_PROMOTION,
-        payload: body,
-        status: res.data.code
+export const createPromotion = (
+  body,
+  modalCallback,
+  design = true
+) => dispatch => {
+  if (design) {
+    let option = {
+      url: `${HostConfig}/promotion_design`,
+      method: "post",
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json"
+      },
+      data: body
+    };
+    axios(option)
+      .then(res => {
+        dispatch({
+          type: ADD_PROMOTION,
+          payload: body
+        });
+        modalCallback(
+          1,
+          "Data Saved!, Transaction request hass been add with code " +
+            res.data.message +
+            "!",
+          200
+        );
+        setTimeout(() => {
+          localStorage.removeItem("PROMOTION");
+          window.location.href = "/promotion";
+        }, 1000);
+      })
+      .catch(error => {
+        dispatch({
+          type: ADD_PROMOTION,
+          payload: null
+        });
+        modalCallback(2, "Something Error, data not saved!", 400);
       });
-    })
-    .catch(error => {
-      dispatch({
-        type: ADD_PROMOTION,
-        payload: null
+  } else {
+    let option = {
+      url: `${HostConfig}/promotion`,
+      method: "post",
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json"
+      },
+      data: body
+    };
+    axios(option)
+      .then(response => {
+        dispatch({
+          type: ADD_PROMOTION,
+          payload: body
+        });
+        modalCallback(
+          1,
+          `Data Saved!, Transaction request has been add with code ${
+            response.data.message
+          }!`,
+          200
+        );
+        setTimeout(() => {
+          window.location.href = "/promotion";
+        }, 2000);
+      })
+      .catch(error => {
+        dispatch({
+          type: ADD_PROMOTION,
+          payload: null
+        });
+        modalCallback(
+          2,
+          `Something Error, data not Saved! with message: ${error}`,
+          400
+        );
       });
-    });
+  }
 };
 
-export const putPromotion = body => dispatch => {
-  let option = {
-    url: ApiConfig.host + ENDPOINTS.PROMOTION.PROMOTION + "/" + body._id,
+export const putPromotion = (
+  data,
+  modalCallback,
+  design = false,
+  approved = false,
+  reject = false
+) => dispatch => {
+  if (approved === false) {
+    let option = {
+      url: HostConfig + "/promotion/" + data.marketHeader._id,
+      method: "put",
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json"
+      },
+      data: data
+    };
+
+    axios(option)
+      .then(response => {
+        dispatch({
+          type: PUT_PROMOTION,
+          payload: data,
+          status: response.data.code
+        });
+        if (design === false) {
+          modalCallback(
+            1,
+            `Data Saved, Transaction with code ${
+              data.marketHeader.code
+            } has been Updated`,
+            200
+          );
+        } else {
+          modalCallback(
+            1,
+            `Data Saved, Transaction with code ${
+              data.marketHeader.code
+            } has been Updated`
+          );
+        }
+        setTimeout(() => {
+          window.location.pathname = "/promotion";
+        }, 1500);
+      })
+      .catch(error => {
+        if (design === false) {
+          modalCallback(2, `Something Wrong, data not saved. ${error}`, 400);
+        } else {
+          modalCallback(2, `Something Wrong, data not saved. ${error}`);
+        }
+
+        dispatch({
+          type: PUT_PROMOTION,
+          payload: null,
+          status: error
+        });
+      });
+  } else {
+    let option = {
+      url: HostConfig + "/promotion_approve",
+      method: "put",
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json"
+      },
+      data: data
+    };
+
+    axios(option)
+      .then(response => {
+        dispatch({
+          type: PUT_PROMOTION,
+          payload: data,
+          status: response.data.code
+        });
+        if (reject) {
+          modalCallback(
+            2,
+            `Data Rejected, Transaction with code ${
+              data.marketHeader.code
+            } has been Rejected`
+          );
+        } else {
+          modalCallback(
+            1,
+            `Data Saved, Transaction with code ${
+              data.marketHeader.code
+            } has been Updated`
+          );
+        }
+
+        setTimeout(() => {
+          window.location.pathname = "/promotion";
+        }, 1500);
+      })
+      .catch(error => {
+        if (reject) {
+          modalCallback(
+            2,
+            `Data Rejected, Transaction with code ${
+              data.marketHeader.code
+            } has been Rejected`
+          );
+        } else {
+          modalCallback(2, `Something Wrong, data not saved. ${error}`);
+        }
+        dispatch({
+          type: PUT_PROMOTION,
+          payload: null,
+          status: error
+        });
+      });
+  }
+};
+export const closePromotion = (data, modalCallback) => dispatch => {
+  axios({
+    url: `${HostConfig}/promotion_close`,
     method: "put",
     headers: {
       Authorization: token,
       "Content-Type": "application/json"
     },
-    data: body
-  };
-  axios(option)
+    data: data
+  })
     .then(res => {
       dispatch({
         type: PUT_PROMOTION,
-        payload: body,
+        payload: data,
         status: res.data.code
       });
+      modalCallback(
+        1,
+        `Data Closed, Transaction with code ${
+          data.marketHeader.code
+        } has been closed`
+      );
+      setTimeout(() => {
+        window.location.href = "/promotion";
+      }, 1500);
     })
-    .catch(error => {
+    .catch(err => {
       dispatch({
         type: PUT_PROMOTION,
         payload: null
       });
+      modalCallback(1, `Something Error, data not saved. ${err}`);
     });
 };
 //<<-----------------------------End of Get API from t_promotion--------------------->>
@@ -128,7 +307,7 @@ export const putPromotion = body => dispatch => {
 //<<-----------------------------Get API from t_event-------------------------------->>
 export const getEvent = () => dispatch => {
   let options = {
-    url: ApiConfig.host + ENDPOINTS.PROMOTION.EVENT,
+    url: HostConfig + ENDPOINTS.PROMOTION.EVENT,
     method: "get",
     headers: {
       Authorization: token
@@ -153,7 +332,7 @@ export const getEvent = () => dispatch => {
 //<<-----------------------------Get API from t_design------------------------------->>
 export const getDesign = () => dispatch => {
   let options = {
-    url: ApiConfig.host + ENDPOINTS.PROMOTION.DESIGN,
+    url: HostConfig + ENDPOINTS.PROMOTION.DESIGN,
     method: "get",
     headers: {
       Authorization: token
@@ -174,9 +353,9 @@ export const getDesign = () => dispatch => {
       });
     });
 };
-export const getDesignByCode = data => dispatch => {
+export const getDesignByCode = code => dispatch => {
   let option = {
-    url: ApiConfig.host + ENDPOINTS.PROMOTION.DESIGN + "/" + data,
+    url: `${HostConfig}${ENDPOINTS.PROMOTION.DESIGN}/${code}`,
     method: "get",
     headers: {
       Authorization: token
@@ -207,7 +386,7 @@ export const addDataP = body => dispatch => {
 };
 export const getPromotion = id => dispatch => {
   let options = {
-    url: ApiConfig.host + ENDPOINTS.PROMOTION.PROMOTION + "/" + id,
+    url: HostConfig + ENDPOINTS.PROMOTION.PROMOTION + "/" + id,
     method: "get",
     headers: {
       Authorization: token
@@ -230,7 +409,7 @@ export const getPromotion = id => dispatch => {
 };
 export const getDesignOne = code => dispatch => {
   let options = {
-    url: ApiConfig.host + ENDPOINTS.DESIGN + "/" + code,
+    url: HostConfig + ENDPOINTS.DESIGN + "/" + code,
     method: "get",
     headers: {
       Authorization: token
@@ -248,6 +427,31 @@ export const getDesignOne = code => dispatch => {
       dispatch({
         type: "GET_D_ONE",
         payload: null
+      });
+    });
+};
+export const getDesignItem = (code, design) => dispatch => {
+  let option = {
+    url: `${HostConfig}/promotion_item/${code}/${design}`,
+    method: "get",
+    headers: {
+      Authorization: token,
+      "Content-Type": "application/json"
+    }
+  };
+  axios(option)
+    .then(res => {
+      dispatch({
+        type: "GET_P_ITEM",
+        payload: res.data.message[0],
+        status: res.data.status
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: "GET_P_ITEM",
+        payload: null,
+        status: err
       });
     });
 };

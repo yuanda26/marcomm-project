@@ -377,4 +377,14 @@ module.exports = server => {
     authenticate,
     promotionLogic.handlerAddWithDesign
   );
+  server.put(
+    "/api/promotion_approve",
+    authenticate,
+    promotionLogic.approvePromotionHandler
+  );
+  server.put(
+    "/api/promotion_close",
+    authenticate,
+    promotionLogic.closePromotionHandler
+  );
 };

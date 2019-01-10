@@ -17,6 +17,7 @@ const initialState = {
   item: [],
   file: [],
   designOne: [],
+  designItem: [],
   statusGET: "",
   statusDEL: "",
   statusADD: "",
@@ -51,9 +52,7 @@ export default function(state = initialState, action) {
     case PUT_PROMOTION:
       return {
         ...state,
-        promotion: state.promotion.filter(
-          promotion => promotion._id !== action.payload.id
-        ),
+        promotion: action.payload,
         statusPUT: action.status
       };
 
@@ -76,28 +75,16 @@ export default function(state = initialState, action) {
         test: alert(JSON.stringify(action.payload))
       };
 
-    // case "GET_ONE":
-    //   return {
-    //     ...state,
-    //     one: action.payload
-    //   };
-
-    // case "GET_I_ONE":
-    //   return {
-    //     ...state,
-    //     item: action.payload
-    //   };
-    // case "GET_F_ONE":
-    //   return {
-    //     ...state,
-    //     file: action.payload
-    //   };
-
-    // case "GET_D_ONE":
-    //   return {
-    //     ...state,
-    //     designOne: action.payload
-    //   };
+    case "GET_ONE_DESIGN":
+      return {
+        ...state,
+        designOne: action.payload
+      };
+    case "GET_P_ITEM":
+      return {
+        ...state,
+        designItem: action.payload
+      };
     default:
       return state;
   }

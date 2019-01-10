@@ -1,7 +1,8 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
-import apiConfig from "../../../config/Host_Config";
+import { getAllMenu } from "../../../actions/menuActions";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import {
   FormGroup,
   FormControlLabel,
@@ -12,7 +13,6 @@ import {
   TableRow,
   TableFooter
 } from "@material-ui/core";
-import axios from "axios";
 
 const styles = theme => ({
   container: {
@@ -38,42 +38,25 @@ class CreateAccess extends React.Component {
     };
   }
   componentDidMount() {
-    this.getListMenu();
+    this.props.getAllMenu();
   }
-
-  getListMenu() {
-    let token = localStorage.token;
-    let option = {
-      url: `${apiConfig.host}/menu`,
-      method: "get",
-      headers: {
-        Authorization: token
-      }
-    };
-    axios(option)
-      .then(response => {
-        let half = response.data.message.length / 2;
-        this.setState({
-          menu: response.data.message,
-          partOne: response.data.message
-            .map((content, index) => {
-              if (index < half) return content;
-              else return false;
-            })
-            .filter(a => a !== false),
-          partTwo: response.data.message
-            .map((content, index) => {
-              if (index >= half) return content;
-              else return false;
-            })
-            .filter(a => a !== false)
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
+  UNSAFE_componentWillReceiveProps(propsData) {
+    const half = propsData.menuData.menuArr.length / 2;
+    this.setState({
+      partOne: propsData.menuData.menuArr
+        .map((content, index) => {
+          if (index < half) return content;
+          else return false;
+        })
+        .filter(a => a !== false),
+      partTwo: propsData.menuData.menuArr
+        .map((content, index) => {
+          if (index >= half) return content;
+          else return false;
+        })
+        .filter(a => a !== false)
+    });
   }
-
   getChecked = code => {
     let data = this.props.theAccess.filter(a => a === code);
 
@@ -94,7 +77,7 @@ class CreateAccess extends React.Component {
               <TableCell>
                 <TableRow>
                   <FormGroup>
-                    {this.state.partOne.map((row, index) => {
+                    {this.state.partOne.map(row => {
                       return (
                         <FormControlLabel
                           control={
@@ -112,7 +95,7 @@ class CreateAccess extends React.Component {
               <TableCell>
                 <TableRow>
                   <FormGroup>
-                    {this.state.partTwo.map((row, index) => {
+                    {this.state.partTwo.map(row => {
                       return (
                         <FormControlLabel
                           control={
@@ -148,4 +131,16 @@ CreateAccess.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(CreateAccess);
+const mapStateToProps = state => ({
+  auth: state.auth,
+  menuData: state.menu
+});
+CreateAccess.propTypes = {
+  getAllMenu: PropTypes.func.isRequired,
+  menuData: PropTypes.object.isRequired
+};
+const style = withStyles(styles)(CreateAccess);
+export default connect(
+  mapStateToProps,
+  { getAllMenu }
+)(style);

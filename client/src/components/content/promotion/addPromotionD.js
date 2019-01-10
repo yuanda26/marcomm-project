@@ -1,11 +1,13 @@
 import React from "react";
 import { Alert } from "reactstrap";
-import { getAllPromotion } from "../../../actions/promotionActions";
+import {
+  getDesignByCode,
+  createPromotion
+} from "../../../actions/promotionActions";
+import { getDesignItem } from "../../../actions/promotionItemActions";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
-import apiConfig from "../../../config/Host_Config";
-import axios from "axios";
 import SaveOutlinedIcon from "@material-ui/icons/SaveAltOutlined";
 import moment from "moment";
 class addPromotionD extends React.Component {
@@ -39,12 +41,18 @@ class addPromotionD extends React.Component {
     this.changeHandler = this.changeHandler.bind(this);
     this.modalStatus = this.modalStatus.bind(this);
   }
-  //<<-----------------Setting of MARKETING HEADER------------------>>>
-  componentWillReceiveProps(newProps) {
+  componentDidMount() {
+    this.props.getDesignByCode(this.t_design_id);
+    this.props.getDesignItem(null, this.t_design_id, "create");
+  }
+  UNSAFE_componentWillReceiveProps(newProps) {
     this.setState({
-      formdata: newProps.ambil.dataP
+      designItem: newProps.promotionItem.promotItem,
+      designHeader: newProps.ambil.designOne
     });
   }
+  //<<-----------------Setting of MARKETING HEADER------------------>>>
+
   modalStatus(status, message, code) {
     this.setState({
       alertData: {
@@ -69,49 +77,6 @@ class addPromotionD extends React.Component {
     });
   }
   //<<----------------End of Setting MARKETING HEADER---------------->>>
-
-  //<<----------------Setting Market Header Information------------>>
-  getDesignByCode = code => {
-    let token = localStorage.token;
-    let option = {
-      url: apiConfig.host + "/design/" + code,
-      method: "get",
-      headers: {
-        Authorization: token,
-        "Content-Type": "application/json"
-      }
-    };
-    axios(option)
-      .then(res => {
-        this.setState({
-          designHeader: res.data.message
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-
-  getDesignItem = code => {
-    let token = localStorage.token;
-    let option = {
-      url: apiConfig.host + "/t_design_item/" + code,
-      method: "get",
-      headers: {
-        Authorization: token,
-        "Content-Type": "application/json"
-      }
-    };
-    axios(option)
-      .then(res => {
-        this.setState({
-          designItem: res.data.message
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
 
   //<<--------------Setting of shareholder (UPLOAD FILE)------------->>>
   // when name change
@@ -237,47 +202,18 @@ class addPromotionD extends React.Component {
     ) {
       this.modalStatus(2, "Something Wrong, please check correctly!", 400);
     } else {
-      let data = {
-        marketHeader: this.state.marketHeader,
-        designHeader: this.state.designHeader,
-        designItem: this.state.designItem,
-        file: this.state.shareholders
-      };
-      let token = localStorage.token;
-      let option = {
-        url: `${apiConfig.host}/promotion_design`,
-        method: "post",
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json"
+      this.props.createPromotion(
+        {
+          marketHeader: this.state.marketHeader,
+          designHeader: this.state.designHeader,
+          designItem: this.state.designItem,
+          file: this.state.shareholders
         },
-        data: data
-      };
-
-      axios(option)
-        .then(response => {
-          this.modalStatus(
-            1,
-            "Data Saved!, Transaction request hass been add with code " +
-              response.data.message +
-              "!",
-            200
-          );
-          setTimeout(() => {
-            localStorage.removeItem("PROMOTION");
-            window.location.href = "/promotion";
-          }, 3000);
-        })
-        .catch(error => {
-          console.log(error);
-        });
+        this.modalStatus
+      );
     }
   };
   //<<----------------End of Setting UPLOAD FILE-------------->>>
-  componentDidMount() {
-    this.getDesignByCode(this.t_design_id);
-    this.getDesignItem(this.t_design_id);
-  }
 
   // <<----------------------------RENDER---------------------------->>
   render() {
@@ -532,7 +468,7 @@ class addPromotionD extends React.Component {
               <h6 class="card-title">DESIGN ITEM INFORMATION</h6>
               <hr />
               <div class="table-responsive">
-                <table class="table-borderless table-sm">
+                <table class="table">
                   <thead>
                     <tr>
                       <th>Product Name</th>
@@ -544,120 +480,128 @@ class addPromotionD extends React.Component {
                       <th>Start Date</th>
                       <th>End Date</th>
                       <th>Note</th>
-                      <th />
                     </tr>
                   </thead>
-                  {this.state.designItem.map((content, index) => (
-                    <tr>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="product_name"
-                          name="product_name"
-                          value={this.state.designItem[index].product_name}
-                          placeholder={
-                            this.state.designItem[index].product_name
-                          }
-                          disabled
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="productdescription"
-                          name="description"
-                          value={this.state.designItem[index].description}
-                          placeholder={this.state.designItem[index].description}
-                          disabled
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="title"
-                          name="title"
-                          value={this.state.designItem[index].title_item}
-                          placeholder={this.state.designItem[index].title_item}
-                          disabled
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="qty"
-                          placeholder="qty"
-                          name="qty"
-                          value={content.qty}
-                          onChange={this.changeByIndex(index, "item")}
-                        />
-                      </td>
-                      <td>
-                        <select
-                          name="todo"
-                          id="todo"
-                          class="form-control"
-                          value={content.todo}
-                          onChange={this.changeByIndex(index, "item")}
+                  <tbody>
+                    {this.state.designItem.map((content, index) => (
+                      <tr>
+                        <td>
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="product_name"
+                            name="product_name"
+                            value={this.state.designItem[index].product_name}
+                            placeholder={
+                              this.state.designItem[index].product_name
+                            }
+                            disabled
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="productdescription"
+                            name="description"
+                            value={this.state.designItem[index].description}
+                            placeholder={
+                              this.state.designItem[index].description
+                            }
+                            disabled
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="title"
+                            name="title"
+                            value={this.state.designItem[index].title_item}
+                            placeholder={
+                              this.state.designItem[index].title_item
+                            }
+                            disabled
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="qty"
+                            placeholder="qty"
+                            name="qty"
+                            value={content.qty}
+                            onChange={this.changeByIndex(index, "item")}
+                          />
+                        </td>
+                        <td>
+                          <select
+                            name="todo"
+                            id="todo"
+                            class="form-control"
+                            value={content.todo}
+                            onChange={this.changeByIndex(index, "item")}
+                          >
+                            <option value="PRINT"> Print </option>
+                            <option value="UPLOAD SOSMED">
+                              {" "}
+                              Upload Sosmed{" "}
+                            </option>
+                            <option selected value="null" disabled>
+                              -Select-
+                            </option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            type="date"
+                            class="form-control"
+                            name="request_due_date"
+                            value={content.request_due_date}
+                            onChange={this.changeByIndex(index, "item")}
+                            id="duedate"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="startdate"
+                            disabled
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="enddate"
+                            disabled
+                          />
+                        </td>
+                        <td>
+                          <textarea
+                            type="text"
+                            class="form-control"
+                            id="note"
+                            name="note"
+                            value={content.note}
+                            onChange={this.changeByIndex(index, "item")}
+                            placeholder="Type Note"
+                          />
+                        </td>
+                        <button
+                          class="btn btn-primary"
+                          onClick={() => {
+                            localStorage.removeItem("PROMOTION");
+                            window.location.href = "/promotion";
+                          }}
                         >
-                          <option value="PRINT"> Print </option>
-                          <option value="UPLOAD SOSMED"> Upload Sosmed </option>
-                          <option selected value="null" disabled>
-                            -Select-
-                          </option>
-                        </select>
-                      </td>
-                      <td>
-                        <input
-                          type="date"
-                          class="form-control"
-                          name="request_due_date"
-                          value={content.request_due_date}
-                          onChange={this.changeByIndex(index, "item")}
-                          id="duedate"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="date"
-                          class="form-control"
-                          id="startdate"
-                          disabled
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="date"
-                          class="form-control"
-                          id="enddate"
-                          disabled
-                        />
-                      </td>
-                      <td>
-                        <textarea
-                          type="text"
-                          class="form-control"
-                          id="note"
-                          name="note"
-                          value={content.note}
-                          onChange={this.changeByIndex(index, "item")}
-                          placeholder="Type Note"
-                        />
-                      </td>
-                      <button
-                        class="btn btn-primary"
-                        onClick={() => {
-                          localStorage.removeItem("PROMOTION");
-                          window.location.href = "/promotion";
-                        }}
-                      >
-                        <SaveOutlinedIcon />
-                      </button>
-                    </tr>
-                  ))}
+                          <SaveOutlinedIcon />
+                        </button>
+                      </tr>
+                    ))}
+                  </tbody>
                 </table>
               </div>
             </div>
@@ -930,17 +874,20 @@ class addPromotionD extends React.Component {
 }
 
 addPromotionD.propTypes = {
-  getAllPromotion: PropTypes.func.isRequired,
   ambil: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired
+  data: PropTypes.object.isRequired,
+  getDesignByCode: PropTypes.func.isRequired,
+  getDesignItem: PropTypes.func.isRequired,
+  createPromotion: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   ambil: state.promot,
-  data: state.auth
+  data: state.auth,
+  promotionItem: state.promotItem
 });
 
 export default connect(
   mapStateToProps,
-  { getAllPromotion }
+  { getDesignByCode, getDesignItem, createPromotion }
 )(addPromotionD);

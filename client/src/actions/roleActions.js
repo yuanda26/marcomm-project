@@ -1,11 +1,11 @@
 import axios from "axios";
 import { GET_ROLE, DEL_ROLE, ADD_ROLE, PUT_ROLE } from "./types"; //, CREATE_ROLE, DELETE_ROLE
-import apiConfig from "../config/Host_Config";
+import HostConfig from "../config/Host_Config";
 let token = localStorage.token;
 
 export const getAllRoles = () => dispatch => {
   let options = {
-    url: `${apiConfig.host}/role`,
+    url: `${HostConfig}/role`,
     method: "get",
     headers: {
       Authorization: token
@@ -27,9 +27,9 @@ export const getAllRoles = () => dispatch => {
     });
 };
 
-export const delRole = param => dispatch => {
+export const deleteRole = (param, modalStatus) => dispatch => {
   let options = {
-    url: `${apiConfig.host}/role/${param}`,
+    url: `${HostConfig}/role/${param}`,
     method: "delete",
     headers: {
       Authorization: token
@@ -42,21 +42,26 @@ export const delRole = param => dispatch => {
         payload: param,
         status: res.data.code
       });
+      modalStatus(
+        1,
+        `Data deleted!, Data role with code ${param} has been deleted!`
+      );
     })
-    .catch(error =>
+    .catch(error => {
       dispatch({
         type: DEL_ROLE,
         payload: null
-        // type: GET_ERRORS,
-        // payload: err.response.data
-      })
-    );
+      });
+      modalStatus(
+        2,
+        `Invalid!, Data role with code  ${param} is used in other account!`
+      );
+    });
 };
 
-export const createRole = body => dispatch => {
-  let token = localStorage.token;
+export const createRole = (body, modalCallback) => dispatch => {
   let option = {
-    url: `${apiConfig.host}/role`,
+    url: `${HostConfig}/role`,
     method: "post",
     headers: {
       Authorization: token,
@@ -71,6 +76,11 @@ export const createRole = body => dispatch => {
         payload: body,
         status: response.data.code
       });
+      modalCallback(
+        1,
+        `Data Saved! New role with code RO-${response.data.message +
+          1} has been added!`
+      );
     })
     .catch(error => {
       dispatch({
@@ -78,37 +88,13 @@ export const createRole = body => dispatch => {
         payload: null,
         status: error.message
       });
+      modalCallback(2, `Something Wrong, data not saved!. message: ${error}`);
     });
-  // let token = localStorage.getItem(apiConfig.LS.TOKEN);
-  // let option = {
-  //   url: apiConfig.BASE_URL + apiConfig.ENDPOINTS.ROLE,
-  //   method: "post",
-  //   headers: {
-  //     Authorization: token,
-  //     "Content-Type": "application/json"
-  //   },
-  //   data: body
-  // };
-  // axios(option)
-  //   .then(res => {
-  //     dispatch({
-  //       type: ADD_ROLE,
-  //       payload: body,
-  //       status: res.data.code
-  //     });
-  //   })
-  //   .catch(error => {
-  //     dispatch({
-  //       type: ADD_ROLE,
-  //       payload: null
-  //     });
-  //   });
 };
 
-export const putRole = body => dispatch => {
-  let token = localStorage.token;
+export const putRole = (body, modalStatus) => dispatch => {
   let option = {
-    url: `${apiConfig.host}/role/${body.code}`,
+    url: `${HostConfig}/role/${body.code}`,
     method: "put",
     headers: {
       Authorization: token,
@@ -123,11 +109,16 @@ export const putRole = body => dispatch => {
         payload: body,
         status: res.data.code
       });
+      modalStatus(
+        1,
+        `Data Updated!, data with code ${body.code} has been updated!`
+      );
     })
     .catch(error => {
       dispatch({
         type: PUT_ROLE,
         payload: null
       });
+      modalStatus(2, `Something error, data not saved!. message: ${error}`);
     });
 };
