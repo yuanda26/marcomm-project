@@ -129,12 +129,14 @@ class DesignRead extends Component {
                           value={this.designStatus(design.status)}
                           disabled={true}
                         />
-                        <TextFieldGroup
-                          label="*Assign to"
-                          name="assign_to"
-                          value={this.assignToName(design.assign_to)}
-                          disabled={true}
-                        />
+                        {design.status !== 0 && (
+                          <TextFieldGroup
+                            label="*Assign to"
+                            name="assign_to"
+                            value={this.assignToName(design.assign_to)}
+                            disabled={true}
+                          />
+                        )}
                       </div>
                       <div className="col-md-6">
                         <TextFieldGroup
