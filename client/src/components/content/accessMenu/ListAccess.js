@@ -11,10 +11,7 @@ import ViewAccess from "./ViewAccess";
 import PropTypes from "prop-types";
 import {
   withStyles,
-  Table,
   TableBody,
-  TableCell,
-  TableHead,
   TableRow,
   TableFooter,
   TablePagination,
@@ -264,7 +261,7 @@ class ListAccess extends React.Component {
   getTheAccess(code) {
     let token = localStorage.token;
     let option = {
-      url: `${HostConfig.host}/access/${code}`,
+      url: `${HostConfig}/access/${code}`,
       method: "get",
       headers: {
         Authorization: token,

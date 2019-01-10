@@ -24,7 +24,6 @@ import addPromotionND from "./components/content/promotion/addPromotionND";
 import addPromotionD from "./components/content/promotion/addPromotionD";
 import editPromotionD from "./components/content/promotion/editPromotionD";
 import editPromotionND from "./components/content/promotion/editPromotionND";
-import ViewPromotion from "./components/content/promotion/viewPromotion/viewPromotion";
 import ListUser from "./components/content/users/ListUser";
 import ListProduct from "./components/content/product/listProduct";
 // Actions
