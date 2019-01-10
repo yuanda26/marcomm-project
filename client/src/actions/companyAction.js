@@ -5,11 +5,11 @@ import {
   EDIT_COMPANY,
   DELETE_COMPANY
 } from "./types";
-import ApiConfig from "../config/Host_Config";
+import HostConfig from "../config/Host_Config";
 
 export const getCompanies = () => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/company`,
+    url: `${HostConfig}/company`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -32,7 +32,7 @@ export const getCompanies = () => dispatch => {
 
 export const createCompany = body => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/company`,
+    url: `${HostConfig}/company`,
     method: "post",
     headers: {
       Authorization: localStorage.token,
@@ -58,7 +58,7 @@ export const createCompany = body => dispatch => {
 
 export const deleteCompany = body => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/company/${body.code}`,
+    url: `${HostConfig}/company/${body.code}`,
     method: "delete",
     headers: {
       Authorization: localStorage.token
@@ -85,7 +85,7 @@ export const deleteCompany = body => dispatch => {
 
 export const editCompany = body => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/company/${body.formdata.code}`,
+    url: `${HostConfig}/company/${body.formdata.code}`,
     method: "put",
     headers: {
       Authorization: localStorage.token

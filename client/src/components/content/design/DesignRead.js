@@ -82,7 +82,6 @@ class DesignRead extends Component {
       code,
       title
     } = this.props;
-    const { status, message } = this.props.design;
 
     return (
       <div className="design-read">

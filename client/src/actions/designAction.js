@@ -206,7 +206,7 @@ export const getAssignToName = () => dispatch => {
 };
 
 // Add New Design Request
-export const createDesign = (designData, history) => dispatch => {
+export const createDesign = designData => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.design}`,
     method: "post",
@@ -220,7 +220,6 @@ export const createDesign = (designData, history) => dispatch => {
         type: ADD_DESIGN,
         payload: res.data.message
       });
-      history.push("/design");
     })
     .catch(err =>
       dispatch({
@@ -231,7 +230,7 @@ export const createDesign = (designData, history) => dispatch => {
 };
 
 // Add New Design Item Request
-export const createDesignItem = (designItemData, history) => dispatch => {
+export const createDesignItem = designItemData => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.design_item}`,
     method: "post",
@@ -240,12 +239,12 @@ export const createDesignItem = (designItemData, history) => dispatch => {
     },
     data: { designItemData }
   })
-    .then(res => {
+    .then(res =>
       dispatch({
-        type: ADD_DESIGN_ITEM
-      });
-      history.push("/design");
-    })
+        type: ADD_DESIGN_ITEM,
+        payload: res.data.message
+      })
+    )
     .catch(err =>
       dispatch({
         type: ERRORS,
@@ -255,21 +254,20 @@ export const createDesignItem = (designItemData, history) => dispatch => {
 };
 
 // Update Design Request
-export const updateDesign = (code, designUpdate, history) => dispatch => {
+export const updateDesign = (code, designUpdate) => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.design}/${code}`,
     method: "put",
     headers: { Authorization: localStorage.token },
     data: designUpdate
   })
-    .then(res => {
+    .then(res =>
       dispatch({
         type: UPDATE_DESIGN,
         payload: res.data.message,
         code: code
-      });
-      history.push("/design");
-    })
+      })
+    )
     .catch(err =>
       dispatch({
         type: ERRORS,
@@ -279,7 +277,7 @@ export const updateDesign = (code, designUpdate, history) => dispatch => {
 };
 
 // Update Design Request
-export const updateDesignItem = (designItemUpdate, history) => dispatch => {
+export const updateDesignItem = designItemUpdate => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.design_item}`,
     method: "put",
@@ -291,7 +289,6 @@ export const updateDesignItem = (designItemUpdate, history) => dispatch => {
         type: UPDATE_DESIGN_ITEM,
         payload: res.data.message
       });
-      history.push("/design");
     })
     .catch(err =>
       dispatch({

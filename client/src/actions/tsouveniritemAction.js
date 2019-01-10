@@ -7,16 +7,15 @@ import {
   REQUEST_APPROVE,
   REQUEST_REJECT,
   TSOUVENIR_RECEIVED,
-  TSOUVENIR_SETTLEMENT,
   SETTLEMENT_APPROVE,
   CLOSE_ORDER,
   GET_EVENT
 } from "./types";
-import ApiConfig from "../config/Host_Config";
+import HostConfig from "../config/Host_Config";
 
 export const getAllTSouvenirItem = () => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/tsouveniritem`,
+    url: `${HostConfig}/tsouveniritem`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -40,7 +39,7 @@ export const getAllTSouvenirItem = () => dispatch => {
 
 export const getAllTSouvenirItemDetil = () => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/tsouveniritemdetil`,
+    url: `${HostConfig}/tsouveniritemdetil`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -63,7 +62,7 @@ export const getAllTSouvenirItemDetil = () => dispatch => {
 
 export const createTSouvenirItem = body => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/tsouveniritem`,
+    url: `${HostConfig}/tsouveniritem`,
     method: "post",
     headers: {
       Authorization: localStorage.token,
@@ -89,7 +88,7 @@ export const createTSouvenirItem = body => dispatch => {
 
 export const updateTSouvenirItem = newTSouvenirItem => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/tsouveniritem/${newTSouvenirItem.souv.code}`,
+    url: `${HostConfig}/tsouveniritem/${newTSouvenirItem.souv.code}`,
     method: "put",
     headers: {
       Authorization: localStorage.token,
@@ -115,7 +114,7 @@ export const updateTSouvenirItem = newTSouvenirItem => dispatch => {
 
 export const adminRequestApprove = tsouveniritem => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/tsouveniritem/adminrequestapprove/${
+    url: `${HostConfig}/tsouveniritem/adminrequestapprove/${
       tsouveniritem.code
     }`,
     method: "put",
@@ -143,9 +142,7 @@ export const adminRequestApprove = tsouveniritem => dispatch => {
 
 export const adminRequestReject = tsouveniritem => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/tsouveniritem/adminrequestreject/${
-      tsouveniritem.code
-    }`,
+    url: `${HostConfig}/tsouveniritem/adminrequestreject/${tsouveniritem.code}`,
     method: "put",
     headers: {
       Authorization: localStorage.token,
@@ -172,9 +169,7 @@ export const adminRequestReject = tsouveniritem => dispatch => {
 
 export const putReceivedSouvenir = tsouveniritem => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/tsouveniritem/receivedsouvenir/${
-      tsouveniritem.code
-    }`,
+    url: `${HostConfig}/tsouveniritem/receivedsouvenir/${tsouveniritem.code}`,
     method: "put",
     headers: {
       Authorization: localStorage.token,
@@ -200,7 +195,7 @@ export const putReceivedSouvenir = tsouveniritem => dispatch => {
 
 export const adminApproveSettlement = tsouveniritem => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/tsouveniritem/adminapprovesettlement/${
+    url: `${HostConfig}/tsouveniritem/adminapprovesettlement/${
       tsouveniritem.code
     }`,
     method: "put",
@@ -228,7 +223,7 @@ export const adminApproveSettlement = tsouveniritem => dispatch => {
 
 export const putCloseOrder = tsouveniritem => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/tsouveniritem/colseorder/${tsouveniritem.code}`,
+    url: `${HostConfig}/tsouveniritem/colseorder/${tsouveniritem.code}`,
     method: "put",
     headers: {
       Authorization: localStorage.token,
@@ -254,7 +249,7 @@ export const putCloseOrder = tsouveniritem => dispatch => {
 
 export const getEvent = () => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/event`,
+    url: `${HostConfig}/event`,
     method: "get",
     headers: {
       Authorization: localStorage.token
