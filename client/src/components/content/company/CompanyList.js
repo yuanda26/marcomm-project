@@ -10,18 +10,10 @@ import ViewCompany from "./ReadCompany";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import {
-  Grid,
-  Input,
-  TableCell,
-  Table,
-  TableBody,
-  TableHead,
   TableRow,
   TableFooter,
   TablePagination,
   IconButton,
-  Paper,
-  Hidden,
   Button
 } from "@material-ui/core";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
@@ -310,180 +302,186 @@ class ListCompany extends React.Component {
   };
 
   render() {
+    const columnWidth = { width: "100%" };
     return (
-      <Grid container spacing={0}>
-        <Grid item xs={12}>
-          <Paper>
-            <ul class="breadcrumb">
-              <li>
-                <a href="/dashboard">Home</a> <span class="divider">/</span>
-              </li>
-              <li>
-                <a href="#!">Master</a> <span class="divider">/</span>
-              </li>
-              <li class="active">List Company</li>
-            </ul>
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <h4>List Company</h4>
-          {this.state.alertData.status === 1 && (
-            <Alert color="success">
-              <b>Data {this.state.alertData.message} ! </b> Company with name{" "}
-              <strong>{this.state.alertData.code} </strong>
-              has been {this.state.alertData.message} !
-            </Alert>
-          )}
-          {this.state.alertData.status === 2 && (
-            <Alert color="danger">{this.state.alertData.message} </Alert>
-          )}
-          <CreateCompany
-            create={this.state.showCreateCompany}
-            closeHandler={this.closeHandler}
-            modalStatus={this.modalStatus}
-            getlist={this.props.getCompanies}
-            allCompany={this.state.companies}
-          />
-          <ViewCompany
-            view={this.state.viewCompany}
-            closeModalHandler={this.closeModalHandler}
-            company={this.state.currentCompany}
-          />
-          <DeleteCompany
-            delete={this.state.deleteCompany}
-            company_del={this.state.currentCompany}
-            closeModalHandler={this.closeModalHandler}
-            modalStatus={this.modalStatus}
-            getlist={this.props.getCompanies}
-          />
-          <UpdateCompany
-            edit={this.state.editCompany}
-            closeModalHandler={this.closeModalHandler}
-            companytest={this.state.currentCompany}
-            companytest2={this.state.currentCompany2}
-            modalStatus={this.modalStatus}
-            allCompany={this.state.companies}
-          />
-        </Grid>
-        <Grid item xs={2} justify="flex-end">
-          <Input
-            placeholder="Search by Code"
-            name="code"
-            onChange={this.changeHandler}
-          />
-        </Grid>
-        <Grid item xs={2}>
-          <Input
-            placeholder="Search by Name"
-            name="name"
-            onChange={this.changeHandler}
-          />
-        </Grid>
-        <Grid item xs={2}>
-          <Input
-            placeholder="Search by Date"
-            type="date"
-            name="created_date"
-            onChange={this.changeHandler}
-          />
-        </Grid>
-        <Grid item xs={2}>
-          <Input
-            placeholder="Search by Create by"
-            name="created_by"
-            onChange={this.changeHandler}
-          />
-        </Grid>
-        <Button
-          variant="contained"
-          color="primary"
-          size="small"
-          onClick={this.showHandler}
-        >
-          Add Company
-        </Button>
-        <Grid item xs={12}>
-          <Hidden>
-            <Paper>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>No.</TableCell>
-                    <TableCell>Company Code</TableCell>
-                    <TableCell>Company Name</TableCell>
-                    <TableCell>Created Date</TableCell>
-                    <TableCell>Created By</TableCell>
-                    <TableCell>Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {this.state.companiesSearch
-                    .slice(
-                      this.state.page * this.state.rowsPerPage,
-                      this.state.page * this.state.rowsPerPage +
-                        this.state.rowsPerPage
-                    )
-                    .map((company, index) => {
-                      return (
-                        <TableRow key={company._id}>
-                          <TableCell>
-                            {index +
-                              1 +
-                              this.state.page * this.state.rowsPerPage}
-                          </TableCell>
-                          <TableCell component="th" scope="row">
-                            {company.code}
-                          </TableCell>
-                          <TableCell>{company.name}</TableCell>
-                          <TableCell>
-                            {this.changeDateFormat(company.created_date)}
-                          </TableCell>
-                          <TableCell>{company.created_by}</TableCell>
-                          <TableCell>
-                            <Link to="#">
-                              <SearchIcon
-                                onClick={() => {
-                                  this.viewModalHandler(company._id);
-                                }}
-                              />
-                            </Link>
-                            <Link to="#">
-                              <CreateOutlinedIcon
-                                onClick={() => {
-                                  this.editModalHandler(company._id);
-                                }}
-                              />
-                            </Link>
-                            <Link to="#">
-                              <DeleteOutlinedIcon
-                                onClick={() => {
-                                  this.deleteModalHandler(company._id);
-                                }}
-                              />
-                            </Link>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TablePagination
-                      colSpan={3}
-                      count={this.state.companiesSearch.length}
-                      rowsPerPage={this.state.rowsPerPage}
-                      page={this.state.page}
-                      onChangePage={this.handleChangePage}
-                      onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                      ActionsComponent={TablePaginationActionsWrapped}
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+            <div className="card border-primary mb-2">
+              <div className="card-header lead">Company List</div>
+              <div className="card-body">
+                <nav aria-label="breadcrumb mb-4">
+                  <ol className="breadcrumb">
+                    <li className="breadcrumb-item">
+                      <Link to="/">Home</Link>
+                    </li>
+                    <li className="breadcrumb-item active" aria-current="page">
+                      Master Company
+                    </li>
+                  </ol>
+                </nav>
+                {this.state.alertData.status === 1 && (
+                  <Alert color="success">
+                    <b>Data {this.state.alertData.message} ! </b> Company with
+                    name <strong>{this.state.alertData.code} </strong>
+                    has been {this.state.alertData.message} !
+                  </Alert>
+                )}
+                {this.state.alertData.status === 2 && (
+                  <Alert color="danger">{this.state.alertData.message} </Alert>
+                )}
+                <CreateCompany
+                  create={this.state.showCreateCompany}
+                  closeHandler={this.closeHandler}
+                  modalStatus={this.modalStatus}
+                  getlist={this.props.getCompanies}
+                  allCompany={this.state.companies}
+                />
+                <ViewCompany
+                  view={this.state.viewCompany}
+                  closeModalHandler={this.closeModalHandler}
+                  company={this.state.currentCompany}
+                />
+                <DeleteCompany
+                  delete={this.state.deleteCompany}
+                  company_del={this.state.currentCompany}
+                  closeModalHandler={this.closeModalHandler}
+                  modalStatus={this.modalStatus}
+                  getlist={this.props.getCompanies}
+                />
+                <UpdateCompany
+                  edit={this.state.editCompany}
+                  closeModalHandler={this.closeModalHandler}
+                  companytest={this.state.currentCompany}
+                  companytest2={this.state.currentCompany2}
+                  modalStatus={this.modalStatus}
+                  allCompany={this.state.companies}
+                />
+                <div className="form-row">
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Code"
+                      name="code"
+                      className="form-control"
+                      onChange={this.changeHandler}
                     />
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </Paper>
-          </Hidden>
-        </Grid>
-      </Grid>
+                  </div>
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Name"
+                      name="name"
+                      className="form-control"
+                      onChange={this.changeHandler}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Date"
+                      type="date"
+                      className="form-control"
+                      name="created_date"
+                      onChange={this.changeHandler}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Create by"
+                      name="created_by"
+                      className="form-control"
+                      onChange={this.changeHandler}
+                    />
+                  </div>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={this.showHandler}
+                  >
+                    Add Company
+                  </Button>
+                </div>
+                <br />
+                <div className="table responsive">
+                  <table className="table  table-stripped">
+                    <thead>
+                      <tr
+                        className="text-center font-weight-bold"
+                        style={columnWidth}
+                      >
+                        <td>No.</td>
+                        <td>Company Code</td>
+                        <td>Company Name</td>
+                        <td>Created Date</td>
+                        <td>Created By</td>
+                        <td>Action</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.companiesSearch
+                        .slice(
+                          this.state.page * this.state.rowsPerPage,
+                          this.state.page * this.state.rowsPerPage +
+                            this.state.rowsPerPage
+                        )
+                        .map((company, index) => (
+                          <tr className="text-center" key={company._id}>
+                            <td>
+                              {index +
+                                1 +
+                                this.state.page * this.state.rowsPerPage}
+                            </td>
+                            <td component="th">{company.code}</td>
+                            <td>{company.name}</td>
+                            <td>
+                              {this.changeDateFormat(company.created_date)}
+                            </td>
+                            <td>{company.created_by}</td>
+                            <td>
+                              <Link to="#">
+                                <SearchIcon
+                                  onClick={() => {
+                                    this.viewModalHandler(company._id);
+                                  }}
+                                />
+                              </Link>
+                              <Link to="#">
+                                <CreateOutlinedIcon
+                                  onClick={() => {
+                                    this.editModalHandler(company._id);
+                                  }}
+                                />
+                              </Link>
+                              <Link to="#">
+                                <DeleteOutlinedIcon
+                                  onClick={() => {
+                                    this.deleteModalHandler(company._id);
+                                  }}
+                                />
+                              </Link>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                    <TableFooter>
+                      <TableRow>
+                        <TablePagination
+                          colSpan={4}
+                          count={this.state.companiesSearch.length}
+                          rowsPerPage={this.state.rowsPerPage}
+                          page={this.state.page}
+                          onChangePage={this.handleChangePage}
+                          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                          ActionsComponent={TablePaginationActionsWrapped}
+                        />
+                      </TableRow>
+                    </TableFooter>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 }

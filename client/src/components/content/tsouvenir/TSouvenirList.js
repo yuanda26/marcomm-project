@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Alert, FormGroup, Input, Form, Button } from "reactstrap";
+import { Alert, Button } from "reactstrap";
 import { getAllTsouvenir } from "../../../actions/tsouvenirAction";
 import apiconfig from "../../../config/Host_Config";
 import axios from "axios";
@@ -11,17 +11,10 @@ import ViewTsouvenir from "./ReadTsouvenir";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import {
-  Table,
-  TableCell,
-  TableHead,
   TableRow,
-  TableBody,
   TableFooter,
   TablePagination,
-  IconButton,
-  Paper,
-  Hidden,
-  Grid
+  IconButton
 } from "@material-ui/core";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import LastPageIcon from "@material-ui/icons/LastPage";
@@ -251,6 +244,7 @@ class ListTsouvenir extends React.Component {
     const {
       code,
       received_by,
+      received_date,
       created_by,
       created_date
     } = this.state.initialSearch;
@@ -259,6 +253,7 @@ class ListTsouvenir extends React.Component {
       if (
         code.test(ele.code.toLowerCase()) &&
         received_by.test(ele.received_by.toLowerCase()) &&
+        received_date.test(ele.received_date.toLowerCase()) &&
         created_by.test(ele.created_by.toLowerCase()) &&
         created_date.test(ele.created_date.toLowerCase())
       ) {
@@ -291,189 +286,191 @@ class ListTsouvenir extends React.Component {
     });
   }
 
-  changeDate = tanggal => {
+  changeDateFormat = tanggal => {
     return moment(tanggal).format("DD/MM/YYYY");
   };
 
   render() {
+    const columnWidth = { width: "100%" };
     return (
-      <div>
-        <Grid container spacing={0}>
-          <Grid item xs={12}>
-            <Paper>
-              <ul class="breadcrumb">
-                <li>
-                  <a href="/company">Home</a> <span class="divider">/</span>
-                </li>
-                <li>
-                  <a href="#!">Transaction</a>
-                  <span class="divider">/</span>
-                </li>
-                <li class="active">List Souvenir Stock</li>
-              </ul>
-            </Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <h4>List Souvenir Stock</h4>
-          </Grid>
-          <Form inline>
-            <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-              <Input
-                type="text"
-                placeholder="Search Code"
-                name="code"
-                onChange={this.changeHandler}
-              />
-            </FormGroup>
-            <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-              <Input
-                type="text"
-                placeholder="Search Received By"
-                name="received_by"
-                onChange={this.changeHandler}
-              />
-            </FormGroup>
-            <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-              <Input
-                type="text"
-                placeholder="Search Created By"
-                name="created_by"
-                onChange={this.changeHandler}
-              />
-            </FormGroup>
-            <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-              <Input
-                type="date"
-                placeholder="Search Created Date"
-                name="created_date"
-                onChange={this.changeHandler}
-              />
-            </FormGroup>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={this.showHandler}
-            >
-              Add Stock
-            </Button>
-          </Form>
-          <Grid item xs={3} justify="flex-end" />
-          <CreateTsouvenir
-            create={this.state.showCreateTsouvenir}
-            closeHandler={this.closeHandler}
-            modalStatus={this.modalStatus}
-            closeModalHandler={this.closeModalHandler}
-          />
-          <ViewTsouvenir
-            view={this.state.viewTsouvenir}
-            closeModalHandler={this.closeModalHandler}
-            item={this.state.currentTsouvenir}
-          />
-          <EditTsouvenir
-            edit={this.state.EditTsouvenir}
-            closeModalHandler={this.closeModalHandler}
-            tsouvenirTest={this.state.currentTsouvenir}
-            getAllItem={this.state.getitem}
-            modalStatus={this.modalStatus}
-          />
-          <Grid item xs={12}>
-            <Hidden>
-              <br />
-              <Paper>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>No</TableCell>
-                      <TableCell>Souvenir Code</TableCell>
-                      <TableCell>Received By</TableCell>
-                      <TableCell>Received Date</TableCell>
-                      <TableCell>Created By</TableCell>
-                      <TableCell>Created Date</TableCell>
-                      <TableCell>Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {this.state.hasil
-                      .slice(
-                        this.state.page * this.state.rowsPerPage,
-                        this.state.page * this.state.rowsPerPage +
-                          this.state.rowsPerPage
-                      )
-                      .map((row, index) => {
-                        return (
-                          <TableRow key={row.id}>
-                            <TableCell>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+            <div className="card border-primary mb-2">
+              <div className="card-header lead">Souvenir Stock List</div>
+              <div className="card-body">
+                <nav aria-label="breadcrumb mb-4">
+                  <ol className="breadcrumb">
+                    <li className="breadcrumb-item">
+                      <Link to="/">Home</Link>
+                    </li>
+                    <li className="breadcrumb-item active" aria-current="page">
+                      Transaction Souvenir Stock
+                    </li>
+                  </ol>
+                </nav>
+                {this.state.alertData.status === 1 && (
+                  <Alert color="success">
+                    <b>Data {this.state.alertData.message} ! </b>
+                    Data souvenir sotck with referential code
+                    <strong>{this.state.alertData.code} </strong>
+                    has been {this.state.alertData.message} !
+                  </Alert>
+                )}
+                {this.state.alertData.status === 2 && (
+                  <Alert color="danger">{this.state.alertData.message} </Alert>
+                )}
+                <CreateTsouvenir
+                  create={this.state.showCreateTsouvenir}
+                  closeHandler={this.closeHandler}
+                  modalStatus={this.modalStatus}
+                  closeModalHandler={this.closeModalHandler}
+                />
+                <ViewTsouvenir
+                  view={this.state.viewTsouvenir}
+                  closeModalHandler={this.closeModalHandler}
+                  item={this.state.currentTsouvenir}
+                />
+                <EditTsouvenir
+                  edit={this.state.EditTsouvenir}
+                  closeModalHandler={this.closeModalHandler}
+                  tsouvenirTest={this.state.currentTsouvenir}
+                  getAllItem={this.state.getitem}
+                  modalStatus={this.modalStatus}
+                />
+                <div className="form-row">
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Code"
+                      name="code"
+                      className="form-control"
+                      onChange={this.changeHandler}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Received By"
+                      name="received_by"
+                      className="form-control"
+                      onChange={this.changeHandler}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Received Date"
+                      type="date"
+                      name="received_date"
+                      className="form-control"
+                      onChange={this.changeHandler}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Create by"
+                      name="created_by"
+                      className="form-control"
+                      onChange={this.changeHandler}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Create Date"
+                      type="date"
+                      name="created_date"
+                      className="form-control"
+                      onChange={this.changeHandler}
+                    />
+                  </div>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={this.showHandler}
+                  >
+                    Add Souvenir Stock
+                  </Button>
+                </div>
+                <br />
+                <div className="table responsive">
+                  <table className="table  table-stripped">
+                    <thead>
+                      <tr
+                        className="text-center font-weight-bold"
+                        style={columnWidth}
+                      >
+                        <td>No.</td>
+                        <td>Souvenir Code</td>
+                        <td>Received By</td>
+                        <td>Received Date</td>
+                        <td>Created By</td>
+                        <td>Created Date</td>
+                        <td>Action</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.hasil
+                        .slice(
+                          this.state.page * this.state.rowsPerPage,
+                          this.state.page * this.state.rowsPerPage +
+                            this.state.rowsPerPage
+                        )
+                        .map((tsouvenir, index) => (
+                          <tr className="text-center" key={tsouvenir._id}>
+                            <td>
                               {index +
                                 1 +
                                 this.state.page * this.state.rowsPerPage}
-                            </TableCell>
-                            <TableCell component="th" scope="row">
-                              {row.code}
-                            </TableCell>
-                            <TableCell>{row.received_by}</TableCell>
-                            <TableCell>
-                              {this.changeDate(row.received_date)}
-                            </TableCell>
-                            <TableCell>{row.created_by}</TableCell>
-                            <TableCell>
-                              {this.changeDate(row.created_date)}
-                            </TableCell>
-                            <TableCell>
+                            </td>
+                            <td component="th">{tsouvenir.code}</td>
+                            <td>{tsouvenir.received_by}</td>
+                            <td>
+                              {this.changeDateFormat(tsouvenir.received_date)}
+                            </td>
+                            <td>{tsouvenir.created_by}</td>
+                            <td>
+                              {this.changeDateFormat(tsouvenir.created_date)}
+                            </td>
+                            <td>
                               <Link to="#">
                                 <SearchIcon
                                   onClick={() => {
-                                    this.viewModalHandler(row._id);
+                                    this.viewModalHandler(tsouvenir._id);
                                   }}
                                 />
                               </Link>
                               <Link to="#">
                                 <CreateOutlinedIcon
                                   onClick={() => {
-                                    this.editModalHandler(row.code, row._id);
+                                    this.editModalHandler(
+                                      tsouvenir.code,
+                                      tsouvenir._id
+                                    );
                                   }}
                                 />
                               </Link>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        colSpan={3}
-                        count={this.state.hasil.length}
-                        rowsPerPage={this.state.rowsPerPage}
-                        page={this.state.page}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActionsWrapped}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              </Paper>
-            </Hidden>
-          </Grid>
-        </Grid>
-        <br />
-        <Grid item xs={12}>
-          {this.state.alertData.status === 1 ? (
-            <Alert color="success">
-              <b>Data {this.state.alertData.message}</b> Data Souvenir with
-              referential code <strong>{this.state.alertData.code} </strong>
-              has been {this.state.alertData.message}
-            </Alert>
-          ) : (
-            ""
-          )}
-          {this.state.alertData.status === 2 ? (
-            <Alert color="danger">{this.state.alertData.message} </Alert>
-          ) : (
-            ""
-          )}
-        </Grid>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                    <TableFooter>
+                      <TableRow>
+                        <TablePagination
+                          colSpan={4}
+                          count={this.state.hasil.length}
+                          rowsPerPage={this.state.rowsPerPage}
+                          page={this.state.page}
+                          onChangePage={this.handleChangePage}
+                          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                          ActionsComponent={TablePaginationActionsWrapped}
+                        />
+                      </TableRow>
+                    </TableFooter>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

@@ -7,19 +7,12 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import Spinner from "../../common/Spinner";
 
-import { Alert, FormGroup, Input, Form, Button } from "reactstrap";
+import { Alert, Button } from "reactstrap";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
   TableFooter,
   TableRow,
   TablePagination,
-  IconButton,
-  Paper,
-  Hidden,
-  Grid
+  IconButton
 } from "@material-ui/core";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
@@ -32,14 +25,10 @@ import { withStyles } from "@material-ui/core/styles";
 import { getAllTSouvenirItem } from "../../../actions/tsouveniritemAction";
 
 import CreateTsouveniritem from "./CreateTSouvenirRequest";
-import EditTsouveniritem from "./UpdateTSouvenirRequest";
 import ViewTsouveniritem from "./ReadTSouvenirRequest";
-import AdminApproveRequest from "./AdminRequestApprove";
-import AdminApproveSettlement from "./AdminSettlementApprove";
-//import AdminRejectRequest from "./AdminRejectRequest";
-import ReceivedSouvenirRequest from "./ReceivedSouvenirItem";
-import SettlementSouvenir from "./SettlementSouvenirItem";
-import CloseOrder from "./CloseOrder";
+import EditTsouveniritem from "./UpdateTSouvenirRequest";
+import AdminHandler from "./AdminHandler";
+import RequesterHandler from "./RequesterHandler";
 
 const actionsStyles = theme => ({
   root: {
@@ -243,7 +232,7 @@ class ListTsouveniritem extends React.Component {
     } else if (tmp.status === 1) {
       this.setState({
         currentTsouveniritem: tmp,
-        adminApprove: true
+        adminHandler: true
       });
     } else if (tmp.status === 2) {
       this.modalStatus(2, "Request Approved, not received by requester yet");
@@ -255,7 +244,7 @@ class ListTsouveniritem extends React.Component {
     } else if (tmp.status === 4) {
       this.setState({
         currentTsouveniritem: tmp,
-        approveSettlement: true
+        adminHandler: true
       });
     } else if (tmp.status === 5) {
       this.modalStatus(2, "Settlement already approved");
@@ -318,19 +307,19 @@ class ListTsouveniritem extends React.Component {
         } else if (tmp.status === 2) {
           this.setState({
             currentTsouveniritem: tmp,
-            receivedSouvenir: true
+            requesterHandler: true
           });
         } else if (tmp.status === 3) {
           this.setState({
             currentTsouveniritem: tmp,
-            settlementSouvenir: true
+            requesterHandler: true
           });
         } else if (tmp.status === 4) {
           this.modalStatus(2, "Settlement not yet approved by admin");
         } else if (tmp.status === 5) {
           this.setState({
             currentTsouveniritem: tmp,
-            closeOrderSouvenir: true
+            requesterHandler: true
           });
         } else {
           this.modalStatus(2, "Request Closed");
@@ -386,13 +375,9 @@ class ListTsouveniritem extends React.Component {
     this.setState({
       viewTsouveniritem: false,
       editTsouveniritem: false,
-      deleteTsouveniritem: false,
-      adminApprove: false,
       rejectRequest: false,
-      receivedSouvenir: false,
-      approveSettlement: false,
-      closeOrderSouvenir: false,
-      settlementSouvenir: false
+      adminHandler: false,
+      requesterHandler: false
     });
   }
 
@@ -405,9 +390,8 @@ class ListTsouveniritem extends React.Component {
       },
       viewTsouveniritem: false,
       editTsouveniritem: false,
-      deleteTsouveniritem: false,
-      adminApprove: false,
-      approveSettlement: false
+      adminHandler: false,
+      requesterHandler: false
     });
     this.props.getAllTSouvenirItem();
     setTimeout(() => {
@@ -420,443 +404,418 @@ class ListTsouveniritem extends React.Component {
   };
 
   render() {
+    const columnWidth = { width: "100%" };
     const { m_role_id } = this.props.auth.user;
     if (m_role_id) {
       if (m_role_id === "RO0001") {
         return (
-          <div>
-            <Grid container spacing={0}>
-              <Grid item xs={12}>
-                <Paper>
-                  <ul class="breadcrumb">
-                    <li>
-                      <a href="/company">Home</a> <span class="divider">/</span>
-                    </li>
-                    <li>
-                      <a href="#!">Transaction</a>
-                      <span class="divider">/</span>
-                    </li>
-                    <li class="active">List Souvenir Request</li>
-                  </ul>
-                </Paper>
-              </Grid>
-              <Grid item xs={12}>
-                <h4>List Souvenir Request</h4>
-                {this.state.alertData.status === 1 ? (
-                  <Alert color="success">
-                    <b>Data {this.state.alertData.message} ! </b> Transaction
-                    souvenir request with code{" "}
-                    <strong>{this.state.alertData.code} </strong>
-                    has been {this.state.alertData.message} !
-                  </Alert>
-                ) : (
-                  console.log("")
-                )}
-                {this.state.alertData.status === 2 ? (
-                  <Alert color="danger">{this.state.alertData.message} </Alert>
-                ) : (
-                  console.log("")
-                )}
-              </Grid>
-              <Form inline>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="text"
-                    placeholder="Search by Code"
-                    name="code"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="text"
-                    placeholder="Search by Requester"
-                    name="request_by"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="date"
-                    placeholder="Search"
-                    name="request_date"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="date"
-                    placeholder="Date Search"
-                    name="request_due_date"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="text"
-                    placeholder="Search by status"
-                    name="status"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="date"
-                    placeholder="Date Search"
-                    name="created_date"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="text"
-                    placeholder="Search by Created by"
-                    name="created_by"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-              </Form>
-              <Grid item xs={3} justify="flex-end" />
-              <ViewTsouveniritem
-                view={this.state.viewTsouveniritem}
-                closeModalHandler={this.closeModalHandler}
-                tsouveniritem={this.state.currentTsouveniritem}
-              />
-              <AdminApproveRequest
-                approve={this.state.adminApprove}
-                closeModalHandler={this.closeModalHandler}
-                tsouveniritem={this.state.currentTsouveniritem}
-                modalStatus={this.modalStatus}
-                getlist={this.props.getAllTSouvenirItem}
-              />
-              {/* <AdminRejectRequest
-                closeModalHandler1={this.closeModalHandler}
-                tsouveniritem={this.state.currentTsouveniritem}
-                modalStatus={this.modalStatus}
-                getlist={this.props.getAllTSouvenirItem}
-              /> */}
-              <AdminApproveSettlement
-                approve={this.state.approveSettlement}
-                closeModalHandler={this.closeModalHandler}
-                tsouveniritem={this.state.currentTsouveniritem}
-                modalStatus={this.modalStatus}
-                getlist={this.props.getAllTSouvenirItem}
-              />
-              <Grid item xs={12}>
-                <Grid>
-                  <h5>
-                    {" "}
-                    Terdapat{" "}
-                    <b>
-                      {
-                        this.state.result.filter(notif => notif.status === 1)
-                          .length
-                      }
-                    </b>{" "}
-                    request submitted yang belum di approve/reject.
-                  </h5>
-                </Grid>
-                <Hidden>
-                  <br />
-                  <Paper>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>No</TableCell>
-                          <TableCell>Transaction Code</TableCell>
-                          <TableCell>Request By</TableCell>
-                          <TableCell>Request Date</TableCell>
-                          <TableCell>Due Date</TableCell>
-                          <TableCell>Status</TableCell>
-                          <TableCell>Created Date</TableCell>
-                          <TableCell>Created By</TableCell>
-                          <TableCell>Action</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {this.state.hasil
-                          .slice(
-                            this.state.page * this.state.rowsPerPage,
-                            this.state.page * this.state.rowsPerPage +
-                              this.state.rowsPerPage
-                          )
-                          .map((row, index) => {
-                            return (
-                              <TableRow key={row.id}>
-                                <TableCell>
+          <div className="container">
+            <div className="row">
+              <div className="col-md-12">
+                <div className="card border-primary mb-2">
+                  <div className="card-header lead">Souvenir Request List</div>
+                  <div className="card-body">
+                    <nav aria-label="breadcrumb mb-4">
+                      <ol className="breadcrumb">
+                        <li className="breadcrumb-item">
+                          <Link to="/">Home</Link>
+                        </li>
+                        <li
+                          className="breadcrumb-item active"
+                          aria-current="page"
+                        >
+                          Transaction Souvenir Request Item
+                        </li>
+                      </ol>
+                    </nav>
+                    {this.state.alertData.status === 1 && (
+                      <Alert color="success">
+                        <b>Data {this.state.alertData.message} ! </b>
+                        Transaction souvenir request with code{" "}
+                        <strong>{this.state.alertData.code} </strong>
+                        has been {this.state.alertData.message} !
+                      </Alert>
+                    )}
+                    {this.state.alertData.status === 2 && (
+                      <Alert color="danger">
+                        {this.state.alertData.message}{" "}
+                      </Alert>
+                    )}
+                    <ViewTsouveniritem
+                      view={this.state.viewTsouveniritem}
+                      closeModalHandler={this.closeModalHandler}
+                      tsouveniritem={this.state.currentTsouveniritem}
+                    />
+                    <AdminHandler
+                      adminHandler={this.state.adminHandler}
+                      closeModalHandler={this.closeModalHandler}
+                      tsouveniritem={this.state.currentTsouveniritem}
+                      modalStatus={this.modalStatus}
+                      getlist={this.props.getAllTSouvenirItem}
+                    />
+                    <div className="form-row">
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Code"
+                          name="code"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Requester"
+                          name="request_by"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Request Date"
+                          type="date"
+                          name="request_date"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Request Due Date"
+                          type="date"
+                          name="request_due_date"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Status"
+                          name="status"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Create by"
+                          name="created_by"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Create Date"
+                          type="date"
+                          name="created_date"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      {/* <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={this.showHandler}
+                      >
+                        Add Souvenir Request
+                      </Button> */}
+                    </div>
+                    <br />
+                    <div className="table responsive">
+                      <table className="table  table-stripped">
+                        <thead>
+                          <tr
+                            className="text-center font-weight-bold"
+                            style={columnWidth}
+                          >
+                            <td>No.</td>
+                            <td>Transaction Code</td>
+                            <td>Request By</td>
+                            <td>Request Date</td>
+                            <td>Request Due Date</td>
+                            <td>Status</td>
+                            <td>Created By</td>
+                            <td>Created Date</td>
+                            <td>Action</td>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {this.state.hasil
+                            .slice(
+                              this.state.page * this.state.rowsPerPage,
+                              this.state.page * this.state.rowsPerPage +
+                                this.state.rowsPerPage
+                            )
+                            .map((tsouveniritem, index) => (
+                              <tr
+                                className="text-center"
+                                key={tsouveniritem._id}
+                              >
+                                <td>
                                   {index +
                                     1 +
                                     this.state.page * this.state.rowsPerPage}
-                                </TableCell>
-                                <TableCell component="th" scope="row">
-                                  {row.code}
-                                </TableCell>
-                                <TableCell>{row.request_by}</TableCell>
-                                <TableCell>
-                                  {this.changeDateFormat(row.request_date)}
-                                </TableCell>
-                                <TableCell>
-                                  {this.changeDateFormat(row.request_due_date)}
-                                </TableCell>
-                                <TableCell>
-                                  {this.designStatus(row.status)}
-                                </TableCell>
-                                <TableCell>
-                                  {this.changeDateFormat(row.created_date)}
-                                </TableCell>
-                                <TableCell>{row.created_by}</TableCell>
-                                <TableCell>
+                                </td>
+                                <td component="th">{tsouveniritem.code}</td>
+                                <td>{tsouveniritem.request_by}</td>
+                                <td>
+                                  {this.changeDateFormat(
+                                    tsouveniritem.request_date
+                                  )}
+                                </td>
+                                <td>
+                                  {this.changeDateFormat(
+                                    tsouveniritem.request_due_date
+                                  )}
+                                </td>
+                                <td>
+                                  {this.designStatus(tsouveniritem.status)}
+                                </td>
+                                <td>{tsouveniritem.created_by}</td>
+                                <td>
+                                  {this.changeDateFormat(
+                                    tsouveniritem.created_date
+                                  )}
+                                </td>
+                                <td>
                                   <Link to="#">
                                     <SearchIcon
                                       onClick={() => {
-                                        this.viewModalHandler(row._id);
+                                        this.viewModalHandler(
+                                          tsouveniritem._id
+                                        );
                                       }}
                                     />
                                   </Link>
                                   <Link to="#">
                                     <CreateOutlinedIcon
                                       onClick={() => {
-                                        this.adminButtonHandler(row._id);
+                                        this.adminButtonHandler(
+                                          tsouveniritem._id
+                                        );
                                       }}
                                     />
                                   </Link>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                      </TableBody>
-                      <TableFooter>
-                        <TableRow>
-                          <TablePagination
-                            colSpan={5}
-                            count={this.state.hasil.length}
-                            rowsPerPage={this.state.rowsPerPage}
-                            page={this.state.page}
-                            onChangePage={this.handleChangePage}
-                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                            ActionsComponent={TablePaginationActionsWrapped}
-                          />
-                        </TableRow>
-                      </TableFooter>
-                    </Table>
-                  </Paper>
-                </Hidden>
-              </Grid>
-            </Grid>
-            <br />
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                        <TableFooter>
+                          <TableRow>
+                            <TablePagination
+                              colSpan={6}
+                              count={this.state.hasil.length}
+                              rowsPerPage={this.state.rowsPerPage}
+                              page={this.state.page}
+                              onChangePage={this.handleChangePage}
+                              onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                              ActionsComponent={TablePaginationActionsWrapped}
+                            />
+                          </TableRow>
+                        </TableFooter>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         );
       } else if (m_role_id === "RO0002") {
         return (
-          <div>
-            <Grid container spacing={0}>
-              <Grid item xs={12}>
-                <Paper>
-                  <ul class="breadcrumb">
-                    <li>
-                      <a href="/company">Home</a> <span class="divider">/</span>
-                    </li>
-                    <li>
-                      <a href="#!">Transaction</a>{" "}
-                      <span class="divider">/</span>
-                    </li>
-                    <li class="active">List Souvenir Request</li>
-                  </ul>
-                </Paper>
-              </Grid>
-              <Grid item xs={12}>
-                <h4>List Souvenir Request</h4>
-                {this.state.alertData.status === 1 ? (
-                  <Alert color="success">
-                    <b>Data {this.state.alertData.message} ! </b> Transaction
-                    souvenir request with code{" "}
-                    <strong>{this.state.alertData.code} </strong>
-                    has been {this.state.alertData.message} !
-                  </Alert>
-                ) : (
-                  console.log("")
-                )}
-                {this.state.alertData.status === 2 ? (
-                  <Alert color="danger">{this.state.alertData.message} </Alert>
-                ) : (
-                  console.log("")
-                )}
-              </Grid>
-              <Form inline>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="text"
-                    placeholder="Search by Code"
-                    name="code"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="text"
-                    placeholder="Search by Requester"
-                    name="request_by"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="date"
-                    placeholder="Search"
-                    name="request_date"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="date"
-                    placeholder="Date Search"
-                    name="request_due_date"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="text"
-                    placeholder="Search by status"
-                    name="status"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="date"
-                    placeholder="Date Search"
-                    name="created_date"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                  <Input
-                    style={{ width: 170 }}
-                    type="text"
-                    placeholder="Search by Created by"
-                    name="created_by"
-                    onChange={this.changeHandler}
-                  />
-                </FormGroup>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  onClick={this.showHandler}
-                >
-                  Add Request
-                </Button>
-              </Form>
-              <Grid item xs={3} justify="flex-end" />
-              <ViewTsouveniritem
-                view={this.state.viewTsouveniritem}
-                closeModalHandler={this.closeModalHandler}
-                tsouveniritem={this.state.currentTsouveniritem}
-              />
-              <CreateTsouveniritem
-                create={this.state.showCreateTsouveniritem}
-                closeHandler={this.closeHandler}
-                modalStatus={this.modalStatus}
-                getlist={this.props.getAllTSouvenirItem}
-              />
-              <EditTsouveniritem
-                edit={this.state.editTsouveniritem}
-                closeModalHandler={this.closeModalHandler}
-                tsouveniritemtest={this.state.currentTsouveniritem}
-                modalStatus={this.modalStatus}
-                getlist={this.props.getAllTSouvenirItem}
-                getAllItem={this.state.getitem}
-              />
-              <ReceivedSouvenirRequest
-                approve={this.state.receivedSouvenir}
-                closeModalHandler={this.closeModalHandler}
-                tsouveniritem={this.state.currentTsouveniritem}
-                modalStatus={this.modalStatus}
-                getlist={this.props.getAllTSouvenirItem}
-              />
-              <SettlementSouvenir
-                approve={this.state.settlementSouvenir}
-                closeModalHandler={this.closeModalHandler}
-                tsouveniritem={this.state.currentTsouveniritem}
-                modalStatus={this.modalStatus}
-                getlist={this.props.getAllTSouvenirItem}
-              />
-              <CloseOrder
-                approve={this.state.closeOrderSouvenir}
-                closeModalHandler={this.closeModalHandler}
-                tsouveniritem={this.state.currentTsouveniritem}
-                modalStatus={this.modalStatus}
-              />
-              <Grid item xs={12}>
-                <Hidden>
-                  <br />
-                  <Paper>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>No</TableCell>
-                          <TableCell>Transaction Code</TableCell>
-                          <TableCell>Request By</TableCell>
-                          <TableCell>Request Date</TableCell>
-                          <TableCell>Due Date</TableCell>
-                          <TableCell>Status</TableCell>
-                          <TableCell>Created Date</TableCell>
-                          <TableCell>Created By</TableCell>
-                          <TableCell>Action</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {this.state.hasil
-                          .slice(
-                            this.state.page * this.state.rowsPerPage,
-                            this.state.page * this.state.rowsPerPage +
-                              this.state.rowsPerPage
-                          )
-                          .map((row, index) => {
-                            return (
-                              <TableRow key={row.id}>
-                                <TableCell>
+          <div className="container">
+            <div className="row">
+              <div className="col-md-12">
+                <div className="card border-primary mb-2">
+                  <div className="card-header lead">Souvenir Request List</div>
+                  <div className="card-body">
+                    <nav aria-label="breadcrumb mb-4">
+                      <ol className="breadcrumb">
+                        <li className="breadcrumb-item">
+                          <Link to="/">Home</Link>
+                        </li>
+                        <li
+                          className="breadcrumb-item active"
+                          aria-current="page"
+                        >
+                          Transaction Souvenir Request Item
+                        </li>
+                      </ol>
+                    </nav>
+                    {this.state.alertData.status === 1 && (
+                      <Alert color="success">
+                        <b>Data {this.state.alertData.message} ! </b>
+                        Transaction souvenir request with code{" "}
+                        <strong>{this.state.alertData.code} </strong>
+                        has been {this.state.alertData.message} !
+                      </Alert>
+                    )}
+                    {this.state.alertData.status === 2 && (
+                      <Alert color="danger">
+                        {this.state.alertData.message}{" "}
+                      </Alert>
+                    )}
+                    <ViewTsouveniritem
+                      view={this.state.viewTsouveniritem}
+                      closeModalHandler={this.closeModalHandler}
+                      tsouveniritem={this.state.currentTsouveniritem}
+                    />
+                    <CreateTsouveniritem
+                      create={this.state.showCreateTsouveniritem}
+                      closeHandler={this.closeHandler}
+                      modalStatus={this.modalStatus}
+                      getlist={this.props.getAllTSouvenirItem}
+                    />
+                    <EditTsouveniritem
+                      edit={this.state.editTsouveniritem}
+                      closeModalHandler={this.closeModalHandler}
+                      tsouveniritemtest={this.state.currentTsouveniritem}
+                      modalStatus={this.modalStatus}
+                      getlist={this.props.getAllTSouvenirItem}
+                      getAllItem={this.state.getitem}
+                    />
+                    <RequesterHandler
+                      requesterHandler={this.state.requesterHandler}
+                      closeModalHandler={this.closeModalHandler}
+                      tsouveniritem={this.state.currentTsouveniritem}
+                      modalStatus={this.modalStatus}
+                      getlist={this.props.getAllTSouvenirItem}
+                    />
+                    <div className="form-row">
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Code"
+                          name="code"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Requester"
+                          name="request_by"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Request Date"
+                          type="date"
+                          name="request_date"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Request Due Date"
+                          type="date"
+                          name="request_due_date"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Status"
+                          name="status"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Create by"
+                          name="created_by"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Search by Create Date"
+                          type="date"
+                          name="created_date"
+                          className="form-control"
+                          onChange={this.changeHandler}
+                        />
+                      </div>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={this.showHandler}
+                      >
+                        Add Souvenir Request
+                      </Button>
+                    </div>
+                    <br />
+                    <div className="table responsive">
+                      <table className="table  table-stripped">
+                        <thead>
+                          <tr
+                            className="text-center font-weight-bold"
+                            style={columnWidth}
+                          >
+                            <td>No.</td>
+                            <td>Transaction Code</td>
+                            <td>Request By</td>
+                            <td>Request Date</td>
+                            <td>Request Due Date</td>
+                            <td>Status</td>
+                            <td>Created By</td>
+                            <td>Created Date</td>
+                            <td>Action</td>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {this.state.hasil
+                            .slice(
+                              this.state.page * this.state.rowsPerPage,
+                              this.state.page * this.state.rowsPerPage +
+                                this.state.rowsPerPage
+                            )
+                            .map((tsouveniritem, index) => (
+                              <tr
+                                className="text-center"
+                                key={tsouveniritem._id}
+                              >
+                                <td>
                                   {index +
                                     1 +
                                     this.state.page * this.state.rowsPerPage}
-                                </TableCell>
-                                <TableCell component="th" scope="row">
-                                  {row.code}
-                                </TableCell>
-                                <TableCell>{row.request_by}</TableCell>
-                                <TableCell>
-                                  {this.changeDateFormat(row.request_date)}
-                                </TableCell>
-                                <TableCell>
-                                  {this.changeDateFormat(row.request_due_date)}
-                                </TableCell>
-                                <TableCell>
-                                  {this.designStatus(row.status)}
-                                </TableCell>
-                                <TableCell>
-                                  {this.changeDateFormat(row.created_date)}
-                                </TableCell>
-                                <TableCell>{row.created_by}</TableCell>
-                                <TableCell>
+                                </td>
+                                <td component="th">{tsouveniritem.code}</td>
+                                <td>{tsouveniritem.request_by}</td>
+                                <td>
+                                  {this.changeDateFormat(
+                                    tsouveniritem.request_date
+                                  )}
+                                </td>
+                                <td>
+                                  {this.changeDateFormat(
+                                    tsouveniritem.request_due_date
+                                  )}
+                                </td>
+                                <td>
+                                  {this.designStatus(tsouveniritem.status)}
+                                </td>
+                                <td>{tsouveniritem.created_by}</td>
+                                <td>
+                                  {this.changeDateFormat(
+                                    tsouveniritem.created_date
+                                  )}
+                                </td>
+                                <td>
                                   <Link to="#">
                                     <SearchIcon
                                       onClick={() => {
-                                        this.viewModalHandler(row._id);
+                                        this.viewModalHandler(
+                                          tsouveniritem._id
+                                        );
                                       }}
                                     />
                                   </Link>
@@ -864,36 +823,35 @@ class ListTsouveniritem extends React.Component {
                                     <CreateOutlinedIcon
                                       onClick={() => {
                                         this.editModalHandler(
-                                          row.code,
-                                          row._id
+                                          tsouveniritem.code,
+                                          tsouveniritem._id
                                         );
                                       }}
                                     />
                                   </Link>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                      </TableBody>
-                      <TableFooter>
-                        <TableRow>
-                          <TablePagination
-                            colSpan={5}
-                            count={this.state.hasil.length}
-                            rowsPerPage={this.state.rowsPerPage}
-                            page={this.state.page}
-                            onChangePage={this.handleChangePage}
-                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                            ActionsComponent={TablePaginationActionsWrapped}
-                          />
-                        </TableRow>
-                      </TableFooter>
-                    </Table>
-                  </Paper>
-                </Hidden>
-              </Grid>
-            </Grid>
-            <br />
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                        <TableFooter>
+                          <TableRow>
+                            <TablePagination
+                              colSpan={6}
+                              count={this.state.hasil.length}
+                              rowsPerPage={this.state.rowsPerPage}
+                              page={this.state.page}
+                              onChangePage={this.handleChangePage}
+                              onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                              ActionsComponent={TablePaginationActionsWrapped}
+                            />
+                          </TableRow>
+                        </TableFooter>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         );
       }

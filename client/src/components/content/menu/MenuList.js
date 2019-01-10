@@ -1,24 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Alert, FormGroup, Input } from "reactstrap";
+import { Alert } from "reactstrap";
 import { getAllMenu } from "../../../actions/menuActions";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { withStyles } from "@material-ui/core/styles";
 import {
-  Table,
-  TableBody,
-  TableCell,
   TableRow,
-  TableHead,
   TableFooter,
   TablePagination,
   IconButton,
-  Paper,
-  Hidden,
-  Button,
-  Grid
+  Button
 } from "@material-ui/core";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
@@ -223,8 +216,8 @@ class ListMenu extends React.Component {
       if (
         patt.test(ele.code.toLowerCase()) ||
         patt.test(ele.name.toLowerCase()) ||
-        patt.test(ele.created_date) ||
-        patt.test(ele.created_by)
+        patt.test(ele.created_by.toLowerCase()) ||
+        patt.test(ele.created_date)
       ) {
         temp.push(ele);
       }
@@ -256,176 +249,189 @@ class ListMenu extends React.Component {
     // this.getListUnit();
   };
 
-  changeDate = date => {
+  changeDateFormat = date => {
     return moment(date).format("DD/MM/YYYY");
   };
 
   render() {
+    const columnWidth = { width: "100%" };
     return (
-      <div>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Paper>
-              <ul class="breadcrumb">
-                <li>
-                  <a href="/dashboard">Home</a> <span class="divider">/</span>
-                </li>
-                <li>
-                  <a href="#!">Master</a> <span class="divider">/</span>
-                </li>
-                <li class="active">List Menu</li>
-              </ul>
-            </Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <h4>List Menu</h4>
-          </Grid>
-          <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-            <Input
-              placeholder="Search"
-              // className={classes.input}
-              name="search"
-              onChange={this.changeHandler}
-            />
-          </FormGroup>
-          <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-            <Input
-              placeholder="Search Date"
-              // className={classes.input}
-              type="date"
-              name="created_date"
-              onChange={this.changeHandler}
-            />
-          </FormGroup>
-          <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              // className={classes.button}
-              onClick={this.showHandler}
-            >
-              Add Menu
-            </Button>
-          </FormGroup>
-          <CreateMenu
-            create={this.state.showCreateMenu}
-            closeHandler={this.closeHandler}
-            modalStatus={this.modalStatus}
-            menu={this.state.allMenu}
-            getlist={this.props.getAllMenu}
-          />
-          <ViewMenu
-            view={this.state.viewMenu}
-            closeModalHandler={this.closeModalHandler}
-            menu={this.state.currentMenu}
-            getlist={this.props.getAllMenu}
-          />
-          <EditMenu
-            edit={this.state.editMenu}
-            closeModalHandler={this.closeModalHandler}
-            menutest={this.state.currentMenu}
-            modalStatus={this.modalStatus}
-            getlist={this.props.getAllMenu}
-          />
-          <DeleteMenu
-            delete={this.state.deleteMenu}
-            menu={this.state.currentMenu}
-            closeModalHandler={this.closeModalHandler}
-            modalStatus={this.modalStatus}
-            getlist={this.props.getAllMenu}
-          />
-          <Grid item xs={12}>
-            {this.state.alertData.status === 1 ? (
-              <Alert color="success">
-                <b>Data {this.state.alertData.message}</b> Data menu with code{" "}
-                <strong>{this.state.alertData.code} </strong>
-                has been {this.state.alertData.message}
-              </Alert>
-            ) : (
-              ""
-            )}
-            {this.state.alertData.status === 2 ? (
-              <Alert color="danger">{this.state.alertData.message} </Alert>
-            ) : (
-              ""
-            )}
-            <Hidden>
-              <br />
-              <Paper>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Menu Code</TableCell>
-                      <TableCell>Menu Name</TableCell>
-                      <TableCell>Created By</TableCell>
-                      <TableCell>Created Date</TableCell>
-                      <TableCell>Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {this.state.hasil
-                      .slice(
-                        this.state.page * this.state.rowsPerPage,
-                        this.state.page * this.state.rowsPerPage +
-                          this.state.rowsPerPage
-                      )
-                      .map((row, index) => {
-                        return (
-                          <TableRow key={row.id}>
-                            <TableCell component="th" scope="row">
-                              {row.code}
-                            </TableCell>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell>{row.created_by}</TableCell>
-                            <TableCell>
-                              {this.changeDate(row.created_date)}
-                            </TableCell>
-                            <TableCell>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+            <div className="card border-primary mb-2">
+              <div className="card-header lead">Menu List</div>
+              <div className="card-body">
+                <nav aria-label="breadcrumb mb-4">
+                  <ol className="breadcrumb">
+                    <li className="breadcrumb-item">
+                      <Link to="/">Home</Link>
+                    </li>
+                    <li className="breadcrumb-item active" aria-current="page">
+                      Master Menu
+                    </li>
+                  </ol>
+                </nav>
+                {this.state.alertData.status === 1 && (
+                  <Alert color="success">
+                    <b>Data {this.state.alertData.message} ! </b>
+                    Data menu with referential code{" "}
+                    <strong>{this.state.alertData.code} </strong>
+                    has been {this.state.alertData.message} !
+                  </Alert>
+                )}
+                {this.state.alertData.status === 2 && (
+                  <Alert color="danger">{this.state.alertData.message} </Alert>
+                )}
+                <CreateMenu
+                  create={this.state.showCreateMenu}
+                  closeHandler={this.closeHandler}
+                  modalStatus={this.modalStatus}
+                  menu={this.state.allMenu}
+                  getlist={this.props.getAllMenu}
+                />
+                <ViewMenu
+                  view={this.state.viewMenu}
+                  closeModalHandler={this.closeModalHandler}
+                  menu={this.state.currentMenu}
+                  getlist={this.props.getAllMenu}
+                />
+                <EditMenu
+                  edit={this.state.editMenu}
+                  closeModalHandler={this.closeModalHandler}
+                  menutest={this.state.currentMenu}
+                  modalStatus={this.modalStatus}
+                  getlist={this.props.getAllMenu}
+                />
+                <DeleteMenu
+                  delete={this.state.deleteMenu}
+                  menu={this.state.currentMenu}
+                  closeModalHandler={this.closeModalHandler}
+                  modalStatus={this.modalStatus}
+                  getlist={this.props.getAllMenu}
+                />
+                <div className="form-row">
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Code"
+                      name="code"
+                      className="form-control"
+                      onChange={this.changeHandler}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Name"
+                      name="name"
+                      className="form-control"
+                      onChange={this.changeHandler}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Created by"
+                      name="created_by"
+                      className="form-control"
+                      onChange={this.changeHandler}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <input
+                      placeholder="Search by Created Date"
+                      type="date"
+                      name="created_date"
+                      className="form-control"
+                      onChange={this.changeHandler}
+                    />
+                  </div>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={this.showHandler}
+                  >
+                    Add Menu
+                  </Button>
+                </div>
+                <br />
+                <div className="table responsive">
+                  <table className="table  table-stripped">
+                    <thead>
+                      <tr
+                        className="text-center font-weight-bold"
+                        style={columnWidth}
+                      >
+                        <td>No.</td>
+                        <td>Menu Code</td>
+                        <td>Menu Name</td>
+                        <td>Created By</td>
+                        <td>Created Date</td>
+                        <td>Action</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.hasil
+                        .slice(
+                          this.state.page * this.state.rowsPerPage,
+                          this.state.page * this.state.rowsPerPage +
+                            this.state.rowsPerPage
+                        )
+                        .map((menu, index) => (
+                          <tr className="text-center" key={menu._id}>
+                            <td>
+                              {index +
+                                1 +
+                                this.state.page * this.state.rowsPerPage}
+                            </td>
+                            <td component="th">{menu.code}</td>
+                            <td>{menu.name}</td>
+                            <td>{menu.created_by}</td>
+                            <td>{this.changeDateFormat(menu.created_date)}</td>
+                            <td>
                               <Link to="#">
                                 <SearchIcon
                                   onClick={() => {
-                                    this.viewModalHandler(row._id);
+                                    this.viewModalHandler(menu._id);
                                   }}
                                 />
                               </Link>
                               <Link to="#">
                                 <CreateOutlinedIcon
                                   onClick={() => {
-                                    this.editModalHandler(row._id);
+                                    this.editModalHandler(menu._id);
                                   }}
                                 />
                               </Link>
                               <Link to="#">
                                 <DeleteOutlinedIcon
                                   onClick={() => {
-                                    this.deleteModalHandler(row._id);
+                                    this.deleteModalHandler(menu._id);
                                   }}
                                 />
                               </Link>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        colSpan={3}
-                        count={this.state.hasil.length}
-                        rowsPerPage={this.state.rowsPerPage}
-                        page={this.state.page}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActionsWrapped}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              </Paper>
-            </Hidden>
-          </Grid>
-        </Grid>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                    <TableFooter>
+                      <TableRow>
+                        <TablePagination
+                          colSpan={4}
+                          count={this.state.hasil.length}
+                          rowsPerPage={this.state.rowsPerPage}
+                          page={this.state.page}
+                          onChangePage={this.handleChangePage}
+                          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                          ActionsComponent={TablePaginationActionsWrapped}
+                        />
+                      </TableRow>
+                    </TableFooter>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

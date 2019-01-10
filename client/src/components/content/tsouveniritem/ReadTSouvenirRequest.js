@@ -138,48 +138,104 @@ class ViewTsouveniritem extends React.Component {
           <div>
             <h5>Souvenir Item </h5>
           </div>
-          <Table>
-            <thead>
-              <tr>
-                <th>M Souvenir ID</th>
-                <th>Qty</th>
-                <th>Note</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.func(this.state.item).map(ele => (
+          {this.props.tsouveniritem.status < 4 && (
+            <Table>
+              <thead>
                 <tr>
-                  <td>
-                    <Input
-                      type="text"
-                      name="note"
-                      placeholder={ele.souv_name}
-                      value={ele.souv_name}
-                      readOnly
-                    />
-                  </td>
-                  <td>
-                    <Input
-                      type="text"
-                      name="note"
-                      placeholder={ele.qty}
-                      value={ele.qty}
-                      readOnly
-                    />
-                  </td>
-                  <td>
-                    <Input
-                      type="text"
-                      name="note"
-                      placeholder={ele.note}
-                      value={ele.note}
-                      readOnly
-                    />
-                  </td>
+                  <th>M Souvenir ID</th>
+                  <th>Qty</th>
+                  <th>Note</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {this.func(this.state.item).map(ele => (
+                  <tr>
+                    <td>
+                      <Input
+                        type="text"
+                        name="note"
+                        placeholder={ele.souv_name}
+                        value={ele.souv_name}
+                        readOnly
+                      />
+                    </td>
+                    <td>
+                      <Input
+                        type="text"
+                        name="note"
+                        placeholder={ele.qty}
+                        value={ele.qty}
+                        readOnly
+                      />
+                    </td>
+                    <td>
+                      <Input
+                        type="text"
+                        name="note"
+                        placeholder={ele.note}
+                        value={ele.note}
+                        readOnly
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
+          {this.props.tsouveniritem.status >= 4 && (
+            <Table>
+              <thead>
+                <tr>
+                  <th>M Souvenir ID</th>
+                  <th>Qty</th>
+                  <th>Qty Actual</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.func(this.state.item).map(ele => (
+                  <tr>
+                    <td>
+                      <Input
+                        type="text"
+                        name="note"
+                        placeholder={ele.souv_name}
+                        value={ele.souv_name}
+                        readOnly
+                      />
+                    </td>
+                    <td>
+                      <Input
+                        type="text"
+                        name="note"
+                        placeholder={ele.qty}
+                        value={ele.qty}
+                        readOnly
+                      />
+                    </td>
+                    <td>
+                      <Input
+                        type="text"
+                        name="note"
+                        placeholder={ele.qty_actual}
+                        value={ele.qty_actual}
+                        readOnly
+                      />
+                    </td>
+                    <td>
+                      <Input
+                        type="text"
+                        name="note"
+                        placeholder={ele.note}
+                        value={ele.note}
+                        readOnly
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
         </ModalBody>
         <ModalFooter>
           <Button color="danger" onClick={this.props.closeModalHandler}>
