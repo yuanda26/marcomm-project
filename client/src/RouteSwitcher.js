@@ -29,6 +29,10 @@ import ListUser from "./components/content/users/ListUser";
 import ListProduct from "./components/content/product/listProduct";
 // Actions
 import { getListAccess } from "./actions/accessMenuActions";
+import ApprovalPromotionD from "./components/content/promotion/ApprovalPromotionD";
+import ApprovalPromotionND from "./components/content/promotion/ApprovalPromotionND";
+import ClosePromotionD from "./components/content/promotion/ClosePromotionD";
+import ClosePromotionND from "./components/content/promotion/ClosePromotionND";
 
 class RouteSwitcher extends Component {
   state = {
@@ -110,8 +114,20 @@ class RouteSwitcher extends Component {
                   component={editPromotionND}
                 />
                 <PrivateRoute
-                  path="/viewpromotion/:flag/:code/:design"
-                  component={ViewPromotion}
+                  path="/approvepromot-d"
+                  component={ApprovalPromotionD}
+                />
+                <PrivateRoute
+                  path="/approvepromot-nd"
+                  component={ApprovalPromotionND}
+                />
+                <PrivateRoute
+                  path="/closepromot-d"
+                  component={ClosePromotionD}
+                />
+                <PrivateRoute
+                  path="/closepromot-nd"
+                  component={ClosePromotionND}
                 />
               </Switch>
             );

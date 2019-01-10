@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { getAllRoles } from "../../../actions/roleActions";
 import { Link } from "react-router-dom";
 import { Alert } from "reactstrap";
-import apiConfig from "../../../config/Host_Config";
+import HostConfig from "../../../config/Host_Config";
 import CreateAccess from "./CreateAccess";
 import DeleteAccess from "./DeleteAccess";
 import ViewAccess from "./ViewAccess";
@@ -18,10 +18,7 @@ import {
   TableRow,
   TableFooter,
   TablePagination,
-  IconButton,
-  Paper,
-  Hidden,
-  Grid
+  IconButton
 } from "@material-ui/core";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
@@ -140,6 +137,7 @@ class ListAccess extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      number: 0,
       getAccess: "",
       search: "",
       roleItem: {
@@ -169,7 +167,6 @@ class ListAccess extends React.Component {
     this.closeHandler2 = this.closeHandler2.bind(this);
     this.deleteModalHandler = this.deleteModalHandler.bind(this);
     this.viewModalHandler = this.viewModalHandler.bind(this);
-    this.editModalHandler = this.editModalHandler.bind(this);
     this.modalStatus = this.modalStatus.bind(this);
     this.modalStatus2 = this.modalStatus2.bind(this);
   }
@@ -184,7 +181,7 @@ class ListAccess extends React.Component {
   componentDidMount() {
     this.props.getAllRoles();
   }
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(newProps) {
     this.setState({
       getAccess: newProps.getTheRole.rolan,
       access: newProps.getTheRole.rolan,
@@ -192,12 +189,7 @@ class ListAccess extends React.Component {
     });
   }
   deleteModalHandler(accessid) {
-    let tmp = {};
-    this.state.access.forEach(ele => {
-      if (accessid === ele._id) {
-        tmp = ele;
-      }
-    });
+    let tmp = this.state.access.filter(content => accessid === content._id)[0];
     this.setState({
       currentAccess: tmp,
       deleteAccess: true
@@ -205,36 +197,13 @@ class ListAccess extends React.Component {
   }
 
   viewModalHandler(accessid) {
-    let tmp = {};
-    this.state.access.forEach(ele => {
-      if (accessid === ele._id) {
-        tmp = ele;
-      }
-    });
+    let tmp = this.state.access.filter(content => accessid === content._id)[0];
     this.setState({
       currentAccess: tmp,
-      viewAccess: true
+      deleteAccess: true
     });
   }
 
-  editModalHandler(accessid) {
-    let tmp = {};
-    this.state.access.forEach(ele => {
-      if (accessid === ele._id) {
-        tmp = {
-          _id: ele._id,
-          m_role_id: ele.m_role_id,
-          name_role: ele.name_role,
-          address: ele.address,
-          update_by: ele.update_by
-        };
-        this.setState({
-          currentAccess: tmp,
-          editAccess: true
-        });
-      }
-    });
-  }
   closeModalHandler() {
     this.setState({
       viewAccess: false,
@@ -273,6 +242,15 @@ class ListAccess extends React.Component {
       editAccess: false,
       deleteAccess: false
     });
+    setTimeout(() => {
+      this.setState({
+        alertData: {
+          status: 0,
+          message: "",
+          code: ""
+        }
+      });
+    }, 4000);
   }
   modalStatus2() {
     setTimeout(() => {
@@ -286,7 +264,7 @@ class ListAccess extends React.Component {
   getTheAccess(code) {
     let token = localStorage.token;
     let option = {
-      url: `${apiConfig.host}/access/${code}`,
+      url: `${HostConfig.host}/access/${code}`,
       method: "get",
       headers: {
         Authorization: token,
@@ -345,202 +323,207 @@ class ListAccess extends React.Component {
       })
       .filter(a => a !== false);
     this.setState({
-      hasil: data
+      hasil: data,
+      number: this.state.number + 1
     });
   };
   //Go Back before search
   refresh = () => {
     this.setState({
-      hasil: this.state.access
+      hasil: this.state.access,
+      number: this.state.number + 1
     });
   };
   render() {
-    const { classes } = this.props;
     return (
-      <div className={classes.root}>
-        <Grid container spacing={0}>
-          <Grid item xs={12}>
-            <Paper className={classes.paper}>
-              <ul class="breadcrumb">
-                <li>
-                  <a href="/dashboard">Home</a> <span class="divider">/</span>
-                </li>
-                <li>
-                  <li class="active">Master/</li>
-                </li>
-                <li class="active">List Access</li>
-              </ul>
-            </Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <h4>List Access</h4>
-          </Grid>
-          <br />
-          <br />
-          <div class="form-row">
-            <div class="col-md-2">
-              <input
-                name="code"
-                onKeyPress={this.keyHandler}
-                onChange={this.changeHandler}
-                class="form-control"
-                placeholder="-Role Code-"
-              />
-            </div>
-            <div class="col-md-2">
-              <input
-                name="name"
-                onKeyPress={this.keyHandler}
-                onChange={this.changeHandler}
-                class="form-control"
-                placeholder="-Role Name-"
-              />
-            </div>
-            <div class="col-md-2">
-              <input
-                name="created_by"
-                onKeyPress={this.keyHandler}
-                onChange={this.changeHandler}
-                class="form-control"
-                placeholder="-Request By-"
-              />
-            </div>
-            <div class="col-md-3">
-              <input
-                name="reqDate"
-                onKeyPress={this.keyHandler}
-                onChange={this.changeHandler}
-                type="date"
-                class="form-control"
-              />
-            </div>
-            <div class="col-md-1">
-              <button class="btn btn-primary" onClick={this.search}>
-                Search
-              </button>
-            </div>
-            <div class="col-md-1">
-              <button onClick={this.refresh} class="btn btn-warning">
-                Refresh
-              </button>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+            <div className="card border-primary mb-3">
+              <div className="card-header lead">List Menu Access</div>
+              <div className="card-body">
+                <nav aria-label="breadcrumb mb-4">
+                  <ol className="breadcrumb">
+                    <li className="breadcrumb-item">
+                      <Link to="/">Home</Link>
+                    </li>
+                    <li className="breadcrumb-item active" aria-current="page">
+                      List Menu Access
+                    </li>
+                  </ol>
+                </nav>
+                {this.state.alertData.status === 1 ? (
+                  <Alert color="success">
+                    {" "}
+                    {this.state.alertData.message}{" "}
+                  </Alert>
+                ) : (
+                  ""
+                )}
+                {this.state.alertData.status === 2 ? (
+                  <Alert color="danger"> {this.state.alertData.message} </Alert>
+                ) : (
+                  ""
+                )}
+                <div className="form-row">
+                  <div className="col-md-2">
+                    <input
+                      name="code"
+                      onKeyPress={this.keyHandler}
+                      onChange={this.changeHandler}
+                      className="form-control"
+                      placeholder="-Role Code-"
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <input
+                      name="name"
+                      onKeyPress={this.keyHandler}
+                      onChange={this.changeHandler}
+                      className="form-control"
+                      placeholder="-Role Name-"
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <input
+                      name="created_by"
+                      onKeyPress={this.keyHandler}
+                      onChange={this.changeHandler}
+                      className="form-control"
+                      placeholder="-Request By-"
+                    />
+                  </div>
+                  <div className="col-md-3">
+                    <input
+                      name="reqDate"
+                      onKeyPress={this.keyHandler}
+                      onChange={this.changeHandler}
+                      type="date"
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="col-xs-4">
+                    {this.state.number % 2 === 0 ? (
+                      <button className="btn btn-warning" onClick={this.search}>
+                        Search
+                      </button>
+                    ) : (
+                      <button
+                        onClick={this.refresh}
+                        className="btn btn-warning"
+                      >
+                        Refresh
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <br />
+                {this.state.hasil.length === 0 ? (
+                  <h5>Loading The Page, Please Wait...</h5>
+                ) : (
+                  <div className="table-responsive">
+                    <table className="table">
+                      <thead>
+                        <tr className="text-center font-weight-bold">
+                          <td>Role Code</td>
+                          <td>Role Name</td>
+                          <td>Created By</td>
+                          <td>Created Date</td>
+                          <td>Action</td>
+                        </tr>
+                      </thead>
+                      <TableBody>
+                        {this.state.hasil
+                          .slice(
+                            this.state.page * this.state.rowsPerPage,
+                            this.state.page * this.state.rowsPerPage +
+                              this.state.rowsPerPage
+                          )
+                          .map(row => {
+                            return (
+                              <tr key={row._id} className="text-center">
+                                <td>{row.code}</td>
+                                <td>{row.name}</td>
+                                <td>{row.created_by}</td>
+                                <td>
+                                  {moment(row.created_date).format(
+                                    "DD/MM/YYYY"
+                                  )}
+                                </td>
+                                <td>
+                                  <Link to="#">
+                                    <SearchIcon
+                                      onClick={() => {
+                                        this.getTheAccess(row.code);
+                                        this.showHandler2(row.name, row.code);
+                                      }}
+                                    />
+                                  </Link>
+                                  <Link to="#">
+                                    <CreateOutlinedIcon
+                                      onClick={() => {
+                                        this.getTheAccess(row.code);
+                                        this.showHandler(row.name, row.code);
+                                      }}
+                                    />
+                                  </Link>
+                                  <Link to="#">
+                                    <DeleteOutlinedIcon
+                                      onClick={() => {
+                                        this.deleteModalHandler(row._id);
+                                      }}
+                                    />
+                                  </Link>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </TableBody>
+                      <TableFooter>
+                        <TableRow>
+                          <TablePagination
+                            colSpan={3}
+                            count={this.state.hasil.length}
+                            rowsPerPage={this.state.rowsPerPage}
+                            page={this.state.page}
+                            onChangePage={this.handleChangePage}
+                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                            ActionsComponent={TablePaginationActionsWrapped}
+                          />
+                        </TableRow>
+                      </TableFooter>
+                    </table>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-          <br />
-          <br />
-          <Grid item xs={6}>
-            {this.state.alertData.status === 1 ? (
-              <Alert color="success">{this.state.alertData.message}</Alert>
-            ) : (
-              ""
-            )}
-            {this.state.alertData.status === 2 ? (
-              <Alert color="danger">{this.state.alertData.message} </Alert>
-            ) : (
-              ""
-            )}
-          </Grid>
-          <br />
-          <CreateAccess
-            create={this.state.showCreateAccess}
-            closeHandler={this.closeHandler}
-            modalStatus={this.modalStatus}
-            modalStatus2={this.modalStatus2}
-            access={this.state.currentAccess}
-            theAccess={this.state.theAccess}
-          />
-          <ViewAccess
-            create={this.state.showViewAccess}
-            closeHandler={this.closeHandler2}
-            modalStatus={this.modalStatus}
-            modalStatus2={this.modalStatus2}
-            view={this.state.viewAccess}
-            closeModalHandler={this.closeModalHandler}
-            access={this.state.currentAccess}
-            theAccess={this.state.theAccess}
-          />
-          <DeleteAccess
-            delete={this.state.deleteAccess}
-            access={this.state.currentAccess}
-            getAccess={this.getListAccess}
-            closeModalHandler={this.closeModalHandler}
-            modalStatus={this.modalStatus}
-          />
-          <Grid item xs={12}>
-            <Hidden>
-              <Paper>
-                <Table className={classes.table}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Role Code</TableCell>
-                      <TableCell>Role Name</TableCell>
-                      <TableCell>Created By</TableCell>
-                      <TableCell>Created Date</TableCell>
-                      <TableCell>Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {this.state.hasil
-                      .slice(
-                        this.state.page * this.state.rowsPerPage,
-                        this.state.page * this.state.rowsPerPage +
-                          this.state.rowsPerPage
-                      )
-                      .map((row, index) => {
-                        return (
-                          <TableRow key={row.id}>
-                            <TableCell>{row.code}</TableCell>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell>{row.created_by}</TableCell>
-                            <TableCell>
-                              {moment(row.created_date).format("DD/MM/YYYY")}
-                            </TableCell>
-                            <TableCell>
-                              <Link to="#">
-                                <SearchIcon
-                                  onClick={() => {
-                                    this.getTheAccess(row.code);
-                                    this.showHandler2(row.name, row.code);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <CreateOutlinedIcon
-                                  onClick={() => {
-                                    this.getTheAccess(row.code);
-                                    this.showHandler(row.name, row.code);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <DeleteOutlinedIcon
-                                  onClick={() => {
-                                    this.deleteModalHandler(row._id);
-                                  }}
-                                />
-                              </Link>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        colSpan={3}
-                        count={this.state.hasil.length}
-                        rowsPerPage={this.state.rowsPerPage}
-                        page={this.state.page}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActionsWrapped}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              </Paper>
-            </Hidden>
-          </Grid>
-        </Grid>
+        </div>
+        <CreateAccess
+          create={this.state.showCreateAccess}
+          closeHandler={this.closeHandler}
+          modalStatus={this.modalStatus}
+          modalStatus2={this.modalStatus2}
+          access={this.state.currentAccess}
+          theAccess={this.state.theAccess}
+        />
+        <ViewAccess
+          create={this.state.showViewAccess}
+          closeHandler={this.closeHandler2}
+          modalStatus={this.modalStatus}
+          modalStatus2={this.modalStatus2}
+          view={this.state.viewAccess}
+          closeModalHandler={this.closeModalHandler}
+          access={this.state.currentAccess}
+          theAccess={this.state.theAccess}
+        />
+        <DeleteAccess
+          delete={this.state.deleteAccess}
+          access={this.state.currentAccess}
+          getAccess={this.getListAccess}
+          closeModalHandler={this.closeModalHandler}
+          modalStatus={this.modalStatus}
+        />
       </div>
     );
   }
@@ -551,7 +534,8 @@ ListAccess.propTypes = {
   classes: PropTypes.object.isRequired
 };
 const mapStateToProps = state => ({
-  getTheRole: state.roleData
+  getTheRole: state.roleData,
+  data: state.auth
 });
 let style = withStyles(styles)(ListAccess);
 export default connect(

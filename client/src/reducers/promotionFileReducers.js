@@ -46,7 +46,12 @@ export default function(state = initialState, action) {
         ),
         statusPUT: action.status
       };
-
+    case "GET_F_ONE":
+      return {
+        ...state,
+        promotFile: action.payload,
+        statusGET: action.status
+      };
     default:
       return state;
   }

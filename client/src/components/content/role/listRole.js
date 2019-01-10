@@ -8,14 +8,6 @@ import CreateRole from "./createRole";
 import { Alert } from "reactstrap";
 import DeleteRole from "./deleteRole";
 import ViewRole from "./viewRole";
-import {
-  Grid,
-  Paper,
-  Table,
-  TableCell,
-  TableHead,
-  TableRow
-} from "@material-ui/core";
 import "react-datepicker/dist/react-datepicker.css";
 import SearchIcon from "@material-ui/icons/Search";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
@@ -26,6 +18,7 @@ class ListRole extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      number: 0,
       showCreateRole: false,
       roleItem: {
         code: null,
@@ -49,14 +42,19 @@ class ListRole extends React.Component {
     this.editModalHandler = this.editModalHandler.bind(this);
     this.modalStatus = this.modalStatus.bind(this);
   }
+  //mount before render
+  componentDidMount() {
+    this.props.getAllRoles();
+  }
+  UNSAFE_componentWillReceiveProps(newProps) {
+    this.setState({
+      role: newProps.getTheRole.rolan,
+      dummyRole: newProps.getTheRole.rolan
+    });
+  }
   //for delete action
   deleteModalHandler(roleid) {
-    let tmp = {};
-    this.state.role.forEach(ele => {
-      if (roleid === ele._id) {
-        tmp = ele;
-      }
-    });
+    let tmp = this.state.role.filter(content => roleid === content._id)[0];
     this.setState({
       currentRole: tmp,
       deleteRole: true
@@ -64,12 +62,7 @@ class ListRole extends React.Component {
   }
   //for view action
   viewModalHandler(roleid) {
-    let tmp = {};
-    this.state.role.forEach(ele => {
-      if (roleid === ele._id) {
-        tmp = ele;
-      }
-    });
+    let tmp = this.state.role.filter(content => roleid === content._id)[0];
     this.setState({
       currentRole: tmp,
       viewRole: true
@@ -77,21 +70,20 @@ class ListRole extends React.Component {
   }
   //for update action
   editModalHandler(roleid) {
-    let tmp = {};
-    this.state.role.forEach(ele => {
-      if (roleid === ele._id) {
-        tmp = {
+    let tmp = this.state.role
+      .filter(content => roleid === content._id)
+      .map(ele => {
+        return {
           _id: ele._id,
           code: ele.code,
           name: ele.name,
           description: ele.description,
           updated_by: ele.updated_by
         };
-        this.setState({
-          currentRole: tmp,
-          editRole: true
-        });
-      }
+      })[0];
+    this.setState({
+      currentRole: tmp,
+      editRole: true
     });
   }
   //close pop up for modal (used in update, veiw, delete)
@@ -149,26 +141,18 @@ class ListRole extends React.Component {
       })
       .filter(a => a !== false);
     this.setState({
-      dummyRole: data
+      dummyRole: data,
+      number: this.state.number + 1
     });
   };
   //Go Back before search
   refresh = () => {
     this.setState({
-      dummyRole: this.state.role
+      dummyRole: this.state.role,
+      number: this.state.number + 1
     });
   };
 
-  //mount before render
-  componentDidMount() {
-    this.props.getAllRoles();
-  }
-  componentWillReceiveProps(newProps) {
-    this.setState({
-      role: newProps.getTheRole.rolan,
-      dummyRole: newProps.getTheRole.rolan
-    });
-  }
   modalStatus(status, message) {
     setTimeout(() => {
       this.props.getAllRoles();
@@ -178,42 +162,177 @@ class ListRole extends React.Component {
         status: status,
         message: message
       },
+      showCreateRole: false,
       viewRole: false,
       editRole: false,
       deleteRole: false
     });
+    setTimeout(() => {
+      this.setState({
+        alertData: {
+          status: 0,
+          message: ""
+        },
+        viewRole: false,
+        editRole: false,
+        deleteRole: false
+      });
+    }, 3000);
   }
 
   render() {
     return (
-      <div>
-        <br />
-        <Grid item xs={12}>
-          <Paper>
-            <ul class="breadcrumb">
-              <li>
-                <a href="/dashboard">Home</a> <span class="divider">/</span>
-              </li>
-              <li class="active">Master/</li>
-              <li class="active">List Role</li>
-            </ul>
-          </Paper>
-        </Grid>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+            <div className="card border-primary mb-3">
+              <div className="card-header lead">List Role</div>
+              <div className="card-body">
+                <nav aria-label="breadcrumb mb-4">
+                  <ol className="breadcrumb">
+                    <li className="breadcrumb-item">
+                      <Link to="/">Home</Link>
+                    </li>
+                    <li className="breadcrumb-item active" aria-current="page">
+                      List Role
+                    </li>
+                  </ol>
+                </nav>
+                {this.state.alertData.status === 1 ? (
+                  <Alert color="success">
+                    {" "}
+                    {this.state.alertData.message}{" "}
+                  </Alert>
+                ) : (
+                  ""
+                )}
+                {this.state.alertData.status === 2 ? (
+                  <Alert color="danger"> {this.state.alertData.message} </Alert>
+                ) : (
+                  ""
+                )}
+                <div className="text-right">
+                  <div className=" mb-2">
+                    <button onClick={this.showHandler} class="btn btn-primary">
+                      Add Role
+                    </button>
+                  </div>
+                </div>
+                <div className="table-responsive ">
+                  <table className="table table-borderless">
+                    <tr>
+                      <td>
+                        <input
+                          name="code"
+                          onKeyPress={this.keyHandler}
+                          onChange={this.changeHandler}
+                          class="form-control"
+                          placeholder="-Role Code-"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          name="name"
+                          onKeyPress={this.keyHandler}
+                          onChange={this.changeHandler}
+                          class="form-control"
+                          placeholder="-Role Name-"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          name="created_by"
+                          onKeyPress={this.keyHandler}
+                          onChange={this.changeHandler}
+                          class="form-control"
+                          placeholder="-Request By-"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          name="reqDate"
+                          onKeyPress={this.keyHandler}
+                          onChange={this.changeHandler}
+                          type="date"
+                          class="form-control"
+                        />
+                      </td>
+                      <td>
+                        {this.state.number % 2 === 0 ? (
+                          <button
+                            class="btn btn-warning btn-block"
+                            onClick={this.search}
+                          >
+                            Search
+                          </button>
+                        ) : (
+                          <button
+                            onClick={this.refresh}
+                            class="btn btn-warning btn-block"
+                          >
+                            Refresh
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  </table>
+                </div>
 
+                {this.state.dummyRole.length === 0 ? (
+                  <h5>Loading Data, Please Wait...</h5>
+                ) : (
+                  <div className="table-responsive">
+                    <table className="table">
+                      <thead>
+                        <tr className="text-center font-weight-bold">
+                          <td>Role Code</td>
+                          <td>Role Name</td>
+                          <td>Created By</td>
+                          <td>Created Date</td>
+                          <td>Action</td>
+                        </tr>
+                      </thead>
+                      {this.state.dummyRole.map(content => (
+                        <tr className="text-center">
+                          <td>{content.code}</td>
+                          <td>{content.name}</td>
+                          <td>{content.created_by}</td>
+                          <td>
+                            {moment(content.created_date).format("DD/MM/YYYY")}
+                          </td>
+                          <td>
+                            <Link to="#">
+                              <SearchIcon
+                                onClick={() => {
+                                  this.viewModalHandler(content._id);
+                                }}
+                              />
+                            </Link>
+                            <Link to="#">
+                              <CreateOutlinedIcon
+                                onClick={() => {
+                                  this.editModalHandler(content._id);
+                                }}
+                              />
+                            </Link>
+                            <Link to="#">
+                              <DeleteOutlinedIcon
+                                onClick={() => {
+                                  this.deleteModalHandler(content._id);
+                                }}
+                              />
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
         <div>
-          <h4>List Role</h4>
-
-          {this.state.alertData.status === 1 ? (
-            <Alert color="success"> {this.state.alertData.message} </Alert>
-          ) : (
-            ""
-          )}
-          {this.state.alertData.status === 2 ? (
-            <Alert color="danger"> {this.state.alertData.message} </Alert>
-          ) : (
-            ""
-          )}
-
           <CreateRole
             create={this.state.showCreateRole}
             modalStatus={this.modalStatus}
@@ -236,106 +355,6 @@ class ListRole extends React.Component {
             roletest={this.state.currentRole}
             modalStatus={this.modalStatus}
           />
-          <br />
-          <div class="form-row">
-            <div class="col-md-2">
-              <input
-                name="code"
-                onKeyPress={this.keyHandler}
-                onChange={this.changeHandler}
-                class="form-control"
-                placeholder="-Role Code-"
-              />
-            </div>
-            <div class="col-md-2">
-              <input
-                name="name"
-                onKeyPress={this.keyHandler}
-                onChange={this.changeHandler}
-                class="form-control"
-                placeholder="-Role Name-"
-              />
-            </div>
-            <div class="col-md-2">
-              <input
-                name="created_by"
-                onKeyPress={this.keyHandler}
-                onChange={this.changeHandler}
-                class="form-control"
-                placeholder="-Request By-"
-              />
-            </div>
-            <div class="col-md-2">
-              <input
-                name="reqDate"
-                onKeyPress={this.keyHandler}
-                onChange={this.changeHandler}
-                type="date"
-                class="form-control"
-              />
-            </div>
-            <div class="col-xs-1">
-              <button class="btn btn-primary" onClick={this.search}>
-                Search
-              </button>
-            </div>
-            <div class="col-xs-1">
-              <button onClick={this.refresh} class="btn btn-warning">
-                Refresh
-              </button>
-            </div>
-            <div class="col-xs-1">
-              <button onClick={this.showHandler} class="btn btn-primary">
-                Add Role
-              </button>
-            </div>
-          </div>
-          <Grid item xs={6} justify="flex-end" />
-          <br />
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Role Code</TableCell>
-                <TableCell>Role Name</TableCell>
-                <TableCell>Created By</TableCell>
-                <TableCell>Created Date</TableCell>
-                <TableCell>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            {this.state.dummyRole.map(content => (
-              <TableRow>
-                <TableCell>{content.code}</TableCell>
-                <TableCell>{content.name}</TableCell>
-                <TableCell>{content.created_by}</TableCell>
-                <TableCell>
-                  {moment(content.created_date).format("DD/MM/YYYY")}
-                </TableCell>
-                <TableCell>
-                  <Link to="#">
-                    <SearchIcon
-                      onClick={() => {
-                        this.viewModalHandler(content._id);
-                      }}
-                    />
-                  </Link>
-                  <Link to="#">
-                    <CreateOutlinedIcon
-                      onClick={() => {
-                        this.editModalHandler(content._id);
-                      }}
-                    />
-                  </Link>
-                  <Link to="#">
-                    <DeleteOutlinedIcon
-                      onClick={() => {
-                        this.deleteModalHandler(content._id);
-                      }}
-                    />
-                  </Link>
-                </TableCell>
-              </TableRow>
-            ))}
-          </Table>
         </div>
       </div>
     );
@@ -344,7 +363,6 @@ class ListRole extends React.Component {
 ListRole.propTypes = {
   getAllRoles: PropTypes.object.isRequired,
   getTheRole: PropTypes.object.isRequired
-  // classes: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -355,5 +373,3 @@ export default connect(
   mapStateToProps,
   { getAllRoles }
 )(ListRole);
-
-// export default ListRole

@@ -1,43 +1,12 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
-import axios from "axios";
-import HostConfig from "../../../config/Host_Config";
-
+import { deleteRole } from "../../../actions/roleActions";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 class DeleteRole extends React.Component {
-  constructor(props) {
-    super(props);
-    this.deleteHandler = this.deleteHandler.bind(this);
-  }
-
-  deleteHandler() {
-    let token = localStorage.token;
-    let option = {
-      url: `${HostConfig.host}/role/${this.props.role.code}`,
-      method: "delete",
-      headers: {
-        Authorization: token
-      }
-    };
-    axios(option)
-      .then(response => {
-        if (response.data.code === 200) {
-          this.props.modalStatus(
-            1,
-            "Data deleted!, Data role with code " +
-              this.props.role.code +
-              " has been deleted!"
-          );
-        }
-      })
-      .catch(error => {
-        this.props.modalStatus(
-          2,
-          "Invalid!, Data role with code " +
-            this.props.role.code +
-            " is used in other account!"
-        );
-      });
-  }
+  deleteHandler = () => {
+    this.props.deleteRole(this.props.role.code, this.props.modalStatus);
+  };
 
   render() {
     return (
@@ -58,4 +27,14 @@ class DeleteRole extends React.Component {
     );
   }
 }
-export default DeleteRole;
+DeleteRole.propTypes = {
+  deleteRole: PropTypes.func.isRequired
+};
+const mapStateToProps = state => ({
+  theRole: state.roleData
+});
+
+export default connect(
+  mapStateToProps,
+  { deleteRole }
+)(DeleteRole);

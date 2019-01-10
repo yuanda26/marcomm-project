@@ -46,9 +46,12 @@ const promotionData = {
     );
   },
   deleteData: (callback, whatDelete) => {
-    db.collection("t_promotion_item").remove({t_promotion_id: whatDelete},(err, docs) => {
+    db.collection("t_promotion_item").remove(
+      { t_promotion_id: whatDelete },
+      (err, docs) => {
         callback(docs);
-      });
+      }
+    );
   },
   createManyData: (callback, data) => {
     db.collection("t_promotion_item").insertMany(data, (err, docs) => {

@@ -1,11 +1,9 @@
 import React from "react";
 import { Alert } from "reactstrap";
-import { getAllPromotion } from "../../../actions/promotionActions";
+import { createPromotion } from "../../../actions/promotionActions";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
-import apiconfig from "../../../config/Host_Config";
-import axios from "axios";
 import moment from "moment";
 class addPromotionD extends React.Component {
   constructor(props) {
@@ -36,11 +34,6 @@ class addPromotionD extends React.Component {
     this.modalStatus = this.modalStatus.bind(this);
   }
 
-  componentWillReceiveProps(newProps) {
-    this.setState({
-      formdata: newProps.ambil.dataP
-    });
-  }
   modalStatus(status, message, code) {
     this.setState({
       alertData: {
@@ -116,37 +109,12 @@ class addPromotionD extends React.Component {
         moment(content.request_due_date) > moment().subtract(1, "days")
     );
     if (this.state.marketHeader.title !== "" && lala.length > 0) {
-      let token = localStorage.token;
       let data = {
         marketHeader: this.state.marketHeader,
         designItem: null,
         file: lala
       };
-      let option = {
-        url: apiconfig.host + "/promotion",
-        method: "post",
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json"
-        },
-        data: data
-      };
-      axios(option)
-        .then(response => {
-          this.modalStatus(
-            1,
-            "Data Saved!, Transaction request has been add with code " +
-              response.data.message +
-              "!",
-            200
-          );
-          setTimeout(() => {
-            window.location.href = "/promotion";
-          }, 3000);
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      this.props.createPromotion(data, this.modalStatus, false);
     } else {
       this.modalStatus(2, "Fill the form!", 400);
     }
@@ -175,18 +143,6 @@ class addPromotionD extends React.Component {
           <Grid item xs={12}>
             <h4>Add Marketing Promotion</h4>
           </Grid>
-        </Grid>
-        <Grid item xs={6}>
-          {this.state.alertData.status === 1 ? (
-            <Alert color="success">{this.state.alertData.message}</Alert>
-          ) : (
-            ""
-          )}
-          {this.state.alertData.status === 2 ? (
-            <Alert color="danger">{this.state.alertData.message}</Alert>
-          ) : (
-            ""
-          )}
         </Grid>
         <form>
           <div class="card mb-3">
@@ -304,6 +260,18 @@ class addPromotionD extends React.Component {
             </div>
           </div>
 
+          <Grid item xs={6}>
+            {this.state.alertData.status === 1 ? (
+              <Alert color="success">{this.state.alertData.message}</Alert>
+            ) : (
+              ""
+            )}
+            {this.state.alertData.status === 2 ? (
+              <Alert color="danger">{this.state.alertData.message}</Alert>
+            ) : (
+              ""
+            )}
+          </Grid>
           <div class="card mb-3">
             <div class="card-body">
               <h6 class="card-title">UPLOAD FILE</h6>
@@ -552,17 +520,15 @@ class addPromotionD extends React.Component {
 }
 
 addPromotionD.propTypes = {
-  getAllPromotion: PropTypes.func.isRequired,
-  ambil: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired
+  data: PropTypes.object.isRequired,
+  createPromotion: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  ambil: state.promot,
   data: state.auth
 });
 
 export default connect(
   mapStateToProps,
-  { getAllPromotion }
+  { createPromotion }
 )(addPromotionD);

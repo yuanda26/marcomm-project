@@ -30,14 +30,7 @@ class CreateRole extends React.Component {
     if (this.state.formdata.name === "") {
       return alert("All field must be Filled!");
     }
-    this.props.createRole(this.state.formdata);
-    this.props.closeHandler();
-    setTimeout(() => {
-      this.props.modalStatus(
-        1,
-        "Data Saved! New role with referential code has been added!"
-      );
-    }, 0);
+    this.props.createRole(this.state.formdata, this.props.modalStatus);
   }
   render() {
     return (

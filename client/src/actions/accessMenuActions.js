@@ -1,5 +1,4 @@
 import axios from "axios";
-// Import Config
 import HostConfig from "../config/Host_Config";
 const token = localStorage.token;
 
@@ -27,7 +26,6 @@ export const createAccessMenu = body => dispatch => {
       });
     });
 };
-
 export const getListAccess = role => dispatch => {
   let option = {
     url: `${HostConfig}/access/${role}`,
