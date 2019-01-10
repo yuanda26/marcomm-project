@@ -21,6 +21,7 @@ class UnitList extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      search: false,
       searchResult: true,
       initialSearch: {
         code: "",
@@ -144,7 +145,7 @@ class UnitList extends Component {
     name = new RegExp(name, "i");
     created_date = new RegExp(created_date, "i");
     created_by = new RegExp(created_by, "i");
-    let test = [];
+    let result = [];
     this.state.unit.forEach(ele => {
       if (
         code.test(ele.code.toLowerCase()) &&
@@ -152,11 +153,21 @@ class UnitList extends Component {
         created_by.test(this.rename(ele.created_by).toLowerCase()) &&
         created_date.test(ele.created_date.toLowerCase())
       ) {
-        test.push(ele);
+        result.push(ele);
       }
     });
     this.setState({
-      coba: test
+      hasil: result,
+      search: true
+    });
+  };
+
+  // Restore Units Data
+  onRestore = e => {
+    e.preventDefault();
+    this.setState({
+      hasil: this.props.units.unitData,
+      search: false
     });
   };
 
@@ -213,19 +224,13 @@ class UnitList extends Component {
       message3,
       status
     } = this.props.units;
-    let { unit, coba, hasil } = this.state;
+    let { unit, hasil } = this.state;
 
     let unitList;
     let unitLabel;
-    let result;
-    if (coba === null) {
-      result = hasil;
-    } else {
-      result = coba;
-    }
 
     if (unitData.length > 0) {
-      unitList = result.map((row, index) => (
+      unitList = hasil.map((row, index) => (
         <tr key={row._id} className="text-center">
           <td>{index + 1}</td>
           <td>{row.code}</td>
@@ -318,7 +323,9 @@ class UnitList extends Component {
                 modalStatus={this.modalStatus}
               />
               <div className="card border-primary mb-3">
-                <div className="card-header lead">Unit List</div>
+                <div className="card-header lead bg-primary text-white font-weight-bold">
+                  Unit List
+                </div>
                 <div className="card-body ">
                   {/* Breadcrumb Navigation */}
                   <nav aria-label="breadcrumb">
@@ -401,11 +408,22 @@ class UnitList extends Component {
                                 />
                               </td>
                               <td>
-                                <input
-                                  type="submit"
-                                  value="Search"
-                                  className="btn btn-block btn-warning"
-                                />
+                                <div className="form-group">
+                                  {this.state.search === true ? (
+                                    <button
+                                      className="btn btn-block btn-default"
+                                      onClick={this.onRestore}
+                                    >
+                                      Refresh!
+                                    </button>
+                                  ) : (
+                                    <input
+                                      type="submit"
+                                      value="Search"
+                                      className="btn btn-block btn-warning"
+                                    />
+                                  )}
+                                </div>
                               </td>
                             </form>
                           </td>

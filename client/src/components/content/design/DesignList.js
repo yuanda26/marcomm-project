@@ -40,11 +40,11 @@ class DesignList extends Component {
     this.props.getEvent();
   }
 
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(props, state) {
     this.setState({
-      employee: newProps.design.assign,
-      designs: newProps.design.designs,
-      event: newProps.design.event
+      employee: props.design.assign,
+      designs: props.design.designs,
+      event: props.design.event
     });
   }
 
@@ -156,14 +156,7 @@ class DesignList extends Component {
     e.preventDefault();
     this.setState({
       designs: this.props.design.designs,
-      search: false,
-      searchCode: "",
-      searchRequestBy: "",
-      searchRequestDate: "",
-      searchStatus: "",
-      searchAssign: "",
-      searchCreatedDate: "",
-      searchCreatedBy: ""
+      search: false
     });
   };
 
@@ -184,7 +177,7 @@ class DesignList extends Component {
     let designLabel;
 
     if (designs.length > 0) {
-      designList = designs.map((design, index) => (
+      designList = this.state.designs.map((design, index) => (
         <tr key={design._id} className="text-center">
           <td>{index + 1}</td>
           <td>{design.code}</td>
@@ -244,7 +237,9 @@ class DesignList extends Component {
           <div className="row">
             <div className="col-md-12">
               <div className="card border-primary mb-3">
-                <div className="card-header lead">Design List</div>
+                <div className="card-header lead bg-primary text-white font-weight-bold">
+                  Design List
+                </div>
                 <div className="card-body">
                   <nav aria-label="breadcrumb mb-4">
                     <ol className="breadcrumb">

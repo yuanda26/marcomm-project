@@ -200,12 +200,7 @@ class SouvenirList extends Component {
     e.preventDefault();
     this.setState({
       souvenirs: this.props.souvenir.souvenirs,
-      search: false,
-      searchCode: "",
-      searchName: "",
-      searchUnit: "",
-      searchDate: "",
-      searchCreated: ""
+      search: false
     });
   };
 
@@ -230,7 +225,7 @@ class SouvenirList extends Component {
     const capitalize = { textTransform: "capitalize" };
 
     if (souvenirs.length > 0) {
-      souvenirList = souvenirs.map((souvenir, index) => (
+      souvenirList = this.state.souvenirs.map((souvenir, index) => (
         <tr key={souvenir._id} className="text-center">
           <td>{index + 1}</td>
           <td>{souvenir.code}</td>
@@ -334,7 +329,9 @@ class SouvenirList extends Component {
               />
 
               <div className="card border-primary mb-2">
-                <div className="card-header lead">List Souvenir</div>
+                <div className="card-header lead bg-primary text-white font-weight-bold">
+                  List Souvenir
+                </div>
                 <div className="card-body">
                   <nav aria-label="breadcrumb mb-4">
                     <ol className="breadcrumb">
