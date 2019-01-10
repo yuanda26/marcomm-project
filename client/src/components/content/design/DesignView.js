@@ -7,7 +7,8 @@ import {
   getItems,
   getRequester,
   getStaff,
-  getAssignToName
+  getAssignToName,
+  getEvent
 } from "../../../actions/designAction";
 // Design Components
 import DesignApprove from "./DesignApprove";
@@ -27,6 +28,7 @@ class DesignView extends Component {
     this.props.getProduct();
     this.props.getRequester();
     this.props.getStaff();
+    this.props.getEvent();
   }
 
   // Function to Get Page Title
@@ -51,7 +53,8 @@ class DesignView extends Component {
       product,
       items,
       assign,
-      staff
+      staff,
+      event
     } = this.props.design;
 
     if (
@@ -60,7 +63,8 @@ class DesignView extends Component {
       requester.length === 0 &&
       product.length === 0 &&
       assign.length === 0 &&
-      staff.length === 0
+      staff.length === 0 &&
+      event.length === 0
     ) {
       return (
         <div className="container">
@@ -122,7 +126,8 @@ DesignView.propTypes = {
   getProduct: PropTypes.func.isRequired,
   getRequester: PropTypes.func.isRequired,
   getAssignToName: PropTypes.func.isRequired,
-  getStaff: PropTypes.func.isRequired
+  getStaff: PropTypes.func.isRequired,
+  getEvent: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -131,5 +136,13 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getProduct, getDesign, getItems, getRequester, getAssignToName, getStaff }
+  {
+    getProduct,
+    getDesign,
+    getItems,
+    getRequester,
+    getAssignToName,
+    getStaff,
+    getEvent
+  }
 )(DesignView);

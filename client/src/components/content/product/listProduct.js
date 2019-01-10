@@ -9,10 +9,7 @@ import CreateProduct from "./createProduct";
 import DeleteProduct from "./deleteProduct";
 import ViewProduct from "./viewProduct";
 
-import { 
-  Alert, 
-  Button 
-} from "reactstrap";
+import { Alert, Button } from "reactstrap";
 
 import {
   getAllProduct,
@@ -148,12 +145,12 @@ class ListProduct extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      initialSearch:{
-        code : '',
-        name : '',
-        description : '',
-        created_date : '',
-        created_by : ''
+      initialSearch: {
+        code: "",
+        name: "",
+        description: "",
+        created_date: "",
+        created_by: ""
       },
       search: "",
       showCreateProduct: false,
@@ -164,7 +161,7 @@ class ListProduct extends React.Component {
       currentProduct: {},
       alertData: {
         status: 0,
-        message: "",
+        message: ""
       },
       hasil: [],
       page: 0,
@@ -191,7 +188,7 @@ class ListProduct extends React.Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
-  deleteModalHandler = (companyid) => {
+  deleteModalHandler = companyid => {
     let tmp = {};
     this.state.result.forEach(ele => {
       if (companyid === ele._id) {
@@ -202,7 +199,7 @@ class ListProduct extends React.Component {
       currentProduct: tmp,
       deleteProduct: true
     });
-  }
+  };
 
   viewModalHandler(companyid) {
     let tmp = {};
@@ -218,8 +215,8 @@ class ListProduct extends React.Component {
   }
 
   chanegeDate = tanggal => {
-    return moment(tanggal).format("DD/MM/YYYY")
-  }
+    return moment(tanggal).format("DD/MM/YYYY");
+  };
 
   editModalHandler(companyid) {
     let tmp = {};
@@ -229,9 +226,9 @@ class ListProduct extends React.Component {
           _id: ele._id,
           code: ele.code,
           name: ele.name,
-          description:ele.description,
+          description: ele.description,
           update_by: "purwanto",
-          address: ele.address,
+          address: ele.address
         };
         //alert(JSON.stringify(tmp));
         this.setState({
@@ -243,23 +240,25 @@ class ListProduct extends React.Component {
   }
 
   changeHandler = event => {
-    let { initialSearch } = this.state
-    let { name, value } = event.target
-    initialSearch[name] = value
+    let { initialSearch } = this.state;
+    let { name, value } = event.target;
+    initialSearch[name] = value;
     this.setState({
-      initialSearch : initialSearch,
+      initialSearch: initialSearch
     });
   };
 
   SearchHandler = () => {
     const {
-      code, name, description, created_date, created_by 
-    } = this.state.initialSearch
-    this.props.searchProduct(
-      code, name, description, created_date, created_by  
-    )
-  }
-  
+      code,
+      name,
+      description,
+      created_date,
+      created_by
+    } = this.state.initialSearch;
+    this.props.searchProduct(code, name, description, created_date, created_by);
+  };
+
   closeModalHandler() {
     this.setState({
       viewProduct: false,
@@ -288,46 +287,57 @@ class ListProduct extends React.Component {
   }
 
   modalStatus = (status, message) => {
-    this.props.eraseStatus()
+    this.props.eraseStatus();
     this.setState({
       alertData: {
         status: status,
         message: message
       }
     });
-    setTimeout(()=>{
+    setTimeout(() => {
       this.setState({
-      alertData: {
-        status: 0,
-        message: ""
-      }
-    });
-    }, 3000)
-  }
+        alertData: {
+          status: 0,
+          message: ""
+        }
+      });
+    }, 3000);
+  };
 
-  closeAlert=()=>{
+  closeAlert = () => {
     this.setState({
       alertData: {
         status: 0,
         message: ""
       }
     });
-  }
+  };
 
   render() {
     return (
       <div className="container">
         <div className="row">
           <div className="col-md-12">
-            <div className='card border-primary'>
-              <div className="card-header bg-primary text-white"><h4>List Product</h4></div>
+            <div className="card border-primary">
+              <div className="card-header bg-primary text-white">
+                <h4>List Product</h4>
+              </div>
               <div className="card-body">
                 <div className="col">
                   <nav aria-label="breadcrumb">
                     <ul className="breadcrumb">
-                      <li className="breadcrumb-item"><a href="/dashboard" >Home</a></li>
-                      <li className="breadcrumb-item"><a href="/dashboard">Master</a></li>
-                      <li className="breadcrumb-item active" aria-current="page">List Product</li>
+                      <li className="breadcrumb-item">
+                        <a href="/dashboard">Home</a>
+                      </li>
+                      <li className="breadcrumb-item">
+                        <a href="/dashboard">Master</a>
+                      </li>
+                      <li
+                        className="breadcrumb-item active"
+                        aria-current="page"
+                      >
+                        List Product
+                      </li>
                     </ul>
                   </nav>
                 </div>
@@ -335,31 +345,35 @@ class ListProduct extends React.Component {
                   {this.state.alertData.status === 1 ? (
                     <Alert className="alert alert-succes alert-dismissible fade show">
                       <b>{this.state.alertData.message}</b>
-                      <button 
-                        type="button" 
-                        className="close" 
+                      <button
+                        type="button"
+                        className="close"
                         data-dismiss="alert"
-                        onClick={this.closeAlert} 
-                        aria-label="Close">
+                        onClick={this.closeAlert}
+                        aria-label="Close"
+                      >
                         <span>&times;</span>
                       </button>
                     </Alert>
-                  ) : ("")
-                  }
+                  ) : (
+                    ""
+                  )}
                   {this.state.alertData.status === 2 ? (
                     <Alert className="alert alert-danger alert-dismissible fade show">
                       <b>{this.state.alertData.message}</b>
-                      <button 
-                        type="button" 
-                        className="close" 
-                        data-dismiss="alert" 
+                      <button
+                        type="button"
+                        className="close"
+                        data-dismiss="alert"
                         aria-label="Close"
-                        onClick={this.closeAlert}>
-                      <span>&times;</span>
-                    </button>
+                        onClick={this.closeAlert}
+                      >
+                        <span>&times;</span>
+                      </button>
                     </Alert>
-                  ) : ("")
-                  }
+                  ) : (
+                    ""
+                  )}
                   <DeleteProduct
                     delete={this.state.deleteProduct}
                     product_del={this.state.currentProduct}
@@ -371,152 +385,164 @@ class ListProduct extends React.Component {
                     closeModalHandler={this.closeModalHandler}
                     product={this.state.currentProduct}
                   />
-                 <CreateProduct
+                  <CreateProduct
                     create={this.state.showCreateProduct}
                     closeHandler={this.closeHandler}
-                    getAllProduct = {this.props.getAllProduct}
+                    getAllProduct={this.props.getAllProduct}
                     modalStatus={this.modalStatus}
-                    dataValidation = {(this.props.product.production.map(content=>content.name))}
+                    dataValidation={this.props.product.production.map(
+                      content => content.name
+                    )}
                   />
-                   <EditProduct
+                  <EditProduct
                     edit={this.state.editProduct}
                     closeModalHandler={this.closeModalHandler}
                     product_test={this.state.currentProduct}
-                    getAllProduct = {this.props.getAllProduct}
+                    getAllProduct={this.props.getAllProduct}
                     modalStatus={this.modalStatus}
-                    dataValidation = {(this.props.product.production.map(content=>content.name))}
+                    dataValidation={this.props.product.production.map(
+                      content => content.name
+                    )}
                   />
                   <form>
                     <div className="form-row align-items-center">
-                      <div className='col-md-2'>
-                        <input 
-                          placeholder="Code" 
-                          className="form-control" 
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Code"
+                          className="form-control"
                           name="code"
                           onChange={this.changeHandler}
                         />
                       </div>
-                      <div className='col-md-2'>
-                        <input 
-                          placeholder="Name" 
-                          className="form-control" 
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Name"
+                          className="form-control"
                           name="name"
                           onChange={this.changeHandler}
                         />
                       </div>
-                      <div className='col-md-2'>
-                        <input 
-                          placeholder="Description" 
-                          className="form-control" 
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Description"
+                          className="form-control"
                           name="description"
                           onChange={this.changeHandler}
                         />
-                       </div>
-                      <div className='col-md'>
+                      </div>
+                      <div className="col-md">
                         <input
                           type="date"
-                          className="form-control" 
+                          className="form-control"
                           placeholder="Search Created Date"
                           name="created_date"
                           onChange={this.changeHandler}
                         />
                       </div>
-                      <div className='col-md-2'>
-                        <input 
-                          placeholder="Created By" 
+                      <div className="col-md-2">
+                        <input
+                          placeholder="Created By"
                           name="created_by"
-                          className="form-control" 
+                          className="form-control"
                           onChange={this.changeHandler}
                         />
                       </div>
-                      <div className='col-md'>
-                        <button 
-                          type="button" 
+                      <div className="col-md">
+                        <button
+                          type="button"
                           className="btn btn-warning float-right"
-                          onClick ={this.SearchHandler}
-                        >Search
+                          onClick={this.SearchHandler}
+                        >
+                          Search
                         </button>
                       </div>
-                      <div className='col-md'>
-                        <Button 
-                          variant="contained" 
-                          color="primary" 
-                          size="small" 
-                          onClick={this.showHandler}>
+                      <div className="col-md">
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          onClick={this.showHandler}
+                        >
                           Add
                         </Button>
                       </div>
                     </div>
-                </form>
-                <br/>
-                <table id="mytable" className="table table table-hover">
-                  <thead>
-                    <tr>
-                      <th>No</th>
-                      <th>Product Code</th>
-                      <th>Product Name</th>
-                      <th>Description</th>
-                      <th>Created By</th>
-                      <th>Created Date</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.props.product.production
-                      .slice(
-                        this.state.page * this.state.rowsPerPage,
-                        this.state.page * this.state.rowsPerPage +
-                          this.state.rowsPerPage
-                      )
-                      .map((row, index) => {
-                        return (
-                          <tr key={row._id}>
-                            <td>{ index + 1 + this.state.page * this.state.rowsPerPage }</td>
-                            <td>{row.code}</td>
-                            <td>{row.name}</td>
-                            <td>{row.description}</td>
-                            <td>{row.created_by}</td>
-                            <td>{this.chanegeDate(row.created_date)}</td>
-                            <td>
-                              <Link to="#">
-                                <Search
-                                  onClick={() => {
-                                    this.viewModalHandler(row._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <CreateOutlined
-                                  onClick={() => {
-                                    this.editModalHandler(row._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <DeleteOutlined
-                                  onClick={() => {
-                                    this.deleteModalHandler(row._id);
-                                  }}
-                                />
-                              </Link>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                  <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        count={this.state.hasil.length}
-                        rowsPerPage={this.state.rowsPerPage}
-                        page={this.state.page}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActionsWrapped}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </table>
+                  </form>
+                  <br />
+                  <div className="table-responsive">
+                    <table id="mytable" className="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>No</th>
+                          <th>Product Code</th>
+                          <th>Product Name</th>
+                          <th>Description</th>
+                          <th>Created By</th>
+                          <th>Created Date</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {this.props.product.production
+                          .slice(
+                            this.state.page * this.state.rowsPerPage,
+                            this.state.page * this.state.rowsPerPage +
+                              this.state.rowsPerPage
+                          )
+                          .map((row, index) => {
+                            return (
+                              <tr key={row._id}>
+                                <td>
+                                  {index +
+                                    1 +
+                                    this.state.page * this.state.rowsPerPage}
+                                </td>
+                                <td>{row.code}</td>
+                                <td>{row.name}</td>
+                                <td>{row.description}</td>
+                                <td>{row.created_by}</td>
+                                <td>{this.chanegeDate(row.created_date)}</td>
+                                <td>
+                                  <Link to="#">
+                                    <Search
+                                      onClick={() => {
+                                        this.viewModalHandler(row._id);
+                                      }}
+                                    />
+                                  </Link>
+                                  <Link to="#">
+                                    <CreateOutlined
+                                      onClick={() => {
+                                        this.editModalHandler(row._id);
+                                      }}
+                                    />
+                                  </Link>
+                                  <Link to="#">
+                                    <DeleteOutlined
+                                      onClick={() => {
+                                        this.deleteModalHandler(row._id);
+                                      }}
+                                    />
+                                  </Link>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                      <TableFooter>
+                        <TableRow>
+                          <TablePagination
+                            count={this.state.hasil.length}
+                            rowsPerPage={this.state.rowsPerPage}
+                            page={this.state.page}
+                            onChangePage={this.handleChangePage}
+                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                            ActionsComponent={TablePaginationActionsWrapped}
+                          />
+                        </TableRow>
+                      </TableFooter>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -526,7 +552,6 @@ class ListProduct extends React.Component {
     );
   }
 }
-
 
 ListProduct.propTypes = {
   getAllProduct: PropTypes.func.isRequired,
@@ -541,5 +566,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getAllProduct, searchProduct, eraseStatus}
-)( withStyles(styles)(ListProduct) );
+  { getAllProduct, searchProduct, eraseStatus }
+)(withStyles(styles)(ListProduct));

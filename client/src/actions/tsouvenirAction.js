@@ -6,11 +6,11 @@ import {
   GET_EMPLOYEE,
   GET_TSOUVENIR_ITEM
 } from "./types";
-import ApiConfig from "../config/Host_Config";
+import HostConfig from "../config/Host_Config";
 
 export const getAllTsouvenir = () => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/tsouvenir`,
+    url: `${HostConfig}/tsouvenir`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -34,7 +34,7 @@ export const getAllTsouvenir = () => dispatch => {
 
 export const createTsouvenir = body => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/tsouvenir`,
+    url: `${HostConfig}/tsouvenir`,
     method: "post",
     headers: {
       Authorization: localStorage.token,
@@ -60,7 +60,7 @@ export const createTsouvenir = body => dispatch => {
 
 export const updateTsouvenir = newTsouvenir => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/tsouvenir/${newTsouvenir.souv.code}`,
+    url: `${HostConfig}/tsouvenir/${newTsouvenir.souv.code}`,
     method: "put",
     headers: {
       Authorization: localStorage.token,
@@ -86,7 +86,7 @@ export const updateTsouvenir = newTsouvenir => dispatch => {
 
 export const getAllEmployee = () => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/employee`,
+    url: `${HostConfig}/employee`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -110,7 +110,7 @@ export const getAllEmployee = () => dispatch => {
 
 export const getListTsouvenirItem = () => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/tsouveniritemdetil`,
+    url: `${HostConfig}/tsouveniritemdetil`,
     method: "get",
     headers: {
       Authorization: localStorage.token

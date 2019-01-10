@@ -354,8 +354,8 @@ class ListMenu extends React.Component {
                   </Button>
                 </div>
                 <br />
-                <div className="table responsive">
-                  <table className="table  table-stripped">
+                <div className="table-responsive">
+                  <table className="table table-stripped">
                     <thead>
                       <tr
                         className="text-center font-weight-bold"
@@ -387,7 +387,7 @@ class ListMenu extends React.Component {
                             <td>{menu.name}</td>
                             <td>{menu.created_by}</td>
                             <td>{this.changeDateFormat(menu.created_date)}</td>
-                            <td>
+                            <td nowrap>
                               <Link to="#">
                                 <SearchIcon
                                   onClick={() => {

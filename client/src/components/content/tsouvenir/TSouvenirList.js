@@ -391,8 +391,8 @@ class ListTsouvenir extends React.Component {
                   </Button>
                 </div>
                 <br />
-                <div className="table responsive">
-                  <table className="table  table-stripped">
+                <div className="table-responsive">
+                  <table className="table table-stripped">
                     <thead>
                       <tr
                         className="text-center font-weight-bold"
