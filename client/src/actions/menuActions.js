@@ -1,10 +1,10 @@
 import axios from "axios";
 import { GET_MENU, DEL_MENU, ADD_MENU, PUT_MENU } from "./types";
-import ApiConfig from "../config/Host_Config";
+import HostConfig from "../config/Host_Config";
 
 export const getAllMenu = () => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/menu`,
+    url: `${HostConfig}/menu`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -28,7 +28,7 @@ export const getAllMenu = () => dispatch => {
 
 export const createMenu = newMenu => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/menu`,
+    url: `${HostConfig}/menu`,
     method: "post",
     headers: {
       Authorization: localStorage.token,
@@ -54,7 +54,7 @@ export const createMenu = newMenu => dispatch => {
 
 export const putMenu = updatedMenu => dispatch => {
   let option = {
-    url: `${ApiConfig.host}/menu/${updatedMenu.code}`,
+    url: `${HostConfig}/menu/${updatedMenu.code}`,
     method: "put",
     headers: {
       Authorization: localStorage.token,
@@ -80,7 +80,7 @@ export const putMenu = updatedMenu => dispatch => {
 
 export const delMenu = menuId => dispatch => {
   let options = {
-    url: `${ApiConfig.host}/menu/${menuId}`,
+    url: `${HostConfig}/menu/${menuId}`,
     method: "delete",
     headers: {
       Authorization: localStorage.token

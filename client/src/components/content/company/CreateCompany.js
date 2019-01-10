@@ -124,7 +124,6 @@ class CreateCompany extends React.Component {
   }
 
   render() {
-    console.log(this.state.userdata);
     this.state.status === 200 &&
       this.props.modalStatus(1, "Created", this.state.name);
 
