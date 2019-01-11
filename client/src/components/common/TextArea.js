@@ -11,7 +11,8 @@ const TextArea = ({
   value,
   onChange,
   disabled,
-  errors
+  errors,
+  maxLength
 }) => {
   return (
     <div className="form-group">
@@ -27,6 +28,7 @@ const TextArea = ({
         value={value}
         onChange={onChange}
         disabled={disabled}
+        maxLength={maxLength}
       />
       {errors && <div className="invalid-feedback">{errors}</div>}
     </div>
@@ -42,12 +44,14 @@ TextArea.propTypes = {
   onChange: PropTypes.func,
   disabled: PropTypes.bool,
   placeholder: PropTypes.string,
+  maxLength: PropTypes.string,
   errors: PropTypes.string
 };
 
 TextArea.defaultProps = {
   cols: "30",
-  rows: "5"
+  rows: "5",
+  maxLength: "255"
 };
 
 export default TextArea;

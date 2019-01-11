@@ -10,7 +10,8 @@ const TextFieldGroup = ({
   type,
   disabled,
   onChange,
-  errors
+  errors,
+  maxLength
 }) => {
   return (
     <div className="form-group row">
@@ -28,7 +29,7 @@ const TextFieldGroup = ({
           value={value}
           disabled={disabled}
           onChange={onChange}
-          maxLength="50"
+          maxLength={maxLength}
         />
         {errors && <div className="invalid-feedback">{errors}</div>}
       </div>
@@ -44,12 +45,14 @@ TextFieldGroup.propTypes = {
   type: PropTypes.string,
   disabled: PropTypes.bool,
   onChange: PropTypes.func,
+  maxLength: PropTypes.string,
   errors: PropTypes.string
 };
 
 TextFieldGroup.defaultProps = {
   type: "text",
-  disabled: false
+  disabled: false,
+  maxLength: "50"
 };
 
 export default TextFieldGroup;
