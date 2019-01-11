@@ -6,7 +6,7 @@ const unitData = {
   readAllUnit: callback => {
     db.collection("m_unit")
       .find({ is_delete: false })
-      .sort({ code: 1 })
+      .sort({ code: -1 })
       .toArray((err, docs) => {
         let units = docs.map(row => {
           return new M_Unit(row);

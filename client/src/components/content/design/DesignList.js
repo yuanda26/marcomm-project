@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { connect } from "react-redux";
-import { Search, CreateOutlined } from "@material-ui/icons";
+import { Search, Create, RemoveRedEye, Refresh, Add } from "@material-ui/icons";
 // Redux Actions
 import {
   getAllDesign,
@@ -179,39 +179,125 @@ class DesignList extends Component {
     if (designs.length > 0) {
       designList = this.state.designs.map((design, index) => (
         <tr key={design._id} className="text-center">
-          <td>{index + 1}</td>
           <td>{design.code}</td>
-          <td>{this.getEvent(design.t_event_id)}</td>
           <td>{this.getEmployee(design.request_by)}</td>
           <td>{design.request_date}</td>
           <td>{this.getEmployee(design.assign_to)}</td>
-          <td nowrap="true">{this.designStatus(design.status)}</td>
+          <td>{this.designStatus(design.status)}</td>
           <td>{design.created_date}</td>
           <td>{this.getEmployee(design.created_by)}</td>
-          <td nowrap="true">
+          <td>
             <a href={`/design/view/${design.code}`}>
-              <Search />
+              <RemoveRedEye />
             </a>
             <a href={`/design/edit/${design.code}`}>
-              <CreateOutlined />
+              <Create />
             </a>
           </td>
         </tr>
       ));
 
       designLabel = (
-        <tr className="text-center font-weight-bold">
-          <td>No</td>
-          <td>Transaction Code</td>
-          <td>Event Name</td>
-          <td>Request By</td>
-          <td nowrap="true">Request Date</td>
-          <td nowrap="true">Assign To</td>
-          <td>Status</td>
-          <td nowrap="true">Created Date</td>
-          <td nowrap="true">Created By</td>
-          <td>Action</td>
-        </tr>
+        <Fragment>
+          <tr>
+            <td>
+              <TextField
+                placeholder="Transaction Code"
+                name="searchCode"
+                value={this.state.searchCode}
+                onChange={this.onSearch}
+              />
+            </td>
+            <td>
+              <TextField
+                placeholder="Request By"
+                name="searchRequestBy"
+                value={this.state.searchRequestBy}
+                onChange={this.onSearch}
+              />
+            </td>
+            <td>
+              <TextField
+                type="date"
+                min="2018-01-01"
+                max={moment().format("YYYY-MM-DD")}
+                name="searchRequestDate"
+                value={this.state.searchRequestDate}
+                onChange={this.onSearch}
+              />
+            </td>
+            <td>
+              <SelectList
+                name="searchAssign"
+                value={this.state.searchAssign}
+                onChange={this.onSearch}
+                options={options}
+              />
+            </td>
+            <td>
+              <TextField
+                placeholder="Status"
+                name="searchStatus"
+                value={this.state.searchStatus}
+                onChange={this.onSearch}
+              />
+            </td>
+            <td>
+              <TextField
+                type="date"
+                min="2018-01-01"
+                max={moment().format("YYYY-MM-DD")}
+                name="searchCreatedDate"
+                value={this.state.searchCreatedDate}
+                onChange={this.onSearch}
+              />
+            </td>
+            <td>
+              <TextField
+                placeholder="Created By"
+                name="searchCreatedBy"
+                value={this.state.searchCreatedBy}
+                onChange={this.onSearch}
+              />
+            </td>
+            <td nowrap="true">
+              <div className="form-group">
+                {this.state.search === true ? (
+                  <button
+                    className="btn btn-warning"
+                    onClick={this.onRestore}
+                    title="Resfresh Result!"
+                  >
+                    <Refresh />
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    title="Search!"
+                  >
+                    <Search />
+                  </button>
+                )}
+                <a href="/design/add" title="Request New Design!">
+                  <button className="btn btn-primary ml-1" type="button">
+                    <Add />
+                  </button>
+                </a>
+              </div>
+            </td>
+          </tr>
+          <tr className="text-center font-weight-bold">
+            <td nowrap="true">Transaction Code</td>
+            <td nowrap="true">Request By</td>
+            <td nowrap="true">Request Date</td>
+            <td nowrap="true">Assign To</td>
+            <td nowrap="true">Status</td>
+            <td nowrap="true">Created Date</td>
+            <td nowrap="true">Created By</td>
+            <td nowrap="true">Action</td>
+          </tr>
+        </Fragment>
       );
     } else {
       designList = (
@@ -254,102 +340,6 @@ class DesignList extends Component {
                       </li>
                     </ol>
                   </nav>
-                  <div className="text-left">
-                    <a href="/design/add">
-                      <button className="btn btn-primary" type="button">
-                        Add Design
-                      </button>
-                    </a>
-                  </div>
-                  {/* Search Form */}
-                  <div className="mt-3">
-                    <form onSubmit={this.submitSearch}>
-                      <table>
-                        <tbody>
-                          <tr>
-                            <td>
-                              <TextField
-                                placeholder="Transaction Code"
-                                name="searchCode"
-                                value={this.state.searchCode}
-                                onChange={this.onSearch}
-                              />
-                            </td>
-                            <td>
-                              <TextField
-                                placeholder="Request By"
-                                name="searchRequestBy"
-                                value={this.state.searchRequestBy}
-                                onChange={this.onSearch}
-                              />
-                            </td>
-                            <td>
-                              <TextField
-                                type="date"
-                                min="2018-01-01"
-                                max={moment().format("YYYY-MM-DD")}
-                                name="searchRequestDate"
-                                value={this.state.searchRequestDate}
-                                onChange={this.onSearch}
-                              />
-                            </td>
-                            <td>
-                              <SelectList
-                                name="searchAssign"
-                                value={this.state.searchAssign}
-                                onChange={this.onSearch}
-                                options={options}
-                              />
-                            </td>
-                            <td>
-                              <TextField
-                                placeholder="Status"
-                                name="searchStatus"
-                                value={this.state.searchStatus}
-                                onChange={this.onSearch}
-                              />
-                            </td>
-                            <td>
-                              <TextField
-                                type="date"
-                                min="2018-01-01"
-                                max={moment().format("YYYY-MM-DD")}
-                                name="searchCreatedDate"
-                                value={this.state.searchCreatedDate}
-                                onChange={this.onSearch}
-                              />
-                            </td>
-                            <td>
-                              <TextField
-                                placeholder="Created By"
-                                name="searchCreatedBy"
-                                value={this.state.searchCreatedBy}
-                                onChange={this.onSearch}
-                              />
-                            </td>
-                            <td nowrap="true">
-                              <div className="form-group">
-                                {this.state.search === true ? (
-                                  <button
-                                    className="btn btn-block btn-default"
-                                    onClick={this.onRestore}
-                                  >
-                                    Go Back!
-                                  </button>
-                                ) : (
-                                  <input
-                                    type="submit"
-                                    value="Search"
-                                    className="btn btn-block btn-warning"
-                                  />
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </form>
-                  </div>
                   {/* Alert Messages */}
                   {status === 1 && (
                     <div className="mt-2 alert alert-success">{message}</div>
@@ -358,10 +348,12 @@ class DesignList extends Component {
                     <div className="mt-2 alert alert-primary">{message}</div>
                   )}
                   <div className="table-responsive">
-                    <table className="table table-stripped">
-                      <thead>{designLabel}</thead>
-                      <tbody>{designList}</tbody>
-                    </table>
+                    <form onSubmit={this.submitSearch}>
+                      <table className="table table-stripped">
+                        <thead>{designLabel}</thead>
+                        <tbody>{designList}</tbody>
+                      </table>
+                    </form>
                   </div>
                 </div>
               </div>
