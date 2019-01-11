@@ -1,7 +1,7 @@
 {
   "local": {
-    "host": "mongodb://miniproject_user:ayamgeprek176@ds039707.mlab.com",
-    "port": 39707,
-    "name": "miniproject176"
+    "host": "mongodb://marcomm-project-user:ayamgoreng176@ds041178.mlab.com",
+    "port": 41178,
+    "name": "marcomm-project-dev"
   }
 }
