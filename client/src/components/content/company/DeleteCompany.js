@@ -24,34 +24,25 @@ class DeleteCompany extends React.Component {
 
   deleteHandler() {
     const formdata = {
+      name: this.props.company_del.name,
       code: this.props.company_del.code,
       updated_by: this.state.userdata.m_employee_id,
       updated_date: moment().format("YYYY-MM-DD"),
       is_delete: true
     };
-    this.props.deleteCompany(formdata);
+    this.props.deleteCompany(formdata, this.props.modalStatus);
     this.props.closeModalHandler();
   }
 
   render() {
-    this.state.status === 200 &&
-      this.props.modalStatus(1, "Deleted", this.props.company_del.name);
-    this.state.status === 400 &&
-      this.props.modalStatus(
-        2,
-        "Invalid! Data company with name " +
-          this.props.company_del.name +
-          " is used in master employee!"
-      );
     return (
       <Modal isOpen={this.props.delete} className={this.props.className}>
         <ModalHeader> Delete Company </ModalHeader>
         <ModalBody>
           <p>
             {" "}
-            Delete Data <strong>
-              Company {this.props.company_del.name}
-            </strong>{" "}
+            Delete Data Company with Name{" "}
+            <strong> {this.props.company_del.name}</strong> ?
           </p>
         </ModalBody>
         <ModalFooter>

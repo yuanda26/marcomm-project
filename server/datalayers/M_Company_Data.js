@@ -47,7 +47,7 @@ const dt = {
           }
         },
         { $match: { is_delete: false } },
-        { $sort: { code: 1 } }
+        { $sort: { code: -1 } }
       ])
       .toArray((err, docs) => {
         callback(docs);
@@ -67,13 +67,12 @@ const dt = {
   },
 
   createCompanyHandlerData: (callback, data) => {
-    let company_object = new M_Company(data);
-    company_object._id = new ObjectID();
-    db.collection("m_company").insert(company_object, (err, docs) => {
+    let companyData = new M_Company(data);
+    db.collection("m_company").insertOne(companyData, (err, docs) => {
       if (err) {
         callback(err);
       } else {
-        callback(data);
+        callback(companyData);
       }
     });
   },

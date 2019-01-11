@@ -1,8 +1,10 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
-import { Alert } from "reactstrap";
 import PropTypes from "prop-types";
-import TextField from "@material-ui/core/TextField";
+import TextFieldGroup from "../../common/TextFieldGroup";
+import TextAreaGroup from "../../common/TextAreaGroup";
+import isEmpty from "../../../validation/isEmpty";
+
 import { connect } from "react-redux";
 import { editCompany } from "../../../actions/companyAction";
 
@@ -40,22 +42,32 @@ class UpdateCompany extends React.Component {
   changeHandler(e) {
     let tmp = this.state.formdata;
     tmp[e.target.name] = e.target.value;
-    this.setState({
-      formdata: tmp,
-      alertData: {
-        status: false,
-        message: ""
-      }
-    });
+    if (e.target.name === "name") {
+      this.setState({ errorName: "" });
+    }
+    if (e.target.name === "email") {
+      this.setState({ errorEmail: "" });
+    }
+    if (e.target.name === "phone") {
+      this.setState({ errorPhone: "" });
+    }
+    if (e.target.name === "address") {
+      this.setState({ errorAddress: "" });
+    }
   }
 
-  validateFilter = input => {
+  validateCompanyName = input => {
     let allCompany = this.props.allCompany.map(ele => ele.name);
     let oldData = this.props.allCompany.filter(
       a => a._id === this.state.formdata._id
     )[0];
-    let a = allCompany.filter(a => a.toLowerCase() === input.toLowerCase());
+    let a = allCompany.filter(b => b.toLowerCase() === input.toLowerCase());
     if (input.toLowerCase() === oldData.name.toLowerCase()) {
+      return true;
+    } else if (
+      input.toLowerCase() !== oldData.name.toLowerCase() &&
+      a.length === 0
+    ) {
       return true;
     } else if (
       input.toLowerCase() !== oldData.name.toLowerCase() &&
@@ -78,121 +90,104 @@ class UpdateCompany extends React.Component {
   }
 
   submitHandler() {
+    if (isEmpty(this.state.formdata.name)) {
+      this.setState({ errorName: "This Field is Required!" });
+    }
+    if (isEmpty(this.state.formdata.email)) {
+      this.setState({ errorEmail: "This Field is Required!" });
+    }
+    if (isEmpty(this.state.formdata.phone)) {
+      this.setState({ errorPhone: "This Field is Required!" });
+    }
+    if (isEmpty(this.state.formdata.address)) {
+      this.setState({ errorAddress: "This Field is Required!" });
+    }
+    if (this.validateCompanyName(this.state.formdata.name) === false) {
+      this.setState({
+        errorName:
+          "Company with name" + this.state.formdata.name + "is already exist!"
+      });
+    }
+    if (this.validateEmail(this.state.formdata.email) === false) {
+      this.setState({
+        errorEmail: "Invalid e-mail format!"
+      });
+    }
+    if (this.validatePhone(this.state.formdata.phone) === false) {
+      this.setState({
+        errorPhone: "Invalid phone number format!"
+      });
+    }
     if (
-      this.state.formdata.name === "" ||
-      this.state.formdata.email === "" ||
-      this.state.formdata.phone === "" ||
-      this.state.formdata.address === ""
+      !isEmpty(this.state.formdata.name) &&
+      !isEmpty(this.state.formdata.email) &&
+      !isEmpty(this.state.formdata.phone) &&
+      !isEmpty(this.state.formdata.address) &&
+      this.validateCompanyName(this.state.formdata.name) &&
+      this.validateEmail(this.state.formdata.email) &&
+      this.validatePhone(this.state.formdata.phone)
     ) {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "all forms must be filled!"
-        }
-      });
-    } else if (this.validateFilter(this.state.formdata.name) === false) {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "Company name already exist"
-        }
-      });
-    } else if (this.validateEmail(this.state.formdata.email) === false) {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "invalid email format,type in the email section correctly!"
-        }
-      });
-    } else if (this.validatePhone(this.state.formdata.phone) === false) {
-      this.setState({
-        alertData: {
-          status: true,
-          message:
-            "invalid phone number format,type in the phone number section correctly!"
-        }
-      });
-    } else {
-      this.props.editCompany(this.state);
+      this.props.editCompany(this.state.formdata, this.props.modalStatus);
       this.props.closeModalHandler();
     }
   }
 
   render() {
-    this.state.status === 200 &&
-      this.props.modalStatus(1, "Updated", this.state.formdata.name);
-    //const { classes } = this.props;
     return (
-      <Modal isOpen={this.props.edit} className={this.props.className}>
+      <Modal
+        isOpen={this.props.edit}
+        className={this.props.className}
+        size="lg"
+      >
         <ModalHeader> Edit Company</ModalHeader>
         <ModalBody>
           <form>
-            <TextField
+            <TextFieldGroup
+              label="*Company Code"
+              placeholder="Auto Generated"
               name="code"
-              label="Company Code"
-              // className={classes.textField}
               value={this.state.formdata.code}
               onChange={this.changeHandler}
-              margin="normal"
-              variant="outlined"
-              fullWidth
-              InputProps={{
-                readOnly: true
-              }}
+              disabled={true}
             />
-            <TextField
+            <TextFieldGroup
+              label="*Company Name"
+              placeholder="Type Company Name"
               name="name"
-              label="Company Name"
-              // className={classes.textField}
               value={this.state.formdata.name}
               onChange={this.changeHandler}
-              margin="normal"
-              variant="outlined"
-              fullWidth
+              errors={this.state.errorName}
+              maxLength="50"
             />
-            <TextField
-              id="outlined-email-input"
-              label="Email"
-              // className={classes.textField}
-              type="email"
+            <TextFieldGroup
+              label="*Company E-mail"
+              placeholder="Type Company E-mail"
               name="email"
               value={this.state.formdata.email}
               onChange={this.changeHandler}
-              autoComplete="email"
-              margin="normal"
-              variant="outlined"
-              fullWidth
+              errors={this.state.errorEmail}
             />
-            <TextField
+            <TextFieldGroup
+              label="*Company Phone Number"
+              placeholder="Type Company Phone Number"
               name="phone"
-              label="Phone Number"
-              // className={classes.textField}
               value={this.state.formdata.phone}
               onChange={this.changeHandler}
-              margin="normal"
-              variant="outlined"
-              fullWidth
+              errors={this.state.errorPhone}
             />
-            <TextField
+            <TextAreaGroup
+              label="*Company Address"
+              placeholder="Type Company Address"
               name="address"
-              label="Address"
-              defaultValue="Default Value"
-              rows="4"
               value={this.state.formdata.address}
               onChange={this.changeHandler}
-              // className={classes.textField}
-              margin="normal"
-              variant="outlined"
-              fullWidth
+              errors={this.state.errorAddress}
+              rows="3"
+              maxLength="255"
             />
           </form>
         </ModalBody>
         <ModalFooter>
-          {this.state.alertData.status === true ? (
-            <Alert color="danger">{this.state.alertData.message} </Alert>
-          ) : (
-            ""
-          )}
           <Button
             variant="contained"
             color="primary"

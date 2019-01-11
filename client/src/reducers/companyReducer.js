@@ -22,32 +22,30 @@ export default function(state = initialState, action) {
         statusGET: action.status
       };
     case DELETE_COMPANY:
-      //alert(action.status)
       return {
         ...state,
-        //companies: state.companies.filter(companies => companies._id !== action.payload),
+        companies: state.companies.filter(
+          companies => companies.code !== action.payload
+        ),
         statusDEL: action.status
       };
     case CREATE_COMPANY:
       return {
         ...state,
-        //companies: state.companies.concat(action.payload),
+        companies: [...state.companies, action.payload],
         statusADD: action.status
       };
     case EDIT_COMPANY:
+      const updatedCompany = state.companies.map(company => {
+        if (company.code === action.payload.code) {
+          return { ...company, ...action.payload };
+        }
+        return company;
+      });
       return {
         ...state,
+        companies: updatedCompany,
         statusPUT: action.status
-        // const updatedCompany = state.companies.map(company => {
-        //     if (company.code === action.company_id) {
-        //         return { ...company, ...action.payload }
-        //     }
-        //     return company;
-        // })
-        // return {
-        //     ...state,
-        //     companies: updatedCompany,
-        //     statusPUT: action.status
       };
     default:
       return state;

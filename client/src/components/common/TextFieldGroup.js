@@ -10,12 +10,13 @@ const TextFieldGroup = ({
   type,
   disabled,
   onChange,
-  errors
+  errors,
+  maxLength
 }) => {
   return (
     <div className="form-group row">
       {label && (
-        <label className="col-sm-4 col-form-label text-right">{label}</label>
+        <label className="col-sm-4 col-form-label text-left">{label}</label>
       )}
       <div className="col-sm-8">
         <input
@@ -28,7 +29,7 @@ const TextFieldGroup = ({
           value={value}
           disabled={disabled}
           onChange={onChange}
-          maxLength="50"
+          maxLength={maxLength}
         />
         {errors && <div className="invalid-feedback">{errors}</div>}
       </div>

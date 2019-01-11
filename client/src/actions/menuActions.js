@@ -26,7 +26,7 @@ export const getAllMenu = () => dispatch => {
     });
 };
 
-export const createMenu = newMenu => dispatch => {
+export const createMenu = (newMenu, modalStatus) => dispatch => {
   let option = {
     url: `${HostConfig}/menu`,
     method: "post",
@@ -43,16 +43,21 @@ export const createMenu = newMenu => dispatch => {
         payload: res.data.message,
         status: res.data.code
       });
+      modalStatus(
+        1,
+        `Menu with name ${res.data.message.name} has been created!`
+      );
     })
     .catch(error => {
       dispatch({
         type: ADD_MENU,
         payload: null
       });
+      modalStatus(2, `${error.message}`);
     });
 };
 
-export const putMenu = updatedMenu => dispatch => {
+export const putMenu = (updatedMenu, modalStatus) => dispatch => {
   let option = {
     url: `${HostConfig}/menu/${updatedMenu.code}`,
     method: "put",
@@ -69,18 +74,20 @@ export const putMenu = updatedMenu => dispatch => {
         payload: updatedMenu,
         status: res.data.code
       });
+      modalStatus(1, `Menu with name ${updatedMenu.name} has been updated!`);
     })
     .catch(error => {
       dispatch({
         type: PUT_MENU,
         payload: null
       });
+      modalStatus(2, `${error.message}`);
     });
 };
 
-export const delMenu = menuId => dispatch => {
+export const delMenu = (deletedMenu, modalStatus) => dispatch => {
   let options = {
-    url: `${HostConfig}/menu/${menuId}`,
+    url: `${HostConfig}/menu/${deletedMenu.code}`,
     method: "delete",
     headers: {
       Authorization: localStorage.token
@@ -90,14 +97,21 @@ export const delMenu = menuId => dispatch => {
     .then(res => {
       dispatch({
         type: DEL_MENU,
-        payload: menuId,
+        payload: deletedMenu.code,
         status: res.data.code
       });
+      modalStatus(1, `Menu with name ${deletedMenu.name} has been deleted!`);
     })
-    .catch(error =>
+    .catch(error => {
       dispatch({
         type: DEL_MENU,
         payload: null
-      })
-    );
+      });
+      modalStatus(
+        2,
+        `Failed to delete menu with name ${
+          deletedMenu.name
+        }! The menu was used on other data.`
+      );
+    });
 };

@@ -10,16 +10,20 @@ import {
   TableRow,
   TableFooter,
   TablePagination,
-  IconButton,
-  Button
+  IconButton
 } from "@material-ui/core";
+import {
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  Add,
+  Search,
+  Delete,
+  Create,
+  RemoveRedEye,
+  Refresh
+} from "@material-ui/icons";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
-import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
-import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
-import SearchIcon from "@material-ui/icons/Search";
-import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
-import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 // Master Menu Components
 import EditMenu from "./UpdateMenu";
 import CreateMenu from "./CreateMenu";
@@ -117,20 +121,26 @@ class ListMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      search: "",
+      formSearch: {
+        code: /(?:)/,
+        name: /(?:)/,
+        created_date: /(?:)/,
+        created_by: /(?:)/
+      },
       showCreateMenu: false,
       allMenu: [],
+      menuSearch: [],
       currentMenu: {},
       alertData: {
         status: 0,
         message: "",
         code: ""
       },
-      hasil: [],
       page: 0,
       rowsPerPage: 5,
       startDate: new Date(),
-      created_date: ""
+      created_date: "",
+      search: true
     };
   }
 
@@ -139,9 +149,12 @@ class ListMenu extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
+    let menu = newProps.menuIndexReducer.menuArr.filter(
+      row => row.parent_id !== false
+    );
     this.setState({
-      allMenu: newProps.take.menuArr,
-      hasil: newProps.take.menuArr
+      allMenu: newProps.menuIndexReducer.menuArr,
+      menuSearch: menu
     });
   }
 
@@ -207,23 +220,42 @@ class ListMenu extends React.Component {
     });
   };
 
-  changeHandler = e => {
-    let temp = [];
-    let search = e.target.value;
-    let patt = new RegExp(search.toLowerCase());
+  searchHandler = event => {
+    let tmp = this.state.formSearch;
+    if (event.target.name) {
+      tmp[event.target.name] = new RegExp(event.target.value.toLowerCase());
+    } else {
+      tmp[event.target.name] = event.target.value;
+    }
+    this.setState({
+      formSearch: tmp
+    });
+  };
 
-    this.state.allMenu.forEach(ele => {
+  search = () => {
+    const { code, name, created_date, created_by } = this.state.formSearch;
+    let temp = [];
+    this.state.allMenu.map(ele => {
       if (
-        patt.test(ele.code.toLowerCase()) ||
-        patt.test(ele.name.toLowerCase()) ||
-        patt.test(ele.created_by.toLowerCase()) ||
-        patt.test(ele.created_date)
+        code.test(ele.code.toLowerCase()) &&
+        name.test(ele.name.toLowerCase()) &&
+        created_date.test(ele.created_date.toLowerCase()) &&
+        created_by.test(ele.created_by.toLowerCase())
       ) {
         temp.push(ele);
       }
+      return temp;
     });
     this.setState({
-      hasil: temp
+      menuSearch: temp,
+      search: false
+    });
+  };
+
+  refreshSearch = () => {
+    this.setState({
+      menuSearch: this.state.allMenu,
+      search: true
     });
   };
 
@@ -236,6 +268,7 @@ class ListMenu extends React.Component {
   };
 
   modalStatus = (status, message, code) => {
+    this.props.getAllMenu();
     this.setState({
       alertData: {
         status: status,
@@ -246,7 +279,15 @@ class ListMenu extends React.Component {
       editMenu: false,
       deleteMenu: false
     });
-    // this.getListUnit();
+    setTimeout(() => {
+      this.setState({
+        alertData: {
+          status: 0,
+          message: "",
+          code: ""
+        }
+      });
+    }, 2500);
   };
 
   changeDateFormat = date => {
@@ -273,104 +314,110 @@ class ListMenu extends React.Component {
                   </ol>
                 </nav>
                 {this.state.alertData.status === 1 && (
-                  <Alert color="success">
-                    <b>Data {this.state.alertData.message} ! </b>
-                    Data menu with referential code{" "}
-                    <strong>{this.state.alertData.code} </strong>
-                    has been {this.state.alertData.message} !
-                  </Alert>
+                  <Alert color="success">{this.state.alertData.message}</Alert>
                 )}
                 {this.state.alertData.status === 2 && (
-                  <Alert color="danger">{this.state.alertData.message} </Alert>
+                  <Alert color="danger">{this.state.alertData.message}</Alert>
                 )}
                 <CreateMenu
                   create={this.state.showCreateMenu}
                   closeHandler={this.closeHandler}
                   modalStatus={this.modalStatus}
                   menu={this.state.allMenu}
-                  getlist={this.props.getAllMenu}
                 />
                 <ViewMenu
                   view={this.state.viewMenu}
                   closeModalHandler={this.closeModalHandler}
                   menu={this.state.currentMenu}
-                  getlist={this.props.getAllMenu}
                 />
                 <EditMenu
                   edit={this.state.editMenu}
                   closeModalHandler={this.closeModalHandler}
                   menutest={this.state.currentMenu}
                   modalStatus={this.modalStatus}
-                  getlist={this.props.getAllMenu}
+                  menu={this.state.allMenu}
                 />
                 <DeleteMenu
                   delete={this.state.deleteMenu}
                   menu={this.state.currentMenu}
                   closeModalHandler={this.closeModalHandler}
                   modalStatus={this.modalStatus}
-                  getlist={this.props.getAllMenu}
                 />
-                <div className="form-row">
-                  <div className="col-md-2">
-                    <input
-                      placeholder="Search by Code"
-                      name="code"
-                      className="form-control"
-                      onChange={this.changeHandler}
-                    />
-                  </div>
-                  <div className="col-md-2">
-                    <input
-                      placeholder="Search by Name"
-                      name="name"
-                      className="form-control"
-                      onChange={this.changeHandler}
-                    />
-                  </div>
-                  <div className="col-md-2">
-                    <input
-                      placeholder="Search by Created by"
-                      name="created_by"
-                      className="form-control"
-                      onChange={this.changeHandler}
-                    />
-                  </div>
-                  <div className="col-md-2">
-                    <input
-                      placeholder="Search by Created Date"
-                      type="date"
-                      name="created_date"
-                      className="form-control"
-                      onChange={this.changeHandler}
-                    />
-                  </div>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    onClick={this.showHandler}
-                  >
-                    Add Menu
-                  </Button>
-                </div>
-                <br />
                 <div className="table-responsive">
                   <table className="table table-stripped">
                     <thead>
+                      <tr>
+                        <td nowrap="true">
+                          <input
+                            placeholder="Search by Code"
+                            name="code"
+                            className="form-control"
+                            onChange={this.searchHandler}
+                          />
+                        </td>
+                        <td nowrap="true">
+                          <input
+                            placeholder="Search by Name"
+                            name="name"
+                            className="form-control"
+                            onChange={this.searchHandler}
+                          />
+                        </td>
+                        <td nowrap="true">
+                          <input
+                            placeholder="Search by Created by"
+                            name="created_by"
+                            className="form-control"
+                            onChange={this.searchHandler}
+                          />
+                        </td>
+                        <td nowrap="true">
+                          <input
+                            placeholder="Search by Created Date"
+                            type="date"
+                            name="created_date"
+                            className="form-control"
+                            onChange={this.searchHandler}
+                          />
+                        </td>
+                        <td nowrap="true">
+                          {this.state.search === true && (
+                            <button
+                              className="mr-2 btn btn-primary"
+                              onClick={this.search}
+                            >
+                              <Search />
+                            </button>
+                          )}
+                          {this.state.search === false && (
+                            <button
+                              className="mr-2 btn btn-warning"
+                              onClick={this.refreshSearch}
+                            >
+                              <Refresh />
+                            </button>
+                          )}
+                          <button
+                            className="mr-2 btn btn-primary"
+                            onClick={this.showHandler}
+                          >
+                            <Add />
+                          </button>
+                        </td>
+                      </tr>
                       <tr
                         className="text-center font-weight-bold"
                         style={columnWidth}
                       >
-                        <td>No.</td>
-                        <td>Menu Code</td>
-                        <td>Menu Name</td>
-                        <td>Created By</td>
-                        <td>Created Date</td>
-                        <td>Action</td>
+                        <td nowrap="true">Menu Code</td>
+                        <td nowrap="true">Menu Name</td>
+                        <td nowrap="true">Created By</td>
+                        <td nowrap="true">Created Date</td>
+                        <td nowrap="true">Action</td>
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.hasil
+                      {this.state.menuSearch
                         .slice(
                           this.state.page * this.state.rowsPerPage,
                           this.state.page * this.state.rowsPerPage +
@@ -378,32 +425,27 @@ class ListMenu extends React.Component {
                         )
                         .map((menu, index) => (
                           <tr className="text-center" key={menu._id}>
-                            <td>
-                              {index +
-                                1 +
-                                this.state.page * this.state.rowsPerPage}
-                            </td>
                             <td component="th">{menu.code}</td>
                             <td>{menu.name}</td>
                             <td>{menu.created_by}</td>
                             <td>{this.changeDateFormat(menu.created_date)}</td>
                             <td nowrap>
                               <Link to="#">
-                                <SearchIcon
+                                <RemoveRedEye
                                   onClick={() => {
                                     this.viewModalHandler(menu._id);
                                   }}
                                 />
                               </Link>
                               <Link to="#">
-                                <CreateOutlinedIcon
+                                <Create
                                   onClick={() => {
                                     this.editModalHandler(menu._id);
                                   }}
                                 />
                               </Link>
                               <Link to="#">
-                                <DeleteOutlinedIcon
+                                <Delete
                                   onClick={() => {
                                     this.deleteModalHandler(menu._id);
                                   }}
@@ -416,8 +458,8 @@ class ListMenu extends React.Component {
                     <TableFooter>
                       <TableRow>
                         <TablePagination
-                          colSpan={4}
-                          count={this.state.hasil.length}
+                          colSpan={3}
+                          count={this.state.menuSearch.length}
                           rowsPerPage={this.state.rowsPerPage}
                           page={this.state.page}
                           onChangePage={this.handleChangePage}
@@ -439,12 +481,12 @@ class ListMenu extends React.Component {
 
 ListMenu.propTypes = {
   getAllMenu: PropTypes.func.isRequired,
-  take: PropTypes.object.isRequired,
+  menuIndexReducer: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  take: state.menu
+  menuIndexReducer: state.menu
 });
 
 export default connect(

@@ -1,8 +1,9 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
-import { Alert } from "reactstrap";
 import PropTypes from "prop-types";
-import TextField from "@material-ui/core/TextField";
+import TextFieldGroup from "../../common/TextFieldGroup";
+import TextAreaGroup from "../../common/TextAreaGroup";
+import isEmpty from "../../../validation/isEmpty";
 
 import { connect } from "react-redux";
 import { createCompany } from "../../../actions/companyAction";
@@ -29,8 +30,6 @@ class CreateCompany extends React.Component {
     this.changeHandler = this.changeHandler.bind(this);
   }
 
-  componentDidMount() {}
-
   componentWillReceiveProps(newProps) {
     this.setState({
       status: newProps.companyReducer.statusADD,
@@ -40,23 +39,31 @@ class CreateCompany extends React.Component {
 
   changeHandler(e) {
     this.setState({
-      [e.target.name]: e.target.value,
-      alertData: {
-        status: false,
-        message: ""
-      }
+      [e.target.name]: e.target.value
     });
+    if (e.target.name === "name") {
+      this.setState({ errorName: "" });
+    }
+    if (e.target.name === "email") {
+      this.setState({ errorEmail: "" });
+    }
+    if (e.target.name === "phone") {
+      this.setState({ errorPhone: "" });
+    }
+    if (e.target.name === "address") {
+      this.setState({ errorAddress: "" });
+    }
   }
 
-  validateFilter = companyname => {
+  validateCompanyName = companyname => {
     let allCompany = this.props.allCompany.map(ele => ele.name);
     let a = allCompany.filter(
       e => e.toLowerCase() === companyname.toLowerCase()
     );
     if (a.length === 0) {
-      return false;
-    } else {
       return true;
+    } else {
+      return false;
     }
   };
 
@@ -73,43 +80,42 @@ class CreateCompany extends React.Component {
   }
 
   submitHandler() {
+    if (isEmpty(this.state.name)) {
+      this.setState({ errorName: "This Field is Required!" });
+    }
+    if (isEmpty(this.state.email)) {
+      this.setState({ errorEmail: "This Field is Required!" });
+    }
+    if (isEmpty(this.state.phone)) {
+      this.setState({ errorPhone: "This Field is Required!" });
+    }
+    if (isEmpty(this.state.address)) {
+      this.setState({ errorAddress: "This Field is Required!" });
+    }
+    if (this.validateCompanyName(this.state.name) === false) {
+      this.setState({
+        errorName: "Company with name " + this.state.name + " is already exist!"
+      });
+    }
+    if (this.validateEmail(this.state.email) === false) {
+      this.setState({
+        errorEmail: "Invalid e-mail format!"
+      });
+    }
+    if (this.validatePhone(this.state.phone) === false) {
+      this.setState({
+        errorPhone: "Invalid phone number format!"
+      });
+    }
     if (
-      this.state.name === "" ||
-      this.state.email === "" ||
-      this.state.phone === "" ||
-      this.state.address === "" ||
-      this.state.provinsi === "" ||
-      this.state.kota === ""
+      !isEmpty(this.state.name) &&
+      !isEmpty(this.state.email) &&
+      !isEmpty(this.state.phone) &&
+      !isEmpty(this.state.address) &&
+      this.validateCompanyName(this.state.name) &&
+      this.validateEmail(this.state.email) &&
+      this.validatePhone(this.state.phone)
     ) {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "all forms must be filled!"
-        }
-      });
-    } else if (this.validateFilter(this.state.name) === true) {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "Company with name " + this.state.name + " is already exist"
-        }
-      });
-    } else if (this.validateEmail(this.state.email) === false) {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "invalid email format,type in the email section correctly!"
-        }
-      });
-    } else if (this.validatePhone(this.state.phone) === false) {
-      this.setState({
-        alertData: {
-          status: true,
-          message:
-            "invalid phone number format,type in the phone number section correctly!"
-        }
-      });
-    } else {
       const formdata = {
         code: this.state.code,
         name: this.state.name,
@@ -118,85 +124,91 @@ class CreateCompany extends React.Component {
         phone: this.state.phone,
         created_by: this.state.userdata.m_employee_id
       };
-      this.props.createCompany(formdata);
+      this.props.createCompany(formdata, this.props.modalStatus);
       this.props.closeHandler();
+      setTimeout(() => {
+        this.setState({
+          code: "",
+          name: "",
+          email: "",
+          address: "",
+          phone: ""
+        });
+      }, 3000);
     }
   }
 
-  render() {
-    this.state.status === 200 &&
-      this.props.modalStatus(1, "Created", this.state.name);
+  closeHandler = () => {
+    this.setState({
+      code: "",
+      name: "",
+      email: "",
+      address: "",
+      phone: "",
+      errorName: "",
+      errorEmail: "",
+      errorPhone: "",
+      errorAddress: ""
+    });
+    this.props.closeHandler();
+  };
 
+  render() {
     return (
-      <Modal isOpen={this.props.create} className={this.props.className}>
+      <Modal
+        isOpen={this.props.create}
+        className={this.props.className}
+        //size="lg"
+      >
         <ModalHeader> Add Company</ModalHeader>
         <ModalBody>
-          {/* <form className={classes.container}> */}
           <form>
-            <TextField
-              //   className={classes.textField}
-              id="standard-read-only-input"
+            <TextFieldGroup
+              label="*Company Code"
+              placeholder="Auto Generated"
               name="code"
-              label=""
-              defaultValue="Code Company Auto Generated"
-              margin="normal"
-              variant="outlined"
-              fullWidth
-              InputProps={{
-                readOnly: true
-              }}
+              value={this.state.code}
+              onChange={this.changeHandler}
+              disabled={true}
             />
-            <TextField
-              //   className={classes.textField}
+            <TextFieldGroup
+              label="*Company Name"
+              placeholder="Type Company Name"
               name="name"
-              label="*Type Company Name"
               value={this.state.name}
               onChange={this.changeHandler}
-              margin="normal"
-              variant="outlined"
-              fullWidth
+              errors={this.state.errorName}
+              maxLength="50"
             />
-            <TextField
-              //   className={classes.textField}
-              id="outlined-email-input"
-              label="*Type Company Email"
-              type="email"
+            <TextFieldGroup
+              label="*Company E-mail"
+              placeholder="Type Company E-mail"
               name="email"
               value={this.state.email}
               onChange={this.changeHandler}
-              autoComplete="email"
-              margin="normal"
-              variant="outlined"
-              fullWidth
+              errors={this.state.errorEmail}
             />
-            <TextField
-              //   className={classes.textField}
+            <TextFieldGroup
+              label="*Company Phone Number"
+              placeholder="Type Company Phone Number"
               name="phone"
-              label="*Type Company Phone Number"
               value={this.state.phone}
               onChange={this.changeHandler}
-              margin="normal"
-              variant="outlined"
-              fullWidth
+              errors={this.state.errorPhone}
             />
-            <TextField
-              //   className={classes.textField}
+            <TextAreaGroup
+              label="*Company Address"
+              placeholder="Type Company Address"
               name="address"
-              label="*Type Company Address"
               value={this.state.address}
               onChange={this.changeHandler}
-              margin="normal"
-              variant="outlined"
-              fullWidth
+              errors={this.state.errorAddress}
+              rows="3"
+              maxLength="255"
             />
           </form>
         </ModalBody>
         <ModalFooter>
-          {this.state.alertData.status === true ? (
-            <Alert color="danger">{this.state.alertData.message} </Alert>
-          ) : (
-            ""
-          )}
           <Button
             variant="contained"
             color="primary"
@@ -204,7 +216,7 @@ class CreateCompany extends React.Component {
           >
             Save
           </Button>
-          <Button variant="contained" onClick={this.props.closeHandler}>
+          <Button variant="contained" onClick={this.closeHandler}>
             Cancel
           </Button>
         </ModalFooter>

@@ -6,8 +6,9 @@ import {
   FormGroup,
   Label,
   Input,
-  Button,
-  FormFeedback
+  Button
+  // FormFeedback,
+  // Form
 } from "reactstrap";
 import { Alert } from "reactstrap";
 import PropTypes from "prop-types";
@@ -15,7 +16,10 @@ import { connect } from "react-redux";
 import { createTsouvenir } from "../../../actions/tsouvenirAction";
 import { getAllSouvenir } from "../../../actions/souvenirAction";
 import { getAllEmployee } from "../../../actions/tsouvenirAction";
-import Select from "react-select";
+import TextFieldGroup from "../../common/TextFieldGroup";
+import TextAreaGroup from "../../common/TextAreaGroup";
+import SelectList from "../../common/SelectListGroup";
+import isEmpty from "../../../validation/isEmpty";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import moment from "moment";
@@ -38,8 +42,8 @@ class CreateTsouvenir extends React.Component {
       selectedOption2: "",
       employee: [],
       souvenirs: [],
-      invalid: false,
-      userdata: {}
+      userdata: {},
+      invalidReceivedDate: false
     };
 
     this.submitHandler = this.submitHandler.bind(this);
@@ -66,19 +70,21 @@ class CreateTsouvenir extends React.Component {
       moment(e.target.value) < moment().subtract(1, "day")
     ) {
       this.setState({
-        invalid: true
+        invalidReceivedDate: true
       });
     } else {
       this.setState({
-        invalid: false
+        invalidReceivedDate: false
       });
     }
+    if (e.target.name === "recieved_by") {
+      this.setState({ errorReceivedBy: "" });
+    }
+    if (e.target.name === "received_date") {
+      this.setState({ errorReceivedDate: "" });
+    }
     this.setState({
-      [e.target.name]: e.target.value,
-      alertData: {
-        status: false,
-        message: ""
-      }
+      [e.target.name]: e.target.value
     });
   }
 
@@ -169,20 +175,10 @@ class CreateTsouvenir extends React.Component {
       };
     });
 
-    if (formdata.received_by === "") {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "Received By form must be filled!"
-        }
-      });
-    } else if (formdata.received_date === "") {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "Received date form must be filled!"
-        }
-      });
+    if (isEmpty(this.state.received_by)) {
+      this.setState({ errorReceivedBy: "This Field is Required" });
+    } else if (isEmpty(this.state.received_date)) {
+      this.setState({ errorReceivedBy: "This Field is Required" });
     } else if (moment(this.state.received_date) < moment().subtract(1, "day")) {
       alert("Pilih Tnaggal Baru");
     } else {
@@ -260,17 +256,14 @@ class CreateTsouvenir extends React.Component {
   }
 
   render() {
-    this.state.status === 200 &&
-      this.props.modalStatus(1, "Saved", this.state.code);
-
     const options1 = [];
+    options1.push({ label: "*Select Received By", value: "" });
     this.state.employee.forEach(row => {
       options1.push({
         value: row.employee_number,
         label: row.first_name + " " + row.last_name
       });
     });
-
     const options2 = [];
     this.state.souvenirs.forEach(row => {
       options2.push({
@@ -278,12 +271,62 @@ class CreateTsouvenir extends React.Component {
         label: row.name
       });
     });
-
     return (
       <Modal isOpen={this.props.create} className={this.props.className}>
         <ModalHeader> Add Souvenir</ModalHeader>
         <ModalBody>
-          <FormGroup>
+          <form>
+            <TextFieldGroup
+              label="*Transaction Code"
+              placeholder="Auto Generated"
+              name="code"
+              disabled={true}
+            />
+            <SelectList
+              label="*Received By"
+              placeholder="*Select Received By"
+              name="received_by"
+              value={this.state.selectedOption}
+              onChange={this.handleChange1}
+              options={options1}
+              errors={this.state.errorReceivedBy}
+            />
+            <TextFieldGroup
+              label="*Received Date"
+              type="date"
+              placeholder="Type Received Date"
+              name="received_date"
+              value={this.state.received_date}
+              onChange={this.changeHandler}
+              errors={this.state.errorReceivedDate}
+            />
+            {/* <Form horizontal>
+              <FormGroup controlId="formHorizontalReceivedDate">
+                <Col sm={4}>Received date</Col>
+                <Col sm={8}>
+                  <Input
+                    type="date"
+                    name="received_date"
+                    placeholder=""
+                    value={this.state.received_date}
+                    onChange={this.changeHandler}
+                    invalid={this.state.invalidReceivedDate}
+                  />
+                  <FormFeedback invalid={this.state.invalidReceivedDate}>
+                    Received date must be today or onwards.
+                  </FormFeedback>
+                </Col>
+              </FormGroup>
+            </Form> */}
+            <TextAreaGroup
+              label="Notes"
+              placeholder="Type Notes"
+              name="note"
+              value={this.state.note}
+              onChange={this.changeHandler}
+            />
+          </form>
+          {/*<FormGroup>
             <Label for="">Code</Label>
             <Input
               type="text"
@@ -323,7 +366,7 @@ class CreateTsouvenir extends React.Component {
               value={this.state.note}
               onChange={this.changeHandler}
             />
-          </FormGroup>
+          </FormGroup> */}
           <Button
             variant="contained"
             color="primary"

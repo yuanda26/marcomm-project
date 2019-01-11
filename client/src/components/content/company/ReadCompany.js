@@ -3,8 +3,6 @@ import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-//import axios from "axios";
-//import apiconfig from "../../../configs/api.config.json";
 
 const styles = theme => ({
   root: {
@@ -21,7 +19,7 @@ class ViewCompany extends React.Component {
     const { classes } = this.props;
     return (
       <Modal isOpen={this.props.view} className={this.props.className}>
-        <ModalHeader> View Unit</ModalHeader>
+        <ModalHeader> View Company Info</ModalHeader>
         <ModalBody>
           <div>
             <h3>{this.props.company.name} </h3>
@@ -38,10 +36,6 @@ class ViewCompany extends React.Component {
                 Phone Number
                 <br />
                 Company Address
-                {/* <br />
-                Province
-                <br />
-                City */}
               </Grid>
               <Grid item xs={6}>
                 {this.props.company.code}
@@ -53,10 +47,6 @@ class ViewCompany extends React.Component {
                 {this.props.company.phone}
                 <br />
                 {this.props.company.address}
-                {/* <br />
-                {this.props.company.province}
-                <br />
-                {this.props.company.city} */}
               </Grid>
             </Grid>
           </div>

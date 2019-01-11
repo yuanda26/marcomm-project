@@ -31,11 +31,9 @@ const menuData = {
           }
         },
         {
-          $match: {
-            $and: [{ is_delete: false }, { parent_id: { $ne: false } }]
-          }
+          $match: { is_delete: false }
         },
-        { $sort: { code: 1 } }
+        { $sort: { code: -1 } }
       ])
       .toArray((err, docs) => {
         if (docs) {
