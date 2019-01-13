@@ -390,14 +390,13 @@ class UnitList extends Component {
               <UnitAdd
                 userdata={user}
                 create={this.state.addUnit}
-                alertData={this.state.alertData}
                 closeModal={this.closeModalHandler}
                 modalStatus={this.modalStatus}
               />
               <UnitEdit
+                userdata={user}
                 edit={this.state.editUnit}
                 unit={this.state.currentData}
-                alertData={this.state.alertData}
                 closeModal={this.closeModalHandler}
                 modalStatus={this.modalStatus}
               />

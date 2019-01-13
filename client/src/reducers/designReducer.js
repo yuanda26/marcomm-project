@@ -15,6 +15,7 @@ import {
   GET_EMPLOYEE,
   APPROVE_DESIGN,
   REJECT_DESIGN,
+  CLEAR_DESIGN_STATUS,
   ERRORS
 } from "../actions/types";
 
@@ -152,6 +153,15 @@ export default function(state = initialState, action) {
       return {
         ...state,
         assign: action.payload
+      };
+
+    case CLEAR_DESIGN_STATUS:
+      return {
+        ...state,
+        designStatus: 0,
+        designMessage: "",
+        itemsStatus: 0,
+        itemsMessage: ""
       };
 
     case ERRORS:

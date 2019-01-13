@@ -16,6 +16,7 @@ import {
   UPDATE_DESIGN_ITEM,
   APPROVE_DESIGN,
   REJECT_DESIGN,
+  CLEAR_DESIGN_STATUS,
   ERRORS
 } from "./types";
 import HostConfig from "../config/Host_Config";
@@ -239,12 +240,13 @@ export const createDesignItem = designItemData => dispatch => {
     },
     data: { designItemData }
   })
-    .then(res =>
+    .then(res => {
       dispatch({
         type: ADD_DESIGN_ITEM,
         payload: res.data.message
-      })
-    )
+      });
+      window.location.href = "/design";
+    })
     .catch(err =>
       dispatch({
         type: ERRORS,
@@ -400,4 +402,11 @@ export const rejectDesign = (code, formdata) => dispatch => {
         payload: err.response.data
       });
     });
+};
+
+// Clear Design Status & Messages
+export const clearStatusMessage = () => dispatch => {
+  dispatch({
+    type: CLEAR_DESIGN_STATUS
+  });
 };

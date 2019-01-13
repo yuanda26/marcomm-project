@@ -54,11 +54,11 @@ class SouvenirList extends Component {
     this.props.getAssignToName();
   }
 
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(props, state) {
     this.setState({
-      units: newProps.souvenir.units,
-      souvenirs: newProps.souvenir.souvenirs,
-      employee: newProps.design.assign
+      units: props.souvenir.units,
+      souvenirs: props.souvenir.souvenirs,
+      employee: props.design.assign
     });
   }
 
@@ -104,9 +104,12 @@ class SouvenirList extends Component {
 
   // Function to Show Delete Modal Confirmation
   onDeleteModal = code => {
-    const singleSouvenir = {
-      code: code
-    };
+    let singleSouvenir = {};
+    this.state.souvenirs.forEach(souvenir => {
+      if (code === souvenir.code) {
+        singleSouvenir = souvenir;
+      }
+    });
 
     this.setState({
       currentSouvenir: singleSouvenir,

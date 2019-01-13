@@ -1,67 +1,51 @@
-import React from "react";
-import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
-import { withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Alert } from "reactstrap";
 import { connect } from "react-redux";
 import { createUnit } from "../../../actions/unitAction";
+// Form Components
+import { Modal, ModalBody, ModalHeader } from "reactstrap";
+import TextFieldGroup from "../../common/TextFieldGroup";
+import TextAreaGroup from "../../common/TextAreaGroup";
+// Form Validation
+import isEmpty from "../../../validation/isEmpty";
 
-const styles = theme => ({
-  root: {
-    flexGrow: 1
-  },
-  paper: {
-    padding: theme.spacing.unit * 2,
-    textAlign: "center",
-    color: theme.palette.text.secondary
-  }
-});
-
-class CreateUnit extends React.Component {
+class CreateUnit extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       code: "",
       name: "",
       description: "",
-      is_delete: false,
-      userdata: {},
-      alertdata: {
-        stat: "",
-        message: ""
-      },
+      errorName: "",
       units: []
     };
   }
 
-  componentWillReceiveProps(props, state) {
-    this.setState({
-      units: props.units.unitData,
-      userdata: props.userdata
-    });
+  UNSAFE_componentWillReceiveProps(props, state) {
+    this.setState({ units: props.units.unitData });
   }
 
   changeHandler = e => {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
+    this.setState({ [e.target.name]: e.target.value });
   };
 
-  submitHandler = () => {
-    if (this.state.name === "") {
-      this.setState({
-        alertdata: {
-          stat: 2,
-          message: "Field Name tidak boleh kosong"
-        }
-      });
-    } else {
+  submitHandler = e => {
+    e.preventDefault();
+
+    // Form Validation
+    if (isEmpty(this.state.name)) {
+      this.setState({ errorName: "This Field is Required!" });
+    }
+
+    // Final Validation
+    if (!isEmpty(this.state.name)) {
       const formdata = {
         code: this.state.code,
         name: this.state.name,
         description: this.state.description,
-        updated_by: this.state.userdata.m_employee_id
+        created_by: this.props.userdata.m_employee_id,
+        is_delete: false
       };
       // Save Unit to Database
       this.props.createUnit(formdata);
@@ -69,76 +53,61 @@ class CreateUnit extends React.Component {
     }
   };
 
-  render() {
-    const { stat, message } = this.state.alertdata;
-    const { classes } = this.props;
+  closeHandler = () => {
+    this.setState({
+      code: "",
+      name: "",
+      description: "",
+      errorName: ""
+    });
+    this.props.closeModal();
+  };
 
+  render() {
     return (
       <Modal isOpen={this.props.create} className={this.props.className}>
         <ModalHeader>Add Unit</ModalHeader>
         <ModalBody>
-          {stat === 2 && <Alert color="danger">{message}</Alert>}
-          <div className={classes.root}>
-            <form className="form-inline">
-              <div className="input-group mb-3 input-group-sm">
-                <Grid item xs={6}>
-                  <label htmlFor="text">Unit Code</label>
-                </Grid>
-                <Grid item xs={6}>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Auto Generated"
-                    readOnly
-                    name="code"
-                    value={this.state.code}
-                    onChange={this.changeHandler}
-                  />
-                </Grid>
-              </div>
-              <div className="input-group mb-3 input-group-sm">
-                <Grid item xs={6}>
-                  <label htmlFor="text">Unit Name</label>
-                </Grid>
-                <Grid item xs={6}>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Type Unit Name"
-                    name="name"
-                    value={this.state.name}
-                    onChange={this.changeHandler}
-                    required
-                  />
-                </Grid>
-              </div>
-              <div className="input-group mb-3 input-group-sm">
-                <Grid item xs={6}>
-                  <label htmlFor="text">Description</label>
-                </Grid>
-                <Grid item xs={6}>
-                  <input
-                    type="description  "
-                    className="form-control"
-                    placeholder="Type Description"
-                    name="description"
-                    value={this.state.description}
-                    onChange={this.changeHandler}
-                    required
-                  />
-                </Grid>
-              </div>
-            </form>
-          </div>
+          <form onSubmit={this.submitHandler}>
+            <TextFieldGroup
+              label="*Unit Code"
+              placeholder="Auto Generated"
+              name="code"
+              value={this.state.code}
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="*Unit Name"
+              placeholder="Type Unit Name"
+              name="name"
+              value={this.state.name}
+              onChange={this.changeHandler}
+              errors={this.state.errorName}
+            />
+            <TextAreaGroup
+              label="Description"
+              placeholder="Type Description"
+              rows="3"
+              name="description"
+              value={this.state.description}
+              onChange={this.changeHandler}
+            />
+            <div className="form-group mt-4 text-right">
+              <input
+                type="submit"
+                className="btn btn-primary mr-1"
+                value="Submit"
+              />
+              <button
+                type="button"
+                className="btn btn-warning"
+                onClick={this.closeHandler}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </ModalBody>
-        <ModalFooter>
-          <Button color="primary" onClick={this.submitHandler}>
-            Save
-          </Button>
-          <Button color="warning" onClick={this.props.closeModal}>
-            Cancel
-          </Button>
-        </ModalFooter>
       </Modal>
     );
   }
@@ -146,9 +115,7 @@ class CreateUnit extends React.Component {
 
 CreateUnit.propTypes = {
   create: PropTypes.bool.isRequired,
-  classes: PropTypes.object.isRequired,
   userdata: PropTypes.object.isRequired,
-  alertData: PropTypes.object.isRequired,
   closeModal: PropTypes.func.isRequired,
   modalStatus: PropTypes.func.isRequired
 };
@@ -157,9 +124,7 @@ const mapStateToProps = state => ({
   units: state.units
 });
 
-const style = withStyles(styles)(CreateUnit);
-const konek = connect(
+export default connect(
   mapStateToProps,
   { createUnit }
-);
-export default konek(style);
+)(CreateUnit);
