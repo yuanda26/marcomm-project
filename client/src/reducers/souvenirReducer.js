@@ -25,16 +25,19 @@ export default function(state = initialState, action) {
         ...state,
         units: action.payload
       };
+
     case GET_SOUVENIRS:
       return {
         ...state,
         souvenirs: action.payload
       };
+
     case GET_SOUVENIR:
       return {
         ...state,
         souvenir: action.payload
       };
+
     case ADD_SOUVENIR:
       let addSouvenir;
       // Return All Souvenir Data
@@ -45,7 +48,7 @@ export default function(state = initialState, action) {
       }
       // Return Souvenir Data That Have Been Filtered
       if (action.code === 200) {
-        addSouvenir = [...state.souvenirs, action.payload];
+        addSouvenir = [action.payload, ...state.souvenirs];
         status = 1;
         message = `Data Saved! New Souvenir Has Been Added with Code ${
           action.payload.code
@@ -57,6 +60,7 @@ export default function(state = initialState, action) {
         status,
         message
       };
+
     case UPDATE_SOUVENIR:
       let updatedSouvenir;
       // Return All Souvenir Data Without Changing Any Data

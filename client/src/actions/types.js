@@ -20,6 +20,7 @@ export const DELETE_ITEM = "DELETE_ITEM";
 export const ADD_FILE = "ADD_FILE";
 export const UPDATE_FILE = "UPDATE_FILE";
 export const DELETE_FILE = "DELETE_FILE";
+export const CLEAR_DESIGN_STATUS = "CLEAR_DESIGN_STATUS";
 
 // Approve & Close Transaction Design
 export const APPROVE_DESIGN = "APPROVE_DESIGN";

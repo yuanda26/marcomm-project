@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 // Form Components
-import TextField from "../../common/TextFieldGroup";
+import TextFieldGroup from "../../common/TextFieldGroup";
+import TextAreaGroup from "../../common/TextAreaGroup";
 
 class ViewSouvenir extends Component {
   // Function to Get Units Name
@@ -25,30 +26,32 @@ class ViewSouvenir extends Component {
     return (
       <Modal isOpen={this.props.view}>
         <ModalHeader>
-          <div className="lead">
+          <div className="lead font-weight-bold text-capitalize">
             View Souvenir -{" "}
             {`${this.props.souvenir.name} (${this.props.souvenir.code})`}
           </div>
         </ModalHeader>
         <ModalBody>
           <form>
-            <TextField
+            <TextFieldGroup
               label="Souvenir Code"
               value={this.props.souvenir.code}
               disabled={true}
             />
-            <TextField
+            <TextFieldGroup
               label="Souvenir Name"
               value={this.props.souvenir.name}
               disabled={true}
             />
-            <TextField
+            <TextFieldGroup
               label="Unit Name"
               value={this.getUnits(this.props.souvenir.m_unit_id)}
               disabled={true}
             />
-            <TextField
+            <TextAreaGroup
               label="Description"
+              placeholder="Description"
+              rows="3"
               value={this.props.souvenir.description}
               disabled={true}
             />

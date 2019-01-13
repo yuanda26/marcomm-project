@@ -6,6 +6,7 @@ import { updateSouvenir } from "../../../actions/souvenirAction";
 // Form Components
 import TextField from "../../common/TextFieldGroup";
 import SelectList from "../../common/SelectListGroup";
+import TextAreaGroup from "../../common/TextAreaGroup";
 // Form Validation
 import isEmpty from "../../../validation/isEmpty";
 
@@ -102,7 +103,7 @@ class UpdateSouvenir extends Component {
     return (
       <Modal isOpen={this.props.update}>
         <ModalHeader>
-          <div className="lead">
+          <div className="lead font-weight-bold text-capitalize">
             Edit Souvenir - {`${this.state.title} (${this.state.code})`}
           </div>
         </ModalHeader>
@@ -132,9 +133,10 @@ class UpdateSouvenir extends Component {
               options={options}
               errors={this.state.errorUnit}
             />
-            <TextField
-              placeholder="Type Description"
+            <TextAreaGroup
               label="*Description"
+              placeholder="Type Description"
+              rows="3"
               name="description"
               value={this.state.description}
               onChange={this.onChange}
@@ -142,13 +144,13 @@ class UpdateSouvenir extends Component {
             <div className="form-group text-right">
               <input
                 type="submit"
-                className="btn btn-primary mr-2"
+                className="btn btn-primary mr-1"
                 value="Update"
                 onClick={this.onSubmit}
               />
               <button
                 type="button"
-                className="btn btn-default"
+                className="btn btn-warning"
                 onClick={this.props.closeModal}
               >
                 Cancel

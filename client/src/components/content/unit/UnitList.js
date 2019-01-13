@@ -1,9 +1,16 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { Alert } from "reactstrap";
-import { Search, CreateOutlined, DeleteOutlined } from "@material-ui/icons";
+import {
+  Search,
+  Create,
+  Delete,
+  RemoveRedEye,
+  Refresh,
+  Add
+} from "@material-ui/icons";
 import DatePicker from "react-datepicker";
 // Redux actions
 import { getUnits } from "../../../actions/unitAction";
@@ -230,30 +237,29 @@ class UnitList extends Component {
     let unitLabel;
 
     if (unitData.length > 0) {
-      unitList = hasil.map((row, index) => (
+      unitList = hasil.map(row => (
         <tr key={row._id} className="text-center">
-          <td>{index + 1}</td>
           <td>{row.code}</td>
           <td>{row.name}</td>
           <td>{row.created_date}</td>
           <td>{this.rename(row.created_by)}</td>
           <td nowrap="true">
             <Link to="#">
-              <Search
+              <RemoveRedEye
                 onClick={() => {
                   this.viewModalHandler(row.code);
                 }}
               />
             </Link>
             <Link to="#">
-              <CreateOutlined
+              <Create
                 onClick={() => {
                   this.editModalHandler(row.code);
                 }}
               />
             </Link>
             <Link to="#">
-              <DeleteOutlined
+              <Delete
                 onClick={() => {
                   this.deleteModalHandler(row.code);
                 }}
@@ -264,19 +270,98 @@ class UnitList extends Component {
       ));
 
       unitLabel = (
-        <tr className="text-center font-weight-bold">
-          <td>No</td>
-          <td>Unit Code</td>
-          <td>Unit Name</td>
-          <td>Created Date</td>
-          <td>Created By</td>
-          <td>Action</td>
-        </tr>
+        <Fragment>
+          {/* Search Form */}
+          <tr>
+            <td>
+              <select
+                name="code"
+                className="form-control "
+                onChange={this.changeHandler}
+              >
+                <option key="empty" value="">
+                  -Select Unit Code-
+                </option>
+                {unit.map(row => {
+                  return (
+                    <option key={row.code} value={row.code}>
+                      {row.code}
+                    </option>
+                  );
+                })}
+              </select>
+            </td>
+            <td>
+              <select
+                name="name"
+                className="form-control "
+                onChange={this.changeHandler}
+              >
+                <option key="empty" value="">
+                  -Select Unit Name-
+                </option>
+                {unit.map(row => {
+                  return (
+                    <option key={row.code} value={row.name}>
+                      {row.name}
+                    </option>
+                  );
+                })}
+              </select>
+            </td>
+            <td>
+              <DatePicker
+                className="form-control"
+                placeholderText="Created Date"
+                name="created_date"
+                selected={this.state.created_date}
+                onChange={this.handleChangeCreatedDate}
+              />
+            </td>
+            <td>
+              <input
+                placeholder="Created By"
+                name="created_by"
+                className="form-control"
+                onChange={this.changeHandler}
+              />
+            </td>
+            <td nowrap="true">
+              <div className="form-group">
+                {this.state.search === true ? (
+                  <button className="btn btn-warning" onClick={this.onRestore}>
+                    <Refresh />
+                  </button>
+                ) : (
+                  <button type="submit" className="btn btn-primary">
+                    <Search />
+                  </button>
+                )}
+                <Link to="#">
+                  <button
+                    onClick={this.addModalHandler}
+                    className="btn btn-primary ml-1"
+                    type="button"
+                  >
+                    <Add />
+                  </button>
+                </Link>
+              </div>
+            </td>
+          </tr>
+          <tr className="text-center font-weight-bold">
+            <td>Unit Code</td>
+            <td>Unit Name</td>
+            <td>Created Date</td>
+            <td>Created By</td>
+            <td>Action</td>
+          </tr>
+        </Fragment>
       );
     } else {
       unitList = (
         <tr className="text-center">
-          <td>Oops, Unit Not Found!</td>
+          <td>Oops, Unit Data Not Found!</td>
         </tr>
       );
     }
@@ -305,14 +390,13 @@ class UnitList extends Component {
               <UnitAdd
                 userdata={user}
                 create={this.state.addUnit}
-                alertData={this.state.alertData}
                 closeModal={this.closeModalHandler}
                 modalStatus={this.modalStatus}
               />
               <UnitEdit
+                userdata={user}
                 edit={this.state.editUnit}
                 unit={this.state.currentData}
-                alertData={this.state.alertData}
                 closeModal={this.closeModalHandler}
                 modalStatus={this.modalStatus}
               />
@@ -336,101 +420,6 @@ class UnitList extends Component {
                       <li className="breadcrumb-item ">Master Unit</li>
                     </ol>
                   </nav>
-                  <div className="text-left mt-3">
-                    <Link to="#">
-                      <button
-                        onClick={this.addModalHandler}
-                        className="btn btn-primary ml-2 col-md-auto"
-                        type="button"
-                      >
-                        Add Unit
-                      </button>
-                    </Link>
-                  </div>
-                  {/* Search Form */}
-                  <div className="mt-2">
-                    <table>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <form onSubmit={this.SearchHandler}>
-                              <td>
-                                <select
-                                  name="code"
-                                  className="form-control "
-                                  onChange={this.changeHandler}
-                                >
-                                  <option key="empty" value="">
-                                    -Select Unit Code-
-                                  </option>
-                                  {unit.map(row => {
-                                    return (
-                                      <option key={row.code} value={row.code}>
-                                        {row.code}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-                              </td>
-                              <td>
-                                <select
-                                  name="name"
-                                  className="form-control "
-                                  onChange={this.changeHandler}
-                                >
-                                  <option key="empty" value="">
-                                    -Select Unit Name-
-                                  </option>
-                                  {unit.map(row => {
-                                    return (
-                                      <option key={row.code} value={row.name}>
-                                        {row.name}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-                              </td>
-                              <td>
-                                <DatePicker
-                                  className="form-control"
-                                  placeholderText="Created"
-                                  name="created_date"
-                                  selected={this.state.created_date}
-                                  onChange={this.handleChangeCreatedDate}
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  placeholder="Created By"
-                                  name="created_by"
-                                  className="form-control"
-                                  onChange={this.changeHandler}
-                                />
-                              </td>
-                              <td>
-                                <div className="form-group">
-                                  {this.state.search === true ? (
-                                    <button
-                                      className="btn btn-block btn-default"
-                                      onClick={this.onRestore}
-                                    >
-                                      Refresh!
-                                    </button>
-                                  ) : (
-                                    <input
-                                      type="submit"
-                                      value="Search"
-                                      className="btn btn-block btn-warning"
-                                    />
-                                  )}
-                                </div>
-                              </td>
-                            </form>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
                   {status === 1 && (
                     <Alert color="success">
                       <b>{message1}</b>
@@ -447,11 +436,14 @@ class UnitList extends Component {
                       {message3}
                     </Alert>
                   )}
+
                   <div className="table-responsive mt-4">
-                    <table className="table table-stripped ">
-                      <thead>{unitLabel}</thead>
-                      <tbody>{unitList}</tbody>
-                    </table>
+                    <form onSubmit={this.SearchHandler}>
+                      <table className="table table-stripped ">
+                        <thead>{unitLabel}</thead>
+                        <tbody>{unitList}</tbody>
+                      </table>
+                    </form>
                   </div>
                 </div>
               </div>

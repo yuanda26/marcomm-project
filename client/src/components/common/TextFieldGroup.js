@@ -45,12 +45,14 @@ TextFieldGroup.propTypes = {
   type: PropTypes.string,
   disabled: PropTypes.bool,
   onChange: PropTypes.func,
+  maxLength: PropTypes.string,
   errors: PropTypes.string
 };
 
 TextFieldGroup.defaultProps = {
   type: "text",
-  disabled: false
+  disabled: false,
+  maxLength: "50"
 };
 
 export default TextFieldGroup;

@@ -32,6 +32,7 @@ const TextField = ({
         disabled={disabled}
         readOnly={readOnly}
         onChange={onChange}
+        maxLength={maxLength}
       />
       {errors && <div className="invalid-feedback">{errors}</div>}
     </div>
@@ -49,12 +50,14 @@ TextField.propTypes = {
   disabled: PropTypes.bool,
   readOnly: PropTypes.bool,
   onChange: PropTypes.func,
+  maxLength: PropTypes.string,
   errors: PropTypes.string
 };
 
 TextField.defaultProps = {
   type: "text",
-  disabled: false
+  disabled: false,
+  maxLength: "50"
 };
 
 export default TextField;

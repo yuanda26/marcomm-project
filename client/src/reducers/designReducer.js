@@ -15,6 +15,7 @@ import {
   GET_EMPLOYEE,
   APPROVE_DESIGN,
   REJECT_DESIGN,
+  CLEAR_DESIGN_STATUS,
   ERRORS
 } from "../actions/types";
 
@@ -44,45 +45,29 @@ export default function(state = initialState, action) {
         ...state,
         designs: action.payload
       };
+
     case GET_DESIGN:
       return {
         ...state,
         design: action.payload
       };
+
     case GET_CODE:
       return {
         ...state,
         code: action.payload
       };
-    case GET_EVENT:
-      return {
-        ...state,
-        event: action.payload
-      };
-    case GET_PRODUCT:
-      return {
-        ...state,
-        product: action.payload
-      };
-    case GET_REQUESTER:
-      return {
-        ...state,
-        requester: action.payload
-      };
-    case GET_ASSIGN:
-      return {
-        ...state,
-        assign: action.payload
-      };
+
     case ADD_DESIGN:
       return {
         ...state,
-        designs: [...state.designs, action.payload],
+        designs: [action.payload, ...state.designs],
         designStatus: 1,
         designMessage: `Transaction Design Request Has Been Added with Code ${
           action.payload.code
         }!`
       };
+
     case ADD_DESIGN_ITEM:
       return {
         ...state,
@@ -92,11 +77,13 @@ export default function(state = initialState, action) {
           action.payload[0].title_item
         } Successfully Added!`
       };
+
     case GET_DESIGN_ITEM:
       return {
         ...state,
         items: action.payload
       };
+
     case UPDATE_DESIGN:
       return {
         ...state,
@@ -106,20 +93,12 @@ export default function(state = initialState, action) {
           action.code
         } Has Been Updated!`
       };
+
     case UPDATE_DESIGN_ITEM:
       return {
         ...state
       };
-    case GET_STAFF:
-      return {
-        ...state,
-        staff: action.payload
-      };
-    case GET_EMPLOYEE:
-      return {
-        ...state,
-        employee: action.payload
-      };
+
     case APPROVE_DESIGN:
       return {
         ...state,
@@ -129,6 +108,7 @@ export default function(state = initialState, action) {
           action.code
         } Has Been Updated!`
       };
+
     case REJECT_DESIGN:
       return {
         ...state,
@@ -137,6 +117,51 @@ export default function(state = initialState, action) {
         designMessage: `Design Rejected! Transaction Design Request with Code ${
           action.code
         } Has Been Updated!`
+      };
+
+    case GET_STAFF:
+      return {
+        ...state,
+        staff: action.payload
+      };
+
+    case GET_EMPLOYEE:
+      return {
+        ...state,
+        employee: action.payload
+      };
+
+    case GET_EVENT:
+      return {
+        ...state,
+        event: action.payload
+      };
+
+    case GET_PRODUCT:
+      return {
+        ...state,
+        product: action.payload
+      };
+
+    case GET_REQUESTER:
+      return {
+        ...state,
+        requester: action.payload
+      };
+
+    case GET_ASSIGN:
+      return {
+        ...state,
+        assign: action.payload
+      };
+
+    case CLEAR_DESIGN_STATUS:
+      return {
+        ...state,
+        designStatus: 0,
+        designMessage: "",
+        itemsStatus: 0,
+        itemsMessage: ""
       };
 
     case ERRORS:

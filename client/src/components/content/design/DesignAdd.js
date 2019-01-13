@@ -50,10 +50,8 @@ class DesignAdd extends Component {
     this.props.getAssignToName();
   }
 
-  componentWillReceiveProps(newProps) {
-    this.setState({
-      employee: newProps.design.assign
-    });
+  UNSAFE_componentWillReceiveProps(props, state) {
+    this.setState({ employee: props.design.assign });
   }
 
   // Get Employee Name
@@ -263,10 +261,8 @@ class DesignAdd extends Component {
       };
 
       // Save Design & Design Item to Database
-      this.props.createDesign(designData, this.props.history);
-      if (designItemData.length > 0) {
-        this.props.createDesignItem(designItemData, this.props.history);
-      }
+      this.props.createDesign(designData);
+      this.props.createDesignItem(designItemData);
     }
   };
 
@@ -553,14 +549,14 @@ class DesignAdd extends Component {
                         />
                       </div>
                       <div className="col-md-2">
-                        <Link to="/design">
+                        <a href="/design">
                           <button
-                            className="btn btn-default btn-block mt-1"
+                            className="btn btn-warning btn-block mt-1"
                             type="button"
                           >
                             Cancel
                           </button>
-                        </Link>
+                        </a>
                       </div>
                     </div>
                   </form>

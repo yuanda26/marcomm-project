@@ -9,7 +9,7 @@ const designData = {
   readAllData: callback => {
     db.collection("t_design")
       .find({ is_delete: false })
-      .sort({ code: 1 })
+      .sort({ code: -1 })
       .toArray((err, designs) => {
         // Return Data to Callback
         if (err) {

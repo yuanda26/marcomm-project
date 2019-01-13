@@ -8,7 +8,7 @@ const souvenirData = {
   readAllSouvenir: callback => {
     db.collection("m_souvenir")
       .find({ is_delete: false })
-      .sort({ code: 1 })
+      .sort({ code: -1 })
       .toArray((err, souvenirs) => {
         // Return Data to Callback
         if (err) {

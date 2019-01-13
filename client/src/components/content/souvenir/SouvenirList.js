@@ -1,9 +1,16 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { Search, CreateOutlined, DeleteOutlined } from "@material-ui/icons";
+import {
+  Search,
+  Create,
+  Delete,
+  RemoveRedEye,
+  Refresh,
+  Add
+} from "@material-ui/icons";
 // Souvenir Components
 import CreateSouvenir from "./CreateSouvenir";
 import ReadSouvenir from "./ReadSouvenir";
@@ -47,11 +54,11 @@ class SouvenirList extends Component {
     this.props.getAssignToName();
   }
 
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(props, state) {
     this.setState({
-      units: newProps.souvenir.units,
-      souvenirs: newProps.souvenir.souvenirs,
-      employee: newProps.design.assign
+      units: props.souvenir.units,
+      souvenirs: props.souvenir.souvenirs,
+      employee: props.design.assign
     });
   }
 
@@ -97,9 +104,12 @@ class SouvenirList extends Component {
 
   // Function to Show Delete Modal Confirmation
   onDeleteModal = code => {
-    const singleSouvenir = {
-      code: code
-    };
+    let singleSouvenir = {};
+    this.state.souvenirs.forEach(souvenir => {
+      if (code === souvenir.code) {
+        singleSouvenir = souvenir;
+      }
+    });
 
     this.setState({
       currentSouvenir: singleSouvenir,
@@ -225,9 +235,8 @@ class SouvenirList extends Component {
     const capitalize = { textTransform: "capitalize" };
 
     if (souvenirs.length > 0) {
-      souvenirList = this.state.souvenirs.map((souvenir, index) => (
+      souvenirList = this.state.souvenirs.map(souvenir => (
         <tr key={souvenir._id} className="text-center">
-          <td>{index + 1}</td>
           <td>{souvenir.code}</td>
           <td style={capitalize}>{souvenir.name}</td>
           <td>{this.getUnits(souvenir.m_unit_id)}</td>
@@ -235,21 +244,21 @@ class SouvenirList extends Component {
           <td>{this.getEmployee(souvenir.created_by)}</td>
           <td nowrap="true">
             <Link to="#">
-              <Search
+              <RemoveRedEye
                 onClick={() => {
                   this.onViewModal(souvenir._id);
                 }}
               />
             </Link>
             <Link to="#">
-              <CreateOutlined
+              <Create
                 onClick={() => {
                   this.onEditModal(souvenir._id);
                 }}
               />
             </Link>
             <Link to="#">
-              <DeleteOutlined
+              <Delete
                 onClick={() => {
                   this.onDeleteModal(souvenir.code);
                 }}
@@ -260,15 +269,81 @@ class SouvenirList extends Component {
       ));
 
       souvenirLabel = (
-        <tr className="text-center font-weight-bold">
-          <td>No</td>
-          <td>Souvenir Code</td>
-          <td>Souvenir Name</td>
-          <td>Unit</td>
-          <td>Created Date</td>
-          <td>Created By</td>
-          <td>Action</td>
-        </tr>
+        <Fragment>
+          <tr>
+            <td>
+              <TextField
+                placeholder="Souvenir Code"
+                name="searchCode"
+                value={this.state.searchCode}
+                onChange={this.onSearch}
+              />
+            </td>
+            <td>
+              <TextField
+                placeholder="Souvenir Name"
+                name="searchName"
+                value={this.state.searchName}
+                onChange={this.onSearch}
+              />
+            </td>
+            <td>
+              <SelectList
+                placeholder="*Select Unit Name"
+                name="searchUnit"
+                value={this.state.searchUnit}
+                onChange={this.onSearch}
+                options={options}
+              />
+            </td>
+            <td>
+              <TextField
+                type="date"
+                min="2018-01-01"
+                max={moment().format("YYYY-MM-DD")}
+                name="searchDate"
+                value={this.state.searchDate}
+                onChange={this.onSearch}
+              />
+            </td>
+            <td>
+              <TextField
+                placeholder="Created By"
+                name="searchCreated"
+                value={this.state.searchCreated}
+                onChange={this.onSearch}
+              />
+            </td>
+            <td nowrap="true">
+              <div className="form-group">
+                {this.state.search === true ? (
+                  <button className="btn btn-warning" onClick={this.onRestore}>
+                    <Refresh />
+                  </button>
+                ) : (
+                  <button type="submit" className="btn btn-primary">
+                    <Search />
+                  </button>
+                )}
+                <button
+                  onClick={this.showHandler}
+                  type="button"
+                  className="btn btn-primary ml-1"
+                >
+                  <Add />
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr className="text-center font-weight-bold">
+            <td>Souvenir Code</td>
+            <td>Souvenir Name</td>
+            <td>Unit</td>
+            <td>Created Date</td>
+            <td>Created By</td>
+            <td>Action</td>
+          </tr>
+        </Fragment>
       );
     } else {
       souvenirLabel = (
@@ -346,86 +421,6 @@ class SouvenirList extends Component {
                       </li>
                     </ol>
                   </nav>
-                  <div className="text-left">
-                    <button
-                      onClick={this.showHandler}
-                      type="button"
-                      className="btn btn-primary"
-                    >
-                      Add Souvenir
-                    </button>
-                  </div>
-                  <div className="mt-2">
-                    <form onSubmit={this.submitSearch}>
-                      <table>
-                        <tbody>
-                          <tr>
-                            <td>
-                              <TextField
-                                placeholder="Souvenir Code"
-                                name="searchCode"
-                                value={this.state.searchCode}
-                                onChange={this.onSearch}
-                              />
-                            </td>
-                            <td>
-                              <TextField
-                                placeholder="Souvenir Name"
-                                name="searchName"
-                                value={this.state.searchName}
-                                onChange={this.onSearch}
-                              />
-                            </td>
-                            <td>
-                              <SelectList
-                                placeholder="*Select Unit Name"
-                                name="searchUnit"
-                                value={this.state.searchUnit}
-                                onChange={this.onSearch}
-                                options={options}
-                              />
-                            </td>
-                            <td>
-                              <TextField
-                                type="date"
-                                min="2018-01-01"
-                                max={moment().format("YYYY-MM-DD")}
-                                name="searchDate"
-                                value={this.state.searchDate}
-                                onChange={this.onSearch}
-                              />
-                            </td>
-                            <td>
-                              <TextField
-                                placeholder="Created By"
-                                name="searchCreated"
-                                value={this.state.searchCreated}
-                                onChange={this.onSearch}
-                              />
-                            </td>
-                            <td nowrap="true">
-                              <div className="form-group">
-                                {this.state.search === true ? (
-                                  <button
-                                    className="btn btn-block btn-default"
-                                    onClick={this.onRestore}
-                                  >
-                                    Refresh!
-                                  </button>
-                                ) : (
-                                  <input
-                                    type="submit"
-                                    value="Search"
-                                    className="btn btn-block btn-warning"
-                                  />
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </form>
-                  </div>
                   {/* Alert Messages */}
                   {status === 1 && (
                     <div className="mt-2 alert alert-success">{message}</div>
@@ -436,11 +431,13 @@ class SouvenirList extends Component {
                   {status === 3 && (
                     <div className="mt-2 alert alert-danger">{message}</div>
                   )}
-                  <div className="table-responsive">
-                    <table className="table table-stripped">
-                      <thead>{souvenirLabel}</thead>
-                      <tbody>{souvenirList}</tbody>
-                    </table>
+                  <div>
+                    <form onSubmit={this.submitSearch}>
+                      <table className="table table-responsive table-stripped">
+                        <thead>{souvenirLabel}</thead>
+                        <tbody>{souvenirList}</tbody>
+                      </table>
+                    </form>
                   </div>
                 </div>
               </div>
