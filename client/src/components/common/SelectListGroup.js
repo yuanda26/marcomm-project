@@ -2,7 +2,15 @@ import React from "react";
 import PropTypes from "prop-types";
 import classnames from "classnames";
 
-const SelectListGroup = ({ label, name, value, onChange, options, errors }) => {
+const SelectListGroup = ({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+  errors,
+  disabled
+}) => {
   const selectOptions = options.map(option => (
     <option key={option.label} value={option.value}>
       {option.label}
@@ -10,7 +18,7 @@ const SelectListGroup = ({ label, name, value, onChange, options, errors }) => {
   ));
   return (
     <div className="form-group row">
-      <label className="col-sm-4 col-form-label text-right">{label}</label>
+      <label className="col-sm-4 col-form-label text-left">{label}</label>
       <div className="col-sm-8">
         <select
           className={classnames("form-control", {
@@ -19,6 +27,7 @@ const SelectListGroup = ({ label, name, value, onChange, options, errors }) => {
           name={name}
           value={value}
           onChange={onChange}
+          disabled={disabled}
         >
           {selectOptions}
         </select>

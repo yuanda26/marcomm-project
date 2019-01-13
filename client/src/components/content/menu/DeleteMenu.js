@@ -13,7 +13,7 @@ class DeleteMenu extends React.Component {
   }
 
   deleteHandler = () => {
-    this.props.delMenu(this.props.menu.code);
+    this.props.delMenu(this.props.menu, this.props.modalStatus);
     this.props.closeModalHandler();
   };
 
@@ -24,9 +24,6 @@ class DeleteMenu extends React.Component {
   }
 
   render() {
-    this.state.status === 200 &&
-      this.props.modalStatus(1, "Deleted!", this.props.menu.code);
-
     return (
       <Modal isOpen={this.props.delete} className={this.props.className}>
         <ModalHeader> Delete Menu </ModalHeader>

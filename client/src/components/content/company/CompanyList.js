@@ -13,15 +13,20 @@ import {
   TableRow,
   TableFooter,
   TablePagination,
-  IconButton,
-  Button
+  IconButton
 } from "@material-ui/core";
-import { KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
-import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
-import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
+import {
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  Add,
+  Search,
+  Delete,
+  Create,
+  RemoveRedEye,
+  Refresh
+} from "@material-ui/icons";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import LastPageIcon from "@material-ui/icons/LastPage";
-import SearchIcon from "@material-ui/icons/Search";
 import moment from "moment";
 
 const actionsStyles = theme => ({
@@ -133,7 +138,6 @@ class ListCompany extends React.Component {
         created_date: /(?:)/,
         created_by: /(?:)/
       },
-      search: "",
       companies: [],
       companiesSearch: [],
       page: 0,
@@ -146,11 +150,13 @@ class ListCompany extends React.Component {
         message: "",
         code: ""
       },
-      userdata: {}
+      search: true,
+      userdata: {},
+      errorName: ""
     };
     this.showHandler = this.showHandler.bind(this);
     this.closeHandler = this.closeHandler.bind(this);
-    this.changeHandler = this.changeHandler.bind(this);
+    this.searchHandler = this.searchHandler.bind(this);
     this.closeModalHandler = this.closeModalHandler.bind(this);
     this.deleteModalHandler = this.deleteModalHandler.bind(this);
     this.viewModalHandler = this.viewModalHandler.bind(this);
@@ -220,26 +226,6 @@ class ListCompany extends React.Component {
     });
   }
 
-  changeHandler(e) {
-    let test = [];
-    let search = e.target.value;
-    let patt = new RegExp(search.toLowerCase());
-
-    this.state.companies.forEach(ele => {
-      if (
-        patt.test(ele.code.toLowerCase()) ||
-        patt.test(ele.name.toLowerCase()) ||
-        patt.test(ele.created_by.toLowerCase()) ||
-        patt.test(ele.created_date.toLowerCase())
-      ) {
-        test.push(ele);
-      }
-    });
-    this.setState({
-      companiesSearch: test
-    });
-  }
-
   handleChangePage = (event, page) => {
     this.setState({ page });
   };
@@ -249,6 +235,7 @@ class ListCompany extends React.Component {
   };
 
   modalStatus(status, message, code) {
+    this.props.getCompanies();
     this.setState({
       alertData: {
         status: status,
@@ -259,9 +246,14 @@ class ListCompany extends React.Component {
       editCompany: false,
       deleteCompany: false
     });
-    this.props.getCompanies();
     setTimeout(() => {
-      window.location.href = "/company";
+      this.setState({
+        alertData: {
+          status: 0,
+          message: "",
+          code: ""
+        }
+      });
     }, 2500);
   }
 
@@ -269,7 +261,7 @@ class ListCompany extends React.Component {
     return moment(tanggal).format("DD/MM/YYYY");
   };
 
-  changeHandler = event => {
+  searchHandler = event => {
     let tmp = this.state.formSearch;
     if (event.target.name) {
       tmp[event.target.name] = new RegExp(event.target.value.toLowerCase());
@@ -279,10 +271,9 @@ class ListCompany extends React.Component {
     this.setState({
       formSearch: tmp
     });
-    this.change();
   };
 
-  change = () => {
+  search = () => {
     const { code, name, created_date, created_by } = this.state.formSearch;
     let temp = [];
     this.state.companies.map(ele => {
@@ -297,7 +288,15 @@ class ListCompany extends React.Component {
       return temp;
     });
     this.setState({
-      companiesSearch: temp
+      companiesSearch: temp,
+      search: false
+    });
+  };
+
+  refreshSearch = () => {
+    this.setState({
+      companiesSearch: this.state.companies,
+      search: true
     });
   };
 
@@ -307,10 +306,12 @@ class ListCompany extends React.Component {
       <div className="container">
         <div className="row">
           <div className="col-md-12">
-            <div className="card border-primary mb-2">
-              <div className="card-header lead">Company List</div>
+            <div className="card border-primary">
+              <div className="card-header bg-primary text-white lead">
+                Company List
+              </div>
               <div className="card-body">
-                <nav aria-label="breadcrumb mb-4">
+                <nav aria-label="breadcrumb">
                   <ol className="breadcrumb">
                     <li className="breadcrumb-item">
                       <Link to="/">Home</Link>
@@ -322,9 +323,7 @@ class ListCompany extends React.Component {
                 </nav>
                 {this.state.alertData.status === 1 && (
                   <Alert color="success">
-                    <b>Data {this.state.alertData.message} ! </b> Company with
-                    name <strong>{this.state.alertData.code} </strong>
-                    has been {this.state.alertData.message} !
+                    {this.state.alertData.message} !
                   </Alert>
                 )}
                 {this.state.alertData.status === 2 && (
@@ -334,7 +333,6 @@ class ListCompany extends React.Component {
                   create={this.state.showCreateCompany}
                   closeHandler={this.closeHandler}
                   modalStatus={this.modalStatus}
-                  getlist={this.props.getCompanies}
                   allCompany={this.state.companies}
                 />
                 <ViewCompany
@@ -347,73 +345,85 @@ class ListCompany extends React.Component {
                   company_del={this.state.currentCompany}
                   closeModalHandler={this.closeModalHandler}
                   modalStatus={this.modalStatus}
-                  getlist={this.props.getCompanies}
                 />
                 <UpdateCompany
                   edit={this.state.editCompany}
                   closeModalHandler={this.closeModalHandler}
                   companytest={this.state.currentCompany}
-                  companytest2={this.state.currentCompany2}
                   modalStatus={this.modalStatus}
                   allCompany={this.state.companies}
                 />
-                <div className="form-row">
-                  <div className="col-md-2">
-                    <input
-                      placeholder="Search by Code"
-                      name="code"
-                      className="form-control"
-                      onChange={this.changeHandler}
-                    />
-                  </div>
-                  <div className="col-md-2">
-                    <input
-                      placeholder="Search by Name"
-                      name="name"
-                      className="form-control"
-                      onChange={this.changeHandler}
-                    />
-                  </div>
-                  <div className="col-md-2">
-                    <input
-                      placeholder="Search by Date"
-                      type="date"
-                      className="form-control"
-                      name="created_date"
-                      onChange={this.changeHandler}
-                    />
-                  </div>
-                  <div className="col-md-2">
-                    <input
-                      placeholder="Search by Create by"
-                      name="created_by"
-                      className="form-control"
-                      onChange={this.changeHandler}
-                    />
-                  </div>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    onClick={this.showHandler}
-                  >
-                    Add Company
-                  </Button>
-                </div>
-                <br />
                 <div className="table-responsive">
                   <table className="table table-stripped">
+                    <thead>
+                      <td>
+                        <input
+                          placeholder="Search by Code"
+                          name="code"
+                          className="form-control"
+                          onChange={this.searchHandler}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          placeholder="Search by Name"
+                          name="name"
+                          className="form-control"
+                          onChange={this.searchHandler}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          placeholder="Search by Date"
+                          type="date"
+                          className="form-control"
+                          name="created_date"
+                          onChange={this.searchHandler}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          placeholder="Search by Create by"
+                          name="created_by"
+                          className="form-control"
+                          onChange={this.searchHandler}
+                        />
+                      </td>
+                      <td nowrap="true">
+                        {this.state.search === true && (
+                          <button
+                            className="mr-2 btn btn-primary"
+                            onClick={this.search}
+                          >
+                            <Search />
+                          </button>
+                        )}
+                        {this.state.search === false && (
+                          <button
+                            className="mr-2 btn btn-warning"
+                            onClick={this.refreshSearch}
+                          >
+                            <Refresh />
+                          </button>
+                        )}
+                        <button
+                          className="mr-2 btn btn-primary"
+                          onClick={this.showHandler}
+                        >
+                          <Add />
+                        </button>
+                      </td>
+                    </thead>
                     <thead>
                       <tr
                         className="text-center font-weight-bold"
                         style={columnWidth}
                       >
-                        <td>No.</td>
-                        <td>Company Code</td>
-                        <td>Company Name</td>
-                        <td>Created Date</td>
-                        <td>Created By</td>
-                        <td>Action</td>
+                        <td nowrap="true">Company Code</td>
+                        <td nowrap="true">Company Name</td>
+                        <td nowrap="true">Created Date</td>
+                        <td nowrap="true">Created By</td>
+                        <td nowrap="true">Action</td>
                       </tr>
                     </thead>
                     <tbody>
@@ -425,34 +435,29 @@ class ListCompany extends React.Component {
                         )
                         .map((company, index) => (
                           <tr className="text-center" key={company._id}>
-                            <td>
-                              {index +
-                                1 +
-                                this.state.page * this.state.rowsPerPage}
-                            </td>
                             <td component="th">{company.code}</td>
                             <td>{company.name}</td>
                             <td>
                               {this.changeDateFormat(company.created_date)}
                             </td>
                             <td>{company.created_by}</td>
-                            <td>
+                            <td nowrap="true">
                               <Link to="#">
-                                <SearchIcon
+                                <RemoveRedEye
                                   onClick={() => {
                                     this.viewModalHandler(company._id);
                                   }}
                                 />
                               </Link>
                               <Link to="#">
-                                <CreateOutlinedIcon
+                                <Create
                                   onClick={() => {
                                     this.editModalHandler(company._id);
                                   }}
                                 />
                               </Link>
                               <Link to="#">
-                                <DeleteOutlinedIcon
+                                <Delete
                                   onClick={() => {
                                     this.deleteModalHandler(company._id);
                                   }}
@@ -465,7 +470,7 @@ class ListCompany extends React.Component {
                     <TableFooter>
                       <TableRow>
                         <TablePagination
-                          colSpan={4}
+                          colSpan={3}
                           count={this.state.companiesSearch.length}
                           rowsPerPage={this.state.rowsPerPage}
                           page={this.state.page}

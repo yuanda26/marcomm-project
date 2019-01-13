@@ -16,7 +16,7 @@ const TextAreaGroup = ({
   return (
     <div className="form-group row">
       {label && (
-        <label className="col-sm-4 col-form-label text-right">{label}</label>
+        <label className="col-sm-4 col-form-label text-left">{label}</label>
       )}
       <div className="col-sm-8">
         <textarea

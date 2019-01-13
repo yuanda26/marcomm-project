@@ -1,8 +1,12 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
 import PropTypes from "prop-types";
-import { putMenu } from "../../../actions/menuActions";
+import TextFieldGroup from "../../common/TextFieldGroup";
+import SelectList from "../../common/SelectListGroup";
+import isEmpty from "../../../validation/isEmpty";
+
 import { connect } from "react-redux";
+import { putMenu } from "../../../actions/menuActions";
 
 class EditMenu extends React.Component {
   constructor(props) {
@@ -34,89 +38,85 @@ class EditMenu extends React.Component {
   changeHandler = e => {
     let tmp = this.state.formdata;
     tmp[e.target.name] = e.target.value;
-    this.setState({
-      formdata: tmp,
-      alertData: {
-        status: false,
-        message: ""
-      }
-    });
+    if (e.target.name === "name") {
+      this.setState({ errorName: "" });
+    }
+    if (e.target.name === "controller") {
+      this.setState({ errorController: "" });
+    }
   };
 
   submitHandler = () => {
-    const formdata = {
-      code: this.state.formdata.code,
-      name: this.state.formdata.name,
-      controller: this.state.formdata.controller,
-      parent_id: this.state.formdata.parent_id,
-      updated_by: this.state.userdata.m_employee_id
-    };
+    if (isEmpty(this.state.formdata.name)) {
+      this.setState({ errorName: "This Field is Required!" });
+    }
+    if (isEmpty(this.state.formdata.controller)) {
+      this.setState({ errorController: "This Field is Required!" });
+    }
     if (
-      formdata.code === "" ||
-      formdata.name === "" ||
-      formdata.controller === ""
+      !isEmpty(this.state.formdata.name) &&
+      !isEmpty(this.state.formdata.controller)
     ) {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "all forms must be filled!"
-        }
-      });
-    } else {
-      this.props.putMenu(formdata);
+      const formdata = {
+        code: this.state.formdata.code,
+        name: this.state.formdata.name,
+        controller: this.state.formdata.controller,
+        parent_id: this.state.formdata.parent_id,
+        updated_by: this.state.userdata.m_employee_id
+      };
+      this.props.putMenu(formdata, this.props.modalStatus);
       this.props.closeModalHandler();
     }
   };
 
   render() {
-    this.state.status === 200 &&
-      this.props.modalStatus(1, "Updated!", this.state.formdata.code);
+    const parentMenu = this.props.menu.filter(row => row.parent_id === false);
+    const options = [];
+    options.push({ label: "*Select Parent Menu", value: "" });
+    parentMenu.forEach(parentMenu =>
+      options.push({
+        label: parentMenu.name,
+        value: parentMenu.code
+      })
+    );
     return (
       <Modal isOpen={this.props.edit} className={this.props.className}>
         <ModalHeader> Edit Menu</ModalHeader>
         <ModalBody>
-          <label for="text"> Menu Code : </label>
-          <form class="form">
-            <input
-              type="text"
-              class="form-control"
-              readOnly
+          <form>
+            <TextFieldGroup
+              label="*Menu Code"
+              placeholder="Auto Generated"
               name="code"
               value={this.state.formdata.code}
               onChange={this.changeHandler}
+              disabled={true}
             />
-          </form>
-          <form>
-            <label for="text"> Menu Name :</label>
-            <div class="input-group mb-3">
-              <input
-                type="text"
-                class="form-control"
-                name="name"
-                value={this.state.formdata.name}
-                onChange={this.changeHandler}
-              />
-            </div>
-          </form>
-          <label for="text"> URL : </label>
-          <form>
-            <input
-              type="text"
-              class="form-control"
+            <TextFieldGroup
+              label="*Menu Name"
+              placeholder="Type Menu Name"
+              name="name"
+              value={this.state.formdata.name}
+              onChange={this.changeHandler}
+              errors={this.state.errorName}
+              maxLength="50"
+            />
+            <TextFieldGroup
+              label="*Menu Controller / URL"
+              placeholder="Type Menu Controller / URL"
               name="controller"
               value={this.state.formdata.controller}
               onChange={this.changeHandler}
+              errors={this.state.errorController}
             />
-          </form>
-          <label for="text"> Parent : </label>
-          <form>
-            <input
-              type="text"
-              class="form-control"
-              readOnly
+            <SelectList
+              label="Parent Menu"
+              placeholder="*Select Parent Menu"
               name="parent_id"
               value={this.state.formdata.parent_id}
-              onChange={this.changeHandler}
+              onChange={this.onChange}
+              options={options}
+              disabled={true}
             />
           </form>
         </ModalBody>

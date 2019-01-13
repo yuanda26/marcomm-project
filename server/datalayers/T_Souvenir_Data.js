@@ -40,7 +40,8 @@ const dtl = {
             created_date: "$created_date",
             note: "$note"
           }
-        }
+        },
+        { $sort: { created_date: -1 } }
       ])
       .toArray((err, docs) => {
         callback(docs);

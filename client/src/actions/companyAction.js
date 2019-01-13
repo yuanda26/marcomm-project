@@ -30,7 +30,7 @@ export const getCompanies = () => dispatch => {
     });
 };
 
-export const createCompany = body => dispatch => {
+export const createCompany = (newCompany, modalStatus) => dispatch => {
   let option = {
     url: `${HostConfig}/company`,
     method: "post",
@@ -38,41 +38,49 @@ export const createCompany = body => dispatch => {
       Authorization: localStorage.token,
       "Content-Type": "application/json"
     },
-    data: body
+    data: newCompany
   };
   axios(option)
     .then(res => {
       dispatch({
         type: CREATE_COMPANY,
-        payload: body,
+        payload: res.data.message,
         status: res.data.code
       });
+      modalStatus(
+        1,
+        `Company with name ${res.data.message.name} has been created!`
+      );
     })
     .catch(error => {
       dispatch({
         type: CREATE_COMPANY,
         payload: null
       });
+      modalStatus(2, `${error.message}`);
     });
 };
 
-export const deleteCompany = body => dispatch => {
+export const deleteCompany = (deletedCompany, modalStatus) => dispatch => {
   let options = {
-    url: `${HostConfig}/company/${body.code}`,
+    url: `${HostConfig}/company/${deletedCompany.code}`,
     method: "delete",
     headers: {
       Authorization: localStorage.token
     },
-    data: body
+    data: deletedCompany
   };
   axios(options)
     .then(res => {
       dispatch({
         type: DELETE_COMPANY,
-        payload: body,
+        payload: deletedCompany.code,
         status: res.data.code
       });
-      //alert(res.data.code)
+      modalStatus(
+        1,
+        `Company with name ${deletedCompany.name} has been deleted!`
+      );
     })
     .catch(error => {
       dispatch({
@@ -80,31 +88,42 @@ export const deleteCompany = body => dispatch => {
         payload: null,
         status: 400
       });
+      modalStatus(
+        2,
+        `Failed to delete company with name ${
+          deletedCompany.name
+        }! The company was used on other data.`
+      );
     });
 };
 
-export const editCompany = body => dispatch => {
+export const editCompany = (updatedCompany, modalStatus) => dispatch => {
   let options = {
-    url: `${HostConfig}/company/${body.formdata.code}`,
+    url: `${HostConfig}/company/${updatedCompany.code}`,
     method: "put",
     headers: {
       Authorization: localStorage.token
     },
-    data: body.formdata
+    data: updatedCompany
   };
   axios(options)
     .then(res => {
       dispatch({
         type: EDIT_COMPANY,
-        payload: body.formdata,
+        payload: updatedCompany,
         status: res.data.code,
-        company_id: body.formdata.code
+        company_id: updatedCompany.code
       });
+      modalStatus(
+        1,
+        `Company with name ${updatedCompany.name} has been updated!`
+      );
     })
     .catch(error => {
       dispatch({
         type: EDIT_COMPANY,
         payload: null
       });
+      modalStatus(2, `${error.message}`);
     });
 };
