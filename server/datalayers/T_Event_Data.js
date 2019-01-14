@@ -24,7 +24,7 @@ const tEventDatalayer = {
 	        }
 	    }, {$unwind : "$user"},
 	    {$match : { "is_delete" : false }},
-	    { $sort : { code : 1 } },
+	    { $sort : { code : -1 } },
 	    {
 	      $project : {
 	        "_id" : "$_id",
@@ -146,7 +146,7 @@ const tEventDatalayer = {
 					created_by : new RegExp(created_by), 
 					is_delete : false
 				}
-			},
+			},{ $sort : { code : -1 } },
 			 {
 	      $project : {
 	        "_id" : "$_id",

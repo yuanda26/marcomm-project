@@ -37,7 +37,7 @@ export default function(state = initialState, action) {
         ...state,
         myEmployee: action.payload,
         statusCreated: action.status,
-        employee_number: action.created.employee_number
+        employee_number: action.created[0].employee_number
       };
     case SEARCH_EMPLOYEE:
       return {
