@@ -1,4 +1,3 @@
-const ObjectId = require("mongodb").ObjectID;
 const Database = require("../models/Database");
 const M_Souvenir = require("../models/M_Souvenir_Model");
 
@@ -113,11 +112,11 @@ const souvenirData = {
         }
       });
   },
-  isNameRelated: (callback, name, souvenirId) => {
+  isNameRelated: (callback, name, code) => {
     db.collection("m_souvenir")
       .find({
         $and: [
-          { _id: { $ne: new ObjectId(souvenirId) } },
+          { code: { $ne: code } },
           { is_delete: false },
           { name: { $regex: name } }
         ]
