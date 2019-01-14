@@ -17,12 +17,17 @@ import ReadSouvenir from "./ReadSouvenir";
 import UpdateSouvenir from "./UpdateSouvenir";
 import DeleteSouvenir from "./DeleteSouvenir";
 // Redux Actions
-import { getAllSouvenir, getUnits } from "../../../actions/souvenirAction";
+import {
+  getAllSouvenir,
+  getUnits,
+  clearAlert
+} from "../../../actions/souvenirAction";
 import { getAssignToName } from "../../../actions/designAction";
 // Search Form Components
 import Spinner from "../../common/Spinner";
 import TextField from "../../common/TextField";
 import SelectList from "../../common/SelectList";
+import Alert from "../../common/Alert";
 
 class SouvenirList extends Component {
   constructor(props) {
@@ -214,8 +219,14 @@ class SouvenirList extends Component {
     });
   };
 
+  // Clear Alert
+  onClearAlert = e => {
+    e.preventDefault();
+    this.props.clearAlert();
+  };
+
   render() {
-    const { souvenirs, units, status, message } = this.props.souvenir;
+    const { souvenirs, units, status, message, data } = this.props.souvenir;
     const { user } = this.props.auth;
 
     const options = [];
@@ -423,20 +434,36 @@ class SouvenirList extends Component {
                   </nav>
                   {/* Alert Messages */}
                   {status === 1 && (
-                    <div className="mt-2 alert alert-success">{message}</div>
+                    <Alert
+                      action="Data Saved!"
+                      message={message}
+                      data={data}
+                      onClick={this.onClearAlert}
+                    />
                   )}
                   {status === 2 && (
-                    <div className="mt-2 alert alert-primary">{message}</div>
+                    <Alert
+                      action="Data Updated!"
+                      message={message}
+                      data={data}
+                      onClick={this.onClearAlert}
+                    />
                   )}
                   {status === 3 && (
-                    <div className="mt-2 alert alert-danger">{message}</div>
+                    <Alert
+                      action="Action Error!"
+                      message={message}
+                      onClick={this.onClearAlert}
+                    />
                   )}
                   <div>
                     <form onSubmit={this.submitSearch}>
-                      <table className="table table-responsive table-stripped">
-                        <thead>{souvenirLabel}</thead>
-                        <tbody>{souvenirList}</tbody>
-                      </table>
+                      <div className="table-responsive">
+                        <table className="table table-stripped">
+                          <thead>{souvenirLabel}</thead>
+                          <tbody>{souvenirList}</tbody>
+                        </table>
+                      </div>
                     </form>
                   </div>
                 </div>
@@ -454,7 +481,8 @@ SouvenirList.propTypes = {
   getAllSouvenir: PropTypes.func.isRequired,
   getUnits: PropTypes.func.isRequired,
   souvenir: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  clearAlert: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -465,5 +493,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getAllSouvenir, getUnits, getAssignToName }
+  { getAllSouvenir, getUnits, getAssignToName, clearAlert }
 )(SouvenirList);

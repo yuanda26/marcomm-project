@@ -75,8 +75,8 @@ class UpdateSouvenir extends Component {
         description: this.state.description,
         updated_by: this.props.m_employee_id
       };
-      // Update Souvenir from Database
-      this.props.updateSouvenir(this.state._id, souvenirData);
+      // Update Souvenir to Database
+      this.props.updateSouvenir(this.state.code, souvenirData);
       // Clear All State
       this.setState({
         name: "",
