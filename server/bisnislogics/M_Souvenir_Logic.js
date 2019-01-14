@@ -8,16 +8,16 @@ const M_Souvenir_Logic = {
       responseHelper.sendResponse(res, 200, souvenir);
     });
   },
-  readSouvenirById: (req, res, next) => {
-    const souvenirId = req.params.souvenirId;
+  readOneByCode: (req, res, next) => {
+    const code = req.params.code;
 
-    souvenirData.readByIdSouvenir(souvenir => {
+    souvenirData.readByCodeSouvenir(souvenir => {
       if (souvenir) {
         responseHelper.sendResponse(res, 200, souvenir);
       } else {
         responseHelper.sendResponse(res, 404, "404. Souvenir Data Not Found");
       }
-    }, souvenirId);
+    }, code);
   },
   createSouvenir: (req, res, next) => {
     // Generate Souvenir Code
@@ -86,7 +86,7 @@ const M_Souvenir_Logic = {
     });
   },
   updateSouvenir: (req, res, next) => {
-    const souvenirId = req.params.souvenirId;
+    const code = req.params.code;
     const updateSouvenir = {
       name: req.body.name.toLowerCase(),
       description: req.body.description,
@@ -117,7 +117,7 @@ const M_Souvenir_Logic = {
                 souvenir => {
                   responseHelper.sendResponse(res, 200, souvenir);
                 },
-                souvenirId,
+                code,
                 updateSouvenir
               );
             }
@@ -127,13 +127,13 @@ const M_Souvenir_Logic = {
             souvenir => {
               responseHelper.sendResponse(res, 200, souvenir);
             },
-            souvenirId,
+            code,
             updateSouvenir
           );
         }
       },
       newName.split(" ")[0],
-      souvenirId
+      code
     );
   },
   deleteSouvenir: (req, res, next) => {

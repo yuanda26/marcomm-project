@@ -18,9 +18,9 @@ const souvenirData = {
         }
       });
   },
-  readByIdSouvenir: (callback, souvenirId) => {
+  readByCodeSouvenir: (callback, code) => {
     db.collection("m_souvenir").findOne(
-      { is_delete: false, _id: new ObjectId(souvenirId) },
+      { is_delete: false, code: code },
       (err, souvenir) => {
         // Return Data to Callback
         if (err) {
@@ -42,9 +42,9 @@ const souvenirData = {
       }
     });
   },
-  updateSouvenir: (callback, souvenirId, updateSouvenir) => {
+  updateSouvenir: (callback, code, updateSouvenir) => {
     db.collection("m_souvenir").updateOne(
-      { _id: new ObjectId(souvenirId) },
+      { code: code },
       { $set: updateSouvenir },
       (err, souvenir) => {
         // Return Data to Callback

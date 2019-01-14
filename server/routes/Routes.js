@@ -71,26 +71,18 @@ module.exports = server => {
   // Master Souvenir Route
   // Made By: Dian Yuanda
   server.get("/api/souvenir", authenticate, souvenirLogic.readAllSouvenir);
-  server.get(
-    "/api/souvenir/:souvenirId",
-    authenticate,
-    souvenirLogic.readSouvenirById
-  );
+  server.get("/api/souvenir/:code", authenticate, souvenirLogic.readOneByCode);
   server.post("/api/souvenir", authenticate, souvenirLogic.createSouvenir);
-  server.put(
-    "/api/souvenir/:souvenirId",
-    authenticate,
-    souvenirLogic.updateSouvenir
-  );
+  server.put("/api/souvenir/:code", authenticate, souvenirLogic.updateSouvenir);
   server.del("/api/souvenir/:code", authenticate, souvenirLogic.deleteSouvenir);
   //== End of Master Souvenir Route
 
   // Master Unit Route
   server.get("/api/unit", authenticate, unitLogic.readAllUnit);
-  server.get("/api/unit/:unitId", authenticate, unitLogic.readOneById);
+  server.get("/api/unit/:code", authenticate, unitLogic.readOneByCode);
   server.post("/api/unit", authenticate, unitLogic.createUnit);
-  server.put("/api/unit/:unitId", authenticate, unitLogic.updateUnit);
-  server.del("/api/unit/:unitId", authenticate, unitLogic.deleteUnit);
+  server.put("/api/unit/:code", authenticate, unitLogic.updateUnit);
+  server.del("/api/unit/:code", authenticate, unitLogic.deleteUnit);
   //==End of Master Unit Route
 
   // Transaction Design Route

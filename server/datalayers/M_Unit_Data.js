@@ -18,9 +18,9 @@ const unitData = {
         }
       });
   },
-  readOneById: (callback, unitId) => {
+  readOneByCode: (callback, code) => {
     db.collection("m_unit").findOne(
-      { is_delete: false, _id: new ObjectId(unitId) },
+      { is_delete: false, code: code },
       (err, unit) => {
         if (err) {
           callback(err);
@@ -51,21 +51,25 @@ const unitData = {
       callback(docs)
     );
   },
-  updateUnit: (callback, data, unitId) => {
+  updateUnit: (callback, data, code) => {
     db.collection("m_unit").updateOne(
-      { _id: new ObjectId(unitId) },
+      { code: code },
       { $set: data },
       (err, docs) => {
         callback(data);
       }
     );
   },
-  deleteUnit: (callback, unitId) => {
+  deleteUnit: (callback, code) => {
     db.collection("m_unit").updateOne(
-      { _id: new ObjectId(unitId) },
+      { code: code },
       { $set: { is_delete: true } },
       (err, docs) => {
-        callback(unitId);
+        if (err) {
+          callback(err);
+        } else {
+          callback(code);
+        }
       }
     );
   }
