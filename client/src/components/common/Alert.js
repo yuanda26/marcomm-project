@@ -1,25 +1,38 @@
-import React, { Component } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 
-export default class Alert extends Component {
-  render() {
-    console.log(this.props.message);
-    return (
+const Alert = ({ alert, action, message, data, onClick }) => {
+  return (
+    <div className="action-alert">
       <div
-        className={`alert alert-warning alert-dismissible fade`}
+        className={`alert alert-${alert} alert-dismissible show`}
         role="alert"
       >
-        <strong>Holy guacamole!</strong> You should check in on some of those
-        fields below.
+        <strong>{action}</strong> {message} {data && <strong>{data}</strong>}
         <button
           type="button"
           className="close"
           data-dismiss="alert"
           aria-label="Close"
-          onClick={this.props.closeAlert}
+          onClick={onClick}
         >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+Alert.propTypes = {
+  alert: PropTypes.string.isRequired,
+  action: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
+  data: PropTypes.string,
+  onClick: PropTypes.func
+};
+
+Alert.defaultProps = {
+  alert: "success"
+};
+
+export default Alert;
