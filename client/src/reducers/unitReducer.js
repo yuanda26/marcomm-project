@@ -3,17 +3,16 @@ import {
   GET_UNIT,
   CREATE_UNIT,
   UPDATE_UNIT,
-  DELETE_UNIT
+  DELETE_UNIT,
+  CLEAR_UNIT_ALERT
 } from "../actions/types";
 
 const initialState = {
   unitData: [],
   unit: {},
-  status: null,
-  code: "",
-  message1: "",
-  message2: "",
-  message3: ""
+  status: 0,
+  message: "",
+  data: ""
 };
 
 export default function(state = initialState, action) {
@@ -34,16 +33,14 @@ export default function(state = initialState, action) {
       return {
         ...state,
         unitData: [action.payload, ...state.unitData],
-        message1: `Data Saved ! `,
-        message2: `New Unit Has Been Added with Code `,
-        message3: ` `,
-        code: action.id,
-        status: action.status
+        status: 1,
+        message: "New Unit Has Been Added with Code ",
+        data: action.data
       };
 
     case UPDATE_UNIT:
       let updatedUnit = state.unitData.map(unit => {
-        if (unit._id === action.unitId) {
+        if (unit.code === action.unitCode) {
           return { ...unit, ...action.payload };
         }
         return unit;
@@ -52,23 +49,28 @@ export default function(state = initialState, action) {
       return {
         ...state,
         unitData: updatedUnit,
-        message1: `Data Updated ! `,
-        message2: `Data Unit Has Been Updated !`,
-        message3: ` `,
-        code: "",
-        status: action.status
+        status: 2,
+        message: "Data Unit Has Been Updated !",
+        data: action.unitCode
       };
 
     case DELETE_UNIT:
       return {
         ...state,
-        unitData: state.unitData.filter(data => data._id !== action.payload),
-        message1: `Data Deleted ! `,
-        message2: `Data Unit With Code `,
-        message3: ` Has Been Deleted !`,
-        code: action.payload,
-        status: action.status
+        unitData: state.unitData.filter(data => data.code !== action.payload),
+        status: 3,
+        message: `Data Unit Has Been Deleted with Code `,
+        data: action.payload
       };
+
+    case CLEAR_UNIT_ALERT:
+      return {
+        ...state,
+        status: 0,
+        message: "",
+        data: ""
+      };
+
     default:
       return state;
   }

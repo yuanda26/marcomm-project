@@ -2,7 +2,6 @@ import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { Alert } from "reactstrap";
 import {
   Search,
   Create,
@@ -13,7 +12,7 @@ import {
 } from "@material-ui/icons";
 import DatePicker from "react-datepicker";
 // Redux actions
-import { getUnits } from "../../../actions/unitAction";
+import { getUnits, clearAlert } from "../../../actions/unitAction";
 import { getStaff, getEmployee } from "../../../actions/designAction";
 // Unit Components
 import UnitView from "./UnitView";
@@ -22,6 +21,7 @@ import UnitDelete from "./UnitDelete";
 import UnitAdd from "./UnitAdd";
 // Form Components
 import Spinner from "../../common/Spinner";
+import Alert from "../../common/Alert";
 import "react-datepicker/dist/react-datepicker.css";
 
 class UnitList extends Component {
@@ -44,13 +44,6 @@ class UnitList extends Component {
       editUnit: false,
       deleteUnit: false,
       addUnit: false,
-      alertData: {
-        status: 0,
-        message: "",
-        code: "",
-        action: "",
-        optional: ""
-      },
       employee: []
     };
   }
@@ -61,7 +54,7 @@ class UnitList extends Component {
     this.props.getEmployee();
   }
 
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(newProps) {
     this.setState({
       unit: newProps.units.unitData,
       hasil: newProps.units.unitData,
@@ -79,22 +72,6 @@ class UnitList extends Component {
     this.setState({
       currentData: tmp,
       viewUnit: true
-    });
-  };
-
-  modalStatus = (status, action, message, optional, code) => {
-    this.setState({
-      alertData: {
-        status: status,
-        action: action,
-        message: message,
-        optional: optional,
-        code: code
-      },
-      viewUnit: false,
-      editUnit: false,
-      deleteUnit: false,
-      addUnit: false
     });
   };
 
@@ -221,16 +198,15 @@ class UnitList extends Component {
     });
   };
 
+  // Clear Alert
+  onClearAlert = e => {
+    e.preventDefault();
+    this.props.clearAlert();
+  };
+
   render() {
     const { user } = this.props.auth;
-    const {
-      unitData,
-      code,
-      message1,
-      message2,
-      message3,
-      status
-    } = this.props.units;
+    const { unitData, status, data, message } = this.props.units;
     let { unit, hasil } = this.state;
 
     let unitList;
@@ -385,26 +361,22 @@ class UnitList extends Component {
                 view={this.state.viewUnit}
                 unit={this.state.currentData}
                 closeModal={this.closeModalHandler}
-                modalStatus={this.modalStatus}
               />
               <UnitAdd
                 userdata={user}
                 create={this.state.addUnit}
                 closeModal={this.closeModalHandler}
-                modalStatus={this.modalStatus}
               />
               <UnitEdit
                 userdata={user}
                 edit={this.state.editUnit}
                 unit={this.state.currentData}
                 closeModal={this.closeModalHandler}
-                modalStatus={this.modalStatus}
               />
               <UnitDelete
                 delete={this.state.deleteUnit}
                 unit={this.state.currentData}
                 closeModal={this.closeModalHandler}
-                modalStatus={this.modalStatus}
               />
               <div className="card border-primary mb-3">
                 <div className="card-header lead bg-primary text-white font-weight-bold">
@@ -421,20 +393,28 @@ class UnitList extends Component {
                     </ol>
                   </nav>
                   {status === 1 && (
-                    <Alert color="success">
-                      <b>{message1}</b>
-                      {message2}
-                      <b>{code}</b>
-                      {message3}
-                    </Alert>
+                    <Alert
+                      action="Data Saved!"
+                      message={message}
+                      data={data}
+                      onClick={this.onClearAlert}
+                    />
                   )}
                   {status === 2 && (
-                    <Alert color="danger">
-                      <b>{message1}</b>
-                      {message2}
-                      <b>{code}</b>
-                      {message3}
-                    </Alert>
+                    <Alert
+                      action="Data Updated!"
+                      message={message}
+                      data={data}
+                      onClick={this.onClearAlert}
+                    />
+                  )}
+                  {status === 3 && (
+                    <Alert
+                      action="Data Deleted!"
+                      message={message}
+                      data={data}
+                      onClick={this.onClearAlert}
+                    />
                   )}
 
                   <div className="table-responsive mt-4">
@@ -461,7 +441,8 @@ UnitList.propTypes = {
   getEmployee: PropTypes.func.isRequired,
   units: PropTypes.object.isRequired,
   design: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  clearAlert: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -472,5 +453,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getUnits, getStaff, getEmployee }
+  { getUnits, getStaff, getEmployee, clearAlert }
 )(UnitList);

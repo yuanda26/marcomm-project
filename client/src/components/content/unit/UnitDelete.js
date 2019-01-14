@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
-import { connect } from "react-redux";
+import { Modal, ModalBody, ModalHeader } from "reactstrap";
 // Redux Action
+import { connect } from "react-redux";
 import { deleteUnit } from "../../../actions/unitAction";
 
 class DeleteUnit extends Component {
   deleteHandler = () => {
-    this.props.deleteUnit(this.props.unit._id);
+    this.props.deleteUnit(this.props.unit.code);
     this.props.closeModal();
   };
 
@@ -19,17 +19,20 @@ class DeleteUnit extends Component {
         </ModalHeader>
         <ModalBody>
           <p>
-            Are you sure you want to delete <b>{this.props.unit.name}</b> ?
+            Are You Sure You Want to Delete Unit <b>{this.props.unit.name}</b> ?
           </p>
+          <div className="form-group text-right">
+            <button
+              className="btn btn-danger mr-1"
+              onClick={this.deleteHandler}
+            >
+              Delete
+            </button>
+            <button className="btn btn-warning" onClick={this.props.closeModal}>
+              Cancel
+            </button>
+          </div>
         </ModalBody>
-        <ModalFooter>
-          <Button color="danger" onClick={this.deleteHandler}>
-            Delete
-          </Button>
-          <Button color="warning" onClick={this.props.closeModal}>
-            Cancel
-          </Button>
-        </ModalFooter>
       </Modal>
     );
   }
@@ -38,8 +41,7 @@ class DeleteUnit extends Component {
 DeleteUnit.propTypes = {
   delete: PropTypes.bool.isRequired,
   unit: PropTypes.object.isRequired,
-  closeModal: PropTypes.func.isRequired,
-  modalStatus: PropTypes.func.isRequired
+  closeModal: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
