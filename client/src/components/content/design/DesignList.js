@@ -14,6 +14,8 @@ import {
 import Spinner from "../../common/Spinner";
 import TextField from "../../common/TextField";
 import SelectList from "../../common/SelectList";
+// Form Validation
+import isEmpty from "../../../validation/isEmpty";
 
 class DesignList extends Component {
   constructor(props) {
@@ -307,7 +309,7 @@ class DesignList extends Component {
       );
     }
 
-    if (designs.length === 0 && assign.length === 0) {
+    if (isEmpty(designs) && isEmpty(assign)) {
       return (
         <div className="container">
           <div className="row">

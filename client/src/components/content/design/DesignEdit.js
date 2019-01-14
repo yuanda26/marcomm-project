@@ -12,7 +12,8 @@ import {
   createDesign,
   createDesignItem,
   updateDesign,
-  updateDesignItem
+  updateDesignItem,
+  clearAlert
 } from "../../../actions/designAction";
 import { CreateOutlined, DeleteOutlined } from "@material-ui/icons";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
@@ -25,6 +26,8 @@ import TextField from "../../common/TextField";
 import TextAreaGroup from "../../common/TextAreaGroup";
 import SelectList from "../../common/SelectList";
 import SelectListGroup from "../../common/SelectListGroup";
+import Alert from "../../common/Alert";
+// Form Validation
 import isEmpty from "../../../validation/isEmpty";
 
 class DesignEdit extends Component {
@@ -299,15 +302,15 @@ class DesignEdit extends Component {
       // contain updated items
       const designItemUpdate = [];
       this.state.items.forEach((item, index) => {
+        // Delete Some Property
+        delete item.disabled;
+        delete item.errorDueDate;
+        delete item.errorPIC;
+        delete item.errorProduct;
+        delete item.errorTitle;
+        // Compare Updated Data with Original Data
         if (JSON.stringify(item) !== JSON.stringify(originalData[index])) {
           if (item._id !== false) {
-            // Delete Some Property
-            delete item.disabled;
-            delete item.errorDueDate;
-            delete item.errorPIC;
-            delete item.errorProduct;
-            delete item.errorTitle;
-
             designItemUpdate.push({
               ...item,
               updated_by: this.props.user.m_employee_id,
@@ -395,6 +398,12 @@ class DesignEdit extends Component {
     }
   }
 
+  // Clear Alert
+  onClearAlert = e => {
+    e.preventDefault();
+    this.props.clearAlert();
+  };
+
   render() {
     const {
       design,
@@ -404,9 +413,7 @@ class DesignEdit extends Component {
       requester,
       assign,
       designStatus,
-      designMessage,
-      itemsStatus,
-      itemsMessage
+      designMessage
     } = this.props.design;
     const user = this.props.user;
     const { code } = this.props.match.params;
@@ -449,13 +456,14 @@ class DesignEdit extends Component {
     };
 
     if (
-      Object.keys(user).length === 0 &&
-      Object.keys(design).length === 0 &&
-      event.length === 0 &&
-      product.length === 0 &&
-      requester.length === 0 &&
-      assign.length === 0
+      isEmpty(user) &&
+      isEmpty(design) &&
+      isEmpty(event) &&
+      isEmpty(product) &&
+      isEmpty(requester) &&
+      isEmpty(assign)
     ) {
+      console.log(true);
       return (
         <div className="container">
           <div className="row">
@@ -498,16 +506,11 @@ class DesignEdit extends Component {
                 </nav>
                 {/* Alert Messages */}
                 {designStatus === 2 && (
-                  <div className="alert alert-success">
-                    <span className="font-weight-bold">Data Updated! </span>
-                    {designMessage}
-                  </div>
-                )}
-                {itemsStatus === 1 && (
-                  <div className="alert alert-success">
-                    <span className="font-weight-bold">Data Saved! </span>
-                    {itemsMessage}
-                  </div>
+                  <Alert
+                    action="Data Updated! "
+                    message={designMessage}
+                    onClick={this.onClearAlert}
+                  />
                 )}
                 <div className="card border-info mb-3">
                   <div className="card-header lead">
@@ -766,7 +769,8 @@ DesignEdit.propTypes = {
   updateDesignItem: PropTypes.func.isRequired,
   getAssignToName: PropTypes.func.isRequired,
   design: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired
+  user: PropTypes.object.isRequired,
+  clearAlert: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -786,6 +790,7 @@ export default connect(
     createDesignItem,
     updateDesign,
     updateDesignItem,
-    getAssignToName
+    getAssignToName,
+    clearAlert
   }
 )(DesignEdit);

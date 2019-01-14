@@ -16,7 +16,7 @@ import {
   UPDATE_DESIGN_ITEM,
   APPROVE_DESIGN,
   REJECT_DESIGN,
-  CLEAR_DESIGN_STATUS,
+  CLEAR_DESIGN_ALERT,
   ERRORS
 } from "./types";
 import HostConfig from "../config/Host_Config";
@@ -206,6 +206,48 @@ export const getAssignToName = () => dispatch => {
     );
 };
 
+// Get All Employee
+export const getEmployee = () => dispatch => {
+  axios({
+    url: `${HostConfig}/${ApiConfig.employee}`,
+    method: "get",
+    headers: { Authorization: localStorage.token }
+  })
+    .then(res =>
+      dispatch({
+        type: GET_EMPLOYEE,
+        payload: res.data.message
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: ERRORS,
+        payload: {}
+      })
+    );
+};
+
+// Get User has Staff Role
+export const getStaff = () => dispatch => {
+  axios({
+    url: `${HostConfig}/${ApiConfig.design_staff}`,
+    method: "get",
+    headers: { Authorization: localStorage.token }
+  })
+    .then(res =>
+      dispatch({
+        type: GET_STAFF,
+        payload: res.data.message
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: ERRORS,
+        payload: {}
+      })
+    );
+};
+
 // Add New Design Request
 export const createDesign = designData => dispatch => {
   axios({
@@ -245,7 +287,6 @@ export const createDesignItem = designItemData => dispatch => {
         type: ADD_DESIGN_ITEM,
         payload: res.data.message
       });
-      window.location.href = "/design";
     })
     .catch(err =>
       dispatch({
@@ -296,48 +337,6 @@ export const updateDesignItem = designItemUpdate => dispatch => {
       dispatch({
         type: ERRORS,
         payload: err.response.data
-      })
-    );
-};
-
-// Get User has Staff Role
-export const getStaff = () => dispatch => {
-  axios({
-    url: `${HostConfig}/${ApiConfig.design_staff}`,
-    method: "get",
-    headers: { Authorization: localStorage.token }
-  })
-    .then(res =>
-      dispatch({
-        type: GET_STAFF,
-        payload: res.data.message
-      })
-    )
-    .catch(err =>
-      dispatch({
-        type: ERRORS,
-        payload: {}
-      })
-    );
-};
-
-// Get All Employee
-export const getEmployee = () => dispatch => {
-  axios({
-    url: `${HostConfig}/${ApiConfig.employee}`,
-    method: "get",
-    headers: { Authorization: localStorage.token }
-  })
-    .then(res =>
-      dispatch({
-        type: GET_EMPLOYEE,
-        payload: res.data.message
-      })
-    )
-    .catch(err =>
-      dispatch({
-        type: ERRORS,
-        payload: {}
       })
     );
 };
@@ -405,8 +404,8 @@ export const rejectDesign = (code, formdata) => dispatch => {
 };
 
 // Clear Design Status & Messages
-export const clearStatusMessage = () => dispatch => {
+export const clearAlert = () => dispatch => {
   dispatch({
-    type: CLEAR_DESIGN_STATUS
+    type: CLEAR_DESIGN_ALERT
   });
 };
