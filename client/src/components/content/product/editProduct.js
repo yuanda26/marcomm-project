@@ -26,6 +26,10 @@ class EditProduct extends React.Component {
       status: false,
       message: ""
     },
+    validate : {
+      validateNameProduct : "form-control", 
+      validateDescription : "form-control",
+    },
     updated_by:this.props.user.m_employee_id
     }
     this.submitHandler = this.submitHandler.bind(this);
@@ -49,11 +53,21 @@ class EditProduct extends React.Component {
   }
 
   changeHandler(e) {
-    let tmp = this.state.formdata;
-    tmp[e.target.name] = e.target.value;
+    const { id, name, value } = e.target
+    const { validate, formdata } = this.state
+    formdata[name] = value
+    if(
+      ( name === "name" && value === '' ) ||
+      ( name === "description" && value === "" )
+    ){
+      validate[id] = "form-control is-invalid"
+    }else{
+      validate[id] = "form-control is-valid"
+    }
     this.setState({
-     formdata:tmp
-    })   
+      formdata: formdata,
+      validate : validate
+    });
   }
 
   submitHandler() {
@@ -97,16 +111,48 @@ class EditProduct extends React.Component {
         <ModalHeader> Edit Product</ModalHeader>
         <ModalBody >
           <FormGroup>
-            <Label for="">Code</Label>
-            <Input type="text" name="code" value={this.state.formdata.code} placeholder="Auto Denerate" readOnly />
+              <Label htmlFor="">Code</Label>
+              <Input 
+              type="text" 
+              name="code"
+              value={this.state.formdata.code}
+              placeholder="Auto Generate" readOnly />
+            </FormGroup>
+          <FormGroup className="needs-validation">
+            <Label htmlFor="validateNameProduct">Name Product</Label>
+            <Input 
+              type="text" 
+              name="name"
+              id="validateNameProduct"
+              placeholder="Type Name"
+              className={this.state.validate.validateNameProduct} 
+              value={this.state.formdata.name}  
+              onChange={this.changeHandler}
+            />
+            <div className="valid-feedback">
+              Looks good!
+            </div>
+            <div className="invalid-feedback">
+              Please Type Name!.
+            </div>
           </FormGroup>
           <FormGroup>
-            <Label for="">Name Product</Label>
-            <Input type="text" name="name"  placeholder="" value={this.state.formdata.name}  onChange={this.changeHandler} />
-          </FormGroup>
-          <FormGroup>
-            <Label for="">Description</Label>
-            <Input type="text" name="description"  placeholder="" value={this.state.formdata.description}  onChange={this.changeHandler} />
+            <Label htmlFor="validateDescription">Description</Label>
+            <Input 
+              type="text" 
+              name="description"  
+              placeholder="Type Description" 
+              id="validateDescription"
+              className={this.state.validate.validateDescription}
+              value={this.state.formdata.description}  
+              onChange={this.changeHandler} 
+            />
+            <div className="valid-feedback">
+              Looks good!
+            </div>
+            <div className="invalid-feedback">
+              Please Type Description!.
+            </div>
           </FormGroup>
         </ModalBody>
         <ModalFooter>
