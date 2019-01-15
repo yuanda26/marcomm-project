@@ -16,8 +16,6 @@ import TextField from "../../common/TextField";
 import SelectList from "../../common/SelectList";
 import Spinner from "../../common/Spinner";
 import Alert from "../../common/Alert";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import ReactTooltip from "react-tooltip";
 // Pagination with Material IU
 import Pagination from "../../common/Pagination";
