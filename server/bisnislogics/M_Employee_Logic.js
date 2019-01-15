@@ -22,9 +22,13 @@ const mEmployeeBisnislogic = {
 		let company = req.params.company;
 		let createdDate = req.params.createdDate;
 		let createdBy = req.params.createdBy;
-		dtl.searchHandlerData((items) => {
-			responseHelper.sendResponse(res, 200, items);
-		}, empId, empName, company, createdDate, createdBy);
+		dtl.getUser((user) => {
+			let created_by = "";
+			user === null || user === undefined ? ( created_by = createdBy ) : ( created_by = user.m_employee_id )
+				dtl.searchHandlerData((items) => {
+					responseHelper.sendResponse(res, 200, items);
+				}, empId, empName, company, createdDate, created_by);
+			}, createdBy)
 	},
 
 	createHandler  : (req, res, next) => {

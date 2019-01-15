@@ -80,18 +80,20 @@ const tEventDatalayer = {
 	},
 
 	getUser : (callback, param) => {
-		param === "" ? ( param = "wefd34w57@4346^8" ) : ( param = param  )
-		db.collection('m_user').findOne({ username : new RegExp(param), is_delete : false }, (err, docs) => {
-			if(err){
-				callback("")
-			}else{
-				callback(docs)
-			}
-		})
+		if(param === "") {
+			callback(param)			
+		}else{
+			db.collection('m_user').findOne({ username : new RegExp(param), is_delete : false }, (err, docs) => {
+				if(err){
+					callback("")
+				}else{
+					callback(docs)
+				}
+			})
+		}
 	},
 
 	getEmployee : (callback, param) => {
-		param === "" ? ( param = "vT%67V0iiuvwe5" ) : ( param = param )
 		let newName = param.split(" ")
 		let first_name = ""
 		let last_name = ""
@@ -110,7 +112,7 @@ const tEventDatalayer = {
 			last_name : new RegExp(last_name) 
 			}, (err, docs) => {
 				if(err){
-					callback("")
+					callback(first_name + " " + last_name)
 				}else{
 					callback(docs)
 				}

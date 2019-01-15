@@ -423,7 +423,7 @@ class ListProduct extends React.Component {
                     )}
                   />
                   <div className="table-responsive">
-                    <table id="mytable" className="table table-hover table-responsive">
+                  <table id="mytable" className="table table-hover table-responsive">
                       <thead>
                         <td >
                           <input
