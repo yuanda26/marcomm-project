@@ -51,7 +51,8 @@ class CreateEmployee extends React.Component{
     }else if(
       ( name==="email" && value !== '' ) ||
       ( name==="m_company_id" && value==="" ) ||
-      ( name==="first_name" && value==="" )
+      ( name==="first_name" && value==="" ) ||
+      ( name==="first_name" && value===" " )
     ){
       validate[id] = "form-control is-invalid"
     }else{
@@ -74,11 +75,14 @@ class CreateEmployee extends React.Component{
           emailJikaAda = ele.email
         }
       })
+    let arrFirstName = first_name.split(" ")
     formdata['created_by'] = this.props.user.m_employee_id
     if( m_company_id === "" ){
       alert( "Select Company!" )
     }else if( first_name === '' ){
       alert( "Type First Name!" )
+    }else if( arrFirstName.length > 0 ){
+      alert( "Please Type First Name Without Space!" )
     }
     else if(  email === emailJikaAda ) {
       alert( "Email Sudah Ada!" )
