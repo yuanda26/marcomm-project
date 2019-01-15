@@ -12,6 +12,7 @@ import {
 import Spinner from "../../common/Spinner";
 import TextField from "../../common/TextField";
 import SelectList from "../../common/SelectList";
+import ReactTooltip from "react-tooltip";
 // Form Validation
 import isEmpty from "../../../validation/isEmpty";
 // Pagination with Material IU
@@ -177,7 +178,7 @@ class DesignList extends Component {
   };
 
   render() {
-    const { designs, assign, status, message } = this.props.design;
+    const { designs, assign } = this.props.design;
 
     // Define Options for Assign to Dropdown
     const options = [];
@@ -198,7 +199,7 @@ class DesignList extends Component {
           this.state.page * this.state.rowsPerPage,
           this.state.page * this.state.rowsPerPage + this.state.rowsPerPage
         )
-        .map((design, index) => (
+        .map(design => (
           <tr key={design._id} className="text-center">
             <td>{design.code}</td>
             <td>{this.getEmployee(design.request_by)}</td>
@@ -208,11 +209,16 @@ class DesignList extends Component {
             <td>{design.created_date}</td>
             <td>{this.getEmployee(design.created_by)}</td>
             <td>
-              <a href={`/design/view/${design.code}`}>
+              <a href={`/design/view/${design.code}`} data-tip="See Detail">
                 <RemoveRedEye />
+                <ReactTooltip place="top" type="dark" effect="solid" />
               </a>
-              <a href={`/design/edit/${design.code}`}>
+              <a
+                href={`/design/edit/${design.code}`}
+                data-tip="Edit Design Request"
+              >
                 <Create />
+                <ReactTooltip place="top" type="dark" effect="solid" />
               </a>
             </td>
           </tr>
@@ -300,10 +306,15 @@ class DesignList extends Component {
                     <Search />
                   </button>
                 )}
-                <a href="/design/add" title="Request New Design!">
+                <a
+                  href="/design/add"
+                  title="Request New Design!"
+                  data-tip="Add New Unit"
+                >
                   <button className="btn btn-primary ml-1" type="button">
                     <Add />
                   </button>
+                  <ReactTooltip place="top" type="dark" effect="solid" />
                 </a>
               </div>
             </td>
@@ -361,13 +372,6 @@ class DesignList extends Component {
                       </li>
                     </ol>
                   </nav>
-                  {/* Alert Messages */}
-                  {status === 1 && (
-                    <div className="mt-2 alert alert-success">{message}</div>
-                  )}
-                  {status === 2 && (
-                    <div className="mt-2 alert alert-primary">{message}</div>
-                  )}
                   <div className="table-responsive">
                     <form onSubmit={this.submitSearch}>
                       <table className="table table-stripped">

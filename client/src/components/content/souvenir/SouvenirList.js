@@ -20,6 +20,7 @@ import Spinner from "../../common/Spinner";
 import TextField from "../../common/TextField";
 import SelectList from "../../common/SelectList";
 import Alert from "../../common/Alert";
+import ReactTooltip from "react-tooltip";
 // Pagination with Material IU
 import Pagination from "../../common/Pagination";
 import { TablePagination } from "@material-ui/core";
@@ -274,26 +275,29 @@ class SouvenirList extends Component {
             <td>{souvenir.created_date}</td>
             <td>{this.getEmployee(souvenir.created_by)}</td>
             <td nowrap="true">
-              <Link to="#">
+              <Link to="#" data-tip="See Detail">
                 <RemoveRedEye
                   onClick={() => {
                     this.onViewModal(souvenir._id);
                   }}
                 />
+                <ReactTooltip place="top" type="dark" effect="solid" />
               </Link>
-              <Link to="#">
+              <Link to="#" data-tip="Edit Souvenir">
                 <Create
                   onClick={() => {
                     this.onEditModal(souvenir._id);
                   }}
                 />
+                <ReactTooltip place="top" type="dark" effect="solid" />
               </Link>
-              <Link to="#">
+              <Link to="#" data-tip="Delete Souvenir">
                 <Delete
                   onClick={() => {
                     this.onDeleteModal(souvenir.code);
                   }}
                 />
+                <ReactTooltip place="top" type="dark" effect="solid" />
               </Link>
             </td>
           </tr>
@@ -356,13 +360,18 @@ class SouvenirList extends Component {
                     <Search />
                   </button>
                 )}
-                <button
-                  onClick={this.showHandler}
-                  type="button"
-                  className="btn btn-primary ml-1"
-                >
-                  <Add />
-                </button>
+                <Fragment>
+                  <Link to="#" data-tip="Add New Souvenir">
+                    <button
+                      onClick={this.showHandler}
+                      type="button"
+                      className="btn btn-primary ml-1"
+                    >
+                      <Add />
+                    </button>
+                  </Link>
+                  <ReactTooltip place="top" type="dark" effect="solid" />
+                </Fragment>
               </div>
             </td>
           </tr>
