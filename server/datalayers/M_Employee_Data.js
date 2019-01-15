@@ -50,9 +50,8 @@ const employeeDatalayer = {
 					"created_date"    : "$created_date",
 					"updated_by"      : "$updated_by",
 					"updated_date"    : "$updated_date",
-					"role"    : "$role.m_role_id"
-			  }
-		                                       
+					"role"            : "$role.m_role_id"
+			  }                                   
 		  }]).toArray((err, docs) => {
 			let mEmployee = docs.map((row) => {
 				return new employeeModel(row)
@@ -99,7 +98,7 @@ const employeeDatalayer = {
 				}
 			}
 		})
-		if(createdDate != ""){
+		if(createdDate !== ""){
 			newCreatedDate = moment(createdDate).format("DD/MM/YYYY")
 		}else{
 			newCreatedDate = ""

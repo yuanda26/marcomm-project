@@ -16,23 +16,27 @@ const M_Product_Data = {
     }, code);
   },
   //SEARCH
+  searchHandler : (req, res, next) => {
+    let empId = req.params.empId;
+    let empName = req.params.empName;
+    let company = req.params.company;
+    let createdDate = req.params.createdDate;
+    let createdBy = req.params.createdBy;
+    
+  },
   searchHandler: (req, res, next) => {
     let code = req.params.Code;
     let name = req.params.Name;
     let description = req.params.Description;
     let created_date = req.params.createdDate;
-    let created_by = req.params.createdBy;
-
-    productData.searchHandlerData(
-      items => {
-        ResponseHelper.sendResponse(res, 200, items);
-      },
-      code,
-      name,
-      description,
-      created_date,
-      created_by
-    );
+    let createdBy = req.params.createdBy;
+    productData.getUser((user) => {
+      let created_by = "";
+      user === null || user === undefined ? ( created_by = createdBy ) : ( created_by = user.m_employee_id )
+        productData.searchHandlerData((items) => {
+          ResponseHelper.sendResponse(res, 200, items);
+        }, code, name, description, created_date, created_by)
+      }, createdBy)
   },
   //ADD PRODUCT TABLE
   createHandler: (req, res, next) => {

@@ -70,6 +70,15 @@ class EditProduct extends React.Component {
     });
   }
 
+  cancelHandler = () => {
+    let validate = {
+      validateNameProduct : "form-control", 
+      validateDescription : "form-control",
+    }
+    this.setState({validate: validate})
+    this.props.closeModalHandler()
+  }
+
   submitHandler() {
     const func = (arrReq, input)=>{
       if(
@@ -162,7 +171,7 @@ class EditProduct extends React.Component {
           ""
           )}
           <Button color="primary" onClick ={this.submitHandler}>Update</Button>
-          <Button color="warning" onClick={this.props.closeModalHandler}>Cancel</Button>
+          <Button color="warning" onClick={this.cancelHandler}>Cancel</Button>
         </ModalFooter>
       </Modal>
     )

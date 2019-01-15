@@ -39,6 +39,16 @@ class EditEvent extends React.Component {
 
   componentWillReceiveProps(newProps){
     let { currentEvent, statusUpdate, modalStatus } = newProps
+    let formdata = {
+      code : currentEvent.code,
+      event_name : currentEvent.event_name,
+      place : currentEvent.place,
+      start_date : currentEvent.start_date,
+      end_date : currentEvent.end_date,
+      budget : currentEvent.budget,
+      request_by : currentEvent.request_by,
+      created_by : currentEvent.created_by
+    }
     let { readOnly } = this.state
     let { request_by_first_name, request_by_last_name } = currentEvent
     if( currentEvent.status === "Submitted" ){
@@ -47,7 +57,7 @@ class EditEvent extends React.Component {
       readOnly = true
     }
     this.setState({
-      formdata : currentEvent,
+      formdata : formdata,
       readOnly: readOnly,
       currentEmployee : request_by_first_name + " " + request_by_last_name
     })
@@ -80,6 +90,19 @@ class EditEvent extends React.Component {
     })
   }
 
+  cancelhandler = () => {
+    let newCurrentEvent = this.props.currentEvent
+    let validate = {
+      validateEventName : "form-control",
+      validateEventPlace : "form-control",
+      validateEventStartDate : "form-control",
+      validateEventEndDate : "form-control",
+      validateBudget : "form-control",
+    }
+    this.setState({validate: validate, formdata: newCurrentEvent})
+    this.props.closeModalHandler()
+  }
+  
   submitHandler = () => {
     let { formdata, regexBudget } = this.state
     let { 
@@ -105,6 +128,25 @@ class EditEvent extends React.Component {
       alert("Budget Is Invalid!")
     }else{
       this.props.updateEvent(_id, formdata)
+      let validate = {
+        validateEventName : "form-control",
+        validateEventPlace : "form-control",
+        validateEventStartDate : "form-control",
+        validateEventEndDate : "form-control",
+        validateBudget : "form-control",
+      }
+      let newFormdata = {
+        code : '',
+        event_name : '',
+        place : '',
+        start_date : '',
+        end_date : '',
+        budget : '',
+        request_by : '',
+        request_date : '',
+        created_by : ''
+      }
+      this.setState({validate: validate, formdata: newFormdata})
       this.props.closeModalHandler()
     }
   }
@@ -310,7 +352,7 @@ class EditEvent extends React.Component {
           >Save</Button>
           <Button 
             color="warning"
-            onClick={this.props.closeModalHandler}
+            onClick={this.cancelhandler}
           >Cancel</Button>
         </ModalFooter>
       </Modal>
