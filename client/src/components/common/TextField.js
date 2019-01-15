@@ -4,6 +4,8 @@ import classnames from "classnames";
 
 const TextField = ({
   label,
+  id,
+  className,
   name,
   placeholder,
   value,
@@ -20,8 +22,9 @@ const TextField = ({
     <div className="form-group">
       {label && <label>{label}</label>}
       <input
+        id={id}
         type={type}
-        className={classnames("form-control", {
+        className={classnames(`form-control ${className}`, {
           "is-invalid": errors
         })}
         placeholder={placeholder}
@@ -41,22 +44,25 @@ const TextField = ({
 
 TextField.propTypes = {
   label: PropTypes.string,
+  id: PropTypes.string,
+  className: PropTypes.string,
+  type: PropTypes.string,
   name: PropTypes.string,
   placeholder: PropTypes.string,
   value: PropTypes.string,
   min: PropTypes.string,
   max: PropTypes.string,
-  type: PropTypes.string,
+  maxLength: PropTypes.string,
   disabled: PropTypes.bool,
   readOnly: PropTypes.bool,
   onChange: PropTypes.func,
-  maxLength: PropTypes.string,
   errors: PropTypes.string
 };
 
 TextField.defaultProps = {
   type: "text",
   disabled: false,
+  readOnly: false,
   maxLength: "50"
 };
 
