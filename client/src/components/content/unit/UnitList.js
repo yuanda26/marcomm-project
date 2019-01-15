@@ -15,6 +15,7 @@ import Spinner from "../../common/Spinner";
 import Alert from "../../common/Alert";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ReactTooltip from "react-tooltip";
 // Pagination with Material IU
 import Pagination from "../../common/Pagination";
 import { TablePagination } from "@material-ui/core";
@@ -240,26 +241,29 @@ class UnitList extends Component {
             <td>{row.created_date}</td>
             <td>{this.rename(row.created_by)}</td>
             <td nowrap="true">
-              <Link to="#">
+              <Link to="#" data-tip="See Detail">
                 <RemoveRedEye
                   onClick={() => {
                     this.viewModalHandler(row.code);
                   }}
                 />
+                <ReactTooltip place="top" type="dark" effect="solid" />
               </Link>
-              <Link to="#">
+              <Link to="#" data-tip="Edit Unit">
                 <Create
                   onClick={() => {
                     this.editModalHandler(row.code);
                   }}
                 />
+                <ReactTooltip place="top" type="dark" effect="solid" />
               </Link>
-              <Link to="#">
+              <Link to="#" data-tip="Delete Unit">
                 <Delete
                   onClick={() => {
                     this.deleteModalHandler(row.code);
                   }}
                 />
+                <ReactTooltip place="top" type="dark" effect="solid" />
               </Link>
             </td>
           </tr>
@@ -333,7 +337,7 @@ class UnitList extends Component {
                     <Search />
                   </button>
                 )}
-                <Link to="#">
+                <Link to="#" data-tip="Add New Unit">
                   <button
                     onClick={this.addModalHandler}
                     className="btn btn-primary ml-1"
@@ -341,6 +345,7 @@ class UnitList extends Component {
                   >
                     <Add />
                   </button>
+                  <ReactTooltip place="top" type="dark" effect="solid" />
                 </Link>
               </div>
             </td>
