@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import moment from "moment";
 // Redux actions
 import { connect } from "react-redux";
 import { getUnits, clearAlert } from "../../../actions/unitAction";
@@ -136,15 +137,19 @@ class UnitList extends Component {
 
     code = new RegExp(code, "i");
     name = new RegExp(name, "i");
-    created_date = new RegExp(created_date, "i");
+    created_date =
+      created_date === ""
+        ? new RegExp("")
+        : new RegExp(moment(created_date, "YYYY-MM-DD").format("DD/MM/YYYY"));
     created_by = new RegExp(created_by, "i");
+
     let result = [];
     this.state.unit.forEach(row => {
       if (
         code.test(row.code.toLowerCase()) &&
         name.test(row.name.toLowerCase()) &&
         created_by.test(this.rename(row.created_by).toLowerCase()) &&
-        created_date.test(row.created_date.toLowerCase())
+        created_date.test(row.created_date)
       ) {
         result.push(row);
       }
@@ -154,37 +159,6 @@ class UnitList extends Component {
       hasil: result,
       search: true
     });
-  };
-
-  // Restore Units Data
-  onRestore = e => {
-    e.preventDefault();
-    this.setState({
-      hasil: this.props.units.unitData,
-      search: false
-    });
-  };
-
-  handleChangeCreatedDate = date => {
-    const { initialSearch } = this.state;
-    if (date) {
-      let dd = date.getDate();
-      let mm = date.getMonth() + 1;
-      let yy = date.getFullYear().toString();
-      let newDate = dd + "/" + mm + "/" + yy;
-      initialSearch["created_date"] = newDate;
-
-      this.setState({
-        initialSearch: initialSearch,
-        created_date: date
-      });
-    } else {
-      initialSearch["created_date"] = /(?:)/;
-      this.setState({
-        initialSearch: initialSearch,
-        created_date: new Date()
-      });
-    }
   };
 
   rename = param => {
@@ -221,6 +195,15 @@ class UnitList extends Component {
     this.setState({ rowsPerPage: e.target.value });
   };
 
+  // Restore Units Data
+  onRestore = e => {
+    e.preventDefault();
+    this.setState({
+      hasil: this.props.units.unitData,
+      search: false
+    });
+  };
+
   render() {
     const { user } = this.props.auth;
     const { unitData, status, data, message } = this.props.units;
@@ -230,7 +213,7 @@ class UnitList extends Component {
     let unitLabel;
 
     let optionsCode = [];
-    optionsCode.push({ label: "Select Unit Code", value: "" });
+    optionsCode.push({ label: "~Select Unit Code~", value: "" });
     unit.forEach(row =>
       optionsCode.push({
         label: row.code,
@@ -239,7 +222,7 @@ class UnitList extends Component {
     );
 
     let optionsName = [];
-    optionsName.push({ label: "Select Unit Name", value: "" });
+    optionsName.push({ label: "~Select Unit Name~", value: "" });
     unit.forEach(row =>
       optionsName.push({
         label: row.name,
@@ -294,6 +277,7 @@ class UnitList extends Component {
           <tr>
             <td>
               <SelectList
+                className="search-form"
                 name="code"
                 value={this.state.initialSearch.code}
                 onChange={this.changeHandler}
@@ -302,6 +286,7 @@ class UnitList extends Component {
             </td>
             <td>
               <SelectList
+                className="search-form"
                 name="name"
                 value={this.state.initialSearch.name}
                 onChange={this.changeHandler}
@@ -309,17 +294,18 @@ class UnitList extends Component {
               />
             </td>
             <td>
-              <DatePicker
-                className="form-control"
-                placeholderText="Created Date"
+              <TextField
+                className="search-form"
+                type="date"
+                min="2018-01-01"
                 name="created_date"
-                selected={this.state.created_date}
-                onChange={this.handleChangeCreatedDate}
-                isClearable={true}
+                value={this.state.created_date}
+                onChange={this.changeHandler}
               />
             </td>
             <td>
               <TextField
+                className="search-form"
                 placeholder="Created By"
                 name="created_by"
                 value={this.state.initialSearch.created_by}
