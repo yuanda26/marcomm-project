@@ -9,7 +9,7 @@ const datalayer = {
   readAllRole: callback => {
     db.collection("m_role")
       .find({ is_delete: false })
-      .sort({ code: 1 })
+      .sort({ code: -1 })
       .toArray((err, docs) => {
         let role = docs.map(row => {
           return new roleModel(row);
