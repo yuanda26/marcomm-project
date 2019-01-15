@@ -9,15 +9,134 @@ import { Alert } from "reactstrap";
 import DeleteRole from "./deleteRole";
 import ViewRole from "./viewRole";
 import "react-datepicker/dist/react-datepicker.css";
-import SearchIcon from "@material-ui/icons/Search";
+import SearchIcon from "@material-ui/icons/RemoveRedEye";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import moment from "moment";
+import { Add, Search, Refresh } from "@material-ui/icons";
+import {
+  withStyles,
+  TableRow,
+  TableFooter,
+  TablePagination,
+  IconButton
+} from "@material-ui/core";
+import FirstPageIcon from "@material-ui/icons/FirstPage";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import LastPageIcon from "@material-ui/icons/LastPage";
+import Spinner from "../../common/Spinner";
+const actionsStyles = theme => ({
+  root: {
+    flexShrink: 0,
+    color: theme.palette.text.secondary,
+    marginLeft: theme.spacing.unit * 2.5
+  }
+});
+
+class TablePaginationActions extends React.Component {
+  handleFirstPageButtonClick = event => {
+    this.props.onChangePage(event, 0);
+  };
+
+  handleBackButtonClick = event => {
+    this.props.onChangePage(event, this.props.page - 1);
+  };
+
+  handleNextButtonClick = event => {
+    this.props.onChangePage(event, this.props.page + 1);
+  };
+
+  handleLastPageButtonClick = event => {
+    this.props.onChangePage(
+      event,
+      Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1)
+    );
+  };
+
+  render() {
+    const { classes, count, page, rowsPerPage, theme } = this.props;
+
+    return (
+      <div className={classes.root}>
+        <IconButton
+          onClick={this.handleFirstPageButtonClick}
+          disabled={page === 0}
+          aria-label="First Page"
+        >
+          {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
+        </IconButton>
+        <IconButton
+          onClick={this.handleBackButtonClick}
+          disabled={page === 0}
+          aria-label="Previous Page"
+        >
+          {theme.direction === "rtl" ? (
+            <KeyboardArrowRight />
+          ) : (
+            <KeyboardArrowLeft />
+          )}
+        </IconButton>
+        <IconButton
+          onClick={this.handleNextButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="Next Page"
+        >
+          {theme.direction === "rtl" ? (
+            <KeyboardArrowLeft />
+          ) : (
+            <KeyboardArrowRight />
+          )}
+        </IconButton>
+        <IconButton
+          onClick={this.handleLastPageButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="Last Page"
+        >
+          {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
+        </IconButton>
+      </div>
+    );
+  }
+}
+
+TablePaginationActions.propTypes = {
+  classes: PropTypes.object.isRequired,
+  count: PropTypes.number.isRequired,
+  onChangePage: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+  theme: PropTypes.object.isRequired
+};
+
+const TablePaginationActionsWrapped = withStyles(actionsStyles, {
+  withTheme: true
+})(TablePaginationActions);
+
+const styles = theme => ({
+  root: {
+    width: "100%",
+    marginTop: theme.spacing.unit * 3,
+    overflowX: "auto"
+  },
+  table: {
+    minWidth: 700,
+    hidden: true
+  },
+  button: {
+    margin: theme.spacing.unit
+  },
+  extendedIcon: {
+    marginRight: theme.spacing.unit
+  }
+});
 
 class ListRole extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      page: 0,
+      rowsPerPage: 5,
       number: 0,
       showCreateRole: false,
       roleItem: {
@@ -42,6 +161,15 @@ class ListRole extends React.Component {
     this.editModalHandler = this.editModalHandler.bind(this);
     this.modalStatus = this.modalStatus.bind(this);
   }
+
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = event => {
+    this.setState({ rowsPerPage: event.target.value });
+  };
+
   //mount before render
   componentDidMount() {
     this.props.getAllRoles();
@@ -211,13 +339,6 @@ class ListRole extends React.Component {
                 ) : (
                   ""
                 )}
-                <div className="text-right">
-                  <div className=" mb-2">
-                    <button onClick={this.showHandler} class="btn btn-primary">
-                      Add Role
-                    </button>
-                  </div>
-                </div>
                 <div className="table-responsive ">
                   <table className="table table-borderless">
                     <tr>
@@ -260,26 +381,36 @@ class ListRole extends React.Component {
                       <td>
                         {this.state.number % 2 === 0 ? (
                           <button
-                            class="btn btn-warning btn-block"
+                            class="btn btn-primary btn-block"
                             onClick={this.search}
                           >
-                            Search
+                            <Search />
                           </button>
                         ) : (
                           <button
                             onClick={this.refresh}
                             class="btn btn-warning btn-block"
                           >
-                            Refresh
+                            <Refresh />
                           </button>
                         )}
+                      </td>
+                      <td>
+                        <div className="mb-2">
+                          <button
+                            onClick={this.showHandler}
+                            class="btn btn-primary"
+                          >
+                            <Add />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   </table>
                 </div>
 
                 {this.state.dummyRole.length === 0 ? (
-                  <h5>Loading Data, Please Wait...</h5>
+                  <Spinner />
                 ) : (
                   <div className="table-responsive">
                     <table className="table">
@@ -292,39 +423,60 @@ class ListRole extends React.Component {
                           <td>Action</td>
                         </tr>
                       </thead>
-                      {this.state.dummyRole.map(content => (
-                        <tr className="text-center">
-                          <td>{content.code}</td>
-                          <td>{content.name}</td>
-                          <td>{content.created_by}</td>
-                          <td>
-                            {moment(content.created_date).format("DD/MM/YYYY")}
-                          </td>
-                          <td>
-                            <Link to="#">
-                              <SearchIcon
-                                onClick={() => {
-                                  this.viewModalHandler(content._id);
-                                }}
-                              />
-                            </Link>
-                            <Link to="#">
-                              <CreateOutlinedIcon
-                                onClick={() => {
-                                  this.editModalHandler(content._id);
-                                }}
-                              />
-                            </Link>
-                            <Link to="#">
-                              <DeleteOutlinedIcon
-                                onClick={() => {
-                                  this.deleteModalHandler(content._id);
-                                }}
-                              />
-                            </Link>
-                          </td>
-                        </tr>
-                      ))}
+                      {this.state.dummyRole
+                        .slice(
+                          this.state.page * this.state.rowsPerPage,
+                          this.state.page * this.state.rowsPerPage +
+                            this.state.rowsPerPage
+                        )
+                        .map(content => (
+                          <tr className="text-center">
+                            <td>{content.code}</td>
+                            <td>{content.name}</td>
+                            <td>{content.created_by}</td>
+                            <td>
+                              {moment(content.created_date).format(
+                                "DD/MM/YYYY"
+                              )}
+                            </td>
+                            <td>
+                              <Link to="#">
+                                <SearchIcon
+                                  onClick={() => {
+                                    this.viewModalHandler(content._id);
+                                  }}
+                                />
+                              </Link>
+                              <Link to="#">
+                                <CreateOutlinedIcon
+                                  onClick={() => {
+                                    this.editModalHandler(content._id);
+                                  }}
+                                />
+                              </Link>
+                              <Link to="#">
+                                <DeleteOutlinedIcon
+                                  onClick={() => {
+                                    this.deleteModalHandler(content._id);
+                                  }}
+                                />
+                              </Link>
+                            </td>
+                          </tr>
+                        ))}
+                      <TableFooter>
+                        <TableRow>
+                          <TablePagination
+                            colSpan={3}
+                            count={this.state.dummyRole.length}
+                            rowsPerPage={this.state.rowsPerPage}
+                            page={this.state.page}
+                            onChangePage={this.handleChangePage}
+                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                            ActionsComponent={TablePaginationActionsWrapped}
+                          />
+                        </TableRow>
+                      </TableFooter>
                     </table>
                   </div>
                 )}
@@ -369,7 +521,8 @@ const mapStateToProps = state => ({
   getTheRole: state.roleData
 });
 
+let style = withStyles(styles)(ListRole);
 export default connect(
   mapStateToProps,
   { getAllRoles }
-)(ListRole);
+)(style);

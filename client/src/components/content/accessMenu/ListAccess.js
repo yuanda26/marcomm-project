@@ -25,6 +25,8 @@ import SearchIcon from "@material-ui/icons/Search";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import moment from "moment";
+import Spinner from "../../common/Spinner";
+import { Add, Search, Refresh } from "@material-ui/icons";
 const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
@@ -362,64 +364,69 @@ class ListAccess extends React.Component {
                 ) : (
                   ""
                 )}
-                <div className="form-row">
-                  <div className="col-md-2">
-                    <input
-                      name="code"
-                      onKeyPress={this.keyHandler}
-                      onChange={this.changeHandler}
-                      className="form-control"
-                      placeholder="-Role Code-"
-                    />
-                  </div>
-                  <div className="col-md-2">
-                    <input
-                      name="name"
-                      onKeyPress={this.keyHandler}
-                      onChange={this.changeHandler}
-                      className="form-control"
-                      placeholder="-Role Name-"
-                    />
-                  </div>
-                  <div className="col-md-2">
-                    <input
-                      name="created_by"
-                      onKeyPress={this.keyHandler}
-                      onChange={this.changeHandler}
-                      className="form-control"
-                      placeholder="-Request By-"
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <input
-                      name="reqDate"
-                      onKeyPress={this.keyHandler}
-                      onChange={this.changeHandler}
-                      type="date"
-                      className="form-control"
-                    />
-                  </div>
-                  <div className="col-xs-4">
-                    {this.state.number % 2 === 0 ? (
-                      <button className="btn btn-warning" onClick={this.search}>
-                        Search
-                      </button>
-                    ) : (
-                      <button
-                        onClick={this.refresh}
-                        className="btn btn-warning"
-                      >
-                        Refresh
-                      </button>
-                    )}
-                  </div>
-                </div>
-                <br />
-                {this.state.hasil.length === 0 ? (
-                  <h5>Loading The Page, Please Wait...</h5>
+                {this.state.hasil.length === 0 &&
+                this.state.access.length === 0 ? (
+                  <Spinner />
                 ) : (
                   <div className="table-responsive">
                     <table className="table">
+                      <thead>
+                        <tr>
+                          <td>
+                            <input
+                              name="code"
+                              onKeyPress={this.keyHandler}
+                              onChange={this.changeHandler}
+                              className="form-control"
+                              placeholder="-Role Code-"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              name="name"
+                              onKeyPress={this.keyHandler}
+                              onChange={this.changeHandler}
+                              className="form-control"
+                              placeholder="-Role Name-"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              name="created_by"
+                              onKeyPress={this.keyHandler}
+                              onChange={this.changeHandler}
+                              className="form-control"
+                              placeholder="-Created By-"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              name="reqDate"
+                              onKeyPress={this.keyHandler}
+                              onChange={this.changeHandler}
+                              type="date"
+                              className="form-control"
+                            />
+                          </td>
+                          <td>
+                            {this.state.number % 2 === 0 ? (
+                              <button
+                                className="btn btn-primary"
+                                onClick={this.search}
+                              >
+                                <Search />
+                              </button>
+                            ) : (
+                              <button
+                                onClick={this.refresh}
+                                className="btn btn-warning"
+                              >
+                                <Refresh />
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      </thead>
                       <thead>
                         <tr className="text-center font-weight-bold">
                           <td>Role Code</td>
