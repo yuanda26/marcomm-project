@@ -10,8 +10,8 @@ import DeleteRole from "./deleteRole";
 import ViewRole from "./viewRole";
 import "react-datepicker/dist/react-datepicker.css";
 import SearchIcon from "@material-ui/icons/RemoveRedEye";
-import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
-import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
+import DeleteOutlinedIcon from "@material-ui/icons/Delete";
+import CreateOutlinedIcon from "@material-ui/icons/Create";
 import moment from "moment";
 import { Add, Search, Refresh } from "@material-ui/icons";
 import {
@@ -314,7 +314,9 @@ class ListRole extends React.Component {
         <div className="row">
           <div className="col-md-12">
             <div className="card border-primary mb-3">
-              <div className="card-header lead">List Role</div>
+              <div className="card-header lead bg-primary text-white">
+                List Role
+              </div>
               <div className="card-body">
                 <nav aria-label="breadcrumb mb-4">
                   <ol className="breadcrumb">
@@ -409,7 +411,8 @@ class ListRole extends React.Component {
                   </table>
                 </div>
 
-                {this.state.dummyRole.length === 0 ? (
+                {this.state.dummyRole.length === 0 &&
+                this.state.role.length === 0 ? (
                   <Spinner />
                 ) : (
                   <div className="table-responsive">

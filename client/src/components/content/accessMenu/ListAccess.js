@@ -21,12 +21,12 @@ import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
-import SearchIcon from "@material-ui/icons/Search";
-import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
-import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
+import SearchIcon from "@material-ui/icons/RemoveRedEye";
+import DeleteOutlinedIcon from "@material-ui/icons/Delete";
+import CreateOutlinedIcon from "@material-ui/icons/Create";
 import moment from "moment";
 import Spinner from "../../common/Spinner";
-import { Add, Search, Refresh } from "@material-ui/icons";
+import { Search, Refresh } from "@material-ui/icons";
 const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
