@@ -11,6 +11,8 @@ import UnitEdit from "./UnitEdit";
 import UnitDelete from "./UnitDelete";
 import UnitAdd from "./UnitAdd";
 // Form Components
+import TextField from "../../common/TextField";
+import SelectList from "../../common/SelectList";
 import Spinner from "../../common/Spinner";
 import Alert from "../../common/Alert";
 import DatePicker from "react-datepicker";
@@ -137,16 +139,17 @@ class UnitList extends Component {
     created_date = new RegExp(created_date, "i");
     created_by = new RegExp(created_by, "i");
     let result = [];
-    this.state.unit.forEach(ele => {
+    this.state.unit.forEach(row => {
       if (
-        code.test(ele.code.toLowerCase()) &&
-        name.test(ele.name.toLowerCase()) &&
-        created_by.test(this.rename(ele.created_by).toLowerCase()) &&
-        created_date.test(ele.created_date.toLowerCase())
+        code.test(row.code.toLowerCase()) &&
+        name.test(row.name.toLowerCase()) &&
+        created_by.test(this.rename(row.created_by).toLowerCase()) &&
+        created_date.test(row.created_date.toLowerCase())
       ) {
-        result.push(ele);
+        result.push(row);
       }
     });
+
     this.setState({
       hasil: result,
       search: true
@@ -163,16 +166,14 @@ class UnitList extends Component {
   };
 
   handleChangeCreatedDate = date => {
-    let { initialSearch } = this.state;
+    const { initialSearch } = this.state;
     if (date) {
       let dd = date.getDate();
       let mm = date.getMonth() + 1;
-      let yy = date
-        .getFullYear()
-        .toString()
-        .substr(2, 2);
+      let yy = date.getFullYear().toString();
       let newDate = dd + "/" + mm + "/" + yy;
-      initialSearch["created_date"] = new RegExp(newDate);
+      initialSearch["created_date"] = newDate;
+
       this.setState({
         initialSearch: initialSearch,
         created_date: date
@@ -197,12 +198,12 @@ class UnitList extends Component {
   };
 
   changeHandler = e => {
-    let { initialSearch } = this.state;
-    initialSearch[e.target.name] = new RegExp(e.target.value, "i");
     e.preventDefault();
-    this.setState({
-      initialSearch: initialSearch
-    });
+
+    let { initialSearch } = this.state;
+    initialSearch[e.target.name] = e.target.value;
+
+    this.setState({ initialSearch: initialSearch });
   };
 
   // Clear Alert
@@ -223,10 +224,28 @@ class UnitList extends Component {
   render() {
     const { user } = this.props.auth;
     const { unitData, status, data, message } = this.props.units;
-    let { unit, hasil } = this.state;
+    const { unit, hasil } = this.state;
 
     let unitList;
     let unitLabel;
+
+    let optionsCode = [];
+    optionsCode.push({ label: "Select Unit Code", value: "" });
+    unit.forEach(row =>
+      optionsCode.push({
+        label: row.code,
+        value: row.code
+      })
+    );
+
+    let optionsName = [];
+    optionsName.push({ label: "Select Unit Name", value: "" });
+    unit.forEach(row =>
+      optionsName.push({
+        label: row.name,
+        value: row.name
+      })
+    );
 
     if (unitData.length > 0) {
       unitList = hasil
@@ -274,40 +293,20 @@ class UnitList extends Component {
           {/* Search Form */}
           <tr>
             <td>
-              <select
+              <SelectList
                 name="code"
-                className="form-control "
+                value={this.state.initialSearch.code}
                 onChange={this.changeHandler}
-              >
-                <option key="empty" value="">
-                  -Select Unit Code-
-                </option>
-                {unit.map(row => {
-                  return (
-                    <option key={row.code} value={row.code}>
-                      {row.code}
-                    </option>
-                  );
-                })}
-              </select>
+                options={optionsCode}
+              />
             </td>
             <td>
-              <select
+              <SelectList
                 name="name"
-                className="form-control "
+                value={this.state.initialSearch.name}
                 onChange={this.changeHandler}
-              >
-                <option key="empty" value="">
-                  -Select Unit Name-
-                </option>
-                {unit.map(row => {
-                  return (
-                    <option key={row.code} value={row.name}>
-                      {row.name}
-                    </option>
-                  );
-                })}
-              </select>
+                options={optionsName}
+              />
             </td>
             <td>
               <DatePicker
@@ -316,13 +315,14 @@ class UnitList extends Component {
                 name="created_date"
                 selected={this.state.created_date}
                 onChange={this.handleChangeCreatedDate}
+                isClearable={true}
               />
             </td>
             <td>
-              <input
+              <TextField
                 placeholder="Created By"
                 name="created_by"
-                className="form-control"
+                value={this.state.initialSearch.created_by}
                 onChange={this.changeHandler}
               />
             </td>
