@@ -50,7 +50,8 @@ class EditEmployee extends React.Component {
     }else if(
       ( name==="email" && !regexEmail.test(value) && value !== '' ) ||
       ( name==="m_company_id" && value==="" ) ||
-      ( name==="first_name" && value==="" )
+      ( name==="first_name" && value==="" ) ||
+      ( name==="first_name" && value===" " )
     ){
       validate[id] = "form-control is-invalid"
     }else{
@@ -73,10 +74,13 @@ class EditEmployee extends React.Component {
         emailJikaAda = ele.email
       }
       })
+    let arrFirstName = first_name.split(" ")
     if( m_company_id === "" ){
       alert( "Select Company!" )
     }else if( first_name === '' ){
       alert( "Type First Name!" )
+    }else if( arrFirstName.length > 0 ){
+      alert( "Please Type First Name Without Space!" )
     }else if( email === emailJikaAda) {
       alert( "Email Sudah Ada!" )
     }else if( !regexEmail.test(email) && email !== ''){

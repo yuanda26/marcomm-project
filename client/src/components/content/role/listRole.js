@@ -343,71 +343,73 @@ class ListRole extends React.Component {
                 )}
                 <div className="table-responsive ">
                   <table className="table table-borderless">
-                    <tr>
-                      <td>
-                        <input
-                          name="code"
-                          onKeyPress={this.keyHandler}
-                          onChange={this.changeHandler}
-                          class="form-control"
-                          placeholder="-Role Code-"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          name="name"
-                          onKeyPress={this.keyHandler}
-                          onChange={this.changeHandler}
-                          class="form-control"
-                          placeholder="-Role Name-"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          name="created_by"
-                          onKeyPress={this.keyHandler}
-                          onChange={this.changeHandler}
-                          class="form-control"
-                          placeholder="-Request By-"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          name="reqDate"
-                          onKeyPress={this.keyHandler}
-                          onChange={this.changeHandler}
-                          type="date"
-                          class="form-control"
-                        />
-                      </td>
-                      <td>
-                        {this.state.number % 2 === 0 ? (
-                          <button
-                            class="btn btn-primary btn-block"
-                            onClick={this.search}
-                          >
-                            <Search />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={this.refresh}
-                            class="btn btn-warning btn-block"
-                          >
-                            <Refresh />
-                          </button>
-                        )}
-                      </td>
-                      <td>
-                        <div className="mb-2">
-                          <button
-                            onClick={this.showHandler}
-                            class="btn btn-primary"
-                          >
-                            <Add />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <input
+                            name="code"
+                            onKeyPress={this.keyHandler}
+                            onChange={this.changeHandler}
+                            className="form-control"
+                            placeholder="-Role Code-"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            name="name"
+                            onKeyPress={this.keyHandler}
+                            onChange={this.changeHandler}
+                            className="form-control"
+                            placeholder="-Role Name-"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            name="created_by"
+                            onKeyPress={this.keyHandler}
+                            onChange={this.changeHandler}
+                            className="form-control"
+                            placeholder="-Request By-"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            name="reqDate"
+                            onKeyPress={this.keyHandler}
+                            onChange={this.changeHandler}
+                            type="date"
+                            className="form-control"
+                          />
+                        </td>
+                        <td>
+                          {this.state.number % 2 === 0 ? (
+                            <button
+                              className="btn btn-primary btn-block"
+                              onClick={this.search}
+                            >
+                              <Search />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={this.refresh}
+                              className="btn btn-warning btn-block"
+                            >
+                              <Refresh />
+                            </button>
+                          )}
+                        </td>
+                        <td>
+                          <div className="mb-2">
+                            <button
+                              onClick={this.showHandler}
+                              className="btn btn-primary"
+                            >
+                              <Add />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
                   </table>
                 </div>
 
@@ -426,47 +428,49 @@ class ListRole extends React.Component {
                           <td>Action</td>
                         </tr>
                       </thead>
-                      {this.state.dummyRole
-                        .slice(
-                          this.state.page * this.state.rowsPerPage,
-                          this.state.page * this.state.rowsPerPage +
-                            this.state.rowsPerPage
-                        )
-                        .map(content => (
-                          <tr className="text-center">
-                            <td>{content.code}</td>
-                            <td>{content.name}</td>
-                            <td>{content.created_by}</td>
-                            <td>
-                              {moment(content.created_date).format(
-                                "DD/MM/YYYY"
-                              )}
-                            </td>
-                            <td>
-                              <Link to="#">
-                                <SearchIcon
-                                  onClick={() => {
-                                    this.viewModalHandler(content._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <CreateOutlinedIcon
-                                  onClick={() => {
-                                    this.editModalHandler(content._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <DeleteOutlinedIcon
-                                  onClick={() => {
-                                    this.deleteModalHandler(content._id);
-                                  }}
-                                />
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
+                      <tbody>
+                        {this.state.dummyRole
+                          .slice(
+                            this.state.page * this.state.rowsPerPage,
+                            this.state.page * this.state.rowsPerPage +
+                              this.state.rowsPerPage
+                          )
+                          .map(content => (
+                            <tr className="text-center" key={content.code}>
+                              <td>{content.code}</td>
+                              <td>{content.name}</td>
+                              <td>{content.created_by}</td>
+                              <td>
+                                {moment(content.created_date).format(
+                                  "DD/MM/YYYY"
+                                )}
+                              </td>
+                              <td>
+                                <Link to="#">
+                                  <SearchIcon
+                                    onClick={() => {
+                                      this.viewModalHandler(content._id);
+                                    }}
+                                  />
+                                </Link>
+                                <Link to="#">
+                                  <CreateOutlinedIcon
+                                    onClick={() => {
+                                      this.editModalHandler(content._id);
+                                    }}
+                                  />
+                                </Link>
+                                <Link to="#">
+                                  <DeleteOutlinedIcon
+                                    onClick={() => {
+                                      this.deleteModalHandler(content._id);
+                                    }}
+                                  />
+                                </Link>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
                       <TableFooter>
                         <TableRow>
                           <TablePagination
@@ -516,7 +520,7 @@ class ListRole extends React.Component {
   }
 }
 ListRole.propTypes = {
-  getAllRoles: PropTypes.object.isRequired,
+  getAllRoles: PropTypes.func.isRequired,
   getTheRole: PropTypes.object.isRequired
 };
 

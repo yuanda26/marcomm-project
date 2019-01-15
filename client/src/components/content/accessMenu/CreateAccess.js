@@ -17,6 +17,7 @@ import {
   TableRow,
   TableFooter
 } from "@material-ui/core";
+
 const styles = theme => ({
   container: {
     display: "flex",
@@ -140,7 +141,7 @@ class CreateAccess extends React.Component {
         <ModalBody>
           <div className={classes.container}>
             <FormControl component="fieldset" className={classes.formControl}>
-              <label for="text">
+              <label htmlFor="text">
                 <h5>{this.props.access[0]}</h5>
               </label>
               <br />

@@ -2,7 +2,29 @@ import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { Link } from "react-router-dom";
+// Redux Actions
 import { connect } from "react-redux";
+import {
+  getAllSouvenir,
+  getUnits,
+  clearAlert
+} from "../../../actions/souvenirAction";
+import { getAssignToName } from "../../../actions/designAction";
+// Souvenir Components
+import CreateSouvenir from "./CreateSouvenir";
+import ReadSouvenir from "./ReadSouvenir";
+import UpdateSouvenir from "./UpdateSouvenir";
+import DeleteSouvenir from "./DeleteSouvenir";
+// Search Form Components
+import Spinner from "../../common/Spinner";
+import TextField from "../../common/TextField";
+import SelectList from "../../common/SelectList";
+import Alert from "../../common/Alert";
+import ReactTooltip from "react-tooltip";
+// Pagination with Material IU
+import Pagination from "../../common/Pagination";
+import { TablePagination } from "@material-ui/core";
+// Material UI Icons
 import {
   Search,
   Create,
@@ -11,23 +33,6 @@ import {
   Refresh,
   Add
 } from "@material-ui/icons";
-// Souvenir Components
-import CreateSouvenir from "./CreateSouvenir";
-import ReadSouvenir from "./ReadSouvenir";
-import UpdateSouvenir from "./UpdateSouvenir";
-import DeleteSouvenir from "./DeleteSouvenir";
-// Redux Actions
-import {
-  getAllSouvenir,
-  getUnits,
-  clearAlert
-} from "../../../actions/souvenirAction";
-import { getAssignToName } from "../../../actions/designAction";
-// Search Form Components
-import Spinner from "../../common/Spinner";
-import TextField from "../../common/TextField";
-import SelectList from "../../common/SelectList";
-import Alert from "../../common/Alert";
 
 class SouvenirList extends Component {
   constructor(props) {
@@ -49,7 +54,9 @@ class SouvenirList extends Component {
       searchDate: "",
       searchCreated: "",
       search: false,
-      employee: []
+      employee: [],
+      page: 0,
+      rowsPerPage: 5
     };
   }
 
@@ -163,9 +170,7 @@ class SouvenirList extends Component {
 
   // Handler Search Change
   onSearch = e => {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   // Search Handler
@@ -225,12 +230,21 @@ class SouvenirList extends Component {
     this.props.clearAlert();
   };
 
+  // Pagination Handler
+  handleChangePage = (e, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = e => {
+    this.setState({ rowsPerPage: e.target.value });
+  };
+
   render() {
     const { souvenirs, units, status, message, data } = this.props.souvenir;
     const { user } = this.props.auth;
 
     const options = [];
-    options.push({ label: "Select Unit Name", value: "" });
+    options.push({ label: "~Select Unit Name~", value: "" });
     units.forEach(unit =>
       options.push({
         label: unit.name,
@@ -246,44 +260,54 @@ class SouvenirList extends Component {
     const capitalize = { textTransform: "capitalize" };
 
     if (souvenirs.length > 0) {
-      souvenirList = this.state.souvenirs.map(souvenir => (
-        <tr key={souvenir._id} className="text-center">
-          <td>{souvenir.code}</td>
-          <td style={capitalize}>{souvenir.name}</td>
-          <td>{this.getUnits(souvenir.m_unit_id)}</td>
-          <td>{souvenir.created_date}</td>
-          <td>{this.getEmployee(souvenir.created_by)}</td>
-          <td nowrap="true">
-            <Link to="#">
-              <RemoveRedEye
-                onClick={() => {
-                  this.onViewModal(souvenir._id);
-                }}
-              />
-            </Link>
-            <Link to="#">
-              <Create
-                onClick={() => {
-                  this.onEditModal(souvenir._id);
-                }}
-              />
-            </Link>
-            <Link to="#">
-              <Delete
-                onClick={() => {
-                  this.onDeleteModal(souvenir.code);
-                }}
-              />
-            </Link>
-          </td>
-        </tr>
-      ));
+      souvenirList = this.state.souvenirs
+        .slice(
+          this.state.page * this.state.rowsPerPage,
+          this.state.page * this.state.rowsPerPage + this.state.rowsPerPage
+        )
+        .map(souvenir => (
+          <tr key={souvenir._id} className="text-center">
+            <td>{souvenir.code}</td>
+            <td style={capitalize}>{souvenir.name}</td>
+            <td>{this.getUnits(souvenir.m_unit_id)}</td>
+            <td>{souvenir.created_date}</td>
+            <td>{this.getEmployee(souvenir.created_by)}</td>
+            <td nowrap="true">
+              <Link to="#" data-tip="See Detail">
+                <RemoveRedEye
+                  onClick={() => {
+                    this.onViewModal(souvenir._id);
+                  }}
+                />
+                <ReactTooltip place="top" type="dark" effect="solid" />
+              </Link>
+              <Link to="#" data-tip="Edit Souvenir">
+                <Create
+                  onClick={() => {
+                    this.onEditModal(souvenir._id);
+                  }}
+                />
+                <ReactTooltip place="top" type="dark" effect="solid" />
+              </Link>
+              <Link to="#" data-tip="Delete Souvenir">
+                <Delete
+                  onClick={() => {
+                    this.onDeleteModal(souvenir.code);
+                  }}
+                />
+                <ReactTooltip place="top" type="dark" effect="solid" />
+              </Link>
+            </td>
+          </tr>
+        ));
 
       souvenirLabel = (
         <Fragment>
+          {/* Search Form */}
           <tr>
             <td>
               <TextField
+                className="search-form"
                 placeholder="Souvenir Code"
                 name="searchCode"
                 value={this.state.searchCode}
@@ -292,6 +316,7 @@ class SouvenirList extends Component {
             </td>
             <td>
               <TextField
+                className="search-form"
                 placeholder="Souvenir Name"
                 name="searchName"
                 value={this.state.searchName}
@@ -300,7 +325,8 @@ class SouvenirList extends Component {
             </td>
             <td>
               <SelectList
-                placeholder="*Select Unit Name"
+                className="search-form"
+                placeholder="~Select Unit Name~"
                 name="searchUnit"
                 value={this.state.searchUnit}
                 onChange={this.onSearch}
@@ -309,9 +335,9 @@ class SouvenirList extends Component {
             </td>
             <td>
               <TextField
+                className="search-form"
                 type="date"
                 min="2018-01-01"
-                max={moment().format("YYYY-MM-DD")}
                 name="searchDate"
                 value={this.state.searchDate}
                 onChange={this.onSearch}
@@ -319,6 +345,7 @@ class SouvenirList extends Component {
             </td>
             <td>
               <TextField
+                className="search-form"
                 placeholder="Created By"
                 name="searchCreated"
                 value={this.state.searchCreated}
@@ -328,21 +355,32 @@ class SouvenirList extends Component {
             <td nowrap="true">
               <div className="form-group">
                 {this.state.search === true ? (
-                  <button className="btn btn-warning" onClick={this.onRestore}>
-                    <Refresh />
-                  </button>
+                  <a href="#!" data-tip="Refresh Result!">
+                    <button
+                      className="btn btn-warning"
+                      onClick={this.onRestore}
+                    >
+                      <Refresh />
+                    </button>
+                    <ReactTooltip place="top" type="dark" effect="solid" />
+                  </a>
                 ) : (
                   <button type="submit" className="btn btn-primary">
                     <Search />
                   </button>
                 )}
-                <button
-                  onClick={this.showHandler}
-                  type="button"
-                  className="btn btn-primary ml-1"
-                >
-                  <Add />
-                </button>
+                <Fragment>
+                  <Link to="#" data-tip="Add New Souvenir">
+                    <button
+                      onClick={this.showHandler}
+                      type="button"
+                      className="btn btn-primary ml-1"
+                    >
+                      <Add />
+                    </button>
+                  </Link>
+                  <ReactTooltip place="top" type="dark" effect="solid" />
+                </Fragment>
               </div>
             </td>
           </tr>
@@ -422,7 +460,7 @@ class SouvenirList extends Component {
                   <nav aria-label="breadcrumb mb-4">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item">
-                        <Link to="/">Home</Link>
+                        <a href="/">Home</a>
                       </li>
                       <li
                         className="breadcrumb-item active"
@@ -462,6 +500,20 @@ class SouvenirList extends Component {
                         <table className="table table-stripped">
                           <thead>{souvenirLabel}</thead>
                           <tbody>{souvenirList}</tbody>
+                          <tfoot>
+                            <tr className="text-center">
+                              <TablePagination
+                                count={this.state.souvenirs.length}
+                                rowsPerPage={this.state.rowsPerPage}
+                                page={this.state.page}
+                                onChangePage={this.handleChangePage}
+                                onChangeRowsPerPage={
+                                  this.handleChangeRowsPerPage
+                                }
+                                ActionsComponent={Pagination}
+                              />
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </form>

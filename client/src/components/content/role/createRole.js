@@ -95,7 +95,7 @@ class CreateRole extends React.Component {
   }
 }
 CreateRole.propTypes = {
-  createRole: PropTypes.object.isRequired
+  createRole: PropTypes.func.isRequired
 };
 const mapStateToProps = state => ({
   theRole: state.roleData

@@ -210,7 +210,7 @@ class ListEmployee extends React.Component {
       created_date: date
     });
   }
-
+  
   changeHandler = event => {
     let { initialSearch } = this.state
     let { name, value } = event.target
@@ -457,40 +457,40 @@ class ListEmployee extends React.Component {
                         <th className="text-nowrap text-center">Action</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {employee.myEmployee
-                      .slice(
-                        this.state.page * this.state.rowsPerPage,
-                        this.state.page * this.state.rowsPerPage +
-                          this.state.rowsPerPage
-                      )
-                      .map((row,x)=>
-                      <tr key={row._id}>
-                        <td className="text-nowrap text-center">{row.employee_number}</td>
-                        <td className="text-nowrap text-center">{row.first_name + " " + row.last_name}</td>
-                        <td className="text-nowrap text-center">{row.m_company_name}</td>
-                        <td className="text-nowrap text-center">{row.created_date}</td>
-                        <td className="text-nowrap text-center">{row.created_by}</td>
-                        <td className="text-nowrap text-center">
-                        <Link to="#">
-                            <RemoveRedEyeOutlined
-                              onClick={() => {
-                              this.viewModalHandler(row._id);
-                              }}
-                            />
-                            <CreateOutlined
-                              onClick={() => {
-                              this.editModalHandler(row._id);
-                              }}
-                            />
-                            <DeleteOutlined
-                              onClick={() => {
-                              this.deleteModalHandler(row._id);
-                              }}
-                            />
-                          </Link>
-                        </td>
-                      </tr>
+                      <tbody>
+                        {employee.myEmployee
+                        .slice(
+                          this.state.page * this.state.rowsPerPage,
+                          this.state.page * this.state.rowsPerPage +
+                            this.state.rowsPerPage
+                        )
+                        .map((row,x)=>
+                        <tr key={row._id}>
+                          <td className="text-nowrap text-center">{row.employee_number}</td>
+                          <td className="text-nowrap text-center">{row.first_name + " " + row.last_name}</td>
+                          <td className="text-nowrap text-center">{row.m_company_name}</td>
+                          <td className="text-nowrap text-center">{row.created_date}</td>
+                          <td className="text-nowrap text-center">{row.created_by}</td>
+                          <td className="text-nowrap text-center">
+                          <Link to="#">
+                              <RemoveRedEyeOutlined
+                                onClick={() => {
+                                this.viewModalHandler(row._id);
+                                }}
+                              />
+                              <CreateOutlined
+                                onClick={() => {
+                                this.editModalHandler(row._id);
+                                }}
+                              />
+                              <DeleteOutlined
+                                onClick={() => {
+                                this.deleteModalHandler(row._id);
+                                }}
+                              />
+                            </Link>
+                          </td>
+                        </tr>
                       )}
                      </tbody>
                      <TableFooter>

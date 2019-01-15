@@ -70,6 +70,20 @@ const employeeDatalayer = {
 		})
 	},
 
+	getUser : (callback, param) => {
+		if(param === "") {
+			callback(param)			
+		}else{
+			db.collection('m_user').findOne({ username : new RegExp(param), is_delete : false }, (err, docs) => {
+				if(err){
+					callback("")
+				}else{
+					callback(docs)
+				}
+			})
+		}
+	},
+
 	searchHandlerData : (callback, empId, empName, company, createdDate, createdBy) => {
 		let newName = empName.split(" ")
 		let first_name = ""
@@ -99,6 +113,14 @@ const employeeDatalayer = {
 					as : "compa"
 				}
 			}, {$unwind : "$compa"},
+			{ 
+				$lookup : {
+					from : "m_user",
+					localField : "created_by",
+					foreignField : "m_employee_id",
+					as : "user"
+				}
+			},
 			{ $match : {
 					employee_number : new RegExp(empId),
 					first_name : new RegExp(first_name), 
@@ -119,7 +141,7 @@ const employeeDatalayer = {
 					"m_company_name"  : "$compa.name",
 					"email"           : "$email",
 					"is_delete"       : "$is_delete",
-					"created_by"      : "$created_by",
+					"created_by"      : "$user.username",
 					"created_date"    : "$created_date",
 					"updated_by"      : "$updated_by",
 					"updated_date"    : "$updated_date"
