@@ -329,9 +329,15 @@ class UnitList extends Component {
             <td nowrap="true">
               <div className="form-group">
                 {this.state.search === true ? (
-                  <button className="btn btn-warning" onClick={this.onRestore}>
-                    <Refresh />
-                  </button>
+                  <a href="#!" data-tip="Refresh Result!">
+                    <button
+                      className="btn btn-warning"
+                      onClick={this.onRestore}
+                    >
+                      <Refresh />
+                    </button>
+                    <ReactTooltip place="top" type="dark" effect="solid" />
+                  </a>
                 ) : (
                   <button type="submit" className="btn btn-primary">
                     <Search />
@@ -412,7 +418,7 @@ class UnitList extends Component {
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item active">
-                        <Link to="/">Home </Link>
+                        <a href="/">Home </a>
                       </li>
                       <li className="breadcrumb-item ">Master Unit</li>
                     </ol>

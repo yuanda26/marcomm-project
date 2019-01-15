@@ -290,13 +290,15 @@ class DesignList extends Component {
             <td nowrap="true">
               <div className="form-group">
                 {this.state.search === true ? (
-                  <button
-                    className="btn btn-warning"
-                    onClick={this.onRestore}
-                    title="Resfresh Result!"
-                  >
-                    <Refresh />
-                  </button>
+                  <a href="#!" data-tip="Refresh Result!">
+                    <button
+                      className="btn btn-warning"
+                      onClick={this.onRestore}
+                    >
+                      <Refresh />
+                    </button>
+                    <ReactTooltip place="top" type="dark" effect="solid" />
+                  </a>
                 ) : (
                   <button
                     type="submit"
@@ -306,11 +308,7 @@ class DesignList extends Component {
                     <Search />
                   </button>
                 )}
-                <a
-                  href="/design/add"
-                  title="Request New Design!"
-                  data-tip="Add New Unit"
-                >
+                <a href="/design/add" data-tip="Request New Design!">
                   <button className="btn btn-primary ml-1" type="button">
                     <Add />
                   </button>
