@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import moment from "moment";
 // Redux actions
 import { connect } from "react-redux";
 import { getUnits, clearAlert } from "../../../actions/unitAction";
@@ -11,10 +12,10 @@ import UnitEdit from "./UnitEdit";
 import UnitDelete from "./UnitDelete";
 import UnitAdd from "./UnitAdd";
 // Form Components
+import TextField from "../../common/TextField";
+import SelectList from "../../common/SelectList";
 import Spinner from "../../common/Spinner";
 import Alert from "../../common/Alert";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import ReactTooltip from "react-tooltip";
 // Pagination with Material IU
 import Pagination from "../../common/Pagination";
@@ -134,56 +135,28 @@ class UnitList extends Component {
 
     code = new RegExp(code, "i");
     name = new RegExp(name, "i");
-    created_date = new RegExp(created_date, "i");
+    created_date =
+      created_date === ""
+        ? new RegExp("")
+        : new RegExp(moment(created_date, "YYYY-MM-DD").format("DD/MM/YYYY"));
     created_by = new RegExp(created_by, "i");
+
     let result = [];
-    this.state.unit.forEach(ele => {
+    this.state.unit.forEach(row => {
       if (
-        code.test(ele.code.toLowerCase()) &&
-        name.test(ele.name.toLowerCase()) &&
-        created_by.test(this.rename(ele.created_by).toLowerCase()) &&
-        created_date.test(ele.created_date.toLowerCase())
+        code.test(row.code.toLowerCase()) &&
+        name.test(row.name.toLowerCase()) &&
+        created_by.test(this.rename(row.created_by).toLowerCase()) &&
+        created_date.test(row.created_date)
       ) {
-        result.push(ele);
+        result.push(row);
       }
     });
+
     this.setState({
       hasil: result,
       search: true
     });
-  };
-
-  // Restore Units Data
-  onRestore = e => {
-    e.preventDefault();
-    this.setState({
-      hasil: this.props.units.unitData,
-      search: false
-    });
-  };
-
-  handleChangeCreatedDate = date => {
-    let { initialSearch } = this.state;
-    if (date) {
-      let dd = date.getDate();
-      let mm = date.getMonth() + 1;
-      let yy = date
-        .getFullYear()
-        .toString()
-        .substr(2, 2);
-      let newDate = dd + "/" + mm + "/" + yy;
-      initialSearch["created_date"] = new RegExp(newDate);
-      this.setState({
-        initialSearch: initialSearch,
-        created_date: date
-      });
-    } else {
-      initialSearch["created_date"] = /(?:)/;
-      this.setState({
-        initialSearch: initialSearch,
-        created_date: new Date()
-      });
-    }
   };
 
   rename = param => {
@@ -197,12 +170,12 @@ class UnitList extends Component {
   };
 
   changeHandler = e => {
-    let { initialSearch } = this.state;
-    initialSearch[e.target.name] = new RegExp(e.target.value, "i");
     e.preventDefault();
-    this.setState({
-      initialSearch: initialSearch
-    });
+
+    let { initialSearch } = this.state;
+    initialSearch[e.target.name] = e.target.value;
+
+    this.setState({ initialSearch: initialSearch });
   };
 
   // Clear Alert
@@ -220,13 +193,40 @@ class UnitList extends Component {
     this.setState({ rowsPerPage: e.target.value });
   };
 
+  // Restore Units Data
+  onRestore = e => {
+    e.preventDefault();
+    this.setState({
+      hasil: this.props.units.unitData,
+      search: false
+    });
+  };
+
   render() {
     const { user } = this.props.auth;
     const { unitData, status, data, message } = this.props.units;
-    let { unit, hasil } = this.state;
+    const { unit, hasil } = this.state;
 
     let unitList;
     let unitLabel;
+
+    let optionsCode = [];
+    optionsCode.push({ label: "~Select Unit Code~", value: "" });
+    unit.forEach(row =>
+      optionsCode.push({
+        label: row.code,
+        value: row.code
+      })
+    );
+
+    let optionsName = [];
+    optionsName.push({ label: "~Select Unit Name~", value: "" });
+    unit.forEach(row =>
+      optionsName.push({
+        label: row.name,
+        value: row.name
+      })
+    );
 
     if (unitData.length > 0) {
       unitList = hasil
@@ -274,64 +274,54 @@ class UnitList extends Component {
           {/* Search Form */}
           <tr>
             <td>
-              <select
+              <SelectList
+                className="search-form"
                 name="code"
-                className="form-control "
+                value={this.state.initialSearch.code}
                 onChange={this.changeHandler}
-              >
-                <option key="empty" value="">
-                  -Select Unit Code-
-                </option>
-                {unit.map(row => {
-                  return (
-                    <option key={row.code} value={row.code}>
-                      {row.code}
-                    </option>
-                  );
-                })}
-              </select>
-            </td>
-            <td>
-              <select
-                name="name"
-                className="form-control "
-                onChange={this.changeHandler}
-              >
-                <option key="empty" value="">
-                  -Select Unit Name-
-                </option>
-                {unit.map(row => {
-                  return (
-                    <option key={row.code} value={row.name}>
-                      {row.name}
-                    </option>
-                  );
-                })}
-              </select>
-            </td>
-            <td>
-              <DatePicker
-                className="form-control"
-                placeholderText="Created Date"
-                name="created_date"
-                selected={this.state.created_date}
-                onChange={this.handleChangeCreatedDate}
+                options={optionsCode}
               />
             </td>
             <td>
-              <input
+              <SelectList
+                className="search-form"
+                name="name"
+                value={this.state.initialSearch.name}
+                onChange={this.changeHandler}
+                options={optionsName}
+              />
+            </td>
+            <td>
+              <TextField
+                className="search-form"
+                type="date"
+                min="2018-01-01"
+                name="created_date"
+                value={this.state.created_date}
+                onChange={this.changeHandler}
+              />
+            </td>
+            <td>
+              <TextField
+                className="search-form"
                 placeholder="Created By"
                 name="created_by"
-                className="form-control"
+                value={this.state.initialSearch.created_by}
                 onChange={this.changeHandler}
               />
             </td>
             <td nowrap="true">
               <div className="form-group">
                 {this.state.search === true ? (
-                  <button className="btn btn-warning" onClick={this.onRestore}>
-                    <Refresh />
-                  </button>
+                  <a href="#!" data-tip="Refresh Result!">
+                    <button
+                      className="btn btn-warning"
+                      onClick={this.onRestore}
+                    >
+                      <Refresh />
+                    </button>
+                    <ReactTooltip place="top" type="dark" effect="solid" />
+                  </a>
                 ) : (
                   <button type="submit" className="btn btn-primary">
                     <Search />
@@ -412,7 +402,7 @@ class UnitList extends Component {
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item active">
-                        <Link to="/">Home </Link>
+                        <a href="/">Home </a>
                       </li>
                       <li className="breadcrumb-item ">Master Unit</li>
                     </ol>

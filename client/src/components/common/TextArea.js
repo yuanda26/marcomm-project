@@ -4,6 +4,8 @@ import classnames from "classnames";
 
 const TextArea = ({
   label,
+  id,
+  className,
   name,
   placeholder,
   cols,
@@ -18,7 +20,8 @@ const TextArea = ({
     <div className="form-group">
       <label>{label}</label>
       <textarea
-        className={classnames("form-control", {
+        id={id}
+        className={classnames(`form-control ${className}`, {
           "is-invalid": errors
         })}
         cols={cols}
@@ -37,14 +40,16 @@ const TextArea = ({
 
 TextArea.propTypes = {
   label: PropTypes.string,
+  id: PropTypes.string,
+  className: PropTypes.string,
   name: PropTypes.string,
+  placeholder: PropTypes.string,
   value: PropTypes.string,
   cols: PropTypes.string,
   rows: PropTypes.string,
+  maxLength: PropTypes.string,
   onChange: PropTypes.func,
   disabled: PropTypes.bool,
-  placeholder: PropTypes.string,
-  maxLength: PropTypes.string,
   errors: PropTypes.string
 };
 
