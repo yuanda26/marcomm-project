@@ -1,17 +1,8 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import {
-  Search,
-  Create,
-  Delete,
-  RemoveRedEye,
-  Refresh,
-  Add
-} from "@material-ui/icons";
-import DatePicker from "react-datepicker";
 // Redux actions
+import { connect } from "react-redux";
 import { getUnits, clearAlert } from "../../../actions/unitAction";
 import { getStaff, getEmployee } from "../../../actions/designAction";
 // Unit Components
@@ -22,7 +13,20 @@ import UnitAdd from "./UnitAdd";
 // Form Components
 import Spinner from "../../common/Spinner";
 import Alert from "../../common/Alert";
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+// Pagination with Material IU
+import Pagination from "../../common/Pagination";
+import { TablePagination } from "@material-ui/core";
+// Material UI Icons
+import {
+  Search,
+  Create,
+  Delete,
+  RemoveRedEye,
+  Refresh,
+  Add
+} from "@material-ui/icons";
 
 class UnitList extends Component {
   constructor(props) {
@@ -44,7 +48,9 @@ class UnitList extends Component {
       editUnit: false,
       deleteUnit: false,
       addUnit: false,
-      employee: []
+      employee: [],
+      page: 0,
+      rowsPerPage: 5
     };
   }
 
@@ -204,6 +210,15 @@ class UnitList extends Component {
     this.props.clearAlert();
   };
 
+  // Pagination Handler
+  handleChangePage = (e, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = e => {
+    this.setState({ rowsPerPage: e.target.value });
+  };
+
   render() {
     const { user } = this.props.auth;
     const { unitData, status, data, message } = this.props.units;
@@ -213,37 +228,42 @@ class UnitList extends Component {
     let unitLabel;
 
     if (unitData.length > 0) {
-      unitList = hasil.map(row => (
-        <tr key={row._id} className="text-center">
-          <td>{row.code}</td>
-          <td>{row.name}</td>
-          <td>{row.created_date}</td>
-          <td>{this.rename(row.created_by)}</td>
-          <td nowrap="true">
-            <Link to="#">
-              <RemoveRedEye
-                onClick={() => {
-                  this.viewModalHandler(row.code);
-                }}
-              />
-            </Link>
-            <Link to="#">
-              <Create
-                onClick={() => {
-                  this.editModalHandler(row.code);
-                }}
-              />
-            </Link>
-            <Link to="#">
-              <Delete
-                onClick={() => {
-                  this.deleteModalHandler(row.code);
-                }}
-              />
-            </Link>
-          </td>
-        </tr>
-      ));
+      unitList = hasil
+        .slice(
+          this.state.page * this.state.rowsPerPage,
+          this.state.page * this.state.rowsPerPage + this.state.rowsPerPage
+        )
+        .map(row => (
+          <tr key={row._id} className="text-center">
+            <td>{row.code}</td>
+            <td>{row.name}</td>
+            <td>{row.created_date}</td>
+            <td>{this.rename(row.created_by)}</td>
+            <td nowrap="true">
+              <Link to="#">
+                <RemoveRedEye
+                  onClick={() => {
+                    this.viewModalHandler(row.code);
+                  }}
+                />
+              </Link>
+              <Link to="#">
+                <Create
+                  onClick={() => {
+                    this.editModalHandler(row.code);
+                  }}
+                />
+              </Link>
+              <Link to="#">
+                <Delete
+                  onClick={() => {
+                    this.deleteModalHandler(row.code);
+                  }}
+                />
+              </Link>
+            </td>
+          </tr>
+        ));
 
       unitLabel = (
         <Fragment>
@@ -422,6 +442,18 @@ class UnitList extends Component {
                       <table className="table table-stripped ">
                         <thead>{unitLabel}</thead>
                         <tbody>{unitList}</tbody>
+                        <tfoot>
+                          <tr className="text-center">
+                            <TablePagination
+                              count={this.state.hasil.length}
+                              rowsPerPage={this.state.rowsPerPage}
+                              page={this.state.page}
+                              onChangePage={this.handleChangePage}
+                              onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                              ActionsComponent={Pagination}
+                            />
+                          </tr>
+                        </tfoot>
                       </table>
                     </form>
                   </div>

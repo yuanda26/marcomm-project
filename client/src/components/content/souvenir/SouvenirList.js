@@ -2,7 +2,28 @@ import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { Link } from "react-router-dom";
+// Redux Actions
 import { connect } from "react-redux";
+import {
+  getAllSouvenir,
+  getUnits,
+  clearAlert
+} from "../../../actions/souvenirAction";
+import { getAssignToName } from "../../../actions/designAction";
+// Souvenir Components
+import CreateSouvenir from "./CreateSouvenir";
+import ReadSouvenir from "./ReadSouvenir";
+import UpdateSouvenir from "./UpdateSouvenir";
+import DeleteSouvenir from "./DeleteSouvenir";
+// Search Form Components
+import Spinner from "../../common/Spinner";
+import TextField from "../../common/TextField";
+import SelectList from "../../common/SelectList";
+import Alert from "../../common/Alert";
+// Pagination with Material IU
+import Pagination from "../../common/Pagination";
+import { TablePagination } from "@material-ui/core";
+// Material UI Icons
 import {
   Search,
   Create,
@@ -11,23 +32,6 @@ import {
   Refresh,
   Add
 } from "@material-ui/icons";
-// Souvenir Components
-import CreateSouvenir from "./CreateSouvenir";
-import ReadSouvenir from "./ReadSouvenir";
-import UpdateSouvenir from "./UpdateSouvenir";
-import DeleteSouvenir from "./DeleteSouvenir";
-// Redux Actions
-import {
-  getAllSouvenir,
-  getUnits,
-  clearAlert
-} from "../../../actions/souvenirAction";
-import { getAssignToName } from "../../../actions/designAction";
-// Search Form Components
-import Spinner from "../../common/Spinner";
-import TextField from "../../common/TextField";
-import SelectList from "../../common/SelectList";
-import Alert from "../../common/Alert";
 
 class SouvenirList extends Component {
   constructor(props) {
@@ -49,7 +53,9 @@ class SouvenirList extends Component {
       searchDate: "",
       searchCreated: "",
       search: false,
-      employee: []
+      employee: [],
+      page: 0,
+      rowsPerPage: 5
     };
   }
 
@@ -225,6 +231,15 @@ class SouvenirList extends Component {
     this.props.clearAlert();
   };
 
+  // Pagination Handler
+  handleChangePage = (e, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = e => {
+    this.setState({ rowsPerPage: e.target.value });
+  };
+
   render() {
     const { souvenirs, units, status, message, data } = this.props.souvenir;
     const { user } = this.props.auth;
@@ -246,38 +261,43 @@ class SouvenirList extends Component {
     const capitalize = { textTransform: "capitalize" };
 
     if (souvenirs.length > 0) {
-      souvenirList = this.state.souvenirs.map(souvenir => (
-        <tr key={souvenir._id} className="text-center">
-          <td>{souvenir.code}</td>
-          <td style={capitalize}>{souvenir.name}</td>
-          <td>{this.getUnits(souvenir.m_unit_id)}</td>
-          <td>{souvenir.created_date}</td>
-          <td>{this.getEmployee(souvenir.created_by)}</td>
-          <td nowrap="true">
-            <Link to="#">
-              <RemoveRedEye
-                onClick={() => {
-                  this.onViewModal(souvenir._id);
-                }}
-              />
-            </Link>
-            <Link to="#">
-              <Create
-                onClick={() => {
-                  this.onEditModal(souvenir._id);
-                }}
-              />
-            </Link>
-            <Link to="#">
-              <Delete
-                onClick={() => {
-                  this.onDeleteModal(souvenir.code);
-                }}
-              />
-            </Link>
-          </td>
-        </tr>
-      ));
+      souvenirList = this.state.souvenirs
+        .slice(
+          this.state.page * this.state.rowsPerPage,
+          this.state.page * this.state.rowsPerPage + this.state.rowsPerPage
+        )
+        .map(souvenir => (
+          <tr key={souvenir._id} className="text-center">
+            <td>{souvenir.code}</td>
+            <td style={capitalize}>{souvenir.name}</td>
+            <td>{this.getUnits(souvenir.m_unit_id)}</td>
+            <td>{souvenir.created_date}</td>
+            <td>{this.getEmployee(souvenir.created_by)}</td>
+            <td nowrap="true">
+              <Link to="#">
+                <RemoveRedEye
+                  onClick={() => {
+                    this.onViewModal(souvenir._id);
+                  }}
+                />
+              </Link>
+              <Link to="#">
+                <Create
+                  onClick={() => {
+                    this.onEditModal(souvenir._id);
+                  }}
+                />
+              </Link>
+              <Link to="#">
+                <Delete
+                  onClick={() => {
+                    this.onDeleteModal(souvenir.code);
+                  }}
+                />
+              </Link>
+            </td>
+          </tr>
+        ));
 
       souvenirLabel = (
         <Fragment>
@@ -422,7 +442,7 @@ class SouvenirList extends Component {
                   <nav aria-label="breadcrumb mb-4">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item">
-                        <Link to="/">Home</Link>
+                        <a href="/">Home</a>
                       </li>
                       <li
                         className="breadcrumb-item active"
@@ -462,6 +482,20 @@ class SouvenirList extends Component {
                         <table className="table table-stripped">
                           <thead>{souvenirLabel}</thead>
                           <tbody>{souvenirList}</tbody>
+                          <tfoot>
+                            <tr className="text-center">
+                              <TablePagination
+                                count={this.state.souvenirs.length}
+                                rowsPerPage={this.state.rowsPerPage}
+                                page={this.state.page}
+                                onChangePage={this.handleChangePage}
+                                onChangeRowsPerPage={
+                                  this.handleChangeRowsPerPage
+                                }
+                                ActionsComponent={Pagination}
+                              />
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </form>

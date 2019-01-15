@@ -1,21 +1,24 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
-import { connect } from "react-redux";
-import { Search, Create, RemoveRedEye, Refresh, Add } from "@material-ui/icons";
 // Redux Actions
+import { connect } from "react-redux";
 import {
   getAllDesign,
   getAssignToName,
   getEvent
 } from "../../../actions/designAction";
-
 // Form Components
 import Spinner from "../../common/Spinner";
 import TextField from "../../common/TextField";
 import SelectList from "../../common/SelectList";
 // Form Validation
 import isEmpty from "../../../validation/isEmpty";
+// Pagination with Material IU
+import Pagination from "../../common/Pagination";
+import { TablePagination } from "@material-ui/core";
+// Material UI Icons
+import { Search, Create, RemoveRedEye, Refresh, Add } from "@material-ui/icons";
 
 class DesignList extends Component {
   constructor(props) {
@@ -32,7 +35,9 @@ class DesignList extends Component {
       search: false,
       employee: [],
       designs: [],
-      event: []
+      event: [],
+      page: 0,
+      rowsPerPage: 5
     };
   }
 
@@ -162,6 +167,15 @@ class DesignList extends Component {
     });
   };
 
+  // Pagination Handler
+  handleChangePage = (e, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = e => {
+    this.setState({ rowsPerPage: e.target.value });
+  };
+
   render() {
     const { designs, assign, status, message } = this.props.design;
 
@@ -179,25 +193,30 @@ class DesignList extends Component {
     let designLabel;
 
     if (designs.length > 0) {
-      designList = this.state.designs.map((design, index) => (
-        <tr key={design._id} className="text-center">
-          <td>{design.code}</td>
-          <td>{this.getEmployee(design.request_by)}</td>
-          <td>{design.request_date}</td>
-          <td>{this.getEmployee(design.assign_to)}</td>
-          <td>{this.designStatus(design.status)}</td>
-          <td>{design.created_date}</td>
-          <td>{this.getEmployee(design.created_by)}</td>
-          <td>
-            <a href={`/design/view/${design.code}`}>
-              <RemoveRedEye />
-            </a>
-            <a href={`/design/edit/${design.code}`}>
-              <Create />
-            </a>
-          </td>
-        </tr>
-      ));
+      designList = this.state.designs
+        .slice(
+          this.state.page * this.state.rowsPerPage,
+          this.state.page * this.state.rowsPerPage + this.state.rowsPerPage
+        )
+        .map((design, index) => (
+          <tr key={design._id} className="text-center">
+            <td>{design.code}</td>
+            <td>{this.getEmployee(design.request_by)}</td>
+            <td>{design.request_date}</td>
+            <td>{this.getEmployee(design.assign_to)}</td>
+            <td>{this.designStatus(design.status)}</td>
+            <td>{design.created_date}</td>
+            <td>{this.getEmployee(design.created_by)}</td>
+            <td>
+              <a href={`/design/view/${design.code}`}>
+                <RemoveRedEye />
+              </a>
+              <a href={`/design/edit/${design.code}`}>
+                <Create />
+              </a>
+            </td>
+          </tr>
+        ));
 
       designLabel = (
         <Fragment>
@@ -354,6 +373,18 @@ class DesignList extends Component {
                       <table className="table table-stripped">
                         <thead>{designLabel}</thead>
                         <tbody>{designList}</tbody>
+                        <tfoot>
+                          <tr className="text-center">
+                            <TablePagination
+                              count={this.state.designs.length}
+                              rowsPerPage={this.state.rowsPerPage}
+                              page={this.state.page}
+                              onChangePage={this.handleChangePage}
+                              onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                              ActionsComponent={Pagination}
+                            />
+                          </tr>
+                        </tfoot>
                       </table>
                     </form>
                   </div>
