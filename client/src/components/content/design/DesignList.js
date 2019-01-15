@@ -229,6 +229,7 @@ class DesignList extends Component {
           <tr>
             <td>
               <TextField
+                className="search-form"
                 placeholder="Transaction Code"
                 name="searchCode"
                 value={this.state.searchCode}
@@ -237,6 +238,7 @@ class DesignList extends Component {
             </td>
             <td>
               <TextField
+                className="search-form"
                 placeholder="Request By"
                 name="searchRequestBy"
                 value={this.state.searchRequestBy}
@@ -245,9 +247,9 @@ class DesignList extends Component {
             </td>
             <td>
               <TextField
+                className="search-form"
                 type="date"
                 min="2018-01-01"
-                max={moment().format("YYYY-MM-DD")}
                 name="searchRequestDate"
                 value={this.state.searchRequestDate}
                 onChange={this.onSearch}
@@ -255,6 +257,7 @@ class DesignList extends Component {
             </td>
             <td>
               <SelectList
+                className="search-form"
                 name="searchAssign"
                 value={this.state.searchAssign}
                 onChange={this.onSearch}
@@ -263,6 +266,7 @@ class DesignList extends Component {
             </td>
             <td>
               <TextField
+                className="search-form"
                 placeholder="Status"
                 name="searchStatus"
                 value={this.state.searchStatus}
@@ -271,6 +275,7 @@ class DesignList extends Component {
             </td>
             <td>
               <TextField
+                className="search-form"
                 type="date"
                 min="2018-01-01"
                 max={moment().format("YYYY-MM-DD")}
@@ -281,6 +286,7 @@ class DesignList extends Component {
             </td>
             <td>
               <TextField
+                className="search-form"
                 placeholder="Created By"
                 name="searchCreatedBy"
                 value={this.state.searchCreatedBy}

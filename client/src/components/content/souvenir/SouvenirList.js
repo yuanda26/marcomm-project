@@ -170,9 +170,7 @@ class SouvenirList extends Component {
 
   // Handler Search Change
   onSearch = e => {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   // Search Handler
@@ -246,7 +244,7 @@ class SouvenirList extends Component {
     const { user } = this.props.auth;
 
     const options = [];
-    options.push({ label: "Select Unit Name", value: "" });
+    options.push({ label: "~Select Unit Name~", value: "" });
     units.forEach(unit =>
       options.push({
         label: unit.name,
@@ -305,9 +303,11 @@ class SouvenirList extends Component {
 
       souvenirLabel = (
         <Fragment>
+          {/* Search Form */}
           <tr>
             <td>
               <TextField
+                className="search-form"
                 placeholder="Souvenir Code"
                 name="searchCode"
                 value={this.state.searchCode}
@@ -316,6 +316,7 @@ class SouvenirList extends Component {
             </td>
             <td>
               <TextField
+                className="search-form"
                 placeholder="Souvenir Name"
                 name="searchName"
                 value={this.state.searchName}
@@ -324,7 +325,8 @@ class SouvenirList extends Component {
             </td>
             <td>
               <SelectList
-                placeholder="*Select Unit Name"
+                className="search-form"
+                placeholder="~Select Unit Name~"
                 name="searchUnit"
                 value={this.state.searchUnit}
                 onChange={this.onSearch}
@@ -333,9 +335,9 @@ class SouvenirList extends Component {
             </td>
             <td>
               <TextField
+                className="search-form"
                 type="date"
                 min="2018-01-01"
-                max={moment().format("YYYY-MM-DD")}
                 name="searchDate"
                 value={this.state.searchDate}
                 onChange={this.onSearch}
@@ -343,6 +345,7 @@ class SouvenirList extends Component {
             </td>
             <td>
               <TextField
+                className="search-form"
                 placeholder="Created By"
                 name="searchCreated"
                 value={this.state.searchCreated}
