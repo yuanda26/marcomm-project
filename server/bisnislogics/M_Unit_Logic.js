@@ -7,12 +7,12 @@ const M_Unit_BisnisLogic = {
       responseHelper.sendResponse(res, 200, items);
     });
   },
-  readOneById: (req, res, next) => {
-    const unitId = req.params.unitId;
+  readOneByCode: (req, res, next) => {
+    const code = req.params.code;
 
-    unitData.readOneById(items => {
+    unitData.readOneByCode(items => {
       responseHelper.sendResponse(res, 200, items);
-    }, unitId);
+    }, code);
   },
   createUnit: (req, res, next) => {
     let newUnit = {
@@ -35,39 +35,39 @@ const M_Unit_BisnisLogic = {
     });
   },
   updateUnit: (req, res, next) => {
-    const unitId = req.params.unitId;
+    const code = req.params.code;
     const data = req.body;
     // Add Update Date Property
     data.updated_date = moment().format("DD/MM/YYYY");
 
     // Check Unit Existence
-    unitData.readOneById(unit => {
+    unitData.readAllUnit(unit => {
       if (unit) {
         unitData.updateUnit(
           items => {
             responseHelper.sendResponse(res, 201, items);
           },
           data,
-          unitId
+          code
         );
       } else {
         responseHelper.sendResponse(res, 404, "Unit Does'nt Exist");
       }
-    }, unitId);
+    }, code);
   },
   deleteUnit: (req, res, next) => {
-    const unitId = req.params.unitId;
+    const code = req.params.code;
 
     // Check Unit Existence
-    unitData.readOneById(unit => {
+    unitData.readOneByCode(unit => {
       if (unit) {
         unitData.deleteUnit(items => {
           responseHelper.sendResponse(res, 200, items);
-        }, unitId);
+        }, code);
       } else {
         responseHelper.sendResponse(res, 404, "Unit Does'nt Exist");
       }
-    }, unitId);
+    }, code);
   }
 };
 

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
-import { Link } from "react-router-dom";
+// Redux Actions
 import { connect } from "react-redux";
 import {
   getCode,
@@ -10,18 +10,20 @@ import {
   getRequester,
   createDesign,
   createDesignItem,
-  getAssignToName
+  getAssignToName,
+  clearAlert
 } from "../../../actions/designAction";
-import { CreateOutlined, DeleteOutlined } from "@material-ui/icons";
-import { Modal, ModalBody, ModalHeader } from "reactstrap";
 
 // Form Components
+import { CreateOutlined, DeleteOutlined } from "@material-ui/icons";
+import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import Spinner from "../../common/Spinner";
 import TextFieldGroup from "../../common/TextFieldGroup";
 import TextField from "../../common/TextField";
 import TextAreaGroup from "../../common/TextAreaGroup";
 import SelectListGroup from "../../common/SelectListGroup";
 import SelectList from "../../common/SelectList";
+import Alert from "../../common/Alert";
 // Form Validation
 import isEmpty from "../../../validation/isEmpty";
 
@@ -263,11 +265,36 @@ class DesignAdd extends Component {
       // Save Design & Design Item to Database
       this.props.createDesign(designData);
       this.props.createDesignItem(designItemData);
+      // Empty Form After Submitting Data
+      this.setState({
+        eventCode: "",
+        designTitle: "",
+        note: "",
+        items: [],
+        errorEvent: "",
+        errorTitle: "",
+        errorItem: ""
+      });
     }
   };
 
+  // Clear Alert
+  onClearAlert = e => {
+    e.preventDefault();
+    this.props.clearAlert();
+  };
+
   render() {
-    const { code, event, product, requester, assign } = this.props.design;
+    const {
+      code,
+      event,
+      product,
+      requester,
+      assign,
+      designStatus,
+      designMessage,
+      designData
+    } = this.props.design;
     const { user } = this.props.auth;
 
     // Set PIC Options
@@ -332,16 +359,25 @@ class DesignAdd extends Component {
               <nav aria-label="breadcrumb mb-4">
                 <ol className="breadcrumb">
                   <li className="breadcrumb-item">
-                    <Link to="/">Home</Link>
+                    <a href="/">Home</a>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to="/design">List Design</Link>
+                    <a href="/design">List Design</a>
                   </li>
                   <li className="breadcrumb-item active" aria-current="page">
                     Add New Design
                   </li>
                 </ol>
               </nav>
+              {/* Alert Messages */}
+              {designStatus === 1 && (
+                <Alert
+                  action="Data Saved! "
+                  message={designMessage}
+                  data={designData}
+                  onClick={this.onClearAlert}
+                />
+              )}
               <div className="card border-info mb-3">
                 <div className="card-header lead">Add New Design Request</div>
                 <div className="card-body">
@@ -395,7 +431,7 @@ class DesignAdd extends Component {
                           onChange={this.onChange}
                         />
                       </div>
-                      <div className="col-md-12 mb-2 font-weigh-bold">
+                      <div className="col-md-12 mb-2 font-weight-bold">
                         {this.state.errorItem !== "" && (
                           <div className="mt-2 alert alert-danger">
                             {this.state.errorItem}
@@ -578,6 +614,7 @@ DesignAdd.propTypes = {
   createDesign: PropTypes.func.isRequired,
   createDesignItem: PropTypes.func.isRequired,
   getAssignToName: PropTypes.func.isRequired,
+  clearAlert: PropTypes.func.isRequired,
   design: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired
 };
@@ -596,6 +633,7 @@ export default connect(
     getRequester,
     createDesign,
     createDesignItem,
-    getAssignToName
+    getAssignToName,
+    clearAlert
   }
 )(DesignAdd);

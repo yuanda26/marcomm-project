@@ -48,8 +48,7 @@ class DeleteMenu extends React.Component {
 
 DeleteMenu.propTypes = {
   delMenu: PropTypes.func.isRequired,
-  take: PropTypes.object.isRequired,
-  classes: PropTypes.object.isRequired
+  take: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({

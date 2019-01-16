@@ -7,41 +7,46 @@ class ViewRole extends React.Component {
       <Modal isOpen={this.props.view} className={this.props.className}>
         <ModalHeader> View Role</ModalHeader>
         <ModalBody>
-          <form class="form-inline">
-            <div class="input-group mb-3 input-group-sm">
-              <label for="text"> Role Code </label>
-              <input
-                type="text"
-                class="form-control"
-                readOnly
-                name="code"
-                value={this.props.role.code}
-                onChange={this.changeHandler}
-              />
-              <label for="text"> Role Name </label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Type Unit Name"
-                readOnly
-                name="name"
-                value={this.props.role.name}
-                onChange={this.changeHandler}
-              />
-            </div>
-            <div class="input-group mb-3 input-group-sm">
-              <label for="text"> Description </label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="description"
-                readOnly
-                name="description"
-                value={this.props.role.description}
-                onChange={this.changeHandler}
-              />
-            </div>
-          </form>
+          <div className="table-responsive">
+            <table className="table table-borderless">
+              <tr>
+                <td nowrap="true">Role Code</td>
+                <td>
+                  <input
+                    type="text"
+                    className="form-control"
+                    readOnly
+                    name="code"
+                    value={this.props.role.code}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td nowrap="true">Role Name</td>
+                <td>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="name"
+                    value={this.props.role.name}
+                    readOnly
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td nowrap="true">Description</td>
+                <td>
+                  <textarea
+                    type="text"
+                    className="form-control"
+                    name="description"
+                    value={this.props.role.description}
+                    readOnly
+                  />
+                </td>
+              </tr>
+            </table>
+          </div>
         </ModalBody>
         <ModalFooter>
           <Button color="danger" onClick={this.props.closeModalHandler}>

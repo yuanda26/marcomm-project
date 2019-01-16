@@ -4,6 +4,8 @@ import classnames from "classnames";
 
 const SelectList = ({
   label,
+  className,
+  id,
   name,
   value,
   onChange,
@@ -20,7 +22,8 @@ const SelectList = ({
     <div className="form-group">
       {label && <label>{label}</label>}
       <select
-        className={classnames("form-control", {
+        id={id}
+        className={classnames(`form-control ${className}`, {
           "is-invalid": errors
         })}
         name={name}
@@ -36,8 +39,14 @@ const SelectList = ({
 };
 
 SelectList.propTypes = {
-  onChange: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired,
+  id: PropTypes.string,
+  className: PropTypes.string,
+  label: PropTypes.string,
+  name: PropTypes.string,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  disabled: PropTypes.bool,
   errors: PropTypes.string
 };
 

@@ -116,8 +116,7 @@ class CreateUnit extends Component {
 CreateUnit.propTypes = {
   create: PropTypes.bool.isRequired,
   userdata: PropTypes.object.isRequired,
-  closeModal: PropTypes.func.isRequired,
-  modalStatus: PropTypes.func.isRequired
+  closeModal: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

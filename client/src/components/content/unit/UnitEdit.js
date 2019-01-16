@@ -53,7 +53,7 @@ class EditUnit extends Component {
         updated_by: this.props.userdata.m_employee_id
       };
 
-      this.props.updateUnit(this.state.unitId, formdata);
+      this.props.updateUnit(this.state.code, formdata);
       this.props.closeModal();
     }
   };
@@ -118,8 +118,7 @@ class EditUnit extends Component {
 EditUnit.propTypes = {
   edit: PropTypes.bool.isRequired,
   unit: PropTypes.object.isRequired,
-  closeModal: PropTypes.func.isRequired,
-  modalStatus: PropTypes.func.isRequired
+  closeModal: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

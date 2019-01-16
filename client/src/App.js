@@ -4,8 +4,6 @@ import { Provider } from "react-redux";
 import { CURRENT_USER } from "./actions/types";
 import store from "./store";
 import jwt from "jsonwebtoken";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.min.js";
 // Private Route
 import RouteSwitcher from "./RouteSwitcher";
 // Layout Components

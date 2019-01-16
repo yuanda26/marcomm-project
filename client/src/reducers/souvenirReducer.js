@@ -4,7 +4,8 @@ import {
   GET_UNITS,
   ADD_SOUVENIR,
   UPDATE_SOUVENIR,
-  DELETE_SOUVENIR
+  DELETE_SOUVENIR,
+  CLEAR_SOUVENIR_ALERT
 } from "../actions/types";
 
 const initialState = {
@@ -12,7 +13,8 @@ const initialState = {
   souvenir: {},
   units: [],
   status: 0,
-  message: ""
+  message: "",
+  data: ""
 };
 
 export default function(state = initialState, action) {
@@ -50,15 +52,15 @@ export default function(state = initialState, action) {
       if (action.code === 200) {
         addSouvenir = [action.payload, ...state.souvenirs];
         status = 1;
-        message = `Data Saved! New Souvenir Has Been Added with Code ${
-          action.payload.code
-        }!`;
+        message = "New Souvenir Has Been Added with Code ";
       }
+
       return {
         ...state,
         souvenirs: addSouvenir,
         status,
-        message
+        message,
+        data: action.payload.code
       };
 
     case UPDATE_SOUVENIR:
@@ -72,20 +74,21 @@ export default function(state = initialState, action) {
 
       if (action.code === 200) {
         updatedSouvenir = state.souvenirs.map(souvenir => {
-          if (souvenir._id === action.souvenirId) {
+          if (souvenir.code === action.souvenirCode) {
             return { ...souvenir, ...action.payload };
           }
           return souvenir;
         });
-        status = 1;
-        message = "Data Updated! Data Souvenir Has Been Updated!";
+        status = 2;
+        message = "Data Souvenir Has Been Updated with Code";
       }
 
       return {
         ...state,
         souvenirs: updatedSouvenir,
         status,
-        message
+        message,
+        data: action.souvenirCode
       };
 
     case DELETE_SOUVENIR:
@@ -104,16 +107,23 @@ export default function(state = initialState, action) {
         );
         deletedSouvenir = filtered;
         status = 1;
-        message = `Data Deleted! Data Souvenir with Code ${
-          action.payload
-        } Has Been Deleted!`;
+        message = "Data Souvenir Successfully Deleted with Code ";
       }
 
       return {
         ...state,
         souvenirs: deletedSouvenir,
         status,
-        message
+        message,
+        data: action.payload
+      };
+
+    case CLEAR_SOUVENIR_ALERT:
+      return {
+        ...state,
+        status: 0,
+        message: "",
+        data: ""
       };
 
     default:

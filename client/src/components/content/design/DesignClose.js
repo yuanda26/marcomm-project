@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 // Redux Actions
 import { connect } from "react-redux";
+import { clearAlert } from "../../../actions/designAction";
 // Forms Components
 import TextFieldGroup from "../../common/TextFieldGroup";
+import Alert from "../../common/Alert";
 
 class DesignClose extends Component {
   state = {
@@ -85,8 +87,6 @@ class DesignClose extends Component {
 
   onClose = e => {
     e.preventDefault();
-
-    console.log(this.state.assign_to);
   };
 
   onCancel = e => {
@@ -94,9 +94,15 @@ class DesignClose extends Component {
     window.location.href = "/design";
   };
 
+  // Clear Alert
+  onClearAlert = e => {
+    e.preventDefault();
+    this.props.clearAlert();
+  };
+
   render() {
     const { design, items, staff, code, title } = this.props;
-    const { status, message } = this.props.design;
+    const { designStatus, designMessage } = this.props.design;
 
     // Set Assign to Options
     const staffOptions = [];
@@ -125,8 +131,12 @@ class DesignClose extends Component {
                 </li>
               </ol>
             </nav>
-            {status === 2 && (
-              <div className="mb-4 alert alert-success">{message}</div>
+            {designStatus === 3 && (
+              <Alert
+                action="Design Approved! "
+                message={designMessage}
+                onClick={this.onClearAlert}
+              />
             )}
             <div className="card border-info mb-3">
               <div className="card-header lead">
@@ -334,7 +344,8 @@ DesignClose.propTypes = {
   employee: PropTypes.array.isRequired,
   product: PropTypes.array.isRequired,
   staff: PropTypes.array.isRequired,
-  requester: PropTypes.array.isRequired
+  requester: PropTypes.array.isRequired,
+  clearAlert: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -343,5 +354,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  {}
+  { clearAlert }
 )(DesignClose);

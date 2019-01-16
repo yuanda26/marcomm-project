@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 // Redux Actions
 import { connect } from "react-redux";
+import { clearAlert } from "../../../actions/designAction";
 // Forms Components
 import TextFieldGroup from "../../common/TextFieldGroup";
+import Alert from "../../common/Alert";
 
 class DesignRead extends Component {
   // Function to Get User with 'Requester' Role
@@ -75,7 +77,15 @@ class DesignRead extends Component {
     }
   }
 
+  // Clear Alert
+  onClearAlert = e => {
+    e.preventDefault();
+    this.props.clearAlert();
+  };
+
   render() {
+    const { designStatus, designMessage } = this.props.design;
+
     const {
       design: { design },
       items,
@@ -101,6 +111,14 @@ class DesignRead extends Component {
                   </li>
                 </ol>
               </nav>
+              {/* Alert Message */}
+              {designStatus === 4 && (
+                <Alert
+                  action="Design Rejected! "
+                  message={designMessage}
+                  onClick={this.onClearAlert}
+                />
+              )}
               <div className="card border-info mb-3">
                 <div className="card-header lead">
                   {title}: {code}
@@ -303,7 +321,8 @@ DesignRead.propTypes = {
   items: PropTypes.array.isRequired,
   employee: PropTypes.array.isRequired,
   product: PropTypes.array.isRequired,
-  requester: PropTypes.array.isRequired
+  requester: PropTypes.array.isRequired,
+  clearAlert: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -312,5 +331,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  {}
+  { clearAlert }
 )(DesignRead);

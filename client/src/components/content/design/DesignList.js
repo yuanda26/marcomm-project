@@ -1,19 +1,25 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
-import { connect } from "react-redux";
-import { Search, Create, RemoveRedEye, Refresh, Add } from "@material-ui/icons";
 // Redux Actions
+import { connect } from "react-redux";
 import {
   getAllDesign,
   getAssignToName,
   getEvent
 } from "../../../actions/designAction";
-
 // Form Components
 import Spinner from "../../common/Spinner";
 import TextField from "../../common/TextField";
 import SelectList from "../../common/SelectList";
+import ReactTooltip from "react-tooltip";
+// Form Validation
+import isEmpty from "../../../validation/isEmpty";
+// Pagination with Material IU
+import Pagination from "../../common/Pagination";
+import { TablePagination } from "@material-ui/core";
+// Material UI Icons
+import { Search, Create, RemoveRedEye, Refresh, Add } from "@material-ui/icons";
 
 class DesignList extends Component {
   constructor(props) {
@@ -28,9 +34,11 @@ class DesignList extends Component {
       searchCreatedDate: "",
       searchCreatedBy: "",
       search: false,
-      employee: [],
-      designs: [],
-      event: []
+      employee: null,
+      designs: null,
+      event: null,
+      page: 0,
+      rowsPerPage: 5
     };
   }
 
@@ -160,8 +168,17 @@ class DesignList extends Component {
     });
   };
 
+  // Pagination Handler
+  handleChangePage = (e, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = e => {
+    this.setState({ rowsPerPage: e.target.value });
+  };
+
   render() {
-    const { designs, assign, status, message } = this.props.design;
+    const { designs, assign } = this.props.design;
 
     // Define Options for Assign to Dropdown
     const options = [];
@@ -174,140 +191,50 @@ class DesignList extends Component {
     );
 
     let designList;
-    let designLabel;
 
     if (designs.length > 0) {
-      designList = this.state.designs.map((design, index) => (
-        <tr key={design._id} className="text-center">
-          <td>{design.code}</td>
-          <td>{this.getEmployee(design.request_by)}</td>
-          <td>{design.request_date}</td>
-          <td>{this.getEmployee(design.assign_to)}</td>
-          <td>{this.designStatus(design.status)}</td>
-          <td>{design.created_date}</td>
-          <td>{this.getEmployee(design.created_by)}</td>
-          <td>
-            <a href={`/design/view/${design.code}`}>
-              <RemoveRedEye />
-            </a>
-            <a href={`/design/edit/${design.code}`}>
-              <Create />
-            </a>
-          </td>
-        </tr>
-      ));
-
-      designLabel = (
-        <Fragment>
-          <tr>
+      designList = this.state.designs
+        .slice(
+          this.state.page * this.state.rowsPerPage,
+          this.state.page * this.state.rowsPerPage + this.state.rowsPerPage
+        )
+        .map(design => (
+          <tr key={design._id} className="text-center">
+            <td>{design.code}</td>
+            <td>{this.getEmployee(design.request_by)}</td>
+            <td>{design.request_date}</td>
+            <td>{this.getEmployee(design.assign_to)}</td>
+            <td>{this.designStatus(design.status)}</td>
+            <td>{design.created_date}</td>
+            <td>{this.getEmployee(design.created_by)}</td>
             <td>
-              <TextField
-                placeholder="Transaction Code"
-                name="searchCode"
-                value={this.state.searchCode}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <TextField
-                placeholder="Request By"
-                name="searchRequestBy"
-                value={this.state.searchRequestBy}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <TextField
-                type="date"
-                min="2018-01-01"
-                max={moment().format("YYYY-MM-DD")}
-                name="searchRequestDate"
-                value={this.state.searchRequestDate}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <SelectList
-                name="searchAssign"
-                value={this.state.searchAssign}
-                onChange={this.onSearch}
-                options={options}
-              />
-            </td>
-            <td>
-              <TextField
-                placeholder="Status"
-                name="searchStatus"
-                value={this.state.searchStatus}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <TextField
-                type="date"
-                min="2018-01-01"
-                max={moment().format("YYYY-MM-DD")}
-                name="searchCreatedDate"
-                value={this.state.searchCreatedDate}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <TextField
-                placeholder="Created By"
-                name="searchCreatedBy"
-                value={this.state.searchCreatedBy}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td nowrap="true">
-              <div className="form-group">
-                {this.state.search === true ? (
-                  <button
-                    className="btn btn-warning"
-                    onClick={this.onRestore}
-                    title="Resfresh Result!"
-                  >
-                    <Refresh />
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    title="Search!"
-                  >
-                    <Search />
-                  </button>
-                )}
-                <a href="/design/add" title="Request New Design!">
-                  <button className="btn btn-primary ml-1" type="button">
-                    <Add />
-                  </button>
-                </a>
-              </div>
+              <a href={`/design/view/${design.code}`} data-tip="See Detail">
+                <RemoveRedEye />
+                <ReactTooltip place="top" type="dark" effect="solid" />
+              </a>
+              <a
+                href={`/design/edit/${design.code}`}
+                data-tip="Edit Design Request"
+              >
+                <Create />
+                <ReactTooltip place="top" type="dark" effect="solid" />
+              </a>
             </td>
           </tr>
-          <tr className="text-center font-weight-bold">
-            <td nowrap="true">Transaction Code</td>
-            <td nowrap="true">Request By</td>
-            <td nowrap="true">Request Date</td>
-            <td nowrap="true">Assign To</td>
-            <td nowrap="true">Status</td>
-            <td nowrap="true">Created Date</td>
-            <td nowrap="true">Created By</td>
-            <td nowrap="true">Action</td>
-          </tr>
-        </Fragment>
-      );
+        ));
     } else {
       designList = (
         <tr className="text-center">
-          <td>Oops, No Design List Found!</td>
+          <td colSpan="8">Oops, No Design Request Found!</td>
         </tr>
       );
     }
 
-    if (designs.length === 0 && assign.length === 0) {
+    if (
+      isEmpty(this.state.designs) &&
+      isEmpty(this.state.employee) &&
+      isEmpty(this.state.event)
+    ) {
       return (
         <div className="container">
           <div className="row">
@@ -340,18 +267,145 @@ class DesignList extends Component {
                       </li>
                     </ol>
                   </nav>
-                  {/* Alert Messages */}
-                  {status === 1 && (
-                    <div className="mt-2 alert alert-success">{message}</div>
-                  )}
-                  {status === 2 && (
-                    <div className="mt-2 alert alert-primary">{message}</div>
-                  )}
                   <div className="table-responsive">
                     <form onSubmit={this.submitSearch}>
                       <table className="table table-stripped">
-                        <thead>{designLabel}</thead>
+                        <thead>
+                          <tr>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                placeholder="Transaction Code"
+                                name="searchCode"
+                                value={this.state.searchCode}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                placeholder="Request By"
+                                name="searchRequestBy"
+                                value={this.state.searchRequestBy}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                type="date"
+                                min="2018-01-01"
+                                name="searchRequestDate"
+                                value={this.state.searchRequestDate}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <SelectList
+                                className="search-form"
+                                name="searchAssign"
+                                value={this.state.searchAssign}
+                                onChange={this.onSearch}
+                                options={options}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                placeholder="Status"
+                                name="searchStatus"
+                                value={this.state.searchStatus}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                type="date"
+                                min="2018-01-01"
+                                max={moment().format("YYYY-MM-DD")}
+                                name="searchCreatedDate"
+                                value={this.state.searchCreatedDate}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                placeholder="Created By"
+                                name="searchCreatedBy"
+                                value={this.state.searchCreatedBy}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <div className="form-group">
+                                {this.state.search === true ? (
+                                  <a href="#!" data-tip="Refresh Result!">
+                                    <button
+                                      className="btn btn-warning"
+                                      onClick={this.onRestore}
+                                    >
+                                      <Refresh />
+                                    </button>
+                                    <ReactTooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
+                                    />
+                                  </a>
+                                ) : (
+                                  <button
+                                    type="submit"
+                                    className="btn btn-primary"
+                                    title="Search!"
+                                  >
+                                    <Search />
+                                  </button>
+                                )}
+                                <a
+                                  href="/design/add"
+                                  data-tip="Request New Design!"
+                                >
+                                  <button
+                                    className="btn btn-primary ml-1"
+                                    type="button"
+                                  >
+                                    <Add />
+                                  </button>
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </a>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr className="text-center font-weight-bold">
+                            <td nowrap="true">Transaction Code</td>
+                            <td nowrap="true">Request By</td>
+                            <td nowrap="true">Request Date</td>
+                            <td nowrap="true">Assign To</td>
+                            <td nowrap="true">Status</td>
+                            <td nowrap="true">Created Date</td>
+                            <td nowrap="true">Created By</td>
+                            <td nowrap="true">Action</td>
+                          </tr>
+                        </thead>
                         <tbody>{designList}</tbody>
+                        <tfoot>
+                          <tr className="text-center">
+                            <TablePagination
+                              count={this.state.designs.length}
+                              rowsPerPage={this.state.rowsPerPage}
+                              page={this.state.page}
+                              onChangePage={this.handleChangePage}
+                              onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                              ActionsComponent={Pagination}
+                            />
+                          </tr>
+                        </tfoot>
                       </table>
                     </form>
                   </div>

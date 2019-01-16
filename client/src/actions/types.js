@@ -20,7 +20,7 @@ export const DELETE_ITEM = "DELETE_ITEM";
 export const ADD_FILE = "ADD_FILE";
 export const UPDATE_FILE = "UPDATE_FILE";
 export const DELETE_FILE = "DELETE_FILE";
-export const CLEAR_DESIGN_STATUS = "CLEAR_DESIGN_STATUS";
+export const CLEAR_DESIGN_ALERT = "CLEAR_DESIGN_ALERT";
 
 // Approve & Close Transaction Design
 export const APPROVE_DESIGN = "APPROVE_DESIGN";
@@ -33,6 +33,7 @@ export const GET_SOUVENIR = "GET_SOUVENIR";
 export const ADD_SOUVENIR = "ADD_SOUVENIR";
 export const UPDATE_SOUVENIR = "UPDATE_SOUVENIR";
 export const DELETE_SOUVENIR = "DELETE_SOUVENIR";
+export const CLEAR_SOUVENIR_ALERT = "CLEAR_SOUVENIR_ALERT";
 
 // Master Unit
 export const GET_UNITS = "GET_UNITS";
@@ -40,6 +41,7 @@ export const GET_UNIT = "GET_UNIT";
 export const CREATE_UNIT = "CREATE_UNIT";
 export const UPDATE_UNIT = "UPDATE_UNIT";
 export const DELETE_UNIT = "DELETE_UNIT";
+export const CLEAR_UNIT_ALERT = "CLEAR_UNIT_ALERT";
 
 // Common Types
 export const ERRORS = "ERRORS";

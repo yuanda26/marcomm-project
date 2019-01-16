@@ -4,6 +4,8 @@ import classnames from "classnames";
 
 const TextFieldGroup = ({
   label,
+  id,
+  className,
   name,
   placeholder,
   value,
@@ -21,7 +23,8 @@ const TextFieldGroup = ({
       <div className="col-sm-8">
         <input
           type={type}
-          className={classnames("form-control", {
+          id={id}
+          className={classnames(`form-control ${className}`, {
             "is-invalid": errors
           })}
           placeholder={placeholder}
@@ -39,6 +42,8 @@ const TextFieldGroup = ({
 
 TextFieldGroup.propTypes = {
   label: PropTypes.string,
+  id: PropTypes.string,
+  className: PropTypes.string,
   name: PropTypes.string,
   placeholder: PropTypes.string,
   value: PropTypes.string,
@@ -52,6 +57,7 @@ TextFieldGroup.propTypes = {
 TextFieldGroup.defaultProps = {
   type: "text",
   disabled: false,
+  readOnly: false,
   maxLength: "50"
 };
 

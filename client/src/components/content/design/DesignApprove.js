@@ -9,6 +9,7 @@ import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import TextFieldGroup from "../../common/TextFieldGroup";
 import SelectListGroup from "../../common/SelectListGroup";
 import TextArea from "../../common/TextArea";
+import TextAreaGroup from "../../common/TextAreaGroup";
 // Form Validation
 import isEmpty from "../../../validation/isEmpty";
 
@@ -264,7 +265,7 @@ class DesignApprove extends Component {
                         value={design.request_date}
                         disabled={true}
                       />
-                      <TextFieldGroup
+                      <TextAreaGroup
                         label="Note"
                         value={design.note}
                         disabled={true}

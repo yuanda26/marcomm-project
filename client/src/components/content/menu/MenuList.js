@@ -29,6 +29,7 @@ import EditMenu from "./UpdateMenu";
 import CreateMenu from "./CreateMenu";
 import DeleteMenu from "./DeleteMenu";
 import ViewMenu from "./ReadMenu";
+import SpinnerTable from "../../common/SpinnerTable";
 
 const actionsStyles = theme => ({
   root: {
@@ -129,7 +130,7 @@ class ListMenu extends React.Component {
       },
       showCreateMenu: false,
       allMenu: [],
-      menuSearch: [],
+      menuSearch: [null],
       currentMenu: {},
       alertData: {
         status: 0,
@@ -301,7 +302,9 @@ class ListMenu extends React.Component {
         <div className="row">
           <div className="col-md-12">
             <div className="card border-primary mb-2">
-              <div className="card-header lead">Menu List</div>
+              <div className="card-header bg-primary text-white lead">
+                Menu List
+              </div>
               <div className="card-body">
                 <nav aria-label="breadcrumb mb-4">
                   <ol className="breadcrumb">
@@ -417,43 +420,53 @@ class ListMenu extends React.Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.menuSearch
-                        .slice(
-                          this.state.page * this.state.rowsPerPage,
-                          this.state.page * this.state.rowsPerPage +
-                            this.state.rowsPerPage
-                        )
-                        .map((menu, index) => (
-                          <tr className="text-center" key={menu._id}>
-                            <td component="th">{menu.code}</td>
-                            <td>{menu.name}</td>
-                            <td>{menu.created_by}</td>
-                            <td>{this.changeDateFormat(menu.created_date)}</td>
-                            <td nowrap>
-                              <Link to="#">
-                                <RemoveRedEye
-                                  onClick={() => {
-                                    this.viewModalHandler(menu._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <Create
-                                  onClick={() => {
-                                    this.editModalHandler(menu._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <Delete
-                                  onClick={() => {
-                                    this.deleteModalHandler(menu._id);
-                                  }}
-                                />
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
+                      {this.state.menuSearch[0] === null ? (
+                        <SpinnerTable />
+                      ) : this.state.menuSearch.length === 0 ? (
+                        <tr>
+                          <td colSpan="3">No Menu Data Found</td>
+                        </tr>
+                      ) : (
+                        this.state.menuSearch
+                          .slice(
+                            this.state.page * this.state.rowsPerPage,
+                            this.state.page * this.state.rowsPerPage +
+                              this.state.rowsPerPage
+                          )
+                          .map((menu, index) => (
+                            <tr className="text-center" key={menu._id}>
+                              <td component="th">{menu.code}</td>
+                              <td>{menu.name}</td>
+                              <td>{menu.created_by}</td>
+                              <td>
+                                {this.changeDateFormat(menu.created_date)}
+                              </td>
+                              <td nowrap="true">
+                                <Link to="#">
+                                  <RemoveRedEye
+                                    onClick={() => {
+                                      this.viewModalHandler(menu._id);
+                                    }}
+                                  />
+                                </Link>
+                                <Link to="#">
+                                  <Create
+                                    onClick={() => {
+                                      this.editModalHandler(menu._id);
+                                    }}
+                                  />
+                                </Link>
+                                <Link to="#">
+                                  <Delete
+                                    onClick={() => {
+                                      this.deleteModalHandler(menu._id);
+                                    }}
+                                  />
+                                </Link>
+                              </td>
+                            </tr>
+                          ))
+                      )}
                     </tbody>
                     <TableFooter>
                       <TableRow>
@@ -481,8 +494,7 @@ class ListMenu extends React.Component {
 
 ListMenu.propTypes = {
   getAllMenu: PropTypes.func.isRequired,
-  menuIndexReducer: PropTypes.object.isRequired,
-  classes: PropTypes.object.isRequired
+  menuIndexReducer: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({

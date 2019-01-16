@@ -20,7 +20,10 @@ import Gavel from "@material-ui/icons/Gavel";
 import Assignment from "@material-ui/icons/Assignment";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import moment from "moment";
-
+import Spinner from "../../common/Spinner";
+import Search from "@material-ui/icons/Search";
+import Refresh from "@material-ui/icons/Refresh";
+import Create from "@material-ui/icons/Add";
 const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
@@ -129,7 +132,7 @@ class ListPromotion extends React.Component {
         message: "",
         code: ""
       },
-      hasil: [],
+      hasil: [null],
       number: true,
       page: 0,
       rowsPerPage: 5
@@ -338,112 +341,110 @@ class ListPromotion extends React.Component {
                       size="small"
                       onClick={this.showHandler}
                     >
-                      Add Promotion
+                      <Create />
                     </Button>
                   </div>
                 ) : (
                   <div />
                 )}
-                <div className="table-responsive mb-2">
-                  <table className="table table-borderless">
-                    <tr>
-                      <td>
-                        <input
-                          class="form-control"
-                          placeholder="Transaction Code"
-                          name="code"
-                          onChange={this.changeHandler}
-                          onKeyPress={this.keyHandler}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          class="form-control"
-                          placeholder="Request By"
-                          name="request_by"
-                          onChange={this.changeHandler}
-                          onKeyPress={this.keyHandler}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          class="form-control"
-                          placeholder="Request Date"
-                          name="request_date"
-                          type="date"
-                          onChange={this.changeHandler}
-                          onKeyPress={this.keyHandler}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          class="form-control"
-                          placeholder="Assign to"
-                          name="assign_to"
-                          onChange={this.changeHandler}
-                          onKeyPress={this.keyHandler}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          class="form-control"
-                          placeholder="Created Date"
-                          type="date"
-                          name="created_date"
-                          onChange={this.changeHandler}
-                          onKeyPress={this.keyHandler}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          class="form-control"
-                          placeholder="Created By"
-                          type="text"
-                          name="created_by"
-                          onChange={this.changeHandler}
-                          onKeyPress={this.keyHandler}
-                        />
-                      </td>
-                      <td>
-                        {this.state.number ? (
-                          <button
-                            className="btn btn-warning btn-block"
-                            onClick={this.search}
-                          >
-                            Search
-                          </button>
-                        ) : (
-                          <button
-                            className="btn btn-warning btn-block"
-                            onClick={() => {
-                              this.setState({
-                                hasil: this.state.allPromotion,
-                                number: true
-                              });
-                            }}
-                          >
-                            Refresh
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-                {this.state.hasil.length === 0 ? (
-                  <h5>Loading Data, Please Wait...</h5>
+                {this.state.hasil[0] === null ? (
+                  <Spinner />
                 ) : (
                   <div className="table-responsive">
                     <table className="table">
                       <thead>
+                        <tr>
+                          <td>
+                            <input
+                              class="form-control"
+                              placeholder="Transaction Code"
+                              name="code"
+                              onChange={this.changeHandler}
+                              onKeyPress={this.keyHandler}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              class="form-control"
+                              placeholder="Request By"
+                              name="request_by"
+                              onChange={this.changeHandler}
+                              onKeyPress={this.keyHandler}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              class="form-control"
+                              placeholder="Request Date"
+                              name="request_date"
+                              type="date"
+                              onChange={this.changeHandler}
+                              onKeyPress={this.keyHandler}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              class="form-control"
+                              placeholder="Assign to"
+                              name="assign_to"
+                              onChange={this.changeHandler}
+                              onKeyPress={this.keyHandler}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              class="form-control"
+                              placeholder="Created Date"
+                              type="date"
+                              name="created_date"
+                              onChange={this.changeHandler}
+                              onKeyPress={this.keyHandler}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              class="form-control"
+                              placeholder="Created By"
+                              type="text"
+                              name="created_by"
+                              onChange={this.changeHandler}
+                              onKeyPress={this.keyHandler}
+                            />
+                          </td>
+                          <td>
+                            {this.state.number ? (
+                              <button
+                                className="btn btn-primary btn-block"
+                                onClick={this.search}
+                              >
+                                <Search />
+                              </button>
+                            ) : (
+                              <button
+                                className="btn btn-warning btn-block"
+                                onClick={() => {
+                                  this.setState({
+                                    hasil: this.state.allPromotion,
+                                    number: true
+                                  });
+                                }}
+                              >
+                                <Refresh />
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      </thead>
+                      <thead>
                         <tr className="text-center font-weight-bold">
-                          <td>Transaction Code</td>
-                          <td>Request By</td>
-                          <td>Request Date</td>
-                          <td>Assign To</td>
-                          <td>Status</td>
-                          <td>Created Date</td>
-                          <td>Created By</td>
-                          <td>Action</td>
+                          <td nowrap="true">Transaction Code</td>
+                          <td nowrap="true">Request By</td>
+                          <td nowrap="true">Request Date</td>
+                          <td nowrap="true">Assign To</td>
+                          <td nowrap="true">Status</td>
+                          <td nowrap="true">Created Date</td>
+                          <td nowrap="true">Created By</td>
+                          <td nowrap="true">Action</td>
                         </tr>
                       </thead>
                       <tbody>

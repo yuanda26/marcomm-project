@@ -141,7 +141,6 @@ class CreateMenu extends React.Component {
 }
 
 CreateMenu.propTypes = {
-  classes: PropTypes.object.isRequired,
   createMenu: PropTypes.func.isRequired,
   take: PropTypes.object.isRequired
 };
