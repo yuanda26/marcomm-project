@@ -226,7 +226,6 @@ class CreateCompany extends React.Component {
 }
 
 CreateCompany.propTypes = {
-  classes: PropTypes.object.isRequired,
   createCompany: PropTypes.func.isRequired,
   companyReducer: PropTypes.object.isRequired
 };

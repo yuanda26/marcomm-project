@@ -114,7 +114,7 @@ class EditMenu extends React.Component {
               placeholder="*Select Parent Menu"
               name="parent_id"
               value={this.state.formdata.parent_id}
-              onChange={this.onChange}
+              onChange={this.changeHandler}
               options={options}
               disabled={true}
             />
@@ -138,7 +138,6 @@ class EditMenu extends React.Component {
 }
 
 EditMenu.propTypes = {
-  classes: PropTypes.object.isRequired,
   putMenu: PropTypes.func.isRequired,
   take: PropTypes.object.isRequired
 };

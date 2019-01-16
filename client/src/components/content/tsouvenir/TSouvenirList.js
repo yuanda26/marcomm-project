@@ -28,6 +28,7 @@ import {
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import moment from "moment";
+import SpinnerTable from "../../common/SpinnerTable";
 
 const actionsStyles = theme => ({
   root: {
@@ -130,7 +131,7 @@ class ListTsouvenir extends React.Component {
       showCreateTsouvenir: false,
       getitem: "",
       allSouvenirStock: [],
-      souvenirStockSearch: [],
+      souvenirStockSearch: [null],
       currentTsouvenir: {},
       alertData: {
         status: 0,
@@ -442,44 +443,54 @@ class ListTsouvenir extends React.Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.souvenirStockSearch
-                        .slice(
-                          this.state.page * this.state.rowsPerPage,
-                          this.state.page * this.state.rowsPerPage +
-                            this.state.rowsPerPage
-                        )
-                        .map((tsouvenir, index) => (
-                          <tr className="text-center" key={tsouvenir._id}>
-                            <td component="th">{tsouvenir.code}</td>
-                            <td>{tsouvenir.received_by}</td>
-                            <td>
-                              {this.changeDateFormat(tsouvenir.received_date)}
-                            </td>
-                            <td>{tsouvenir.created_by}</td>
-                            <td>
-                              {this.changeDateFormat(tsouvenir.created_date)}
-                            </td>
-                            <td>
-                              <Link to="#">
-                                <RemoveRedEye
-                                  onClick={() => {
-                                    this.viewModalHandler(tsouvenir._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <Create
-                                  onClick={() => {
-                                    this.editModalHandler(
-                                      tsouvenir.code,
-                                      tsouvenir._id
-                                    );
-                                  }}
-                                />
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
+                      {this.state.souvenirStockSearch[0] === null ? (
+                        <SpinnerTable />
+                      ) : this.state.souvenirStockSearch.length === 0 ? (
+                        <tr className="text-center">
+                          <td colSpan="6">
+                            No Transaction Souvenir Data Found
+                          </td>
+                        </tr>
+                      ) : (
+                        this.state.souvenirStockSearch
+                          .slice(
+                            this.state.page * this.state.rowsPerPage,
+                            this.state.page * this.state.rowsPerPage +
+                              this.state.rowsPerPage
+                          )
+                          .map((tsouvenir, index) => (
+                            <tr className="text-center" key={tsouvenir._id}>
+                              <td component="th">{tsouvenir.code}</td>
+                              <td>{tsouvenir.received_by}</td>
+                              <td>
+                                {this.changeDateFormat(tsouvenir.received_date)}
+                              </td>
+                              <td>{tsouvenir.created_by}</td>
+                              <td>
+                                {this.changeDateFormat(tsouvenir.created_date)}
+                              </td>
+                              <td>
+                                <Link to="#">
+                                  <RemoveRedEye
+                                    onClick={() => {
+                                      this.viewModalHandler(tsouvenir._id);
+                                    }}
+                                  />
+                                </Link>
+                                <Link to="#">
+                                  <Create
+                                    onClick={() => {
+                                      this.editModalHandler(
+                                        tsouvenir.code,
+                                        tsouvenir._id
+                                      );
+                                    }}
+                                  />
+                                </Link>
+                              </td>
+                            </tr>
+                          ))
+                      )}
                     </tbody>
                     <TableFooter>
                       <TableRow>
@@ -506,8 +517,7 @@ class ListTsouvenir extends React.Component {
 }
 
 ListTsouvenir.propTypes = {
-  getAllTsouvenir: PropTypes.func.isRequired,
-  classes: PropTypes.object.isRequired
+  getAllTsouvenir: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
