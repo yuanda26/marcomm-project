@@ -26,6 +26,7 @@ import SelectList from "../../common/SelectList";
 import Alert from "../../common/Alert";
 // Form Validation
 import isEmpty from "../../../validation/isEmpty";
+import DeniedPage from "../../common/DeniedPage";
 
 class DesignAdd extends Component {
   constructor(props) {
@@ -246,7 +247,7 @@ class DesignAdd extends Component {
           ...item,
           t_design_id: this.props.design.code,
           is_delete: false,
-          created_by: this.props.auth.user.m_employee_id,
+          created_by: this.props.user.m_employee_id,
           created_date: moment().format("DD/MM/YYYY")
         });
       });
@@ -258,8 +259,8 @@ class DesignAdd extends Component {
         t_event_id: this.state.eventCode,
         title_header: this.state.designTitle,
         note: this.state.note,
-        request_by: this.props.auth.user.m_employee_id,
-        created_by: this.props.auth.user.m_employee_id
+        request_by: this.props.user.m_employee_id,
+        created_by: this.props.user.m_employee_id
       };
 
       // Save Design & Design Item to Database
@@ -295,7 +296,7 @@ class DesignAdd extends Component {
       designMessage,
       designData
     } = this.props.design;
-    const { user } = this.props.auth;
+    const user = this.props.user;
 
     // Set PIC Options
     const staffOptions = [];
@@ -334,274 +335,279 @@ class DesignAdd extends Component {
       display: display
     };
 
-    if (
-      Object.keys(user).length === 0 &&
-      code.length === 0 &&
-      event.length === 0 &&
-      product.length === 0 &&
-      requester.length === 0 &&
-      assign.length === 0
-    ) {
-      return (
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <Spinner />
+    // Redirect if User is Not a Requester
+    if (this.props.user.m_role_id !== "RO0005") {
+      return <DeniedPage />;
+    } else {
+      if (
+        isEmpty(user) &&
+        isEmpty(code) &&
+        isEmpty(event) &&
+        isEmpty(product) &&
+        isEmpty(requester) &&
+        isEmpty(assign)
+      ) {
+        return (
+          <div className="container">
+            <div className="row">
+              <div className="col-md-12">
+                <Spinner />
+              </div>
             </div>
           </div>
-        </div>
-      );
-    } else {
-      return (
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <nav aria-label="breadcrumb mb-4">
-                <ol className="breadcrumb">
-                  <li className="breadcrumb-item">
-                    <a href="/">Home</a>
-                  </li>
-                  <li className="breadcrumb-item">
-                    <a href="/design">List Design</a>
-                  </li>
-                  <li className="breadcrumb-item active" aria-current="page">
-                    Add New Design
-                  </li>
-                </ol>
-              </nav>
-              {/* Alert Messages */}
-              {designStatus === 1 && (
-                <Alert
-                  action="Data Saved! "
-                  message={designMessage}
-                  data={designData}
-                  onClick={this.onClearAlert}
-                />
-              )}
-              <div className="card border-info mb-3">
-                <div className="card-header lead">Add New Design Request</div>
-                <div className="card-body">
-                  <form onSubmit={this.onSubmit}>
-                    <div className="row">
-                      <div className="col-md-6">
-                        <TextFieldGroup
-                          label="*Transaction Code"
-                          placeholder="Auto Generated"
-                          name="code"
-                          disabled={true}
-                        />
-                        <SelectListGroup
-                          label="*Event Code"
-                          placeholder="*Select Event"
-                          name="eventCode"
-                          value={this.state.eventCode}
-                          onChange={this.onChange}
-                          options={eventOptions}
-                          errors={this.state.errorEvent}
-                        />
-                        <TextFieldGroup
-                          label="*Design Title"
-                          placeholder="Type Title"
-                          name="designTitle"
-                          value={this.state.designTitle}
-                          onChange={this.onChange}
-                          errors={this.state.errorTitle}
-                        />
-                      </div>
-                      <div className="col-md-6">
-                        <TextFieldGroup
-                          label="*Request By"
-                          name="request_by"
-                          value={this.assignToName(user.m_employee_id)}
-                          disabled={true}
-                        />
-                        <TextFieldGroup
-                          label="*Request Date"
-                          name="request_by"
-                          placeholder={moment().format("DD/MM/YYYY")}
-                          value={moment().format("DD/MM/YYYY")}
-                          disabled={true}
-                        />
-                        <TextAreaGroup
-                          label="Note"
-                          placeholder="Type Note"
-                          name="note"
-                          cols="3"
-                          value={this.state.note}
-                          onChange={this.onChange}
-                        />
-                      </div>
-                      <div className="col-md-12 mb-2 font-weight-bold">
-                        {this.state.errorItem !== "" && (
-                          <div className="mt-2 alert alert-danger">
-                            {this.state.errorItem}
-                          </div>
-                        )}
-                      </div>
-                      <div className="col-md-12 mb-4 form-inline">
-                        <button
-                          className="btn btn-primary"
-                          type="button"
-                          onClick={this.handleAddItems}
-                        >
-                          Add Item
-                        </button>
-                        <table className="table table-responsive mt-2 mb-2">
-                          <thead style={style}>
-                            <tr className="text-center">
-                              <td>Product Name</td>
-                              <td>Product Description</td>
-                              <td>Title</td>
-                              <td>Request PIC</td>
-                              <td>Due Date</td>
-                              <td>Start Date</td>
-                              <td>End Date</td>
-                              <td>Note</td>
-                              <td />
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {this.state.items.map((item, idx) => (
-                              <tr key={idx}>
-                                <td>
-                                  <SelectList
-                                    placeholder="*Select Product"
-                                    name="m_product_id"
-                                    options={productOptions}
-                                    disabled={item.disabled}
-                                    onChange={this.handleItemChange(idx)}
-                                    errors={item.errorProduct}
-                                  />
-                                </td>
-                                <td>
-                                  <TextField
-                                    className="form-control"
-                                    placeholder={this.getDescription(
-                                      item.m_product_id
-                                    )}
-                                    disabled={true}
-                                  />
-                                </td>
-                                <td>
-                                  <TextField
-                                    name="title_item"
-                                    placeholder="Type Title"
-                                    value={item.title_item}
-                                    readOnly={item.readOnly}
-                                    onChange={this.handleItemChange(idx)}
-                                    errors={item.errorTitle}
-                                  />
-                                </td>
-                                <td>
-                                  <SelectList
-                                    name="request_pic"
-                                    placeholder="*Select PIC"
-                                    options={staffOptions}
-                                    disabled={item.disabled}
-                                    onChange={this.handleItemChange(idx)}
-                                    errors={item.errorPIC}
-                                  />
-                                </td>
-                                <td>
-                                  <TextField
-                                    type="date"
-                                    name="request_due_date"
-                                    min={moment().format("YYYY-MM-DD")}
-                                    value={item.request_due_date}
-                                    readOnly={item.readOnly}
-                                    onChange={this.handleItemChange(idx)}
-                                    errors={item.errorDueDate}
-                                  />
-                                </td>
-                                <td>
-                                  <TextField
-                                    placeholder="Start Date"
-                                    disabled={true}
-                                  />
-                                </td>
-                                <td>
-                                  <TextField
-                                    placeholder="End Date"
-                                    disabled={true}
-                                  />
-                                </td>
-                                <td>
-                                  <TextField
-                                    name="note"
-                                    placeholder="Note"
-                                    value={item.note}
-                                    readOnly={item.readOnly}
-                                    onChange={this.handleItemChange(idx)}
-                                  />
-                                </td>
-                                <td nowrap="true">
-                                  <CreateOutlined
-                                    color="primary"
-                                    onClick={this.handleReadonly(idx)}
-                                  />
-                                  <DeleteOutlined
-                                    color="primary"
-                                    onClick={this.handleRemoveModal}
-                                  />
-                                  {/* Delete Design Items Modal */}
-                                  <Modal isOpen={this.state.deleteModal}>
-                                    <ModalHeader>
-                                      <div className="lead">Delete Data?</div>
-                                    </ModalHeader>
-                                    <ModalBody>
-                                      <form>
-                                        <div className="form-group text-right">
-                                          <button
-                                            type="button"
-                                            className="btn btn-primary mr-2"
-                                            onClick={this.handleRemoveItems(
-                                              idx
-                                            )}
-                                          >
-                                            Delete
-                                          </button>
-                                          <button
-                                            type="button"
-                                            className="btn btn-default"
-                                            onClick={this.closeModal}
-                                          >
-                                            Close
-                                          </button>
-                                        </div>
-                                      </form>
-                                    </ModalBody>
-                                  </Modal>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                      <div className="col-md-10">
-                        <input
-                          type="submit"
-                          value="Submit"
-                          className="btn btn-info btn-block mt-1"
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <a href="/design">
+        );
+      } else {
+        return (
+          <div className="container">
+            <div className="row">
+              <div className="col-md-12">
+                <nav aria-label="breadcrumb mb-4">
+                  <ol className="breadcrumb">
+                    <li className="breadcrumb-item">
+                      <a href="/">Home</a>
+                    </li>
+                    <li className="breadcrumb-item">
+                      <a href="/design">List Design</a>
+                    </li>
+                    <li className="breadcrumb-item active" aria-current="page">
+                      Add New Design
+                    </li>
+                  </ol>
+                </nav>
+                {/* Alert Messages */}
+                {designStatus === 1 && (
+                  <Alert
+                    action="Data Saved! "
+                    message={designMessage}
+                    data={designData}
+                    onClick={this.onClearAlert}
+                  />
+                )}
+                <div className="card border-info mb-3">
+                  <div className="card-header lead">Add New Design Request</div>
+                  <div className="card-body">
+                    <form onSubmit={this.onSubmit}>
+                      <div className="row">
+                        <div className="col-md-6">
+                          <TextFieldGroup
+                            label="*Transaction Code"
+                            placeholder="Auto Generated"
+                            name="code"
+                            disabled={true}
+                          />
+                          <SelectListGroup
+                            label="*Event Code"
+                            placeholder="*Select Event"
+                            name="eventCode"
+                            value={this.state.eventCode}
+                            onChange={this.onChange}
+                            options={eventOptions}
+                            errors={this.state.errorEvent}
+                          />
+                          <TextFieldGroup
+                            label="*Design Title"
+                            placeholder="Type Title"
+                            name="designTitle"
+                            value={this.state.designTitle}
+                            onChange={this.onChange}
+                            errors={this.state.errorTitle}
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <TextFieldGroup
+                            label="*Request By"
+                            name="request_by"
+                            value={this.assignToName(user.m_employee_id)}
+                            disabled={true}
+                          />
+                          <TextFieldGroup
+                            label="*Request Date"
+                            name="request_by"
+                            placeholder={moment().format("DD/MM/YYYY")}
+                            value={moment().format("DD/MM/YYYY")}
+                            disabled={true}
+                          />
+                          <TextAreaGroup
+                            label="Note"
+                            placeholder="Type Note"
+                            name="note"
+                            cols="3"
+                            value={this.state.note}
+                            onChange={this.onChange}
+                          />
+                        </div>
+                        <div className="col-md-12 mb-2 font-weight-bold">
+                          {this.state.errorItem !== "" && (
+                            <div className="mt-2 alert alert-danger">
+                              {this.state.errorItem}
+                            </div>
+                          )}
+                        </div>
+                        <div className="col-md-12 mb-4 form-inline">
                           <button
-                            className="btn btn-warning btn-block mt-1"
+                            className="btn btn-primary"
                             type="button"
+                            onClick={this.handleAddItems}
                           >
-                            Cancel
+                            Add Item
                           </button>
-                        </a>
+                          <table className="table table-responsive mt-2 mb-2">
+                            <thead style={style}>
+                              <tr className="text-center">
+                                <td>Product Name</td>
+                                <td>Product Description</td>
+                                <td>Title</td>
+                                <td>Request PIC</td>
+                                <td>Due Date</td>
+                                <td>Start Date</td>
+                                <td>End Date</td>
+                                <td>Note</td>
+                                <td />
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {this.state.items.map((item, idx) => (
+                                <tr key={idx}>
+                                  <td>
+                                    <SelectList
+                                      placeholder="*Select Product"
+                                      name="m_product_id"
+                                      options={productOptions}
+                                      disabled={item.disabled}
+                                      onChange={this.handleItemChange(idx)}
+                                      errors={item.errorProduct}
+                                    />
+                                  </td>
+                                  <td>
+                                    <TextField
+                                      className="form-control"
+                                      placeholder={this.getDescription(
+                                        item.m_product_id
+                                      )}
+                                      disabled={true}
+                                    />
+                                  </td>
+                                  <td>
+                                    <TextField
+                                      name="title_item"
+                                      placeholder="Type Title"
+                                      value={item.title_item}
+                                      readOnly={item.readOnly}
+                                      onChange={this.handleItemChange(idx)}
+                                      errors={item.errorTitle}
+                                    />
+                                  </td>
+                                  <td>
+                                    <SelectList
+                                      name="request_pic"
+                                      placeholder="*Select PIC"
+                                      options={staffOptions}
+                                      disabled={item.disabled}
+                                      onChange={this.handleItemChange(idx)}
+                                      errors={item.errorPIC}
+                                    />
+                                  </td>
+                                  <td>
+                                    <TextField
+                                      type="date"
+                                      name="request_due_date"
+                                      min={moment().format("YYYY-MM-DD")}
+                                      value={item.request_due_date}
+                                      readOnly={item.readOnly}
+                                      onChange={this.handleItemChange(idx)}
+                                      errors={item.errorDueDate}
+                                    />
+                                  </td>
+                                  <td>
+                                    <TextField
+                                      placeholder="Start Date"
+                                      disabled={true}
+                                    />
+                                  </td>
+                                  <td>
+                                    <TextField
+                                      placeholder="End Date"
+                                      disabled={true}
+                                    />
+                                  </td>
+                                  <td>
+                                    <TextField
+                                      name="note"
+                                      placeholder="Note"
+                                      value={item.note}
+                                      readOnly={item.readOnly}
+                                      onChange={this.handleItemChange(idx)}
+                                    />
+                                  </td>
+                                  <td nowrap="true">
+                                    <CreateOutlined
+                                      color="primary"
+                                      onClick={this.handleReadonly(idx)}
+                                    />
+                                    <DeleteOutlined
+                                      color="primary"
+                                      onClick={this.handleRemoveModal}
+                                    />
+                                    {/* Delete Design Items Modal */}
+                                    <Modal isOpen={this.state.deleteModal}>
+                                      <ModalHeader>
+                                        <div className="lead">Delete Data?</div>
+                                      </ModalHeader>
+                                      <ModalBody>
+                                        <form>
+                                          <div className="form-group text-right">
+                                            <button
+                                              type="button"
+                                              className="btn btn-primary mr-2"
+                                              onClick={this.handleRemoveItems(
+                                                idx
+                                              )}
+                                            >
+                                              Delete
+                                            </button>
+                                            <button
+                                              type="button"
+                                              className="btn btn-default"
+                                              onClick={this.closeModal}
+                                            >
+                                              Close
+                                            </button>
+                                          </div>
+                                        </form>
+                                      </ModalBody>
+                                    </Modal>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        <div className="col-md-10">
+                          <input
+                            type="submit"
+                            value="Submit"
+                            className="btn btn-info btn-block mt-1"
+                          />
+                        </div>
+                        <div className="col-md-2">
+                          <a href="/design">
+                            <button
+                              className="btn btn-warning btn-block mt-1"
+                              type="button"
+                            >
+                              Cancel
+                            </button>
+                          </a>
+                        </div>
                       </div>
-                    </div>
-                  </form>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      );
+        );
+      }
     }
   }
 }
@@ -616,12 +622,12 @@ DesignAdd.propTypes = {
   getAssignToName: PropTypes.func.isRequired,
   clearAlert: PropTypes.func.isRequired,
   design: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired
+  user: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
   design: state.design,
-  auth: state.auth
+  user: state.auth.user
 });
 
 export default connect(

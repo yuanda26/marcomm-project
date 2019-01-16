@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { clearAlert } from "../../../actions/designAction";
 // Forms Components
 import TextFieldGroup from "../../common/TextFieldGroup";
-import Alert from "../../common/Alert";
+import TextAreaGroup from "../../common/TextAreaGroup";
 
 class DesignClose extends Component {
   state = {
@@ -102,7 +102,6 @@ class DesignClose extends Component {
 
   render() {
     const { design, items, staff, code, title } = this.props;
-    const { designStatus, designMessage } = this.props.design;
 
     // Set Assign to Options
     const staffOptions = [];
@@ -131,13 +130,6 @@ class DesignClose extends Component {
                 </li>
               </ol>
             </nav>
-            {designStatus === 3 && (
-              <Alert
-                action="Design Approved! "
-                message={designMessage}
-                onClick={this.onClearAlert}
-              />
-            )}
             <div className="card border-info mb-3">
               <div className="card-header lead">
                 {title}: {code}
@@ -167,7 +159,7 @@ class DesignClose extends Component {
                         disabled={true}
                       />
                       <TextFieldGroup
-                        label="*Assign to"
+                        label="Assign to"
                         name="assign_to"
                         value={this.assignToName(design.assign_to)}
                         disabled={true}
@@ -184,7 +176,7 @@ class DesignClose extends Component {
                         value={design.request_date}
                         disabled={true}
                       />
-                      <TextFieldGroup
+                      <TextAreaGroup
                         label="Note"
                         value={design.note}
                         disabled={true}
@@ -348,11 +340,7 @@ DesignClose.propTypes = {
   clearAlert: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
-  design: state.design
-});
-
 export default connect(
-  mapStateToProps,
+  null,
   { clearAlert }
 )(DesignClose);

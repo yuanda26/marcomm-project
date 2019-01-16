@@ -368,22 +368,24 @@ class DesignList extends Component {
                                     <Search />
                                   </button>
                                 )}
-                                <a
-                                  href="/design/add"
-                                  data-tip="Request New Design!"
-                                >
-                                  <button
-                                    className="btn btn-primary ml-1"
-                                    type="button"
+                                {this.props.user.m_role_id === "RO0005" && (
+                                  <a
+                                    href="/design/add"
+                                    data-tip="Request New Design!"
                                   >
-                                    <Add />
-                                  </button>
-                                  <ReactTooltip
-                                    place="top"
-                                    type="dark"
-                                    effect="solid"
-                                  />
-                                </a>
+                                    <button
+                                      className="btn btn-primary ml-1"
+                                      type="button"
+                                    >
+                                      <Add />
+                                    </button>
+                                    <ReactTooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
+                                    />
+                                  </a>
+                                )}
                               </div>
                             </td>
                           </tr>

@@ -89,8 +89,7 @@ class DesignRead extends Component {
     const {
       design: { design },
       items,
-      code,
-      title
+      code
     } = this.props;
 
     return (
@@ -107,7 +106,7 @@ class DesignRead extends Component {
                     <a href="/design">Transaction Design</a>
                   </li>
                   <li className="breadcrumb-item active" aria-current="page">
-                    {title}
+                    Design Request
                   </li>
                 </ol>
               </nav>
@@ -120,9 +119,7 @@ class DesignRead extends Component {
                 />
               )}
               <div className="card border-info mb-3">
-                <div className="card-header lead">
-                  {title}: {code}
-                </div>
+                <div className="card-header lead">Design Request: {code}</div>
                 <div className="card-body">
                   <form>
                     <div className="row">
@@ -315,7 +312,6 @@ class DesignRead extends Component {
 }
 
 DesignRead.propTypes = {
-  title: PropTypes.string.isRequired,
   code: PropTypes.string.isRequired,
   design: PropTypes.object.isRequired,
   items: PropTypes.array.isRequired,
