@@ -78,6 +78,29 @@ class CreateEvent extends React.Component{
     })
   }
 
+  cancelHandler = () => {
+    let formdata = {
+      code : '',
+      event_name : '',
+      place : '',
+      start_date : '',
+      end_date : '',
+      budget : '',
+      request_by : this.props.user.m_employee_id,
+      request_date : moment().format("DD/MM/YYYY"),
+      created_by : this.props.user.m_employee_id
+    }
+    let validate = {
+      validateEventName : "form-control",
+      validateEventPlace : "form-control",
+      validateEventStartDate : "form-control",
+      validateEventEndDate : "form-control",
+      validateBudget : "form-control",
+    }
+    this.setState({validate: validate, formdata: formdata})
+    this.props.closeHandler()
+  }
+
   submitHandler = () => {
     let { formdata, regexBudget } = this.state
     let {
@@ -307,7 +330,7 @@ class CreateEvent extends React.Component{
           >Save</Button>
           <Button 
             color="warning"
-            onClick={this.props.closeHandler}
+            onClick={this.cancelHandler}
           >Cancel</Button>
         </ModalFooter>
       </Modal>

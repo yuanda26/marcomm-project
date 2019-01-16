@@ -1,10 +1,17 @@
 import React from 'react'
 import PropTypes from "prop-types"
 import {
-  Modal, ModalBody, ModalFooter, ModalHeader, Button
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Button
 } from 'reactstrap'
 import { connect } from "react-redux";
-import { createEmployee, getAllCompany } from "../../../actions/employeeAction";
+import { 
+  createEmployee, 
+  getAllCompany 
+} from "../../../actions/employeeAction";
 
 class CreateEmployee extends React.Component{
   constructor (props){
@@ -18,9 +25,6 @@ class CreateEmployee extends React.Component{
         email:'',
         created_by: ''
       },
-      companyName: null,
-      selectedCompany: '',
-      andaYakin : false,
       validate : {
         validateFirsname : "form-control", 
         validateEmail : "form-control",
@@ -65,9 +69,26 @@ class CreateEmployee extends React.Component{
     })
   }
 
+  cancelHandler = () => {
+    let validate = {
+        validateFirsname : "form-control", 
+        validateEmail : "form-control",
+        validateCompany : "form-control"
+      }
+    let newFormdata = {
+        employee_number: '',
+        m_company_id:'',
+        first_name:'',
+        last_name:'',
+        email:'',
+        created_by: ''
+      }
+    this.setState({validate: validate, formdata: newFormdata})
+    this.props.closeHandler()
+  }
 
   submitHandler = () => {
-    let { formdata,  regexEmail, companyName } = this.state
+    let { formdata,  regexEmail } = this.state
     let { email, first_name, m_company_id } = formdata
     let emailJikaAda = null
     this.props.employee.myEmployee.forEach((ele)=>{
@@ -90,10 +111,9 @@ class CreateEmployee extends React.Component{
     else if( !regexEmail.test(email) && email !== ''){
       alert( "Email Incorrect!" )
     }else{
-      this.props.createEmployee(formdata, companyName)
+      this.props.createEmployee(formdata)
       let validate = {
         validateFirsname : "form-control", 
-        selectedCompany : "form-control",
         validateEmail : "form-control",
         validateCompany : "form-control"
       }
@@ -219,7 +239,7 @@ class CreateEmployee extends React.Component{
           >Save</Button>
           <Button 
             color="warning"
-            onClick={this.props.closeHandler}
+            onClick={this.cancelHandler}
           >Cancel</Button>
         </ModalFooter>
       </Modal>

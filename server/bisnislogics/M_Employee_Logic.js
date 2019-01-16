@@ -54,7 +54,6 @@ const mEmployeeBisnislogic = {
 					updated_by      : null,
 					updated_date    : null
 				}	    
-
 				dtl.createHandlerData(function(items) {
 					dtl.readAllHandlerData(function (callbackReadData) {
 						responseHelper.sendResponse(res, 200, callbackReadData);
@@ -78,7 +77,6 @@ const mEmployeeBisnislogic = {
 			updated_by      : req.body.updated_by,
 			updated_date    : moment().format("DD/MM/YYYY")
 		};
-
 		dtl.updateHandlerData((items) => {
 			dtl.readAllHandlerData(function (callbackReadData) {
 				responseHelper.sendResponse(res, 200, callbackReadData);

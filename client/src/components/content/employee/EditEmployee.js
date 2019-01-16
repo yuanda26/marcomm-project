@@ -8,7 +8,14 @@ class EditEmployee extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      formdata: {},
+      formdata: {
+        employee_number: '',
+        m_company_id:'',
+        first_name:'',
+        last_name:'',
+        email:'',
+        created_by: ''
+      },
       currentEmployee: null,
       companyname: null,
       first_name : '',
@@ -28,9 +35,17 @@ class EditEmployee extends React.Component {
   }
 
   componentWillReceiveProps(newProps){
-    let { currentEmployee, statusUpdated, modalStatus } = newProps  
+    let { currentEmployee, statusUpdated, modalStatus } = newProps
+    let formdata = {
+      employee_number: currentEmployee.employee_number,
+      m_company_id: currentEmployee.m_company_id,
+      first_name: currentEmployee.first_name,
+      last_name: currentEmployee.last_name,
+      email: currentEmployee.email,
+      created_by: currentEmployee.created_by
+    } 
     this.setState({
-      formdata : currentEmployee,
+      formdata : formdata,
       first_name : currentEmployee.first_name,
       last_name : currentEmployee.last_name
     })
@@ -64,6 +79,18 @@ class EditEmployee extends React.Component {
     })
   }
 
+  cancelhandler = () => {
+    let validate = {
+      validateFirsname : "form-control", 
+      selectedCompany : "form-control",
+      validateEmail : "form-control",
+      validateCompany : "form-control"
+    }
+    let { currentEmployee } = this.props
+    this.setState({validate: validate, formdata: currentEmployee})
+    this.props.closeModalHandler()
+  }
+  
   submitHandler = () => {
     let { formdata, regexEmail, companyName } = this.state
     let { email, first_name, m_company_id } = formdata
@@ -211,7 +238,7 @@ class EditEmployee extends React.Component {
           >Save</Button>
           <Button 
             color="warning"
-            onClick={this.props.closeModalHandler}
+            onClick={this.cancelhandler}
           >Cancel</Button>
         </ModalFooter>
       </Modal>
