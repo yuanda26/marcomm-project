@@ -9,6 +9,7 @@ import CreateProduct from "./createProduct";
 import DeleteProduct from "./deleteProduct";
 import ViewProduct from "./viewProduct";
 import Spinner from "../../common/Spinner";
+import ReactTooltip from "react-tooltip";
 
 import { Alert } from "reactstrap";
 
@@ -469,28 +470,49 @@ class ListProduct extends React.Component {
                           />
                         </td>
                         <td className='text-nowrap'>
-                          {this.state.search === true ? (
-                            <button 
-                              type="button" 
-                              className="btn mr-2 btn-warning"
-                              onClick ={this.onRestore}
-                            ><RefreshOutlined/>
-                            </button>
+                        {this.state.search === true ? (
+                          <a href="#!" data-tip="Refresh Result!">
+                              <button 
+                                type="button" 
+                                className="btn mr-2 btn-warning"
+                                onClick ={this.onRestore}
+                              ><RefreshOutlined/>
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
                             ):(
+                            <a href="#!" data-tip="Search Product!">
+                              <button 
+                                type="button" 
+                                className="btn mr-2 btn-primary"
+                                onClick ={this.SearchHandler}
+                              ><Search/>
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
+                            )}
+                          <Link to="#" data-tip="Add New Product">
                             <button 
                               type="button" 
-                              className="btn mr-2 btn-primary"
-                              onClick ={this.SearchHandler}
-                            ><Search/>
+                              className="btn btn-primary"
+                              onClick ={this.showHandler}
+                            >
+                              <Add/>  
                             </button>
-                            )}
-                          <button 
-                            type="button" 
-                            className="btn btn-primary"
-                            onClick ={this.showHandler}
-                          >
-                            <Add/>  
-                          </button>
+                          </Link>
+                          <ReactTooltip
+                            place="top"
+                            type="dark"
+                            effect="solid"
+                          />
                         </td>
                       </thead>
                       <thead>
@@ -506,9 +528,7 @@ class ListProduct extends React.Component {
                       <tbody>
                         {
                         this.state.loading === null ? (
-                          <div className="container justify-content-center">
-                            <Spinner/>
-                          </div>
+                          <Spinner/>
                         ) : (
                         this.props.product.production
                           .slice(
@@ -525,27 +545,30 @@ class ListProduct extends React.Component {
                                 <td>{row.created_by}</td>
                                 <td>{this.chanegeDate(row.created_date)}</td>
                                 <td>
-                                  <Link to="#">
+                                  <Link to="#" data-tip="View Product">
                                     <RemoveRedEyeOutlined
                                       onClick={() => {
-                                        this.viewModalHandler(row._id);
+                                      this.viewModalHandler(row._id);
                                       }}
                                     />
+                                    <ReactTooltip place="top" type="dark" effect="solid" />
                                   </Link>
-                                  <Link to="#">
+                                  <Link to="#" data-tip="Edit Product">
                                     <CreateOutlined
                                       onClick={() => {
-                                        this.editModalHandler(row._id);
+                                      this.editModalHandler(row._id);
                                       }}
                                     />
+                                    <ReactTooltip place="top" type="dark" effect="solid" />
                                   </Link>
-                                  <Link to="#">
+                                  <Link to="#" data-tip="Delete Product">
                                     <DeleteOutlined
                                       onClick={() => {
-                                        this.deleteModalHandler(row._id);
+                                      this.deleteModalHandler(row._id);
                                       }}
                                     />
-                                  </Link>
+                                    <ReactTooltip place="top" type="dark" effect="solid" />
+                                    </Link>
                                 </td>
                               </tr>
                             );

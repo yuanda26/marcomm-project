@@ -12,7 +12,8 @@ import { withStyles } from "@material-ui/core/styles";
 import EditEvent from "./EditEvent";
 import CreateEvent from "./CreateEvent";
 import ViewEvent from "./ViewEvent";
-import Spinner from "../../common/Spinner"
+import Spinner from "../../common/Spinner";
+import ReactTooltip from "react-tooltip";
 
 import {
   getAllEvent,
@@ -467,20 +468,35 @@ class ListEvent extends React.Component {
                           </td>
                           <td className='text-nowrap text-centered'>
                             {this.state.search === true ? (
+                            <a href="#!" data-tip="Refresh Result!">
                               <button 
                                 type="button" 
                                 className="btn mr-2 btn-warning"
                                 onClick ={this.onRestore}
                               ><RefreshOutlined/>
                               </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
                               ):(
+                            <a href="#!" data-tip="Search Event!">
                               <button 
                                 type="button" 
                                 className="btn mr-2 btn-primary"
                                 onClick ={this.SearchHandler}
                               ><Search/>
                               </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
                               )}
+                            <Link to="#" data-tip="Add New Event">
                             <button 
                               type="button" 
                               className="btn btn-primary"
@@ -488,6 +504,12 @@ class ListEvent extends React.Component {
                             >
                               <Add/>  
                             </button>
+                          </Link>
+                          <ReactTooltip
+                            place="top"
+                            type="dark"
+                            effect="solid"
+                          />
                           </td>
                         </tr>
                       </thead>
@@ -528,19 +550,21 @@ class ListEvent extends React.Component {
                               <td className='text-nowrap text-centered'>{row.created_date}</td>
                               <td className='text-nowrap text-centered'>{row.created_by_employee}</td>
                               <td className='text-nowrap text-centered'>
-                                <Link to="#">
-                                  <RemoveRedEyeOutlined
-                                    onClick={() => {
-                                      this.viewModalHandler(row._id);
-                                    }}
-                                  />
+                                <Link to="#" data-tip="View Event">
+                                <RemoveRedEyeOutlined
+                                  onClick={() => {
+                                  this.viewModalHandler(row._id);
+                                  }}
+                                />
+                                <ReactTooltip place="top" type="dark" effect="solid" />
                                 </Link>
-                                <Link to="#">
+                                <Link to="#" data-tip="Edit Event">
                                   <CreateOutlined
                                     onClick={() => {
-                                      this.editModalHandler(row._id);
+                                    this.editModalHandler(row._id);
                                     }}
                                   />
+                                  <ReactTooltip place="top" type="dark" effect="solid" />
                                 </Link>
                               </td>
                             </tr>
