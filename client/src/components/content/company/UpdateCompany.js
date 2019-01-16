@@ -205,7 +205,6 @@ class UpdateCompany extends React.Component {
 }
 
 UpdateCompany.propTypes = {
-  classes: PropTypes.object.isRequired,
   editCompany: PropTypes.func.isRequired,
   companyReducer: PropTypes.object.isRequired
 };

@@ -59,8 +59,7 @@ class DeleteCompany extends React.Component {
 }
 
 DeleteCompany.propTypes = {
-  deleteCompany: PropTypes.func.isRequired,
-  company: PropTypes.object.isRequired
+  deleteCompany: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

@@ -49,6 +49,7 @@ const dt = {
             created_by: {
               $concat: ["$creater.first_name", " ", "$creater.last_name"]
             },
+            created_by_code: "$created_by",
             created_date: "$created_date",
             updated_by: "$updated_by",
             updated_date: "$updated_date",
@@ -56,7 +57,8 @@ const dt = {
             _id: 1
           }
         },
-        { $match: { is_delete: false } }
+        { $match: { is_delete: false } },
+        { $sort: { created_date: -1 } }
       ])
       .toArray((err, docs) => {
         callback(docs);
