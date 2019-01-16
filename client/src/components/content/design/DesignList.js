@@ -43,7 +43,12 @@ class DesignList extends Component {
   }
 
   componentDidMount() {
-    this.props.getAllDesign();
+    // Get All Design Depends on it's Role ID & Employee Number
+    const { m_role_id, m_employee_id } = this.props.user;
+    if (m_role_id) {
+      this.props.getAllDesign(m_role_id, m_employee_id);
+    }
+
     this.props.getAssignToName();
     this.props.getEvent();
   }
@@ -427,7 +432,8 @@ DesignList.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  design: state.design
+  design: state.design,
+  user: state.auth.user
 });
 
 export default connect(

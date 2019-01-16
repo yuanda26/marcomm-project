@@ -4,9 +4,12 @@ const moment = require("moment");
 
 const T_Design_Logic = {
   readAllDesignHandler: (req, res, next) => {
+    const roleId = req.params.roleId;
+    const employeeId = req.params.employeeId;
+
     designData.readAllData(design => {
       responseHelper.sendResponse(res, 200, design);
-    });
+    }, roleId, employeeId);
   },
   readByCodeHandler: (req, res, next) => {
     const code = req.params.code;

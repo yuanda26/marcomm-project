@@ -87,7 +87,11 @@ module.exports = server => {
 
   // Transaction Design Route
   // Made By: Dian Yuanda
-  server.get("/api/design", authenticate, tDesignLogic.readAllDesignHandler);
+  server.get(
+    "/api/design/:roleId/:employeeId",
+    authenticate,
+    tDesignLogic.readAllDesignHandler
+  );
   server.get("/api/design/code", authenticate, tDesignLogic.getCodeHandler);
   server.get("/api/design/:code", authenticate, tDesignLogic.readByCodeHandler);
   server.post("/api/design", authenticate, tDesignLogic.createDesignHandler);

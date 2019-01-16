@@ -23,9 +23,9 @@ import HostConfig from "../config/Host_Config";
 import ApiConfig from "../config/Api_Config";
 
 // Get All Designs
-export const getAllDesign = () => dispatch => {
+export const getAllDesign = (roleId, employeeId) => dispatch => {
   axios({
-    url: `${HostConfig}/${ApiConfig.design}`,
+    url: `${HostConfig}/${ApiConfig.design}/${roleId}/${employeeId}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
