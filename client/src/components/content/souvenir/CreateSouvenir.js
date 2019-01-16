@@ -4,8 +4,9 @@ import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import { connect } from "react-redux";
 import { createSouvenir } from "../../../actions/souvenirAction";
 // Form Components
-import TextField from "../../common/TextFieldGroup";
-import SelectList from "../../common/SelectListGroup";
+import TextFieldGroup from "../../common/TextFieldGroup";
+import SelectListGroup from "../../common/SelectListGroup";
+import TextAreaGroup from "../../common/TextAreaGroup";
 // Form Validation
 import isEmpty from "../../../validation/isEmpty";
 
@@ -22,7 +23,7 @@ class CreateSouvenir extends Component {
     };
   }
 
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(newProps) {
     this.setState({
       errorName: newProps.errorName,
       errorUnit: newProps.errorUnit
@@ -39,6 +40,19 @@ class CreateSouvenir extends Component {
     if (e.target.name === "m_unit_id") {
       this.setState({ errorUnit: "" });
     }
+  };
+
+  closeHandler = () => {
+    // Clear All State
+    this.setState({
+      name: "",
+      m_unit_id: "",
+      description: "",
+      errorName: "",
+      errorUnit: ""
+    });
+    // Close Modal
+    this.props.closeHandler();
   };
 
   onSubmit = e => {
@@ -89,17 +103,17 @@ class CreateSouvenir extends Component {
     return (
       <Modal isOpen={this.props.create}>
         <ModalHeader>
-          <div className="lead">Add Souvenir</div>
+          <div className="lead font-weight-bold">Add Souvenir</div>
         </ModalHeader>
         <ModalBody>
           <form onSubmit={this.onSubmit}>
-            <TextField
+            <TextFieldGroup
               placeholder="Auto Generated"
               label="*Souvenir Code"
               name="code"
               disabled={true}
             />
-            <TextField
+            <TextFieldGroup
               placeholder="Type Souvenir Name"
               label="*Souvenir Name"
               name="name"
@@ -107,7 +121,7 @@ class CreateSouvenir extends Component {
               onChange={this.onChange}
               errors={this.state.errorName}
             />
-            <SelectList
+            <SelectListGroup
               label="*Unit Name"
               placeholder="*Select Unit Name"
               name="m_unit_id"
@@ -116,9 +130,10 @@ class CreateSouvenir extends Component {
               options={options}
               errors={this.state.errorUnit}
             />
-            <TextField
-              placeholder="Type Description"
+            <TextAreaGroup
               label="Description"
+              rows="3"
+              placeholder="Type Description"
               name="description"
               value={this.state.description}
               onChange={this.onChange}
@@ -126,14 +141,14 @@ class CreateSouvenir extends Component {
             <div className="form-group text-right">
               <input
                 type="submit"
-                className="btn btn-primary mr-2"
+                className="btn btn-primary mr-1"
                 value="Submit"
                 onClick={this.onSubmit}
               />
               <button
                 type="button"
-                className="btn btn-default"
-                onClick={this.props.closeHandler}
+                className="btn btn-warning"
+                onClick={this.closeHandler}
               >
                 Cancel
               </button>

@@ -32,3 +32,7 @@ img {
 .form-control::placeholder {
   color: #bbb !important;
 }
+
+.search-form {
+  width: unset;
+}

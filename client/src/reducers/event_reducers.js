@@ -30,7 +30,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         myEvent: action.payload,
-        code: action.payload[action.payload.length-1].code,
+        code: action.payload[0].code,
         statusCreate: action.status
       };
     case SEARCH_EVENT:

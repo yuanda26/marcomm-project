@@ -5,6 +5,7 @@ import {
   ADD_SOUVENIR,
   UPDATE_SOUVENIR,
   DELETE_SOUVENIR,
+  CLEAR_SOUVENIR_ALERT,
   ERRORS
 } from "./types";
 // Import Config
@@ -83,9 +84,9 @@ export const createSouvenir = souvenirData => dispatch => {
 };
 
 // Update Master Souvenir
-export const updateSouvenir = (souvenirId, souvenirUpdate) => dispatch => {
+export const updateSouvenir = (souvenirCode, souvenirUpdate) => dispatch => {
   axios({
-    url: `${HostConfig}/${ApiConfig.souvenir}/${souvenirId}`,
+    url: `${HostConfig}/${ApiConfig.souvenir}/${souvenirCode}`,
     method: "put",
     headers: {
       authorization: localStorage.token
@@ -97,7 +98,7 @@ export const updateSouvenir = (souvenirId, souvenirUpdate) => dispatch => {
         type: UPDATE_SOUVENIR,
         payload: res.data.message,
         code: res.data.code,
-        souvenirId
+        souvenirCode
       })
     )
     .catch(err =>
@@ -132,4 +133,11 @@ export const deleteSouvenir = (code, deleteData) => dispatch => {
         payload: err
       });
     });
+};
+
+// Clear Souvenir Status & Messages
+export const clearAlert = () => dispatch => {
+  dispatch({
+    type: CLEAR_SOUVENIR_ALERT
+  });
 };

@@ -6,6 +6,7 @@ function mEmployee(m_employee_data) {
 	this.m_company_id    = m_employee_data.m_company_id;
 	this.m_company_name  = m_employee_data.m_company_name;
 	this.email           = m_employee_data.email;
+	this.role            = m_employee_data.role;
 	this.is_delete       = m_employee_data.is_delete;
 	this.created_by      = m_employee_data.created_by;
 	this.created_date    = m_employee_data.created_date;
@@ -23,6 +24,7 @@ mEmployee.prototype.getData = function() {
 		m_company_id    : this.m_company_id,
 		m_company_name  : this.m_company_name,
 		email           : this.email,
+		role            : this.role,
 		is_delete       : this.is_delete,
 		created_by      : this.created_by,
 		created_date    : this.created_date,

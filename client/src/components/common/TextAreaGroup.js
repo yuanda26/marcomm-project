@@ -4,11 +4,15 @@ import classnames from "classnames";
 
 const TextAreaGroup = ({
   label,
+  id,
+  className,
   name,
   placeholder,
   cols,
   rows,
   value,
+  maxLength,
+  minLength,
   onChange,
   disabled,
   errors
@@ -20,7 +24,8 @@ const TextAreaGroup = ({
       )}
       <div className="col-sm-8">
         <textarea
-          className={classnames("form-control", {
+          id={id}
+          className={classnames(`form-control ${className}`, {
             "is-invalid": errors
           })}
           cols={cols}
@@ -30,6 +35,8 @@ const TextAreaGroup = ({
           value={value}
           onChange={onChange}
           disabled={disabled}
+          maxLength={maxLength}
+          minLength={minLength}
         />
         {errors && <div className="invalid-feedback">{errors}</div>}
       </div>
@@ -39,19 +46,24 @@ const TextAreaGroup = ({
 
 TextAreaGroup.propTypes = {
   label: PropTypes.string,
+  id: PropTypes.string,
+  className: PropTypes.string,
   name: PropTypes.string,
+  placeholder: PropTypes.string,
   value: PropTypes.string,
   cols: PropTypes.string,
   rows: PropTypes.string,
-  onChange: PropTypes.func,
+  maxLength: PropTypes.string,
+  minLength: PropTypes.string,
   disabled: PropTypes.bool,
-  placeholder: PropTypes.string,
+  onChange: PropTypes.func,
   errors: PropTypes.string
 };
 
 TextAreaGroup.defaultProps = {
   cols: "30",
-  rows: "5"
+  rows: "3",
+  maxLength: "255"
 };
 
 export default TextAreaGroup;

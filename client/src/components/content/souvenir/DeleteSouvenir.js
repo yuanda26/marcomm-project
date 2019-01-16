@@ -22,19 +22,26 @@ class DeleteSouvenir extends Component {
     return (
       <Modal isOpen={this.props.delete}>
         <ModalHeader>
-          <div className="lead">Delete Data?</div>
+          <div className="lead font-weight-bold">Delete Data?</div>
         </ModalHeader>
         <ModalBody>
+          <div className="mb-4">
+            Are you sure want to Delete{" "}
+            <span className="font-weight-bold text-capitalize">
+              Souvenir {this.props.souvenir.name}
+            </span>
+            ?
+          </div>
           <form onSubmit={this.onSubmit}>
             <div className="form-group text-right">
               <input
                 type="submit"
-                className="btn btn-primary mr-2"
+                className="btn btn-danger mr-1"
                 value="Delete"
               />
               <button
                 type="button"
-                className="btn btn-default"
+                className="btn btn-warning"
                 onClick={this.props.closeModal}
               >
                 Cancel

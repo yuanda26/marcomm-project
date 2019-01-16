@@ -4,8 +4,10 @@ import {
   CREATE_UNIT,
   UPDATE_UNIT,
   DELETE_UNIT,
+  CLEAR_UNIT_ALERT,
   ERRORS
 } from "./types";
+// Config Files
 import HostConfig from "../config/Host_Config";
 import ApiConfig from "../config/Api_Config";
 
@@ -45,8 +47,7 @@ export const createUnit = param => dispatch => {
       dispatch({
         type: CREATE_UNIT,
         payload: res.data.message,
-        id: res.data.message.code,
-        status: 1
+        data: res.data.message.code
       });
     })
     .catch(error =>
@@ -58,9 +59,9 @@ export const createUnit = param => dispatch => {
 };
 
 // Update Unit
-export const updateUnit = (unitId, data) => dispatch => {
+export const updateUnit = (unitCode, data) => dispatch => {
   axios({
-    url: `${HostConfig}/${ApiConfig.unit}/${unitId}`,
+    url: `${HostConfig}/${ApiConfig.unit}/${unitCode}`,
     method: "put",
     headers: {
       Authorization: localStorage.token,
@@ -72,8 +73,7 @@ export const updateUnit = (unitId, data) => dispatch => {
       dispatch({
         type: UPDATE_UNIT,
         payload: res.data.message,
-        unitId: unitId,
-        status: 1
+        unitCode
       });
     })
     .catch(err =>
@@ -85,9 +85,9 @@ export const updateUnit = (unitId, data) => dispatch => {
 };
 
 // Delete Unit
-export const deleteUnit = unitId => dispatch => {
+export const deleteUnit = unitCode => dispatch => {
   axios({
-    url: `${HostConfig}/${ApiConfig.unit}/${unitId}`,
+    url: `${HostConfig}/${ApiConfig.unit}/${unitCode}`,
     method: "delete",
     headers: {
       Authorization: localStorage.token
@@ -96,8 +96,7 @@ export const deleteUnit = unitId => dispatch => {
     .then(res => {
       dispatch({
         type: DELETE_UNIT,
-        payload: unitId,
-        status: 1
+        payload: unitCode
       });
     })
     .catch(error =>
@@ -106,4 +105,11 @@ export const deleteUnit = unitId => dispatch => {
         payload: error.response.data
       })
     );
+};
+
+// Clear Unit Status & Messages
+export const clearAlert = () => dispatch => {
+  dispatch({
+    type: CLEAR_UNIT_ALERT
+  });
 };

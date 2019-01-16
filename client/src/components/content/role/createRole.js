@@ -45,7 +45,7 @@ class CreateRole extends React.Component {
               <input
                 type="text"
                 placeholder="Auto Generated"
-                class="form-control"
+                className="form-control"
                 readOnly
                 name="code"
                 value={this.state.formdata.code}
@@ -58,7 +58,7 @@ class CreateRole extends React.Component {
               </label>
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 placeholder="Type Role Name"
                 name="name"
                 value={this.state.formdata.name}
@@ -72,7 +72,7 @@ class CreateRole extends React.Component {
               </label>
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 placeholder="Type Description"
                 name="description"
                 value={this.state.formdata.description}
@@ -95,7 +95,7 @@ class CreateRole extends React.Component {
   }
 }
 CreateRole.propTypes = {
-  createRole: PropTypes.object.isRequired
+  createRole: PropTypes.func.isRequired
 };
 const mapStateToProps = state => ({
   theRole: state.roleData

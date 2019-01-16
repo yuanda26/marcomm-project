@@ -75,7 +75,7 @@ export const createEmployee = body => dispatch => {
         type: CREATE_EMPLOYEE,
         payload: res.data.message,
         status: res.data.code,
-        created: res.data.message[res.data.message.length - 1]
+        created: res.data.message
       });
     })
     .catch(error => {

@@ -7,7 +7,7 @@ const productData = {
   readAllHandlerData: callback => {
     db.collection("m_product")
       .find({ is_delete: false })
-      .sort({ code: 1 })
+      .sort({ code: -1 })
       .toArray((err, products) => {
         if (err) {
           callback(err);

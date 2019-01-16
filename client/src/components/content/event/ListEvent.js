@@ -32,7 +32,10 @@ import {
   KeyboardArrowRight,
   LastPage,
   Search,
-  CreateOutlined
+  Add,
+  CreateOutlined,
+  RemoveRedEyeOutlined,
+  RefreshOutlined
 } from "@material-ui/icons";
 
 const actionsStyles = theme => ({
@@ -143,6 +146,7 @@ class ListEvent extends React.Component {
         message: "bebas"
       },
       createdDate: null,
+      search: false,
       status: [
         { _id: "4sv8e%7qjhd6", name: "Submitted", code: "1" },
         { _id: "tgsr62%fdsd1", name: "In Progress", code: "2" },
@@ -240,7 +244,23 @@ class ListEvent extends React.Component {
       created_date,
       created_by
     );
+    this.setState({search: true})
   };
+
+  onRestore = () => {
+    let restore = {
+      code : "",
+      request_by : "",
+      request_date : "",
+      status : "",
+      created_date : "",
+      created_by : ""
+    }
+    this.props.searchEvent(
+      "", "", "", "", "", "" 
+    )
+    this.setState({search: false, initialSearch: restore})
+  }
 
   closeModalHandler = () => {
     this.props.eraseStatus();
@@ -370,93 +390,97 @@ class ListEvent extends React.Component {
                     currentEvent={this.state.currentEvent}
                     modalStatus={this.modalStatus}
                   />
-                  <button
-                    type="button"
-                    className="btn btn-primary float-right"
-                    onClick={this.showHandler}
-                  >
-                    Add
-                  </button>
-                  <br /> <br />
-                  <form>
-                    <div className="form-row align-items-center">
-                      <div className="col-md-3">
-                        <input
-                          placeholder="Transaction Code"
-                          className="form-control"
-                          name="code"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md">
-                        <input
-                          placeholder="Request By"
-                          className="form-control"
-                          name="request_by"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md">
-                        <DatePicker
-                          className="form-control"
-                          placeholderText="Request Date"
-                          name="request_date"
-                          selected={this.state.request_date}
-                          onChange={this.handleChangeRequestDate}
-                        />
-                      </div>
-                      <div className="col-md">
-                        <select
-                          name="status"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                          defaultValue=""
-                        >
-                          <option value="">Status...</option>
-                          {this.state.status.map((row, x) => {
-                            return (
-                              <option key={row._id} value={row.code}>
-                                {row.name}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </div>
-
-                      <div className="col-md">
-                        <DatePicker
-                          className="form-control"
-                          placeholderText="Created"
-                          name="created_date"
-                          selected={this.state.created_date}
-                          onChange={this.handleChangeCreatedDate}
-                        />
-                      </div>
-                      <div className="col-md">
-                        <input
-                          placeholder="Created By"
-                          name="created_by"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md">
-                        <button
-                          type="button"
-                          className="btn btn-warning float-right"
-                          onClick={this.SearchHandler}
-                        >
-                          Search
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                  <br />
                   <div className="table-responsive">
                     <table id="mytable" className="table table-hover">
                       <thead>
                         <tr>
-                          <th>No.</th>
+                          <td>
+                            <input
+                              placeholder="Transaction Code"
+                              className="form-control"
+                              name="code"
+                              onChange={this.changeHandler}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              placeholder="Request By"
+                              className="form-control"
+                              name="request_by"
+                              onChange={this.changeHandler}
+                            />
+                          </td>
+                          <td className="">
+                            <DatePicker
+                              className="form-control"
+                              placeholderText="Request Date"
+                              name="request_date"
+                              selected={this.state.request_date}
+                              onChange={this.handleChangeRequestDate}
+                            />
+                          </td>
+                          <td>
+                            <select
+                              name="status"
+                              className="form-control"
+                              onChange={this.changeHandler}
+                              defaultValue=""
+                            >
+                              <option value="">Status...</option>
+                              {this.state.status.map((row, x) => {
+                                return (
+                                  <option key={row._id} value={row.code}>
+                                    {row.name}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                          </td>
+                          <td>
+                            <DatePicker
+                              className="form-control"
+                              placeholderText="Created"
+                              name="created_date"
+                              selected={this.state.created_date}
+                              onChange={this.handleChangeCreatedDate}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              placeholder="Created By"
+                              name="created_by"
+                              className="form-control"
+                              onChange={this.changeHandler}
+                            />
+                          </td>
+                          <td className='text-nowrap'>
+                            {this.state.search === true ? (
+                              <button 
+                                type="button" 
+                                className="btn mr-2 btn-warning"
+                                onClick ={this.onRestore}
+                              ><RefreshOutlined/>
+                              </button>
+                              ):(
+                              <button 
+                                type="button" 
+                                className="btn mr-2 btn-primary"
+                                onClick ={this.SearchHandler}
+                              ><Search/>
+                              </button>
+                              )}
+                            <button 
+                              type="button" 
+                              className="btn btn-primary"
+                              onClick ={this.showHandler}
+                            >
+                              <Add/>  
+                            </button>
+                          </td>
+                        </tr>
+                      </thead>
+                      <thead>
+                        <tr>
                           <th>Transaction Code</th>
                           <th>Request By</th>
                           <th>Request Date</th>
@@ -475,11 +499,6 @@ class ListEvent extends React.Component {
                           )
                           .map((row, x) => (
                             <tr key={row._id}>
-                              <td>
-                                {x +
-                                  1 +
-                                  this.state.page * this.state.rowsPerPage}
-                              </td>
                               <td>{row.code}</td>
                               <td>
                                 {row.request_by_first_name +
@@ -492,7 +511,7 @@ class ListEvent extends React.Component {
                               <td>{row.created_by_employee}</td>
                               <td>
                                 <Link to="#">
-                                  <Search
+                                  <RemoveRedEyeOutlined
                                     onClick={() => {
                                       this.viewModalHandler(row._id);
                                     }}

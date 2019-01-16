@@ -1,4 +1,3 @@
-const ObjectId = require("mongodb").ObjectID;
 const Database = require("../models/Database");
 const M_Souvenir = require("../models/M_Souvenir_Model");
 
@@ -8,7 +7,7 @@ const souvenirData = {
   readAllSouvenir: callback => {
     db.collection("m_souvenir")
       .find({ is_delete: false })
-      .sort({ code: 1 })
+      .sort({ code: -1 })
       .toArray((err, souvenirs) => {
         // Return Data to Callback
         if (err) {
@@ -18,9 +17,9 @@ const souvenirData = {
         }
       });
   },
-  readByIdSouvenir: (callback, souvenirId) => {
+  readByCodeSouvenir: (callback, code) => {
     db.collection("m_souvenir").findOne(
-      { is_delete: false, _id: new ObjectId(souvenirId) },
+      { is_delete: false, code: code },
       (err, souvenir) => {
         // Return Data to Callback
         if (err) {
@@ -42,9 +41,9 @@ const souvenirData = {
       }
     });
   },
-  updateSouvenir: (callback, souvenirId, updateSouvenir) => {
+  updateSouvenir: (callback, code, updateSouvenir) => {
     db.collection("m_souvenir").updateOne(
-      { _id: new ObjectId(souvenirId) },
+      { code: code },
       { $set: updateSouvenir },
       (err, souvenir) => {
         // Return Data to Callback
@@ -113,11 +112,11 @@ const souvenirData = {
         }
       });
   },
-  isNameRelated: (callback, name, souvenirId) => {
+  isNameRelated: (callback, name, code) => {
     db.collection("m_souvenir")
       .find({
         $and: [
-          { _id: { $ne: new ObjectId(souvenirId) } },
+          { code: { $ne: code } },
           { is_delete: false },
           { name: { $regex: name } }
         ]

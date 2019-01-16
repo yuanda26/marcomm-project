@@ -4,8 +4,6 @@ import { Provider } from "react-redux";
 import { CURRENT_USER } from "./actions/types";
 import store from "./store";
 import jwt from "jsonwebtoken";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.min.js";
 // Private Route
 import RouteSwitcher from "./RouteSwitcher";
 // Layout Components
@@ -14,6 +12,8 @@ import Login from "./components/content/users/Login";
 import Forgot from "./components/content/users/ForgotPassword";
 // Config File
 import AuthConfig from "./config/Auth_Config.json";
+// Error Boundary
+import ErrorBoundary from "./ErrorBoundary";
 
 // Check for Token
 if (localStorage.token) {
@@ -45,12 +45,14 @@ class App extends Component {
     return (
       <Provider store={store}>
         <Router>
-          <div className="App">
-            <Navbar />
-            <Route exact path="/" component={Login} />
-            <Route exact path="/forgot_password" component={Forgot} />
-            <RouteSwitcher />
-          </div>
+          <ErrorBoundary>
+            <div className="App">
+              <Navbar />
+              <Route exact path="/" component={Login} />
+              <Route exact path="/forgot_password" component={Forgot} />
+              <RouteSwitcher />
+            </div>
+          </ErrorBoundary>
         </Router>
       </Provider>
     );

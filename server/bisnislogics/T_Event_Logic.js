@@ -32,15 +32,15 @@ const tEventBisnislogic = {
 		}
 		dtl.getUser((user) => {
 			let created_by = "";
-			user === null ? ( created_by = "" ) : ( created_by = user.m_employee_id )
-				dtl.getEmployee((employee)=>{
-					let request_by = "";
-					employee === null ? ( request_by = "" ) : ( request_by = employee.employee_number )
-					dtl.searchHandlerData((items) => {
-						responseHelper.sendResponse(res, 200, items);
-					}, code, request_by, request_date, status, created_date, created_by);
-				}, paramEmployee)
-			}, paramUser)
+			user === null || user === undefined ? ( created_by = paramUser ) : ( created_by = user.m_employee_id )
+			dtl.getEmployee((employee)=>{
+				let request_by = "";
+				employee === null ? ( request_by = paramEmployee ) : ( request_by = employee.employee_number )
+				dtl.searchHandlerData((items) => {
+					responseHelper.sendResponse(res, 200, items);
+				}, code, request_by, request_date, status, created_date, created_by);
+			}, paramEmployee)
+		}, paramUser)
 	},
 
 	createHandler  : (req, res, next) => {

@@ -15,6 +15,7 @@ import {
   GET_EMPLOYEE,
   APPROVE_DESIGN,
   REJECT_DESIGN,
+  CLEAR_DESIGN_ALERT,
   ERRORS
 } from "../actions/types";
 
@@ -33,110 +34,124 @@ const initialState = {
   errors: {},
   designStatus: 0,
   designMessage: "",
-  itemsStatus: 0,
-  itemsMessage: ""
+  designData: ""
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case GET_DESIGNS:
-      return {
-        ...state,
-        designs: action.payload
-      };
-    case GET_DESIGN:
-      return {
-        ...state,
-        design: action.payload
-      };
-    case GET_CODE:
-      return {
-        ...state,
-        code: action.payload
-      };
-    case GET_EVENT:
-      return {
-        ...state,
-        event: action.payload
-      };
-    case GET_PRODUCT:
-      return {
-        ...state,
-        product: action.payload
-      };
-    case GET_REQUESTER:
-      return {
-        ...state,
-        requester: action.payload
-      };
-    case GET_ASSIGN:
-      return {
-        ...state,
-        assign: action.payload
-      };
-    case ADD_DESIGN:
-      return {
-        ...state,
-        designs: [...state.designs, action.payload],
-        designStatus: 1,
-        designMessage: `Transaction Design Request Has Been Added with Code ${
-          action.payload.code
-        }!`
-      };
-    case ADD_DESIGN_ITEM:
-      return {
-        ...state,
-        items: [...state.items, ...action.payload],
-        itemsStatus: 1,
-        itemsMessage: `New Design Item with Title: ${
-          action.payload[0].title_item
-        } Successfully Added!`
-      };
-    case GET_DESIGN_ITEM:
-      return {
-        ...state,
-        items: action.payload
-      };
-    case UPDATE_DESIGN:
-      return {
-        ...state,
-        design: { ...state.design, ...action.payload },
-        designStatus: 2,
-        designMessage: `Transaction Design Request with Code ${
-          action.code
-        } Has Been Updated!`
-      };
-    case UPDATE_DESIGN_ITEM:
-      return {
-        ...state
-      };
     case GET_STAFF:
       return {
         ...state,
         staff: action.payload
       };
+
     case GET_EMPLOYEE:
       return {
         ...state,
         employee: action.payload
       };
-    case APPROVE_DESIGN:
+
+    case GET_EVENT:
+      return {
+        ...state,
+        event: action.payload
+      };
+
+    case GET_PRODUCT:
+      return {
+        ...state,
+        product: action.payload
+      };
+
+    case GET_REQUESTER:
+      return {
+        ...state,
+        requester: action.payload
+      };
+
+    case GET_ASSIGN:
+      return {
+        ...state,
+        assign: action.payload
+      };
+
+    case GET_DESIGNS:
+      return {
+        ...state,
+        designs: action.payload
+      };
+
+    case GET_DESIGN:
+      return {
+        ...state,
+        design: action.payload
+      };
+
+    case GET_CODE:
+      return {
+        ...state,
+        code: action.payload
+      };
+
+    case GET_DESIGN_ITEM:
+      return {
+        ...state,
+        items: action.payload
+      };
+
+    case ADD_DESIGN:
+      return {
+        ...state,
+        designs: [action.payload, ...state.designs],
+        designStatus: 1,
+        designMessage: "Transaction Design Request Has Been Added with Code ",
+        designData: action.payload.code
+      };
+
+    case ADD_DESIGN_ITEM:
+      return {
+        ...state,
+        items: [...state.items, ...action.payload]
+      };
+
+    case UPDATE_DESIGN:
       return {
         ...state,
         design: { ...state.design, ...action.payload },
         designStatus: 2,
-        designMessage: `Design Approved! Transaction Design Request with Code ${
-          action.code
-        } Has Been Updated!`
+        designMessage: "Transaction Design Request Has Been Updated",
+        designData: action.code
       };
+
+    case UPDATE_DESIGN_ITEM:
+      return {
+        ...state,
+        designStatus: 2,
+        designMessage: "Transaction Design Request Has Been Updated"
+      };
+
+    case APPROVE_DESIGN:
+      return {
+        ...state,
+        design: { ...state.design, ...action.payload },
+        designStatus: 3,
+        designMessage: "Transaction Design Request Has Been Approved!"
+      };
+
     case REJECT_DESIGN:
       return {
         ...state,
         design: { ...state.design, ...action.payload },
         designStatus: 4,
-        designMessage: `Design Rejected! Transaction Design Request with Code ${
-          action.code
-        } Has Been Updated!`
+        designMessage: "Transaction Design Request Has Been Rejected!"
+      };
+
+    case CLEAR_DESIGN_ALERT:
+      return {
+        ...state,
+        designStatus: 0,
+        designMessage: "",
+        designData: ""
       };
 
     case ERRORS:
