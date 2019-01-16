@@ -53,19 +53,27 @@ const employeeDatalayer = {
 					"role"            : "$role.m_role_id"
 			  }                                   
 		  }]).toArray((err, docs) => {
-			let mEmployee = docs.map((row) => {
-				return new employeeModel(row)
-			})
-			callback(mEmployee)
+			if ( err ) {
+				callback(err)
+			} else {
+				let mEmployee = docs.map((row) => {
+					return new employeeModel(row)
+				})
+				callback(mEmployee)
+			}
 		})
 	},
 
 	readByIdHandlerData : (callback, param) => {
 		db.collection('m_employee').find({employee_number : param}, {"is_delete" : false}).toArray((err, docs) => {
-			let mEmployee = docs.map((row) => {
-				return new employeeModel(row)
-			})
-			callback(mEmployee)
+			if (err) {
+				callback(err)
+			} else {
+				let mEmployee = docs.map((row) => {
+					return new employeeModel(row)
+				})
+				callback(mEmployee)
+			}
 		})
 	},
 
@@ -147,10 +155,14 @@ const employeeDatalayer = {
 			  }
 		                                       
 		  }]).toArray((err, docs) => {
-			let mEmployee = docs.map((row) => {
-				return new employeeModel(row)
-			})
-			callback(mEmployee)
+			if (err) {
+				callback(err)
+			} else {
+				let mEmployee = docs.map((row) => {
+					return new employeeModel(row)
+				})
+				callback(mEmployee)
+			}
 		})
 	},
 
@@ -158,21 +170,31 @@ const employeeDatalayer = {
 		db.collection('m_employee').find(
 			{ employee_number : { $regex : new RegExp(newDate) } } ).count(
 			(err, count)=>{
+				if (err) {
+					callback(err)
+				} else {
 				callback(count)
-			}
-		);
+				}
+			});
 	},
 	
 	createHandlerData : (callback, body) => {
 		db.collection('m_employee').insertOne(body, (err, docs) => {
-			callback(body)
+			if (err) {
+				callback(err)
+			} else {
+				callback(body)
+			}
 		})
-
 	},
 
 	updateHandlerData : (callback, param, body) => {
 		db.collection('m_employee').updateOne({_id : objectId(param)}, {$set : body}, (err, docs) => {
+			if (err) {
+				callback(err)
+			} else {
 				callback(docs)
+			}
 		})
 	},
 
@@ -188,13 +210,21 @@ const employeeDatalayer = {
 			},{$unwind : "$user"},
 			{$match : { "_id" : objectId(param) }}
 			]).toArray((err, docs) => {
-			callback(docs)
+				if (err) {
+					callback(err)
+				} else {
+				callback(docs)
+				}
 		})
 	},
 
 	deleteHandlerData : (callback, param) => {
 		db.collection('m_employee').updateOne({_id : objectId(param)}, { $set : {is_delete : true}}, (err, docs) => {
+			if (err) {
+				callback(err)
+			} else {
 				callback(docs)
+			}
 		})
 	}
 }

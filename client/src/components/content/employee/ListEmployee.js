@@ -20,6 +20,7 @@ import EditEmployee from './EditEmployee'
 import CreateEmployee from './CreateEmployee'
 import DeleteEmployee from './DeleteEmployee'
 import ViewEmployee from './ViewEmployee'
+import Spinner from "../../common/Spinner";
 
 import {
   TableRow,
@@ -131,6 +132,7 @@ class ListEmployee extends React.Component {
   constructor(props){
     super(props)
     this.state={
+      loading: null,
       initialSearch:{
         employee_id : '',
         employee_name : '',
@@ -231,7 +233,7 @@ class ListEmployee extends React.Component {
     this.props.searchEmployee(
       employee_id, employee_name, company, created_date, created_by 
     )
-    this.setState({search: true})
+    this.setState({search: true, loading: null })
   }
 
   onRestore = () => {
@@ -245,7 +247,11 @@ class ListEmployee extends React.Component {
     this.props.searchEmployee(
       "", "", "", "", "" 
     )
-    this.setState({search: false, initialSearch: restore})
+    this.setState({
+      search: false,
+      initialSearch: restore,
+      loading: null
+    })
   }
 
   closeModalHandler = () => {
@@ -296,6 +302,12 @@ class ListEmployee extends React.Component {
         message: ""
       }
     });
+  }
+
+  UNSAFE_componentWillReceiveProps = ( newProps ) => {
+    if (newProps.employee.myEmployee.length > 0) {
+      this.setState({ loading: newProps.employee.myEmployee })
+    }
   }
 
   render() {
@@ -458,7 +470,13 @@ class ListEmployee extends React.Component {
                       </tr>
                     </thead>
                       <tbody>
-                        {employee.myEmployee
+                      {
+                        this.state.loading === null ? (
+                          <div className="container justify-content-center">
+                            <Spinner/>
+                          </div>
+                        ) : (
+                        employee.myEmployee
                         .slice(
                           this.state.page * this.state.rowsPerPage,
                           this.state.page * this.state.rowsPerPage +
@@ -491,7 +509,9 @@ class ListEmployee extends React.Component {
                             </Link>
                           </td>
                         </tr>
-                      )}
+                      )
+                    )
+                  }
                      </tbody>
                      <TableFooter>
                       <TableRow>

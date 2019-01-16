@@ -8,6 +8,7 @@ import EditProduct from "./editProduct";
 import CreateProduct from "./createProduct";
 import DeleteProduct from "./deleteProduct";
 import ViewProduct from "./viewProduct";
+import Spinner from "../../common/Spinner";
 
 import { Alert } from "reactstrap";
 
@@ -148,6 +149,7 @@ class ListProduct extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: null,
       initialSearch: {
         code: "",
         name: "",
@@ -160,13 +162,11 @@ class ListProduct extends React.Component {
       deleteProduct: false,
       viewProduct: false,
       editProduct: false,
-      result: [],
       currentProduct: {},
       alertData: {
         status: 0,
         message: ""
       },
-      hasil: [],
       page: 0,
       rowsPerPage: 5
     };
@@ -193,7 +193,7 @@ class ListProduct extends React.Component {
 
   deleteModalHandler = companyid => {
     let tmp = {};
-    this.state.result.forEach(ele => {
+    this.props.product.production.forEach(ele => {
       if (companyid === ele._id) {
         tmp = ele;
       }
@@ -206,7 +206,7 @@ class ListProduct extends React.Component {
 
   viewModalHandler(companyid) {
     let tmp = {};
-    this.state.result.forEach(ele => {
+    this.props.product.production.forEach(ele => {
       if (companyid === ele._id) {
         tmp = ele;
       }
@@ -223,7 +223,7 @@ class ListProduct extends React.Component {
 
   editModalHandler(companyid) {
     let tmp = {};
-    this.state.result.forEach(ele => {
+    this.props.product.production.forEach(ele => {
       if (companyid === ele._id) {
         tmp = {
           _id: ele._id,
@@ -233,7 +233,6 @@ class ListProduct extends React.Component {
           update_by: "purwanto",
           address: ele.address
         };
-        //alert(JSON.stringify(tmp));
         this.setState({
           currentProduct: tmp,
           editProduct: true
@@ -260,7 +259,7 @@ class ListProduct extends React.Component {
       created_by
     } = this.state.initialSearch;
     this.props.searchProduct(code, name, description, created_date, created_by);
-    this.setState({search: true})
+    this.setState({ search: true, loading: null})
   };
 
   onRestore = () => {
@@ -274,7 +273,11 @@ class ListProduct extends React.Component {
     this.props.searchProduct(
       "", "", "", "", "", "" 
     )
-    this.setState({search: false, initialSearch: restore})
+    this.setState({
+      search: false,
+      initialSearch: restore,
+      loading: null
+    })
   }
 
   closeModalHandler() {
@@ -295,13 +298,6 @@ class ListProduct extends React.Component {
 
   componentDidMount() {
     this.props.getAllProduct();
-  }
-
-  componentWillReceiveProps(newProps) {
-    this.setState({
-      result: newProps.product.production,
-      hasil: newProps.product.production
-    });
   }
 
   modalStatus = (status, message) => {
@@ -330,6 +326,12 @@ class ListProduct extends React.Component {
       }
     });
   };
+
+  UNSAFE_componentWillReceiveProps = ( newProps ) => {
+    if (newProps.product.production.length > 0) {
+      this.setState({ loading: newProps.product.production })
+    }
+  }
 
   render() {
     return (
@@ -502,7 +504,13 @@ class ListProduct extends React.Component {
                         </tr>
                       </thead>
                       <tbody>
-                        {this.props.product.production
+                        {
+                        this.state.loading === null ? (
+                          <div className="container justify-content-center">
+                            <Spinner/>
+                          </div>
+                        ) : (
+                        this.props.product.production
                           .slice(
                             this.state.page * this.state.rowsPerPage,
                             this.state.page * this.state.rowsPerPage +
@@ -541,12 +549,12 @@ class ListProduct extends React.Component {
                                 </td>
                               </tr>
                             );
-                          })}
+                          }))}
                       </tbody>
                       <TableFooter>
                         <TableRow>
                           <TablePagination
-                            count={this.state.hasil.length}
+                            count={this.props.product.production.length}
                             rowsPerPage={this.state.rowsPerPage}
                             page={this.state.page}
                             onChangePage={this.handleChangePage}

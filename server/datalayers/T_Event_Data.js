@@ -54,28 +54,36 @@ const tEventDatalayer = {
 				}
 	    }
 		]).toArray((err, docs) => {
-			let mTEventData = docs.map((row) => {
-				if(row.status === "1"){
-					row.status = "Submitted"
-				}else if(row.status === "2"){
-					row.status = "In Progress"
-				}else if(row.status === "3"){
-					row.status = "Done"
-				}else if(row.status === "0"){
-					row.status = "Rejected"
-				}
-				return new tEventModel(row)
-			})
-			callback(mTEventData)
+			if (err) {
+				callback(err)
+			} else {
+				let mTEventData = docs.map((row) => {
+					if(row.status === "1"){
+						row.status = "Submitted"
+					}else if(row.status === "2"){
+						row.status = "In Progress"
+					}else if(row.status === "3"){
+						row.status = "Done"
+					}else if(row.status === "0"){
+						row.status = "Rejected"
+					}
+					return new tEventModel(row)
+				})
+				callback(mTEventData)
+			}
 		})
 	},
 
 	readByIdHandlerData : (callback, param) => {
 		db.collection('t_event').find({_id : new objectId(param)}, {"is_delete" : false}).toArray((err, docs) => {
-			let mTEventData = docs.map((row) => {
-				return new tEventModel(row)
-			})
-			callback(mTEventData)
+			if (err) {
+				callback(err)
+			} else {
+				let mTEventData = docs.map((row) => {
+					return new tEventModel(row)
+				})
+				callback(mTEventData)
+			}
 		})
 	},
 
@@ -178,19 +186,23 @@ const tEventDatalayer = {
 				}
 	    }
 	    ]).toArray((err, docs) => {
-			let mEvent = docs.map((row) => {
-				if(row.status === "1"){
-					row.status = "Submitted"
-				}else if(row.status === "2"){
-					row.status = "In Progress"
-				}else if(row.status === "3"){
-					row.status = "Done"
-				}else if(row.status === "0"){
-					row.status = "Rejected"
-				}
-				return new tEventModel(row)
-			})
-			callback(mEvent)
+	    	if (err) {
+	    		callback(err)
+	    	} else {
+				let mEvent = docs.map((row) => {
+					if(row.status === "1"){
+						row.status = "Submitted"
+					}else if(row.status === "2"){
+						row.status = "In Progress"
+					}else if(row.status === "3"){
+						row.status = "Done"
+					}else if(row.status === "0"){
+						row.status = "Rejected"
+					}
+					return new tEventModel(row)
+				})
+				callback(mEvent)
+			}
 		})
 	},
 
@@ -198,9 +210,12 @@ const tEventDatalayer = {
 		db.collection('t_event').find(
 			{ code : { $regex : new RegExp(newDate) } } ).count(
 			(err, count)=>{
+				if (err) {
+					callback(err)
+				} else {
 				callback(count)
 			}
-		);
+		});
 	},
 	
 	createHandlerData : (callback, body) => {
@@ -228,19 +243,31 @@ const tEventDatalayer = {
 			updated_date  : body.updated_date
 		}
 		db.collection('t_event').insertOne(newBody, (err, docs) => {
-			callback(newBody)
+			if (err) {
+				callback(err)
+			} else {
+				callback(newBody)
+			}
 		})
 	},
 
 	updateHandlerData : (callback, param, body) => {
 		db.collection('t_event').updateOne({_id : objectId(param)}, {$set : body}, (err, docs) => {
+			if (err) {
+				callback(err)
+			}else{
 				callback(docs)
+			}
 		})
 	},
 
 	deleteHandlerData : (callback, param) => {
 		db.collection('t_event').updateOne({_id : objectId(param)}, { $set : {is_delete : true}}, (err, docs) => {
+			if (err) {
+				callback(err)
+			}else{
 				callback(docs)
+			}
 		})
 	}
 }
