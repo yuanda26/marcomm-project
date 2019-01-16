@@ -34,10 +34,12 @@ import {
   KeyboardArrowRight,
   LastPage,
   Search,
+  Add,
   CreateOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  RemoveRedEyeOutlined,
+  RefreshOutlined
 } from "@material-ui/icons";
-
 const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
@@ -138,6 +140,7 @@ class ListEmployee extends React.Component {
       },
       showCreateEmployee:false,
       currentEmployee:{},
+      search: false,
       alertData : {
         status : 0,
         message : ""
@@ -207,7 +210,7 @@ class ListEmployee extends React.Component {
       created_date: date
     });
   }
-
+  
   changeHandler = event => {
     let { initialSearch } = this.state
     let { name, value } = event.target
@@ -218,7 +221,7 @@ class ListEmployee extends React.Component {
   };
 
   SearchHandler = () => {
-    const {
+    let {
       employee_id, 
       employee_name,
       company, 
@@ -228,6 +231,21 @@ class ListEmployee extends React.Component {
     this.props.searchEmployee(
       employee_id, employee_name, company, created_date, created_by 
     )
+    this.setState({search: true})
+  }
+
+  onRestore = () => {
+    let restore = {
+      employee_id : "", 
+      employee_name : "",
+      company : "", 
+      created_date : "",
+      created_by : ""
+    }
+    this.props.searchEmployee(
+      "", "", "", "", "" 
+    )
+    this.setState({search: false, initialSearch: restore})
   }
 
   closeModalHandler = () => {
@@ -327,13 +345,6 @@ class ListEmployee extends React.Component {
                     </Alert>
                   ) : ("")
                   }
-                  <button 
-                    type="button" 
-                    className="btn btn-primary float-right"
-                    onClick ={this.showHandler}
-                  >
-                    Add
-                  </button>
                   <CreateEmployee
                     create={this.state.showCreateEmployee}
                     closeHandler={this.closeHandler}
@@ -356,114 +367,130 @@ class ListEmployee extends React.Component {
                     currentEmployee={this.state.currentEmployee}
                     modalStatus={this.modalStatus}
                   />
-                  <br/> <br/>
-                  <form>
-                    <div className="form-row align-items-center">
-                      <div className='col-md-2'>
-                        <input 
-                          placeholder="Employee ID" 
-                          className="form-control" 
-                          name="employee_id"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className='col-md-3'>
-                        <input 
-                          placeholder="Employee Name" 
-                          className="form-control" 
-                          name="employee_name"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className='col-md-3'>
-                        <select
-                          name="company"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                          defaultValue=""
-                        >
-                        <option value="" >Select Company...</option>
-                          {employee.myCompany.map((row,x) => {
-                            return (
-                              <option key={row._id} value={row.code}>{row.name}</option>
-                          )})}
-                        </select>
-                       </div>
-                      <div className='col-md'>
-                        <DatePicker
-                          className="form-control"
-                          placeholderText="Created" 
-                          name="created_date"
-                          selected={this.state.created_date}
-                          onChange={this.handleChangeCreatedDate}
-                        />
-                      </div>
-                      <div className='col-md'>
-                        <input 
-                          placeholder="Created By" 
-                          name="created_by"
-                          className="form-control" 
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className='col-md'>
-                        <button 
-                          type="button" 
-                          className="btn btn-warning float-right"
-                          onClick ={this.SearchHandler}
-                        >Search
-                        </button>
-                      </div>
-                    </div>
-                  </form>
                   <br/>
-                  <table id="mytable" className="table table table-hover">
+                  <table id="mytable" className="table table table-hover table-responsive">
                     <thead>
                       <tr>
-                        <th>No.</th>
-                        <th>Employee Id Number</th>
-                        <th>Employee Name</th>
-                        <th>Company Name</th>
-                        <th>Created Date</th>
-                        <th>Created By</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {employee.myEmployee
-                      .slice(
-                        this.state.page * this.state.rowsPerPage,
-                        this.state.page * this.state.rowsPerPage +
-                          this.state.rowsPerPage
-                      )
-                      .map((row,x)=>
-                      <tr key={row._id}>
-                        <td>{x + 1}</td>
-                        <td>{row.employee_number}</td>
-                        <td>{row.first_name + " " + row.last_name}</td>
-                        <td>{row.m_company_name}</td>
-                        <td>{row.created_date}</td>
-                        <td>{row.created_by}</td>
-                        <td>
-                        <Link to="#">
-                            <Search
-                              onClick={() => {
-                              this.viewModalHandler(row._id);
-                              }}
-                            />
-                            <CreateOutlined
-                              onClick={() => {
-                              this.editModalHandler(row._id);
-                              }}
-                            />
-                            <DeleteOutlined
-                              onClick={() => {
-                              this.deleteModalHandler(row._id);
-                              }}
-                            />
-                          </Link>
+                        <td className='text-nowrap'>
+                          <input 
+                            placeholder="Employee ID" 
+                            className="form-control" 
+                            name="employee_id"
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td className='text-nowrap'>
+                          <input 
+                            placeholder="Employee Name" 
+                            className="form-control" 
+                            name="employee_name"
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td className='text-nowrap'>
+                          <select
+                            name="company"
+                            className="form-control"
+                            onChange={this.changeHandler}
+                            defaultValue=""
+                          >
+                          <option value="" >Select Company...</option>
+                            {employee.myCompany.map((row,x) => {
+                              return (
+                                this.state.search === false ? (
+                                  <option key={row._id} value={row.code}>{row.name}</option>
+                                ):(""
+                              ))
+                            })}
+                          </select>
+                        </td>
+                        <td className='text-nowrap'>
+                          <DatePicker
+                            className="form-control"
+                            placeholderText="Created" 
+                            name="created_date"
+                            selected={this.state.created_date}
+                            onChange={this.handleChangeCreatedDate}
+                          />
+                        </td>
+                        <td className='text-nowrap'>
+                          <input 
+                            placeholder="Created By" 
+                            name="created_by"
+                            className="form-control" 
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td className='text-nowrap'>
+                          {this.state.search === true ? (
+                            <button 
+                              type="button" 
+                              className="btn mr-2 btn-warning"
+                              onClick ={this.onRestore}
+                            ><RefreshOutlined/>
+                            </button>
+                            ):(
+                            <button 
+                              type="button" 
+                              className="btn mr-2 btn-primary"
+                              onClick ={this.SearchHandler}
+                            ><Search/>
+                            </button>
+                            )}
+                          <button 
+                            type="button" 
+                            className="btn btn-primary"
+                            onClick ={this.showHandler}
+                          >
+                            <Add/>  
+                          </button>
                         </td>
                       </tr>
+                    </thead>
+                    <thead>
+                      <tr>
+                        <th className="text-nowrap text-center">Employee Id</th>
+                        <th className="text-nowrap text-center">Employee Name</th>
+                        <th className="text-nowrap text-center">Company Name</th>
+                        <th className="text-nowrap text-center">Created Date</th>
+                        <th className="text-nowrap text-center">Created By</th>
+                        <th className="text-nowrap text-center">Action</th>
+                      </tr>
+                    </thead>
+                      <tbody>
+                        {employee.myEmployee
+                        .slice(
+                          this.state.page * this.state.rowsPerPage,
+                          this.state.page * this.state.rowsPerPage +
+                            this.state.rowsPerPage
+                        )
+                        .map((row,x)=>
+                        <tr key={row._id}>
+                          <td className="text-nowrap text-center">{row.employee_number}</td>
+                          <td className="text-nowrap text-center">{row.first_name + " " + row.last_name}</td>
+                          <td className="text-nowrap text-center">{row.m_company_name}</td>
+                          <td className="text-nowrap text-center">{row.created_date}</td>
+                          <td className="text-nowrap text-center">{row.created_by}</td>
+                          <td className="text-nowrap text-center">
+                          <Link to="#">
+                              <RemoveRedEyeOutlined
+                                onClick={() => {
+                                this.viewModalHandler(row._id);
+                                }}
+                              />
+                              <CreateOutlined
+                                onClick={() => {
+                                this.editModalHandler(row._id);
+                                }}
+                              />
+                              <DeleteOutlined
+                                onClick={() => {
+                                this.deleteModalHandler(row._id);
+                                }}
+                              />
+                            </Link>
+                          </td>
+                        </tr>
                       )}
                      </tbody>
                      <TableFooter>

@@ -51,38 +51,47 @@ class EditRole extends React.Component {
       <Modal isOpen={this.props.edit} className={this.props.className}>
         <ModalHeader> Edit Role</ModalHeader>
         <ModalBody>
-          <form class="form-inline">
-            <div class="input-group mb-3 input-group-sm">
-              <label for="text"> *Role Code : </label>
-              <input
-                type="text"
-                class="form-control"
-                readOnly
-                name="code"
-                value={this.state.formdata.code}
-                onChange={this.changeHandler}
-              />
-              <label for="text"> *Role Name : </label>
-              <input
-                type="text"
-                class="form-control"
-                name="name"
-                value={this.state.formdata.name}
-                onChange={this.changeHandler}
-              />
-            </div>
-
-            <div class="input-group mb-3 input-group-sm">
-              <label for="text"> Description : </label>
-              <input
-                type="text"
-                class="form-control"
-                name="description"
-                value={this.state.formdata.description}
-                onChange={this.changeHandler}
-              />
-            </div>
-          </form>
+          <div className="table-responsive">
+            <table className="table table-borderless">
+              <tr>
+                <td nowrap="true">Role Code</td>
+                <td>
+                  <input
+                    type="text"
+                    className="form-control"
+                    readOnly
+                    name="code"
+                    value={this.state.formdata.code}
+                    onChange={this.changeHandler}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td nowrap="true">Role Name</td>
+                <td>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="name"
+                    value={this.state.formdata.name}
+                    onChange={this.changeHandler}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td nowrap="true">Description</td>
+                <td>
+                  <textarea
+                    type="text"
+                    className="form-control"
+                    name="description"
+                    value={this.state.formdata.description}
+                    onChange={this.changeHandler}
+                  />
+                </td>
+              </tr>
+            </table>
+          </div>
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={this.submitHandler}>

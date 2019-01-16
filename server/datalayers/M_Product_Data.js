@@ -6,9 +6,31 @@ const productData = {
   //GET PRODUCT
   readAllHandlerData: callback => {
     db.collection("m_product")
-      .find({ is_delete: false })
-      .sort({ code: 1 })
-      .toArray((err, products) => {
+      .aggregate([
+      {
+        $lookup : {
+          from: "m_user",
+          localField: "created_by",
+          foreignField: "m_employee_id",
+          as: "user"
+        }
+      }, { $unwind : "$user"},
+      { $match : { "is_delete" : false}},
+      { $sort : { code : -1 }},
+      {
+        $project: {
+          _id         : "$_id",
+          code        : "$code",
+          name        : "$name",
+          description : "$description",
+          is_delete   : "$is_delete",
+          created_by  : "$user.username",
+          created_date: "$created_date",
+          update_by   : "$update_by",
+          update_date : "$update_date"
+        }
+      }
+      ]).toArray((err, products) => {
         if (err) {
           callback(err);
         } else {
@@ -56,35 +78,64 @@ const productData = {
       }
     );
   },
+  //Get User
+  getUser : (callback, param) => {
+    if(param === "") {
+      callback(param)     
+    }else{
+      db.collection('m_user').findOne({ username : new RegExp(param), is_delete : false }, (err, docs) => {
+        if(err){
+          callback("")
+        }else{
+          callback(docs)
+        }
+      })
+    }
+  },
   // SEARCH
-  searchHandlerData: (
-    callback,
-    code,
-    name,
-    description,
-    created_date,
-    created_by
+  searchHandlerData: (callback, code, name, description, created_date, created_by
   ) => {
     let newName = name.toUpperCase();
     let newCode = code.toUpperCase();
     db.collection("m_product")
-      .find({
-        name: new RegExp(newName),
-        code: new RegExp(newCode),
-        description: new RegExp(description),
-        created_date: new RegExp(created_date),
-        created_by: new RegExp(created_by),
-        is_delete: false
-      })
-      .toArray((err, docs) => {
-        let productsData = docs.map(row => {
-          return new M_Product(row);
-        });
-
+      .aggregate([
+      {
+        $match : {
+          name: new RegExp(newName),
+          code: new RegExp(newCode),
+          description: new RegExp(description),
+          created_date: new RegExp(created_date),
+          created_by: new RegExp(created_by),
+          is_delete: false
+        }
+      },
+      {
+        $lookup : {
+          from: "m_user",
+          localField: "created_by",
+          foreignField: "m_employee_id",
+          as: "user"
+        }
+      }, { $unwind : "$user"},
+      { $sort : { code : -1 }},
+      {
+        $project: {
+          _id         : "$_id",
+          code        : "$code",
+          name        : "$name",
+          description : "$description",
+          is_delete   : "$is_delete",
+          created_by  : "$user.username",
+          created_date: "$created_date",
+          update_by   : "$update_by",
+          update_date : "$update_date"
+        }
+      }
+      ]).toArray((err, products) => {
         if (err) {
           callback(err);
         } else {
-          callback(productsData);
+          callback(products);
         }
       });
   },

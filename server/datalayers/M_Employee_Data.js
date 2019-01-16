@@ -23,8 +23,19 @@ const employeeDatalayer = {
 					as : "user"
 				}
 			},
+			{ 
+				$lookup : {
+					from : "m_user",
+					localField : "employee_number",
+					foreignField : "m_employee_id",
+					as : "role"
+				}
+			},{$unwind : {
+        path:"$role",
+        preserveNullAndEmptyArrays:true
+        }},
 			 { $match : {is_delete : false}},
-			 { $sort : { employee_number : 1 } },
+			 { $sort : { employee_number : -1 } },
 		  {
 			  $project : {
 			    "_id"             : "$_id",
@@ -38,9 +49,9 @@ const employeeDatalayer = {
 					"created_by"      : "$user.username",
 					"created_date"    : "$created_date",
 					"updated_by"      : "$updated_by",
-					"updated_date"    : "$updated_date"
-			  }
-		                                       
+					"updated_date"    : "$updated_date",
+					"role"            : "$role.m_role_id"
+			  }                                   
 		  }]).toArray((err, docs) => {
 			let mEmployee = docs.map((row) => {
 				return new employeeModel(row)
@@ -58,6 +69,20 @@ const employeeDatalayer = {
 		})
 	},
 
+	getUser : (callback, param) => {
+		if(param === "") {
+			callback(param)			
+		}else{
+			db.collection('m_user').findOne({ username : new RegExp(param), is_delete : false }, (err, docs) => {
+				if(err){
+					callback("")
+				}else{
+					callback(docs)
+				}
+			})
+		}
+	},
+
 	searchHandlerData : (callback, empId, empName, company, createdDate, createdBy) => {
 		let newName = empName.split(" ")
 		let first_name = ""
@@ -73,7 +98,7 @@ const employeeDatalayer = {
 				}
 			}
 		})
-		if(createdDate != ""){
+		if(createdDate !== ""){
 			newCreatedDate = moment(createdDate).format("DD/MM/YYYY")
 		}else{
 			newCreatedDate = ""
@@ -87,6 +112,14 @@ const employeeDatalayer = {
 					as : "compa"
 				}
 			}, {$unwind : "$compa"},
+			{ 
+				$lookup : {
+					from : "m_user",
+					localField : "created_by",
+					foreignField : "m_employee_id",
+					as : "user"
+				}
+			},
 			{ $match : {
 					employee_number : new RegExp(empId),
 					first_name : new RegExp(first_name), 
@@ -96,7 +129,7 @@ const employeeDatalayer = {
 					created_by : new RegExp(createdBy), 
 					is_delete : false
 				}
-			},
+			},{$sort : { employee_number : -1 }},
 		  {
 			  $project : {
 			    "_id"             : "$_id",
@@ -107,7 +140,7 @@ const employeeDatalayer = {
 					"m_company_name"  : "$compa.name",
 					"email"           : "$email",
 					"is_delete"       : "$is_delete",
-					"created_by"      : "$created_by",
+					"created_by"      : "$user.username",
 					"created_date"    : "$created_date",
 					"updated_by"      : "$updated_by",
 					"updated_date"    : "$updated_date"

@@ -57,7 +57,7 @@ export const getEventId = (param) => dispatch => {
 };
 
 // Add New EVENT
-export const createEvent = (body, companyName) => dispatch => {
+export const createEvent = (body) => dispatch => {
   let options = {
     url: `${HostConfig}/${ApiConfig.event}`,
     method: "post",

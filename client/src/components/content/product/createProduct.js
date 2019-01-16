@@ -29,6 +29,10 @@ class CreateProduct extends React.Component {
       },
       selectedOption:"",
       selectedOption2:"",
+      validate : {
+        validateNameProduct : "form-control", 
+        validateDescription : "form-control",
+      },
     };
 
     this.submitHandler = this.submitHandler.bind(this);
@@ -36,12 +40,23 @@ class CreateProduct extends React.Component {
   }
 
   changeHandler(e) {
+    const { id, name, value } = e.target
+    const { validate } = this.state
+    if(
+      ( name === "name" && value === '' ) ||
+      ( name === "description" && value === "" )
+    ){
+      validate[id] = "form-control is-invalid"
+    }else{
+      validate[id] = "form-control is-valid"
+    }
     this.setState({
-      [e.target.name] : e.target.value,
+      [name] : value,
       alertData: {
         status: false,
         message: ""
-      }
+      },
+      validate : validate
     });
   }
 
@@ -51,6 +66,22 @@ class CreateProduct extends React.Component {
         newProps.modalStatus(1, `Succes, New Product with code ${newProps.productCode} has been add`)
       }
     }
+  }
+
+  cancelHandler = () => {
+    let validate = {
+      validateNameProduct : "form-control", 
+      validateDescription : "form-control",
+    }
+    this.setState({
+      validate: validate, 
+      code: "",
+      name: "",
+      description: "",
+      created_by: this.props.user.m_employee_id,
+      update_by: "",
+    })
+    this.props.closeHandler()
   }
 
   submitHandler(){
@@ -110,10 +141,15 @@ class CreateProduct extends React.Component {
             status: false,
             message: ""
           }
+        let eraseValidate = {
+          validateNameProduct: "form-control",
+          validateDescription: "form-control"
+          }
         this.setState({
           name : "",
           description : "",
-          alertData: eraseAlertData
+          alertData: eraseAlertData,
+          validate: eraseValidate
         })
         this.props.closeHandler();
       }
@@ -129,13 +165,41 @@ class CreateProduct extends React.Component {
               <Label for="">Code</Label>
               <Input type="text" name="code"  placeholder="Auto Generate" readOnly />
             </FormGroup>
-          <FormGroup>
-            <Label for="">Name Product</Label>
-            <Input type="text" name="name"  placeholder="Type Name" value={this.state.name}  onChange={this.changeHandler} />
+          <FormGroup className="needs-validation">
+            <Label htmlFor="validateNameProduct">Name Product</Label>
+            <Input 
+              type="text" 
+              name="name"
+              id="validateNameProduct"
+              placeholder="Type Name"
+              className={this.state.validate.validateNameProduct} 
+              value={this.state.name}  
+              onChange={this.changeHandler}
+            />
+            <div className="valid-feedback">
+              Looks good!
+            </div>
+            <div className="invalid-feedback">
+              Please Type Name!.
+            </div>
           </FormGroup>
           <FormGroup>
-            <Label for="">Description</Label>
-            <Input type="text" name="description"  placeholder="Type Description" value={this.state.description}  onChange={this.changeHandler} />
+            <Label htmlFor="validateDescription">Description</Label>
+            <Input 
+              type="text" 
+              name="description"  
+              placeholder="Type Description" 
+              id="validateDescription"
+              className={this.state.validate.validateDescription}
+              value={this.state.description}  
+              onChange={this.changeHandler} 
+            />
+            <div className="valid-feedback">
+              Looks good!
+            </div>
+            <div className="invalid-feedback">
+              Please Type Description!.
+            </div>
           </FormGroup>
         </ModalBody>
         <ModalFooter>
@@ -151,7 +215,7 @@ class CreateProduct extends React.Component {
           >
             Save
           </Button>
-          <Button variant="contained" onClick={this.props.closeHandler}>
+          <Button variant="contained" onClick={this.cancelHandler}>
             Cancel
           </Button>
         </ModalFooter>

@@ -22,9 +22,13 @@ const mEmployeeBisnislogic = {
 		let company = req.params.company;
 		let createdDate = req.params.createdDate;
 		let createdBy = req.params.createdBy;
-		dtl.searchHandlerData((items) => {
-			responseHelper.sendResponse(res, 200, items);
-		}, empId, empName, company, createdDate, createdBy);
+		dtl.getUser((user) => {
+			let created_by = "";
+			user === null || user === undefined ? ( created_by = createdBy ) : ( created_by = user.m_employee_id )
+				dtl.searchHandlerData((items) => {
+					responseHelper.sendResponse(res, 200, items);
+				}, empId, empName, company, createdDate, created_by);
+			}, createdBy)
 	},
 
 	createHandler  : (req, res, next) => {
@@ -50,7 +54,6 @@ const mEmployeeBisnislogic = {
 					updated_by      : null,
 					updated_date    : null
 				}	    
-
 				dtl.createHandlerData(function(items) {
 					dtl.readAllHandlerData(function (callbackReadData) {
 						responseHelper.sendResponse(res, 200, callbackReadData);
@@ -74,7 +77,6 @@ const mEmployeeBisnislogic = {
 			updated_by      : req.body.updated_by,
 			updated_date    : moment().format("DD/MM/YYYY")
 		};
-
 		dtl.updateHandlerData((items) => {
 			dtl.readAllHandlerData(function (callbackReadData) {
 				responseHelper.sendResponse(res, 200, callbackReadData);

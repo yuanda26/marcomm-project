@@ -9,7 +9,7 @@ import CreateProduct from "./createProduct";
 import DeleteProduct from "./deleteProduct";
 import ViewProduct from "./viewProduct";
 
-import { Alert, Button } from "reactstrap";
+import { Alert } from "reactstrap";
 
 import {
   getAllProduct,
@@ -33,6 +33,9 @@ import {
   KeyboardArrowRight,
   LastPage,
   Search,
+  RefreshOutlined,
+  Add,
+  RemoveRedEyeOutlined,
   DeleteOutlined,
   CreateOutlined
 } from "@material-ui/icons";
@@ -152,7 +155,7 @@ class ListProduct extends React.Component {
         created_date: "",
         created_by: ""
       },
-      search: "",
+      search: false,
       showCreateProduct: false,
       deleteProduct: false,
       viewProduct: false,
@@ -257,7 +260,22 @@ class ListProduct extends React.Component {
       created_by
     } = this.state.initialSearch;
     this.props.searchProduct(code, name, description, created_date, created_by);
+    this.setState({search: true})
   };
+
+  onRestore = () => {
+    let restore = {
+      code : "",
+      name : "",
+      description : "",
+      created_date : "",
+      created_by : ""
+    }
+    this.props.searchProduct(
+      "", "", "", "", "", "" 
+    )
+    this.setState({search: false, initialSearch: restore})
+  }
 
   closeModalHandler() {
     this.setState({
@@ -404,76 +422,77 @@ class ListProduct extends React.Component {
                       content => content.name
                     )}
                   />
-                  <form>
-                    <div className="form-row align-items-center">
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Code"
-                          className="form-control"
-                          name="code"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Name"
-                          className="form-control"
-                          name="name"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Description"
-                          className="form-control"
-                          name="description"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md">
-                        <input
-                          type="date"
-                          className="form-control"
-                          placeholder="Search Created Date"
-                          name="created_date"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Created By"
-                          name="created_by"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md">
-                        <button
-                          type="button"
-                          className="btn btn-warning float-right"
-                          onClick={this.SearchHandler}
-                        >
-                          Search
-                        </button>
-                      </div>
-                      <div className="col-md">
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          onClick={this.showHandler}
-                        >
-                          Add
-                        </Button>
-                      </div>
-                    </div>
-                  </form>
-                  <br />
                   <div className="table-responsive">
-                    <table id="mytable" className="table table-hover">
+                  <table id="mytable" className="table table-hover table-responsive">
+                      <thead>
+                        <td >
+                          <input
+                            placeholder="Code"
+                            className="form-control"
+                            name="code"
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            placeholder="Name"
+                            className="form-control"
+                            name="name"
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            placeholder="Description"
+                            className="form-control"
+                            name="description"
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            placeholder="Created By"
+                            name="created_by"
+                            className="form-control"
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="date"
+                            className="form-control"
+                            placeholder="Search Created Date"
+                            name="created_date"
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td className='text-nowrap'>
+                          {this.state.search === true ? (
+                            <button 
+                              type="button" 
+                              className="btn mr-2 btn-warning"
+                              onClick ={this.onRestore}
+                            ><RefreshOutlined/>
+                            </button>
+                            ):(
+                            <button 
+                              type="button" 
+                              className="btn mr-2 btn-primary"
+                              onClick ={this.SearchHandler}
+                            ><Search/>
+                            </button>
+                            )}
+                          <button 
+                            type="button" 
+                            className="btn btn-primary"
+                            onClick ={this.showHandler}
+                          >
+                            <Add/>  
+                          </button>
+                        </td>
+                      </thead>
                       <thead>
                         <tr>
-                          <th>No</th>
                           <th>Product Code</th>
                           <th>Product Name</th>
                           <th>Description</th>
@@ -492,11 +511,6 @@ class ListProduct extends React.Component {
                           .map((row, index) => {
                             return (
                               <tr key={row._id}>
-                                <td>
-                                  {index +
-                                    1 +
-                                    this.state.page * this.state.rowsPerPage}
-                                </td>
                                 <td>{row.code}</td>
                                 <td>{row.name}</td>
                                 <td>{row.description}</td>
@@ -504,7 +518,7 @@ class ListProduct extends React.Component {
                                 <td>{this.chanegeDate(row.created_date)}</td>
                                 <td>
                                   <Link to="#">
-                                    <Search
+                                    <RemoveRedEyeOutlined
                                       onClick={() => {
                                         this.viewModalHandler(row._id);
                                       }}

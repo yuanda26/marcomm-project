@@ -7,7 +7,7 @@ const promotionData = {
   readAllData: callback => {
     db.collection("t_promotion")
       .find({ is_delete: false })
-      .sort({ code: 1 })
+      .sort({ code: -1 })
       .toArray((err, docs) => {
         let tPromotion = docs.map(row => {
           return new M_Promotion(row);
