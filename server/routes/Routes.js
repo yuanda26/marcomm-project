@@ -178,7 +178,7 @@ module.exports = server => {
   // T Event Route
   // Made By: Purwanto
   server.get("/api/event", event.readAllHandler);
-  server.get("/api/event/:eventId", event.readByIdHandler);
+  server.get("/api/event/:eventId", authenticate, event.readByIdHandler);
   server.get(
     // code, request_by, request_date, , status, created_date, created_by)
     "/api/event/:code/:request_by/:request_date/:status/:created_date/:created_by",
@@ -187,6 +187,8 @@ module.exports = server => {
   server.post("/api/event", event.createHandler);
   server.put("/api/event/:eventId", event.updateHandler);
   server.del("/api/event/:eventId", event.deleteHandler);
+  server.put("/api/event/approve/:eventId", authenticate, event.approveHandler);
+  server.put("/api/event/close/:eventId", authenticate, event.closeHandler);
   //== End of T Event Route
 
   // Master User Route - Login Process
