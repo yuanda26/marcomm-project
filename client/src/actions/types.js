@@ -68,6 +68,9 @@ export const DELETE_EVENT = "DELETE_EVENT";
 export const CREATE_EVENT = "CREATE_EVENT";
 export const SEARCH_EVENT = "SEARCH_EVENT";
 export const ERASE_STATUS = "ERASE_STATUS";
+export const APPROVE_EVENT = "APPROVE_EVENT";
+export const REJECT_EVENT = "REJECT_EVENT";
+export const CLOSE_EVENT = "CLOSE_EVENT";
 
 // Company Types
 export const GET_COMPANIES = "GET_COMPANIES";

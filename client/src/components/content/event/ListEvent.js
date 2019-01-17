@@ -244,23 +244,21 @@ class ListEvent extends React.Component {
       created_date,
       created_by
     );
-    this.setState({search: true})
+    this.setState({ search: true });
   };
 
   onRestore = () => {
     let restore = {
-      code : "",
-      request_by : "",
-      request_date : "",
-      status : "",
-      created_date : "",
-      created_by : ""
-    }
-    this.props.searchEvent(
-      "", "", "", "", "", "" 
-    )
-    this.setState({search: false, initialSearch: restore})
-  }
+      code: "",
+      request_by: "",
+      request_date: "",
+      status: "",
+      created_date: "",
+      created_by: ""
+    };
+    this.props.searchEvent("", "", "", "", "", "");
+    this.setState({ search: false, initialSearch: restore });
+  };
 
   closeModalHandler = () => {
     this.props.eraseStatus();
@@ -380,6 +378,7 @@ class ListEvent extends React.Component {
                   />
                   <ViewEvent
                     view={this.state.viewEvent}
+                    user={this.props.user}
                     closeModalHandler={this.closeModalHandler}
                     currentEvent={this.state.currentEvent}
                   />
@@ -453,28 +452,30 @@ class ListEvent extends React.Component {
                               onChange={this.changeHandler}
                             />
                           </td>
-                          <td className='text-nowrap'>
+                          <td className="text-nowrap">
                             {this.state.search === true ? (
-                              <button 
-                                type="button" 
+                              <button
+                                type="button"
                                 className="btn mr-2 btn-warning"
-                                onClick ={this.onRestore}
-                              ><RefreshOutlined/>
+                                onClick={this.onRestore}
+                              >
+                                <RefreshOutlined />
                               </button>
-                              ):(
-                              <button 
-                                type="button" 
+                            ) : (
+                              <button
+                                type="button"
                                 className="btn mr-2 btn-primary"
-                                onClick ={this.SearchHandler}
-                              ><Search/>
+                                onClick={this.SearchHandler}
+                              >
+                                <Search />
                               </button>
-                              )}
-                            <button 
-                              type="button" 
+                            )}
+                            <button
+                              type="button"
                               className="btn btn-primary"
-                              onClick ={this.showHandler}
+                              onClick={this.showHandler}
                             >
-                              <Add/>  
+                              <Add />
                             </button>
                           </td>
                         </tr>
@@ -561,7 +562,8 @@ ListEvent.propTypes = {
 
 const mapStateToProps = state => ({
   event: state.event,
-  employee: state.employee
+  employee: state.employee,
+  user: state.auth.user
 });
 
 export default connect(
