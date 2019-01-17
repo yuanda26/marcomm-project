@@ -1,24 +1,20 @@
 import React from "react";
-import {
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  FormFeedback
-} from "reactstrap";
-import { Col, Row, FormGroup, Label, Input, Button } from "reactstrap";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { Button } from "reactstrap";
 import { Alert } from "reactstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import Select from "react-select";
-import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
-import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
+import { Delete, Create } from "@material-ui/icons";
 import {
   createTSouvenirItem,
   getEvent
 } from "../../../actions/tsouveniritemAction";
 import { getAllSouvenir } from "../../../actions/souvenirAction";
 import moment from "moment";
+import SelectList from "../../common/SelectList";
+import SelectListGroup from "../../common/SelectListGroup";
+import TextFieldGroup from "../../common/TextFieldGroup";
+import TextAreaGroup from "../../common/TextAreaGroup";
 
 class CreateTsouveniritem extends React.Component {
   componentDidMount() {
@@ -39,7 +35,7 @@ class CreateTsouveniritem extends React.Component {
     super(props);
     this.state = {
       code: "",
-      selectedEventCode: "",
+      event_code: "",
       due_date: "",
       note: "",
       shareholders: [],
@@ -61,18 +57,18 @@ class CreateTsouveniritem extends React.Component {
   }
 
   changeHandler(e) {
-    if (
-      e.target.name === "due_date" &&
-      moment(e.target.value) < moment().subtract(1, "day")
-    ) {
-      this.setState({
-        invalid: true
-      });
-    } else {
-      this.setState({
-        invalid: false
-      });
-    }
+    // if (
+    //   e.target.name === "due_date" &&
+    //   moment(e.target.value) < moment().subtract(1, "day")
+    // ) {
+    //   this.setState({
+    //     invalid: true
+    //   });
+    // } else {
+    //   this.setState({
+    //     invalid: false
+    //   });
+    // }
     this.setState({
       [e.target.name]: e.target.value,
       alertData: {
@@ -82,7 +78,7 @@ class CreateTsouveniritem extends React.Component {
     });
   }
 
-  handleShareholderNameChange = idx => evt => {
+  handleShareholderItemChange = idx => evt => {
     const newShareholders = this.state.shareholders.map((shareholder, sidx) => {
       if (idx !== sidx) return shareholder;
       return { ...shareholder, [evt.target.name]: evt.target.value };
@@ -91,7 +87,7 @@ class CreateTsouveniritem extends React.Component {
     this.setState({ shareholders: newShareholders });
   };
 
-  handleAddShareholder = () => {
+  handleAddItem = () => {
     this.setState({
       shareholders: this.state.shareholders.concat([
         {
@@ -149,7 +145,7 @@ class CreateTsouveniritem extends React.Component {
   submitHandler() {
     const formdata = {
       code: this.state.code,
-      t_event_id: this.state.selectedEventCode,
+      t_event_id: this.state.event_code,
       request_by: this.state.userdata.m_employee_id,
       request_date: moment().format("YYYY-MM-DD"),
       request_due_date: this.state.due_date,
@@ -258,200 +254,204 @@ class CreateTsouveniritem extends React.Component {
             }
           });
           let datas = [formdata, items];
-          this.props.createTSouvenirItem(datas);
+          this.props.createTSouvenirItem(datas, this.props.modalStatus);
           this.props.closeHandler();
         }
       }
     }
   }
 
-  render() {
-    this.state.status === 200 &&
-      this.props.modalStatus(1, "Saved", this.state.code);
+  handleRemoveModal = () => {
+    this.setState({ deleteModal: true });
+  };
 
-    const optionsEvent = [];
+  closeModal = () => {
+    this.setState({
+      deleteModal: false
+    });
+  };
+
+  render() {
+    const EventOptions = [];
+    EventOptions.push({ label: "Select Event Code", value: "" });
     this.state.eventcode.forEach(row => {
-      optionsEvent.push({
+      EventOptions.push({
         value: row.code,
         label: row.event_name
       });
     });
 
+    const SouvenirOptions = [];
+    SouvenirOptions.push({ label: "Select Souvenir", value: "" });
+    this.state.souvenir.forEach(row => {
+      SouvenirOptions.push({
+        value: row.code,
+        label: row.name
+      });
+    });
+
+    // display and undisplay table design item form
+    // based on items state length
+    const display =
+      this.state.shareholders.length === 0 ? "none" : "table-row-group";
+    const style = {
+      display: display
+    };
+
     return (
-      <Modal isOpen={this.props.create} className={this.props.className}>
+      <Modal
+        isOpen={this.props.create}
+        className={this.props.className}
+        size="lg"
+      >
         <ModalHeader> Add Souvenir Request </ModalHeader>
         <ModalBody>
-          {/* <form className={classes.container}> */}
           <form>
-            <FormGroup>
-              <Label for="">*Transaction Code</Label>
-              <Input
-                type="text"
-                name="code"
-                placeholder="Auto Generated"
-                readOnly
-              />
-            </FormGroup>
-            <formGroup
-              variant="outlined"
-              // className={classes.formGroup}
-            >
-              <Label for="">*Event Code</Label>
-              <Select
-                value={this.state.selectedOption}
-                onChange={this.handleChange1}
-                options={optionsEvent}
-              />
-            </formGroup>
-            <FormGroup>
-              <Label for="">*Request By</Label>
-              <Input
-                type="text"
-                name="request_by"
-                placeholder={this.state.userdata.m_employee_id}
-                value={this.state.request_by}
-                onChange={this.changeHandler}
-                readOnly
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">*Request Date</Label>
-              <Input
-                type="text"
-                name="request_date"
-                placeholder={moment().format("DD/MM/YYYY")}
-                value={this.state.request_date}
-                onChange={this.changeHandler}
-                readOnly
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">*Due Date</Label>
-              <Input
-                type="date"
-                name="due_date"
-                placeholder=""
-                value={this.state.due_date}
-                onChange={this.changeHandler}
-                invalid={this.state.invalid}
-              />
-              <FormFeedback invalid={this.state.invalid}>
-                Due date must after request date.
-              </FormFeedback>
-            </FormGroup>
-            <FormGroup>
-              <Label for="">Note</Label>
-              <Input
-                type="textarea"
-                name="note"
-                placeholder=""
-                value={this.state.note}
-                onChange={this.changeHandler}
-              />
-            </FormGroup>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={this.handleAddShareholder}
+            <TextFieldGroup
+              label="*Transaction Code"
+              placeholder="Auto Generated"
+              name="code"
+              disabled={true}
+            />
+            <SelectListGroup
+              label="*Event Code"
+              placeholder="*Select Event Code"
+              name="event_code"
+              value={this.state.event_code}
+              onChange={this.changeHandler}
+              options={EventOptions}
+              errors={this.state.errorEventCode}
+            />
+            <TextFieldGroup
+              label="*Request By"
+              placeholder={this.state.userdata.m_employee_id}
+              name="request_by"
+              value={this.state.userdata.m_employee_id}
+              onChange={this.changeHandler}
+              errors={this.state.errorEventCode}
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="*Request Date"
+              type="date"
+              placeholder="Type Request Date"
+              name="request_date"
+              value={this.state.request_date}
+              onChange={this.changeHandler}
+              errors={this.state.errorRequestDate}
+            />
+            <TextFieldGroup
+              label="*Request Due Date"
+              type="date"
+              placeholder="Type Request Due Date"
+              name="due_date"
+              value={this.state.request_due_date}
+              onChange={this.changeHandler}
+              errors={this.state.errorRequestDueDate}
+            />
+            <TextAreaGroup
+              label="Notes"
+              placeholder="Type Notes"
+              name="note"
+              value={this.state.note}
+              onChange={this.changeHandler}
+              maxLength="255"
+            />
+          </form>
+          <div className="col-md-12 mb-4 form-inline">
+            <button
+              className="btn btn-primary"
+              type="button"
+              onClick={this.handleAddItem}
             >
               Add Item
-            </Button>
-          </form>
-          <form>
-            <Row>
-              <Col md={5}>
-                <Label>
-                  <b>Souvenir Item</b>
-                </Label>
-              </Col>
-              <Col md={2}>
-                <Label>
-                  <b>Qty</b>
-                </Label>
-              </Col>
-              <Col md={2}>
-                <Label>
-                  <b>Note</b>
-                </Label>
-              </Col>
-            </Row>
-            {this.state.shareholders.map((shareholder, idx) => (
-              <div className="shareholder">
-                <Row form>
-                  <Col md={5}>
-                    <FormGroup>
-                      <select
+            </button>
+
+            <table className="table table-responsive mt-2 mb-2">
+              <thead style={style}>
+                <tr className="text-center">
+                  <th>Souvenir</th>
+                  <th>Qty</th>
+                  <th>Note</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.shareholders.map((shareholder, idx) => (
+                  <tr>
+                    <td>
+                      <SelectList
                         name="m_souvenir_id"
-                        id="m_souvenir_id"
-                        class="form-control"
                         value={shareholder.m_souvenir_id}
-                        onChange={this.handleShareholderNameChange(idx)}
+                        onChange={this.handleShareholderItemChange(idx)}
                         disabled={shareholder.disable}
-                      >
-                        {this.state.souvenir.map(row => (
-                          <option value={row.code}>{row.name}</option>
-                        ))}
-                        <option value="" disabled>
-                          {" "}
-                          -{" "}
-                        </option>
-                      </select>
-                    </FormGroup>
-                  </Col>
-                  <Col md={2}>
-                    <FormGroup>
-                      {/* <Label for="exampleQty">Qty</Label> */}
-                      <Input
-                        type="text"
+                        options={SouvenirOptions}
+                        errors={shareholder.errorSouvenir}
+                      />
+                    </td>
+                    <td>
+                      <TextFieldGroup
+                        type="number"
                         name="qty"
-                        id="exampleQty"
-                        placeholder="Qty"
-                        onChange={this.handleShareholderNameChange(idx)}
+                        onChange={this.handleShareholderItemChange(idx)}
                         value={shareholder.qty}
-                        readOnly={shareholder.readonly}
+                        errors={shareholder.errorQty}
+                        disabled={shareholder.disable}
                       />
-                    </FormGroup>
-                  </Col>
-                  <Col md={3}>
-                    <FormGroup>
-                      {/* <Label for="exampleNote">Note</Label> */}
-                      <Input
+                    </td>
+                    <td>
+                      <TextFieldGroup
                         type="text"
-                        name={"note"}
-                        id="exampleNote"
-                        onChange={this.handleShareholderNameChange(idx)}
-                        placeholder="Note"
-                        readOnly={shareholder.readonly}
+                        name="note"
+                        onChange={this.handleShareholderItemChange(idx)}
+                        value={shareholder.note}
+                        readOnly={shareholder.readOnly}
+                        disabled={shareholder.disable}
                       />
-                    </FormGroup>
-                  </Col>
-                  <Col md={1}>
-                    {/* <Label for="exampleNote">Edit</Label> */}
-                    <CreateOutlinedIcon
-                      size="small"
-                      class="fa fa-trash"
-                      onClick={this.handleEditButtonShareholder(idx)}
-                    />
-                  </Col>
-                  <Col md={1}>
-                    {/* <Label for="exampleNote">Delete</Label> */}
-                    <DeleteOutlinedIcon
-                      size="small"
-                      onClick={this.handleRemoveShareholder(idx)}
-                      class="fa fa-trash"
-                    />
-                  </Col>
-                </Row>
-              </div>
-            ))}
-          </form>
+                    </td>
+                    <td>
+                      <Create
+                        className="mr-1"
+                        onClick={this.handleEditButtonShareholder(idx)}
+                        size="small"
+                      />
+                      <Delete onClick={this.handleRemoveModal} size="small" />
+                      {/* Delete Design Items Modal */}
+                      <Modal isOpen={this.state.deleteModal}>
+                        <ModalHeader>
+                          <div className="lead">Delete Item?</div>
+                        </ModalHeader>
+                        <ModalBody>
+                          <form>
+                            <div className="form-group text-right">
+                              <button
+                                type="button"
+                                className="btn btn-primary mr-2"
+                                onClick={this.handleRemoveShareholder(idx)}
+                              >
+                                Delete
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-default"
+                                onClick={this.closeModal}
+                              >
+                                Close
+                              </button>
+                            </div>
+                          </form>
+                        </ModalBody>
+                      </Modal>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </ModalBody>
         <ModalFooter>
-          {this.state.alertData.status === true ? (
+          {this.state.alertData.status === true && (
             <Alert color="danger">{this.state.alertData.message} </Alert>
-          ) : (
-            ""
           )}
           <Button
             variant="contained"

@@ -11,8 +11,7 @@ import {
   Col,
   Row,
   Table,
-  Alert,
-  FormFeedback
+  Alert
 } from "reactstrap";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -26,6 +25,8 @@ import {
   updateTSouvenirItem,
   getEvent
 } from "../../../actions/tsouveniritemAction";
+import TextFieldGroup from "../../common/TextFieldGroup";
+import TextAreaGroup from "../../common/TextAreaGroup";
 
 class EditTsouveniritem extends React.Component {
   constructor(props) {
@@ -34,7 +35,7 @@ class EditTsouveniritem extends React.Component {
     this.state = {
       formdata: {
         code: "",
-        t_event_code: "",
+        t_event_id: "",
         request_by: "",
         request_date: "",
         request_due_date: "",
@@ -186,7 +187,7 @@ class EditTsouveniritem extends React.Component {
             }
           });
         } else {
-          this.props.updateTSouvenirItem(data);
+          this.props.updateTSouvenirItem(data, this.props.modalStatus);
           this.props.closeModalHandler();
         }
       }
@@ -338,9 +339,6 @@ class EditTsouveniritem extends React.Component {
   };
 
   render() {
-    this.state.status === 200 &&
-      this.props.modalStatus(1, "Updated", this.state.formdata.code);
-
     return (
       <Modal isOpen={this.props.edit} className={this.props.className}>
         <ModalHeader>
@@ -349,91 +347,73 @@ class EditTsouveniritem extends React.Component {
         </ModalHeader>
         <ModalBody>
           <form>
-            <FormGroup>
-              <Label for="">Transaction Code</Label>
-              <Input
-                type="text"
-                name="code"
-                placeholder="Auto Generate"
-                value={this.state.formdata.code}
-                readOnly
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">Event Code</Label>
-              <Input
-                type="text"
-                name="t_event_code"
-                placeholder="Auto Generate"
-                value={this.state.formdata.t_event_code}
-                readOnly
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">Request By</Label>
-              <Input
-                type="text"
-                name="request_by"
-                placeholder={this.state.updated_by}
-                value={this.state.formdata.request_by}
-                onChange={this.changeHandler}
-                readOnly
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">*Request Date</Label>
-              <Input
-                type="date"
-                name="request_date"
-                placeholder={this.state.request_date}
-                value={this.state.formdata.request_date}
-                onChange={this.changeHandler}
-                readOnly
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">*Request Due Date</Label>
-              <Input
-                type="date"
-                name="request_due_date"
-                placeholder=""
-                value={this.state.formdata.request_due_date}
-                onChange={this.changeHandler}
-                invalid={this.state.invalid}
-              />
-              <FormFeedback invalid={this.state.invalid}>
-                Request due date must after request date!
-              </FormFeedback>
-            </FormGroup>
-            <FormGroup>
-              <Label for="">Note</Label>
-              <Input
-                type="text"
-                name="note"
-                placeholder=""
-                value={this.state.formdata.note}
-                onChange={this.changeHandler}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">Status</Label>
-              <Input
-                type="text"
-                name="status"
-                placeholder=""
-                value={this.designStatus(this.state.formdata.status)}
-                onChange={this.changeHandler}
-                readOnly
-              />
-            </FormGroup>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
+            <TextFieldGroup
+              label="*Transaction Code"
+              type="text"
+              name="code"
+              placeholder="Auto Generate"
+              value={this.state.formdata.code}
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="*Event Code"
+              type="text"
+              name="t_event_id"
+              placeholder="Auto Generate"
+              value={this.state.formdata.t_event_id}
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="*Request By"
+              type="text"
+              name="request_by"
+              placeholder={this.state.formdata.request_by}
+              value={this.state.formdata.request_by}
+              onChange={this.changeHandler}
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="*Request Date"
+              type="date"
+              name="request_date"
+              placeholder={this.state.request_date}
+              value={this.state.formdata.request_date}
+              onChange={this.changeHandler}
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="*Request Due Date"
+              type="date"
+              name="request_due_date"
+              placeholder=""
+              value={this.state.formdata.request_due_date}
+              onChange={this.changeHandler}
+              errors={this.state.errorRequestDueDate}
+            />
+            <TextAreaGroup
+              label="*Note"
+              type="text"
+              name="note"
+              placeholder=""
+              value={this.state.formdata.note}
+              onChange={this.changeHandler}
+            />
+            <TextFieldGroup
+              label="Status"
+              type="text"
+              name="status"
+              placeholder=""
+              value={this.designStatus(this.state.formdata.status)}
+              onChange={this.changeHandler}
+              disabled={true}
+            />
+            <button
+              className="btn btn-primary"
+              type="button"
               onClick={this.handleAddShareholder}
             >
               Add Item
-            </Button>
+            </button>
           </form>
           <form>
             {this.state.dataItem === undefined ? (
@@ -462,7 +442,6 @@ class EditTsouveniritem extends React.Component {
                     <Row form>
                       <Col md={5}>
                         <FormGroup>
-                          {/* <Label for="m_souvenir_id">Souvenir Item</Label> */}
                           <select
                             name="m_souvenir_id"
                             id="m_souvenir_id"
@@ -483,7 +462,6 @@ class EditTsouveniritem extends React.Component {
                       </Col>
                       <Col md={2}>
                         <FormGroup>
-                          {/* <Label for="exampleQty">Qty</Label> */}
                           <Input
                             type="text"
                             name="qty"
@@ -498,7 +476,6 @@ class EditTsouveniritem extends React.Component {
                       </Col>
                       <Col md={3}>
                         <FormGroup>
-                          {/* <Label for="exampleNote">Note</Label> */}
                           <Input
                             type="text"
                             name="note"
@@ -512,7 +489,6 @@ class EditTsouveniritem extends React.Component {
                         </FormGroup>
                       </Col>
                       <Col md={1}>
-                        {/* <Label for="exampleNote">Edit</Label> */}
                         <CreateOutlinedIcon
                           size="small"
                           onClick={this.handleEditOldFile(idx)}
@@ -520,7 +496,6 @@ class EditTsouveniritem extends React.Component {
                         />
                       </Col>
                       <Col md={1}>
-                        {/* <Label for="exampleNote">Delete</Label> */}
                         <DeleteOutlinedIcon
                           size="small"
                           onClick={this.handleRemoveOldFile(idx)}
@@ -535,7 +510,6 @@ class EditTsouveniritem extends React.Component {
                     <Row form>
                       <Col md={5}>
                         <FormGroup>
-                          {/* <Label for="m_souvenir_id">Souvenir Item</Label> */}
                           <select
                             name="m_souvenir_id"
                             id="m_souvenir_id"
@@ -557,7 +531,6 @@ class EditTsouveniritem extends React.Component {
                       </Col>
                       <Col md={2}>
                         <FormGroup>
-                          {/* <Label for="exampleQty">Qty</Label> */}
                           <Input
                             type="text"
                             name="qty"
@@ -572,7 +545,6 @@ class EditTsouveniritem extends React.Component {
                       </Col>
                       <Col md={3}>
                         <FormGroup>
-                          {/* <Label for="exampleNote">Note</Label> */}
                           <Input
                             type="text"
                             name="note"
@@ -586,7 +558,6 @@ class EditTsouveniritem extends React.Component {
                         </FormGroup>
                       </Col>
                       <Col md={1}>
-                        {/* <Label for="exampleNote">Edit</Label> */}
                         <CreateOutlinedIcon
                           size="small"
                           onClick={this.handleEditButtonShareholder(idx)}
@@ -594,7 +565,6 @@ class EditTsouveniritem extends React.Component {
                         />
                       </Col>
                       <Col md={1}>
-                        {/* <Label for="exampleNote">Delete</Label> */}
                         <DeleteOutlinedIcon
                           size="small"
                           onClick={this.handleRemoveShareholder(idx)}

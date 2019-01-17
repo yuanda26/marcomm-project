@@ -262,7 +262,7 @@ class CreateTsouvenir extends React.Component {
         };
       });
       let datas = [formdata, dataItem];
-      this.props.createTsouvenir(datas);
+      this.props.createTsouvenir(datas, this.props.modalStatus);
       this.props.closeHandler();
     }
   }

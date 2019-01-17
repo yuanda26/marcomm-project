@@ -6,9 +6,15 @@ const ObjectId = require("mongodb").ObjectID;
 const T_Souvenir_Data = {
   //GET TRANSACTION SOUVENIR
   readSouvenirAllHandler: (req, res, next) => {
-    dtl.readSouvenirAllHandler(items => {
-      ResponseHelper.sendResponse(res, 200, items);
-    });
+    let m_role_id = req.params.m_role_id;
+    let m_employee_id = req.params.m_employee_id;
+    dtl.readSouvenirAllHandler(
+      items => {
+        ResponseHelper.sendResponse(res, 200, items);
+      },
+      m_role_id,
+      m_employee_id
+    );
   },
 
   //GET T SOUVENIR ITEM
@@ -152,7 +158,7 @@ const T_Souvenir_Data = {
     };
     dtl.rejectHandler(
       items => {
-        ResponseHelper.sendResponse(res, 400, items);
+        ResponseHelper.sendResponse(res, 200, items);
       },
       data,
       id
