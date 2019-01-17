@@ -208,7 +208,11 @@ module.exports = server => {
 
   // Transaction Souvenir Route
   // Made By: Deovani Anugrah
-  server.get("/api/tsouvenir", authenticate, tSouvenirLogic.readAllHandler);
+  server.get(
+    "/api/tsouvenir/:m_role_id/:m_employee_id",
+    authenticate,
+    tSouvenirLogic.readAllHandler
+  );
   server.get(
     "/api/tsouvenir/:souvenirId",
     authenticate,
@@ -225,7 +229,7 @@ module.exports = server => {
   // Transaction Souvenir Item Route
   // Made By: Deovani Anugrah
   server.get(
-    "/api/tsouveniritem",
+    "/api/tsouveniritem/:m_role_id/:m_employee_id",
     authenticate,
     tSouvenirItemLogic.readSouvenirAllHandler
   );

@@ -1,15 +1,6 @@
 import React from "react";
-import {
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Button,
-  Input,
-  Label,
-  FormGroup,
-  Table
-} from "reactstrap";
+import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
+import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 import {
   getAllTSouvenirItemDetil,
@@ -20,6 +11,8 @@ import {
 import { connect } from "react-redux";
 import AdminRejectRequest from "./AdminReject";
 import moment from "moment";
+// import TextFieldGroup from "../../common/TextFieldGroup";
+// import TextAreaGroup from "../../common/TextAreaGroup";
 
 class AdminHandler extends React.Component {
   constructor(props) {
@@ -79,14 +72,14 @@ class AdminHandler extends React.Component {
     }
   };
 
-  approveHandler = () => {
+  approveRequestHandler = () => {
     const formdata = {
       code: this.props.tsouveniritem.code,
       approved_by: this.state.userdata.m_employee_id,
       approved_date: moment().format("YYYY-MM-DD"),
       status: 2
     };
-    this.props.adminRequestApprove(formdata);
+    this.props.adminRequestApprove(formdata, this.props.modalStatus);
     this.props.closeModalHandler();
   };
 
@@ -97,7 +90,7 @@ class AdminHandler extends React.Component {
       settlement_approved_date: moment().format("YYYY-MM-DD"),
       status: 5
     };
-    this.props.adminApproveSettlement(formdata);
+    this.props.adminApproveSettlement(formdata, this.props.modalStatus);
     this.props.closeModalHandler();
   };
 
@@ -124,31 +117,11 @@ class AdminHandler extends React.Component {
     this.props.modalStatus(status, message, code);
   };
 
+  changeDate = tanggal => {
+    return moment(tanggal).format("DD/MM/YYYY");
+  };
+
   render() {
-    this.state.statusRA === 200 &&
-      this.props.modalStatus(1, "Approved", this.props.tsouveniritem.code);
-    this.state.statusRA === 400 &&
-      this.props.modalStatus(
-        2,
-        "Data Rejected! Transaction souvenir request with code " +
-          this.props.tsouveniritem.code +
-          " is rejected by Administrator!"
-      );
-
-    this.state.statusSA === 200 &&
-      this.props.modalStatus(
-        1,
-        "Settlement Approved",
-        this.props.tsouveniritem.code
-      );
-    this.state.statusSA === 400 &&
-      this.props.modalStatus(
-        2,
-        "Settlement Rejected! Transaction souvenir settlement with code " +
-          this.props.tsouveniritem.code +
-          " is rejected by Administrator!"
-      );
-
     return (
       <Modal isOpen={this.props.adminHandler} className={this.props.className}>
         {this.props.tsouveniritem.status === 1 && (
@@ -171,190 +144,157 @@ class AdminHandler extends React.Component {
             modalStatus={this.modalStatus}
           />
           <div>
-            <FormGroup>
-              <Label for="">Transaction Code</Label>
-              <Input
-                type="text"
-                name="code"
-                placeholder=""
-                value={this.props.tsouveniritem.code}
-                readOnly
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">T Event Code</Label>
-              <Input
-                type="text"
-                name="received_by"
-                placeholder=""
-                value={this.props.tsouveniritem.t_event_id}
-                readOnly
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">Request By</Label>
-              <Input
-                type="text"
-                name="received_date"
-                placeholder=""
-                value={this.props.tsouveniritem.request_by}
-                readOnly
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">Request Date</Label>
-              <Input
-                type="text"
-                name="note"
-                placeholder=""
-                value={this.props.tsouveniritem.request_date}
-                readOnly
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">Due Date</Label>
-              <Input
-                type="text"
-                name="note"
-                placeholder=""
-                value={this.props.tsouveniritem.request_due_date}
-                readOnly
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">Note</Label>
-              <Input
-                type="text"
-                name="note"
-                placeholder=""
-                value={this.props.tsouveniritem.note}
-                readOnly
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="">Status</Label>
-              <Input
-                type="text"
-                name="note"
-                placeholder=""
-                value={this.designStatus(this.props.tsouveniritem.status)}
-                readOnly
-              />
-            </FormGroup>
+            <Grid container spacing={24}>
+              <Grid item xs={6}>
+                Transaction Code
+                <br />
+                Event Code
+                <br />
+                Request By
+                <br />
+                Request Date
+                <br />
+                Request Due Date
+                <br />
+                Status
+                <br />
+                Note
+              </Grid>
+              <Grid item xs={6}>
+                {this.props.tsouveniritem.code}
+                <br />
+                {this.props.tsouveniritem.t_event_id}
+                <br />
+                {this.props.tsouveniritem.request_by}
+                <br />
+                {this.changeDate(this.props.tsouveniritem.request_date)}
+                <br />
+                {this.changeDate(this.props.tsouveniritem.request_due_date)}
+                <br />
+                {this.designStatus(this.props.tsouveniritem.status)}
+                <br />
+                {this.props.tsouveniritem.note}
+              </Grid>
+            </Grid>
+            {/* <TextFieldGroup
+              label="Transaction Code"
+              type="text"
+              name="Transaction Code"
+              placeholder=""
+              value={this.props.tsouveniritem.code}
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="Event Code"
+              type="text"
+              name="t_event_id"
+              placeholder="Event Code"
+              value={this.props.tsouveniritem.t_event_id}
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="Received By"
+              type="text"
+              name="received_date"
+              placeholder=""
+              value={this.props.tsouveniritem.request_by}
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="Request Date"
+              type="text"
+              name="request_date"
+              placeholder=""
+              value={this.changeDate(this.props.tsouveniritem.request_date)}
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="Request Due Date"
+              type="text"
+              name="request_due_date"
+              placeholder=""
+              value={this.changeDate(this.props.tsouveniritem.request_due_date)}
+              disabled={true}
+            />
+            <TextAreaGroup
+              label="Note"
+              type="text"
+              name="note"
+              placeholder=""
+              value={this.props.tsouveniritem.note}
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="Status"
+              type="text"
+              name="status"
+              placeholder=""
+              value={this.designStatus(this.props.tsouveniritem.status)}
+              disabled={true}
+            /> */}
           </div>
+          <br />
           <div>
-            <h5>Souvenir Item </h5>
+            <h4>Souvenir Item </h4>
           </div>
           {this.props.tsouveniritem.status === 1 && (
-            <Table>
-              <thead>
-                <tr>
-                  <th>M Souvenir ID</th>
-                  <th>Qty</th>
-                  <th>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.func(this.state.item).length === 0 ? (
-                  <div>Item Null</div>
-                ) : (
-                  this.func(this.state.item).map(ele => (
-                    <tr>
-                      <td>
-                        <Input
-                          type="text"
-                          name="note"
-                          placeholder={ele.m_souvenir_id}
-                          value={ele.m_souvenir_id}
-                          readOnly
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          type="text"
-                          name="note"
-                          placeholder={ele.qty}
-                          value={ele.qty}
-                          readOnly
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          type="text"
-                          name="note"
-                          placeholder={ele.note}
-                          value={ele.note}
-                          readOnly
-                        />
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </Table>
+            <div className="table-responsive">
+              <table className="table table-stripped">
+                <thead>
+                  <tr>
+                    <th>M Souvenir ID</th>
+                    <th>Qty</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.func(this.state.item).length === 0 ? (
+                    <div>Item Not Found</div>
+                  ) : (
+                    this.func(this.state.item).map(ele => (
+                      <tr>
+                        <td>{ele.m_souvenir_id}</td>
+                        <td>{ele.qty}</td>
+                        <td>{ele.note}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           )}
           {this.props.tsouveniritem.status === 4 && (
-            <Table>
-              <thead>
-                <tr>
-                  <th>M Souvenir ID</th>
-                  <th>Qty</th>
-                  <th>Qty Actual</th>
-                  <th>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.func(this.state.item).length === 0 ? (
-                  <div>Item Null</div>
-                ) : (
-                  this.func(this.state.item).map(ele => (
-                    <tr>
-                      <td>
-                        <Input
-                          type="text"
-                          name="m_souvenir_id"
-                          placeholder={ele.m_souvenir_id}
-                          value={ele.m_souvenir_id}
-                          readOnly
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          type="text"
-                          name="qty"
-                          placeholder={ele.qty}
-                          value={ele.qty}
-                          readOnly
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          type="text"
-                          name="qty_actual"
-                          placeholder={ele.qty_actual}
-                          value={ele.qty_actual}
-                          readOnly
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          type="text"
-                          name="note"
-                          placeholder={ele.note}
-                          value={ele.note}
-                          readOnly
-                        />
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </Table>
+            <div className="table-responsive">
+              <table className="table table-stripped">
+                <thead>
+                  <tr>
+                    <th>M Souvenir ID</th>
+                    <th>Qty</th>
+                    <th>Qty Actual</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.func(this.state.item).length === 0 ? (
+                    <div>No Item Found</div>
+                  ) : (
+                    this.func(this.state.item).map(ele => (
+                      <tr>
+                        <td>{ele.m_souvenir_id}</td>
+                        <td>{ele.qty}</td>
+                        <td>{ele.qty_actual}</td>
+                        <td>{ele.note}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           )}
         </ModalBody>
         <ModalFooter>
           {this.props.tsouveniritem.status === 1 && (
-            <Button color="primary" onClick={this.approveHandler}>
+            <Button color="primary" onClick={this.approveRequestHandler}>
               Approve
             </Button>
           )}

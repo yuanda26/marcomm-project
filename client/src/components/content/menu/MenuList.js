@@ -30,6 +30,7 @@ import CreateMenu from "./CreateMenu";
 import DeleteMenu from "./DeleteMenu";
 import ViewMenu from "./ReadMenu";
 import SpinnerTable from "../../common/SpinnerTable";
+import ReactTooltip from "react-tooltip";
 
 const actionsStyles = theme => ({
   root: {
@@ -385,27 +386,48 @@ class ListMenu extends React.Component {
                         </td>
                         <td nowrap="true">
                           {this.state.search === true && (
+                            <a href="#!" data-tip="Search">
                             <button
                               className="mr-2 btn btn-primary"
                               onClick={this.search}
                             >
                               <Search />
                             </button>
+                            <ReactTooltip
+                            place="top"
+                            type="dark"
+                            effect="solid"
+                          />
+                          </a>
                           )}
                           {this.state.search === false && (
+                            <a href="#!" data-tip="Search">
                             <button
                               className="mr-2 btn btn-warning"
                               onClick={this.refreshSearch}
                             >
                               <Refresh />
                             </button>
+                            <ReactTooltip
+                            place="top"
+                            type="dark"
+                            effect="solid"
+                          />
+                            </a>
                           )}
+                          <a href="#!" data-tip="Add Menu">
                           <button
                             className="mr-2 btn btn-primary"
                             onClick={this.showHandler}
                           >
                             <Add />
                           </button>
+                          <ReactTooltip
+                            place="top"
+                            type="dark"
+                            effect="solid"
+                          />
+                          </a>
                         </td>
                       </tr>
                       <tr
@@ -442,25 +464,40 @@ class ListMenu extends React.Component {
                                 {this.changeDateFormat(menu.created_date)}
                               </td>
                               <td nowrap="true">
-                                <Link to="#">
+                                <Link to="#" data-tip="View Menu">
                                   <RemoveRedEye
                                     onClick={() => {
                                       this.viewModalHandler(menu._id);
                                     }}
                                   />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
                                 </Link>
-                                <Link to="#">
+                                <Link to="#" data-tip="Update Menu">
                                   <Create
                                     onClick={() => {
                                       this.editModalHandler(menu._id);
                                     }}
                                   />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
                                 </Link>
-                                <Link to="#">
+                                <Link to="#" data-tip="Delete Menu">
                                   <Delete
                                     onClick={() => {
                                       this.deleteModalHandler(menu._id);
                                     }}
+                                  />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
                                   />
                                 </Link>
                               </td>

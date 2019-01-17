@@ -19,6 +19,7 @@ import TextAreaGroup from "../../common/TextAreaGroup";
 import SelectListGroup from "../../common/SelectListGroup";
 import SelectList from "../../common/SelectList";
 import Spinner from "../../common/Spinner";
+import SpinnerTable from "../../common/SpinnerTable";
 
 class EditTsouvenir extends React.Component {
   constructor(props) {
@@ -36,12 +37,10 @@ class EditTsouvenir extends React.Component {
         status: false,
         message: ""
       },
-      oldItem: this.props.getAllItem,
-      newItem: [],
       employee: [],
       souv: "",
-      oldFile: "",
-      newFile: "",
+      oldItem: [null],
+      newItem: [],
       status: "",
       souvenirOptions: []
     };
@@ -200,10 +199,10 @@ class EditTsouvenir extends React.Component {
     if (validate(this.state.formdata, this.state.oldItem, this.state.newItem)) {
       let data = {
         souv: this.state.formdata,
-        oldFile: this.state.oldItem,
-        newFile: newItem
+        oldItem: this.state.oldItem,
+        newItem: newItem
       };
-      this.props.updateTsouvenir(data);
+      this.props.updateTsouvenir(data, this.props.modalStatus);
       this.props.closeModalHandler();
     } else {
       setTimeout(() => {
@@ -233,8 +232,6 @@ class EditTsouvenir extends React.Component {
       });
     });
 
-    this.state.status === 200 &&
-      this.props.modalStatus(1, "Updated", this.state.formdata.code);
     return (
       <Modal
         isOpen={this.props.edit}
@@ -303,53 +300,63 @@ class EditTsouvenir extends React.Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {this.state.oldItem.map((oldItem, idx) => (
-                    <tr key={idx}>
-                      <td>
-                        <SelectList
-                          type="text"
-                          name="m_souvenir_id"
-                          placeholder="*Souvenir Item"
-                          value={oldItem.m_souvenir_id}
-                          onChange={this.handleOldItemChange(idx)}
-                          options={this.state.souvenirOptions}
-                          errors={oldItem.errorSouvenir}
-                        />
-                      </td>
-                      <td>
-                        <TextField
-                          type="number"
-                          name="qty"
-                          placeholder="*Qty"
-                          value={oldItem.qty}
-                          onChange={this.handleOldItemChange(idx)}
-                          errors={oldItem.errorQty}
-                        />
-                      </td>
-                      <td>
-                        <TextField
-                          type="text"
-                          name="note"
-                          id="exampleNote"
-                          class="form-control"
-                          value={oldItem.note}
-                          onChange={this.handleOldItemChange(idx)}
-                          placeholder="Note"
-                        />
-                      </td>
-                      <td>
-                        <Create
-                          className="mr-1"
-                          onClick={this.handleEditNewItem(idx)}
-                          size="small"
-                        />
-                        <Delete
-                          onClick={this.handleRemoveOldItem(idx)}
-                          size="small"
-                        />
-                      </td>
+                  {this.state.oldItem[0] === null ? (
+                    <tr className="text-center">
+                      <SpinnerTable />
                     </tr>
-                  ))}
+                  ) : this.state.oldItem.length === 0 ? (
+                    <tr className="text-center">
+                      <td colSpan="4">No Old Item Found.</td>
+                    </tr>
+                  ) : (
+                    this.state.oldItem.map((oldItem, idx) => (
+                      <tr key={idx}>
+                        <td>
+                          <SelectList
+                            type="text"
+                            name="m_souvenir_id"
+                            placeholder="*Souvenir Item"
+                            value={oldItem.m_souvenir_id}
+                            onChange={this.handleOldItemChange(idx)}
+                            options={this.state.souvenirOptions}
+                            errors={oldItem.errorSouvenir}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            type="number"
+                            name="qty"
+                            placeholder="*Qty"
+                            value={oldItem.qty}
+                            onChange={this.handleOldItemChange(idx)}
+                            errors={oldItem.errorQty}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            type="text"
+                            name="note"
+                            id="exampleNote"
+                            class="form-control"
+                            value={oldItem.note}
+                            onChange={this.handleOldItemChange(idx)}
+                            placeholder="Note"
+                          />
+                        </td>
+                        <td>
+                          <Create
+                            className="mr-1"
+                            onClick={this.handleEditNewItem(idx)}
+                            size="small"
+                          />
+                          <Delete
+                            onClick={this.handleRemoveOldItem(idx)}
+                            size="small"
+                          />
+                        </td>
+                      </tr>
+                    ))
+                  )}
                   {this.state.newItem.map((newItem, idx) => (
                     <tr>
                       <td>

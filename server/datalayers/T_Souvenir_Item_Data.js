@@ -6,63 +6,126 @@ const db = DB.getConnection();
 
 const dt = {
   //GET TRANSACTION SOUVENIR ITEM
-  readSouvenirAllHandler: callback => {
-    db.collection("t_souvenir")
-      .aggregate([
-        {
-          $lookup: {
-            from: "m_employee",
-            localField: "request_by",
-            foreignField: "employee_number",
-            as: "employee"
-          }
-        },
-        {
-          $lookup: {
-            from: "m_employee",
-            localField: "created_by",
-            foreignField: "employee_number",
-            as: "creater"
-          }
-        },
-        { $unwind: "$employee" },
-        { $unwind: "$creater" },
-        {
-          $project: {
-            code: "$code",
-            type: "$type",
-            t_event_id: "$t_event_id",
-            request_by: {
-              $concat: ["$employee.first_name", " ", "$employee.last_name"]
-            },
-            request_date: "$request_date",
-            request_due_date: "$request_due_date",
-            approved_by: "$approved_by",
-            approved_date: "$approved_date",
-            note: "$note",
-            recieved_by: "$recieved_by",
-            recieved_date: "$recieved_date",
-            settlement_approved_by: "$settlement_approved_by",
-            settlement_approved_date: "$settlement_approved_date",
-            status: "$status",
-            is_delete: "$is_delete",
-            created_by: {
-              $concat: ["$creater.first_name", " ", "$creater.last_name"]
-            },
-            created_by_code: "$created_by",
-            created_date: "$created_date",
-            updated_by: "$updated_by",
-            updated_date: "$updated_date",
-            note: "$note",
-            _id: 1
-          }
-        },
-        { $match: { is_delete: false } },
-        { $sort: { created_date: -1 } }
-      ])
-      .toArray((err, docs) => {
-        callback(docs);
-      });
+  readSouvenirAllHandler: (callback, m_role_id, m_employee_id) => {
+    if (m_role_id !== "RO0001") {
+      db.collection("t_souvenir")
+        .aggregate([
+          {
+            $lookup: {
+              from: "m_employee",
+              localField: "request_by",
+              foreignField: "employee_number",
+              as: "employee"
+            }
+          },
+          {
+            $lookup: {
+              from: "m_employee",
+              localField: "created_by",
+              foreignField: "employee_number",
+              as: "creater"
+            }
+          },
+          { $unwind: "$employee" },
+          { $unwind: "$creater" },
+          {
+            $project: {
+              code: "$code",
+              type: "$type",
+              t_event_id: "$t_event_id",
+              request_by: {
+                $concat: ["$employee.first_name", " ", "$employee.last_name"]
+              },
+              request_date: "$request_date",
+              request_due_date: "$request_due_date",
+              approved_by: "$approved_by",
+              approved_date: "$approved_date",
+              note: "$note",
+              recieved_by: "$recieved_by",
+              recieved_date: "$recieved_date",
+              settlement_approved_by: "$settlement_approved_by",
+              settlement_approved_date: "$settlement_approved_date",
+              status: "$status",
+              is_delete: "$is_delete",
+              created_by: {
+                $concat: ["$creater.first_name", " ", "$creater.last_name"]
+              },
+              created_by_code: "$creater.employee_number",
+              created_date: "$created_date",
+              updated_by: "$updated_by",
+              updated_date: "$updated_date",
+              note: "$note",
+              _id: 1
+            }
+          },
+          {
+            $match: {
+              $and: [{ created_by_code: m_employee_id }, { type: "Reduction" }]
+            }
+          },
+          { $sort: { created_date: -1 } }
+        ])
+        .toArray((err, docs) => {
+          callback(docs);
+        });
+    } else {
+      db.collection("t_souvenir")
+        .aggregate([
+          {
+            $lookup: {
+              from: "m_employee",
+              localField: "request_by",
+              foreignField: "employee_number",
+              as: "employee"
+            }
+          },
+          {
+            $lookup: {
+              from: "m_employee",
+              localField: "created_by",
+              foreignField: "employee_number",
+              as: "creater"
+            }
+          },
+          { $unwind: "$employee" },
+          { $unwind: "$creater" },
+          {
+            $project: {
+              code: "$code",
+              type: "$type",
+              t_event_id: "$t_event_id",
+              request_by: {
+                $concat: ["$employee.first_name", " ", "$employee.last_name"]
+              },
+              request_date: "$request_date",
+              request_due_date: "$request_due_date",
+              approved_by: "$approved_by",
+              approved_date: "$approved_date",
+              note: "$note",
+              recieved_by: "$recieved_by",
+              recieved_date: "$recieved_date",
+              settlement_approved_by: "$settlement_approved_by",
+              settlement_approved_date: "$settlement_approved_date",
+              status: "$status",
+              is_delete: "$is_delete",
+              created_by: {
+                $concat: ["$creater.first_name", " ", "$creater.last_name"]
+              },
+              created_by_code: "$creater.employee_number",
+              created_date: "$created_date",
+              updated_by: "$updated_by",
+              updated_date: "$updated_date",
+              note: "$note",
+              _id: 1
+            }
+          },
+          { $match: { type: "Reduction" } },
+          { $sort: { created_date: -1 } }
+        ])
+        .toArray((err, docs) => {
+          callback(docs);
+        });
+    }
   },
 
   readSouvenirItemAllHandler: callback => {

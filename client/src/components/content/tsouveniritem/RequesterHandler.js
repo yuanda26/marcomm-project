@@ -1,14 +1,13 @@
 import React from "react";
+import Grid from "@material-ui/core/Grid";
 import {
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
-  Button,
-  Input,
-  Label,
-  FormGroup,
-  Table
+  Button
+  // Label,
+  // FormGroup
 } from "reactstrap";
 import PropTypes from "prop-types";
 import {
@@ -19,15 +18,17 @@ import {
 } from "../../../actions/tsouveniritemAction";
 import { connect } from "react-redux";
 import moment from "moment";
-import ApiConfig from "../../../config/Host_Config";
+import host from "../../../config/Host_Config";
 import axios from "axios";
+import SpinnerTable from "../../common/SpinnerTable";
+import TextField from "../../common/TextField";
 
 class RequesterHandler extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       result: [],
-      item: [],
+      item: [null],
       currentTsouveniritem: {},
       qtyActual: null,
       NewItem: [],
@@ -85,7 +86,7 @@ class RequesterHandler extends React.Component {
       received_date: moment().format("YYYY-MM-DD"),
       status: 3
     };
-    this.props.putReceivedSouvenir(formdata);
+    this.props.putReceivedSouvenir(formdata, this.props.modalStatus);
     this.props.closeModalHandler();
   };
 
@@ -119,9 +120,7 @@ class RequesterHandler extends React.Component {
       status: 4
     };
     let option = {
-      url: `${ApiConfig.host}/tsouveniritemsettlement/${
-        this.props.tsouveniritem.code
-      }`,
+      url: `${host}/tsouveniritemsettlement/${this.props.tsouveniritem.code}`,
       method: "put",
       headers: {
         Authorization: localStorage.token,
@@ -138,7 +137,9 @@ class RequesterHandler extends React.Component {
         if (response.data.code === 200) {
           this.props.modalStatus(
             1,
-            "settlement submitted!",
+            `Settlement Souvenir Request with code ${
+              this.props.tsouveniritem.code
+            } has been submitted!`,
             this.props.tsouveniritem.code
           );
           this.props.history.push("/dashboard");
@@ -158,7 +159,7 @@ class RequesterHandler extends React.Component {
       code: this.props.tsouveniritem.code,
       status: 6
     };
-    this.props.putCloseOrder(formdata);
+    this.props.putCloseOrder(formdata, this.props.modalStatus);
     this.props.closeModalHandler();
   };
 
@@ -167,23 +168,9 @@ class RequesterHandler extends React.Component {
   };
 
   render() {
-    this.state.statusRS === 200 &&
-      this.props.modalStatus(1, "received", this.props.tsouveniritem.code);
-    this.state.statusSS === 200 &&
-      this.props.modalStatus(
-        1,
-        "settlement submitted",
-        this.props.tsouveniritem.code
-      );
-    this.state.statusCO === 200 &&
-      this.props.modalStatus(
-        1,
-        "request closed",
-        this.props.tsouveniritem.code
-      );
     return (
       <Modal
-        isOpen={this.props.RequesterHandler}
+        isOpen={this.props.requesterHandler}
         className={this.props.className}
       >
         {this.props.tsouveniritem.status === 2 && (
@@ -206,7 +193,41 @@ class RequesterHandler extends React.Component {
         )}
         <ModalBody>
           <div>
-            <FormGroup>
+            <Grid container spacing={24}>
+              <Grid item xs={6}>
+                Transaction Code
+                <br />
+                Event Code
+                <br />
+                Request By
+                <br />
+                Request Date
+                <br />
+                Request Due Date
+                <br />
+                Status
+                <br />
+                Note
+              </Grid>
+              <Grid item xs={6}>
+                {this.props.tsouveniritem.code}
+                <br />
+                {this.props.tsouveniritem.t_event_id}
+                <br />
+                {this.props.tsouveniritem.request_by}
+                <br />
+                {this.changeDateFormat(this.props.tsouveniritem.request_date)}
+                <br />
+                {this.changeDateFormat(
+                  this.props.tsouveniritem.request_due_date
+                )}
+                <br />
+                {this.designStatus(this.props.tsouveniritem.status)}
+                <br />
+                {this.props.tsouveniritem.note}
+              </Grid>
+            </Grid>
+            {/* <FormGroup>
               <Label for="">Transaction Code</Label>
               <Input
                 type="text"
@@ -279,167 +300,107 @@ class RequesterHandler extends React.Component {
                 value={this.designStatus(this.props.tsouveniritem.status)}
                 readOnly
               />
-            </FormGroup>
+            </FormGroup> */}
           </div>
+          <br />
           <div>
-            <h5>Souvenir Item </h5>
+            <h4>Souvenir Item </h4>
           </div>
           {this.props.tsouveniritem.status === 2 && (
-            <Table>
-              <thead>
-                <tr>
-                  <th>M Souvenir ID</th>
-                  <th>Qty</th>
-                  <th>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.func(this.state.item).map(ele => (
-                  <tr>
-                    <td>
-                      <Input
-                        type="text"
-                        name="note"
-                        placeholder={ele.m_souvenir_id}
-                        value={ele.m_souvenir_id}
-                        readOnly
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        type="text"
-                        name="note"
-                        placeholder={ele.qty}
-                        value={ele.qty}
-                        readOnly
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        type="text"
-                        name="note"
-                        placeholder={ele.note}
-                        value={ele.note}
-                        readOnly
-                      />
-                    </td>
+            <div className="table-responsive">
+              <table className="table table-stripped">
+                <thead>
+                  <tr nowrap="true">
+                    <th>M Souvenir ID</th>
+                    <th>Qty</th>
+                    <th>Note</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {this.state.item[0] === null ? (
+                    <SpinnerTable />
+                  ) : this.func(this.state.item).length === 0 ? (
+                    <div>Item Not Found</div>
+                  ) : (
+                    this.func(this.state.item).map(ele => (
+                      <tr>
+                        <td>{ele.m_souvenir_id}</td>
+                        <td>{ele.qty}</td>
+                        <td>{ele.note}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           )}
           {this.props.tsouveniritem.status === 3 && (
-            <Table>
-              <thead>
-                <tr>
-                  <th>M Souvenir ID</th>
-                  <th>Qty</th>
-                  <th>Qty Actual</th>
-                  <th>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.func(this.state.item).length === 0 ? (
-                  <div>Item Null</div>
-                ) : (
-                  this.func(this.state.item).map((ele, index) => (
-                    <tr>
-                      <td>
-                        <Input
-                          type="text"
-                          name="note"
-                          placeholder={ele.m_souvenir_id}
-                          value={ele.m_souvenir_id}
-                          readOnly
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          type="text"
-                          name="qty"
-                          placeholder={ele.qty}
-                          id=""
-                          value={ele.qty}
-                          readOnly
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          type="number"
-                          name={index}
-                          placeholder=""
-                          value={this.state.qtyActual}
-                          onChange={this.changeByIndex(ele)}
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          type="text"
-                          name="note"
-                          placeholder={ele.note}
-                          value={ele.note}
-                          readOnly
-                        />
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </Table>
+            <div className="table-responsive">
+              <table className="table table-stripped">
+                <thead>
+                  <tr>
+                    <th nowrap="true">M Souvenir ID</th>
+                    <th>Qty</th>
+                    <th>Qty Actual</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.state.item[0] === null ? (
+                    <SpinnerTable />
+                  ) : this.func(this.state.item).length === 0 ? (
+                    <div>Item Not Found</div>
+                  ) : (
+                    this.func(this.state.item).map((ele, index) => (
+                      <tr>
+                        <td>{ele.m_souvenir_id}</td>
+                        <td>{ele.qty}</td>
+                        <td>
+                          <TextField
+                            type="number"
+                            name={index}
+                            placeholder="Qty Actual"
+                            value={this.state.qtyActual}
+                            onChange={this.changeByIndex(ele)}
+                          />
+                        </td>
+                        <td>{ele.note}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           )}
           {this.props.tsouveniritem.status === 5 && (
-            <Table>
-              <thead>
-                <tr>
-                  <th>M Souvenir ID</th>
-                  <th>Qty</th>
-                  <th>Qty Actual</th>
-                  <th>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.func(this.state.item).map(ele => (
+            <div className="table-responsive">
+              <table className="table table-stripped">
+                <thead>
                   <tr>
-                    <td>
-                      <Input
-                        type="text"
-                        name="name"
-                        placeholder={ele.m_souvenir_id}
-                        value={ele.m_souvenir_id}
-                        readOnly
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        type="text"
-                        name="qty"
-                        placeholder={ele.qty}
-                        value={ele.qty}
-                        readOnly
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        type="text"
-                        name="qty actual"
-                        placeholder={ele.qty_actual}
-                        value={ele.qty_actual}
-                        readOnly
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        type="text"
-                        name="note"
-                        placeholder={ele.note}
-                        value={ele.note}
-                        readOnly
-                      />
-                    </td>
+                    <th>M Souvenir ID</th>
+                    <th>Qty</th>
+                    <th>Qty Actual</th>
+                    <th>Note</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {this.state.item[0] === null ? (
+                    <SpinnerTable />
+                  ) : this.func(this.state.item).length === 0 ? (
+                    <div>Item Not Found</div>
+                  ) : (
+                    this.func(this.state.item).map(ele => (
+                      <tr>
+                        <td>{ele.m_souvenir_id}</td>
+                        <td>{ele.qty}</td>
+                        <td>{ele.qty_actual}</td>
+                        <td>{ele.note}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           )}
         </ModalBody>
         <ModalFooter>

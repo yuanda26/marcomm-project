@@ -5,47 +5,101 @@ const db = DB.getConnection();
 const souvModel = require("../models/T_Souvenir_Item_Model");
 const dtl = {
   //GET TRANSACTION SOUVENIR
-  readSouvenirAllHandler: callback => {
-    db.collection("t_souvenir")
-      .aggregate([
-        {
-          $lookup: {
-            from: "m_employee",
-            localField: "received_by",
-            foreignField: "employee_number",
-            as: "receiver"
+  readSouvenirAllHandler: (callback, m_role_id, m_employee_id) => {
+    if (m_role_id !== "RO0001") {
+      db.collection("t_souvenir")
+        .aggregate([
+          {
+            $lookup: {
+              from: "m_employee",
+              localField: "received_by",
+              foreignField: "employee_number",
+              as: "receiver"
+            }
+          },
+          {
+            $lookup: {
+              from: "m_employee",
+              localField: "created_by",
+              foreignField: "employee_number",
+              as: "creater"
+            }
+          },
+          { $unwind: "$receiver" },
+          { $unwind: "$creater" },
+          {
+            $project: {
+              code: "$code",
+              type: "$type",
+              received_by_id: "$received_by",
+              received_by: {
+                $concat: ["$receiver.first_name", " ", "$receiver.last_name"]
+              },
+              received_date: "$received_date",
+              created_by: {
+                $concat: ["$creater.first_name", " ", "$creater.last_name"]
+              },
+              creater_by_id: "$creater.employee_number",
+              created_date: "$created_date",
+              note: "$note"
+            }
+          },
+          { $sort: { created_date: -1 } },
+          {
+            $match: {
+              $and: [{ creater_by_id: m_employee_id }, { type: "Additional" }]
+            }
           }
-        },
-        {
-          $lookup: {
-            from: "m_employee",
-            localField: "created_by",
-            foreignField: "employee_number",
-            as: "creater"
+        ])
+        .toArray((err, docs) => {
+          callback(docs);
+        });
+    } else {
+      db.collection("t_souvenir")
+        .aggregate([
+          {
+            $lookup: {
+              from: "m_employee",
+              localField: "received_by",
+              foreignField: "employee_number",
+              as: "receiver"
+            }
+          },
+          {
+            $lookup: {
+              from: "m_employee",
+              localField: "created_by",
+              foreignField: "employee_number",
+              as: "creater"
+            }
+          },
+          { $unwind: "$receiver" },
+          { $unwind: "$creater" },
+          {
+            $project: {
+              code: "$code",
+              type: "$type",
+              received_by_id: "$received_by",
+              received_by: {
+                $concat: ["$receiver.first_name", " ", "$receiver.last_name"]
+              },
+              received_date: "$received_date",
+              created_by: {
+                $concat: ["$creater.first_name", " ", "$creater.last_name"]
+              },
+              created_date: "$created_date",
+              note: "$note"
+            }
+          },
+          { $sort: { created_date: -1 } },
+          {
+            $match: { type: "Additional" }
           }
-        },
-        { $unwind: "$receiver" },
-        { $unwind: "$creater" },
-        {
-          $project: {
-            code: "$code",
-            received_by_id: "$received_by",
-            received_by: {
-              $concat: ["$receiver.first_name", " ", "$receiver.last_name"]
-            },
-            received_date: "$received_date",
-            created_by: {
-              $concat: ["$creater.first_name", " ", "$creater.last_name"]
-            },
-            created_date: "$created_date",
-            note: "$note"
-          }
-        },
-        { $sort: { created_date: -1 } }
-      ])
-      .toArray((err, docs) => {
-        callback(docs);
-      });
+        ])
+        .toArray((err, docs) => {
+          callback(docs);
+        });
+    }
   },
 
   //GET TRANSACTION SOUVENIR BY ID

@@ -44,7 +44,7 @@ class RejectRequest extends React.Component {
       reject_reason: this.state.reject_reason,
       status: 0
     };
-    this.props.adminRequestReject(formdata);
+    this.props.adminRequestReject(formdata, this.props.modalStatus);
     this.props.closeModalHandler();
   };
 

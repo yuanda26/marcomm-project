@@ -29,6 +29,7 @@ import FirstPageIcon from "@material-ui/icons/FirstPage";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import moment from "moment";
 import SpinnerTable from "../../common/SpinnerTable";
+import ReactTooltip from "react-tooltip";
 
 const actionsStyles = theme => ({
   root: {
@@ -393,27 +394,48 @@ class ListCompany extends React.Component {
                         </td>
                         <td nowrap="true">
                           {this.state.search === true && (
-                            <button
-                              className="mr-2 btn btn-primary"
-                              onClick={this.search}
-                            >
-                              <Search />
-                            </button>
+                            <a href="#!" data-tip="Search">
+                              <button
+                                className="mr-2 btn btn-primary"
+                                onClick={this.search}
+                              >
+                                <Search />
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
                           )}
                           {this.state.search === false && (
-                            <button
-                              className="mr-2 btn btn-warning"
-                              onClick={this.refreshSearch}
-                            >
-                              <Refresh />
-                            </button>
+                            <a href="#!" data-tip="Refresh Result">
+                              <button
+                                className="mr-2 btn btn-warning"
+                                onClick={this.refreshSearch}
+                              >
+                                <Refresh />
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
                           )}
-                          <button
-                            className="mr-2 btn btn-primary"
-                            onClick={this.showHandler}
-                          >
-                            <Add />
-                          </button>
+                          <a href="#!" data-tip="Add Company">
+                            <button
+                              className="mr-2 btn btn-primary"
+                              onClick={this.showHandler}
+                            >
+                              <Add />
+                            </button>
+                            <ReactTooltip
+                              place="top"
+                              type="dark"
+                              effect="solid"
+                            />
+                          </a>
                         </td>
                       </tr>
                     </thead>
@@ -452,25 +474,40 @@ class ListCompany extends React.Component {
                               </td>
                               <td>{company.created_by}</td>
                               <td nowrap="true">
-                                <Link to="#">
+                                <Link to="#" data-tip="View Company">
                                   <RemoveRedEye
                                     onClick={() => {
                                       this.viewModalHandler(company._id);
                                     }}
                                   />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
                                 </Link>
-                                <Link to="#">
+                                <Link to="#" data-tip="Update Company">
                                   <Create
                                     onClick={() => {
                                       this.editModalHandler(company._id);
                                     }}
                                   />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
                                 </Link>
-                                <Link to="#">
+                                <Link to="#" data-tip="Delete Company">
                                   <Delete
                                     onClick={() => {
                                       this.deleteModalHandler(company._id);
                                     }}
+                                  />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
                                   />
                                 </Link>
                               </td>
