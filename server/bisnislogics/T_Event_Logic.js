@@ -118,7 +118,7 @@ const tEventBisnislogic = {
     const eventId = req.params.eventId;
     const approveData = {
       assign_to: req.body.assign_to,
-      status: 2,
+      status: "2",
       approved_by: req.body.approved_by,
       approved_date: moment().format("DD/MM/YYYY"),
       updated_by: req.body.updated_by,
@@ -136,7 +136,7 @@ const tEventBisnislogic = {
   closeHandler: (req, res, next) => {
     const eventId = req.params.eventId;
     const closeData = {
-      status: 3,
+      status: "3",
       updated_by: req.body.updated_by,
       updated_date: moment().format("DD/MM/YYYY"),
       closed_date: moment().format("DD/MM/YYYY")
