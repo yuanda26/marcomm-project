@@ -188,6 +188,7 @@ module.exports = server => {
   server.put("/api/event/:eventId", event.updateHandler);
   server.del("/api/event/:eventId", event.deleteHandler);
   server.put("/api/event/approve/:eventId", authenticate, event.approveHandler);
+  server.put("/api/event/reject/:eventId", authenticate, event.rejectHandler);
   server.put("/api/event/close/:eventId", authenticate, event.closeHandler);
   //== End of T Event Route
 

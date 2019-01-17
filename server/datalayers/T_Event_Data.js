@@ -281,6 +281,19 @@ const tEventDatalayer = {
       }
     );
   },
+  rejectData: (callback, eventId, rejectData) => {
+    db.collection("t_event").updateOne(
+      { _id: new objectId(eventId) },
+      { $set: rejectData },
+      (err, result) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(rejectData);
+        }
+      }
+    );
+  },
   closeData: (callback, eventId, closeData) => {
     db.collection("t_event").updateOne(
       { _id: new objectId(eventId) },

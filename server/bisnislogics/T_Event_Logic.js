@@ -133,6 +133,23 @@ const tEventBisnislogic = {
       approveData
     );
   },
+  rejectHandler: (req, res, next) => {
+    const eventId = req.params.eventId;
+    const rejectData = {
+      status: "0",
+      reject_reason: req.body.reject_reason,
+      updated_by: req.body.updated_by,
+      updated_date: moment().format("DD/MM/YYYY")
+    };
+
+    dtl.rejectData(
+      items => {
+        responseHelper.sendResponse(res, 200, items);
+      },
+      eventId,
+      rejectData
+    );
+  },
   closeHandler: (req, res, next) => {
     const eventId = req.params.eventId;
     const closeData = {
