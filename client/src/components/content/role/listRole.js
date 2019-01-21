@@ -26,6 +26,8 @@ import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import Spinner from "../../common/Spinner";
+import ReactTooltip from "react-tooltip";
+
 const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
@@ -383,29 +385,51 @@ class ListRole extends React.Component {
                         </td>
                         <td>
                           {this.state.number % 2 === 0 ? (
-                            <button
-                              className="btn btn-primary btn-block"
-                              onClick={this.search}
-                            >
-                              <Search />
-                            </button>
+                            <a href="#!" data-tip="Search">
+                              <button
+                                className="btn btn-primary btn-block"
+                                onClick={this.search}
+                              >
+                                <Search />
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
                           ) : (
-                            <button
-                              onClick={this.refresh}
-                              className="btn btn-warning btn-block"
-                            >
-                              <Refresh />
-                            </button>
+                            <a href="#!" data-tip="Refresh Search">
+                              <button
+                                onClick={this.refresh}
+                                className="btn btn-warning btn-block"
+                              >
+                                <Refresh />
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
                           )}
                         </td>
                         <td>
                           <div className="mb-2">
-                            <button
-                              onClick={this.showHandler}
-                              className="btn btn-primary"
-                            >
-                              <Add />
-                            </button>
+                            <a href="#!" data-tip="Add Role">
+                              <button
+                                onClick={this.showHandler}
+                                className="btn btn-primary"
+                              >
+                                <Add />
+
+                                <ReactTooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
+                              </button>
+                            </a>
                           </div>
                         </td>
                       </tr>
@@ -437,34 +461,40 @@ class ListRole extends React.Component {
                           )
                           .map(content => (
                             <tr className="text-center" key={content.code}>
-                              <td>{content.code}</td>
-                              <td>{content.name}</td>
-                              <td>{content.created_by}</td>
-                              <td>
-                                {moment(content.created_date).format(
-                                  "DD/MM/YYYY"
-                                )}
-                              </td>
-                              <td>
-                                <Link to="#">
+                              <td nowrap="true">{content.code}</td>
+                              <td nowrap="true">{content.name}</td>
+                              <td nowrap="true">{content.created_by}</td>
+                              <td nowrap="true">{content.created_date}</td>
+                              <td nowrap="true">
+                                <Link to="#" data-tip="View role">
                                   <SearchIcon
                                     onClick={() => {
                                       this.viewModalHandler(content._id);
                                     }}
                                   />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
                                 </Link>
-                                <Link to="#">
+                                <Link to="#" data-tip="Edit Role">
                                   <CreateOutlinedIcon
                                     onClick={() => {
                                       this.editModalHandler(content._id);
                                     }}
                                   />
                                 </Link>
-                                <Link to="#">
+                                <Link to="#" data-tip="Delete Role">
                                   <DeleteOutlinedIcon
                                     onClick={() => {
                                       this.deleteModalHandler(content._id);
                                     }}
+                                  />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
                                   />
                                 </Link>
                               </td>

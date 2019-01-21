@@ -9,6 +9,7 @@ import Grid from "@material-ui/core/Grid";
 import SaveOutlinedIcon from "@material-ui/icons/SaveAltOutlined";
 import { getAllEmployee } from "../../../actions/employeeAction";
 import RejectPromotion from "./RejectPromotion";
+import ReactTooltip from "react-tooltip";
 class addPromotionD extends React.Component {
   constructor(props) {
     super(props);
@@ -120,12 +121,16 @@ class addPromotionD extends React.Component {
   }
   // <<----------------------------RENDER---------------------------->>
   render() {
-    const selectAssign = this.props.employee.myEmployee.map(content => {
-      return {
-        value: content.employee_number,
-        label: content.first_name
-      };
-    });
+    const selectAssign = this.props.employee.myEmployee
+      .map(content => {
+        if (content.role === "RO0006") {
+          return {
+            value: content.employee_number,
+            label: content.first_name
+          };
+        } else return null;
+      })
+      .filter(a => a !== null);
     return (
       // Header Setting
       <div class="container-fluid">
@@ -388,14 +393,21 @@ class addPromotionD extends React.Component {
                             />
                           </td>
                           <td>
-                            <button
-                              class="btn btn-primary"
-                              onClick={() => {
-                                window.location.href = "/promotion";
-                              }}
-                            >
-                              <SaveOutlinedIcon />
-                            </button>
+                            <a href="#!" data-tip="Download File">
+                              <button
+                                class="btn btn-primary"
+                                onClick={() => {
+                                  window.location.href = "/promotion";
+                                }}
+                              >
+                                <SaveOutlinedIcon />
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
                           </td>
                         </tr>
                       ))}

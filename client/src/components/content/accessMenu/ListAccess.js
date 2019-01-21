@@ -27,6 +27,7 @@ import CreateOutlinedIcon from "@material-ui/icons/Create";
 import moment from "moment";
 import Spinner from "../../common/Spinner";
 import { Search, Refresh } from "@material-ui/icons";
+import ReactTooltip from "react-tooltip";
 const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
@@ -339,7 +340,9 @@ class ListAccess extends React.Component {
         <div className="row">
           <div className="col-md-12">
             <div className="card border-primary mb-3">
-              <div className="card-header lead">List Menu Access</div>
+              <div className="card-header lead bg-primary text-white">
+                List Menu Access
+              </div>
               <div className="card-body">
                 <nav aria-label="breadcrumb mb-4">
                   <ol className="breadcrumb">
@@ -410,19 +413,33 @@ class ListAccess extends React.Component {
                           </td>
                           <td>
                             {this.state.number % 2 === 0 ? (
-                              <button
-                                className="btn btn-primary"
-                                onClick={this.search}
-                              >
-                                <Search />
-                              </button>
+                              <a href="#!" data-tip="Search">
+                                <button
+                                  className="btn btn-primary"
+                                  onClick={this.search}
+                                >
+                                  <Search />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </button>
+                              </a>
                             ) : (
-                              <button
-                                onClick={this.refresh}
-                                className="btn btn-warning"
-                              >
-                                <Refresh />
-                              </button>
+                              <a href="#!" data-tip="Refresh Search">
+                                <button
+                                  onClick={this.refresh}
+                                  className="btn btn-warning"
+                                >
+                                  <Refresh />
+                                </button>
+                                <ReactTooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
+                              </a>
                             )}
                           </td>
                         </tr>
@@ -446,36 +463,47 @@ class ListAccess extends React.Component {
                           .map(row => {
                             return (
                               <tr key={row._id} className="text-center">
-                                <td>{row.code}</td>
-                                <td>{row.name}</td>
-                                <td>{row.created_by}</td>
-                                <td>
-                                  {moment(row.created_date).format(
-                                    "DD/MM/YYYY"
-                                  )}
-                                </td>
-                                <td>
-                                  <Link to="#">
+                                <td nowrap="true">{row.code}</td>
+                                <td nowrap="true">{row.name}</td>
+                                <td nowrap="true">{row.created_by}</td>
+                                <td nowrap="true">{row.created_date}</td>
+                                <td nowrap="true">
+                                  <Link to="#" data-tip="View Access">
                                     <SearchIcon
                                       onClick={() => {
                                         this.getTheAccess(row.code);
                                         this.showHandler2(row.name, row.code);
                                       }}
                                     />
+                                    <ReactTooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
+                                    />
                                   </Link>
-                                  <Link to="#">
+                                  <Link to="#" data-tip="Edit Access">
                                     <CreateOutlinedIcon
                                       onClick={() => {
                                         this.getTheAccess(row.code);
                                         this.showHandler(row.name, row.code);
                                       }}
                                     />
+                                    <ReactTooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
+                                    />
                                   </Link>
-                                  <Link to="#">
+                                  <Link to="#" data-tip="Delete Role">
                                     <DeleteOutlinedIcon
                                       onClick={() => {
                                         this.deleteModalHandler(row._id);
                                       }}
+                                    />
+                                    <ReactTooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
                                     />
                                   </Link>
                                 </td>

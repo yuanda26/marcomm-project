@@ -152,47 +152,43 @@ class CreateAccess extends React.Component {
                   <TableFooter>
                     {half.map((content, id) => {
                       return id === 0 ? (
-                        <TableCell key={content._id}>
+                        <TableCell key={id.toString()}>
                           {this.state.menu.map((row, index) =>
                             index < this.state.menu.length / 2 ? (
-                              <TableRow>
+                              <TableRow key={index.toString()}>
                                 <FormControlLabel
                                   control={
                                     <Checkbox
                                       onChange={this.handleChange(
                                         String(row.name)
                                       )}
-                                      value={index}
+                                      value={index.toString()}
                                     />
                                   }
                                   label={row.name}
                                 />
                               </TableRow>
-                            ) : (
-                              <div />
-                            )
+                            ) : null
                           )}
                         </TableCell>
                       ) : (
-                        <TableCell>
+                        <TableCell key={id.toString()}>
                           {this.state.menu.map((row, index) =>
                             index >= this.state.menu.length / 2 ? (
-                              <TableRow>
+                              <TableRow key={index.toString()}>
                                 <FormControlLabel
                                   control={
                                     <Checkbox
                                       onChange={this.handleChange(
                                         String(row.name)
                                       )}
-                                      value={index}
+                                      value={index.toString()}
                                     />
                                   }
                                   label={row.name}
                                 />
                               </TableRow>
-                            ) : (
-                              <div />
-                            )
+                            ) : null
                           )}
                         </TableCell>
                       );

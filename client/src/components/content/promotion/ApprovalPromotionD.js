@@ -14,6 +14,7 @@ import Grid from "@material-ui/core/Grid";
 import SaveOutlinedIcon from "@material-ui/icons/SaveAltOutlined";
 import { getAllEmployee } from "../../../actions/employeeAction";
 import RejectPromotion from "./RejectPromotion";
+import ReactTooltip from "react-tooltip";
 class addPromotionD extends React.Component {
   constructor(props) {
     super(props);
@@ -131,12 +132,16 @@ class addPromotionD extends React.Component {
   }
   // <<----------------------------RENDER---------------------------->>
   render() {
-    const selectAssign = this.props.employee.myEmployee.map(content => {
-      return {
-        value: content.employee_number,
-        label: content.first_name
-      };
-    });
+    const selectAssign = this.props.employee.myEmployee
+      .map(content => {
+        if (content.role === "RO0006") {
+          return {
+            value: content.employee_number,
+            label: content.first_name
+          };
+        } else return null;
+      })
+      .filter(a => a !== null);
     return (
       // Header Setting
       <div class="container-fluid">
@@ -423,24 +428,23 @@ class addPromotionD extends React.Component {
               }`}</h6>
               <hr />
               <div class="table-responsive">
-                <table class="table-borderless table-sm">
+                <table class="table table-borderless">
                   <thead>
-                    <tr>
-                      <th>Product Name</th>
-                      <th>Descripton</th>
-                      <th>Title</th>
-                      <th>Qty</th>
-                      <th>Todo</th>
-                      <th>Due Date</th>
-                      <th>Start Date</th>
-                      <th>End Date</th>
-                      <th>Note</th>
-                      <th />
+                    <tr className="text-center font-weight-bold">
+                      <td nowrap="true">Product Name</td>
+                      <td nowrap="true">Descripton</td>
+                      <td nowrap="true">Title</td>
+                      <td nowrap="true">Qty</td>
+                      <td nowrap="true">Todo</td>
+                      <td nowrap="true">Due Date</td>
+                      <td nowrap="true">Start Date</td>
+                      <td nowrap="true">End Date</td>
+                      <td nowrap="true">Note</td>
                     </tr>
                   </thead>
                   {this.state.designItem.map((content, index) => (
                     <tr>
-                      <td>
+                      <td nowrap="true">
                         <input
                           type="text"
                           class="form-control"
@@ -448,7 +452,7 @@ class addPromotionD extends React.Component {
                           disabled
                         />
                       </td>
-                      <td>
+                      <td nowrap="true">
                         <input
                           type="text"
                           class="form-control"
@@ -456,7 +460,7 @@ class addPromotionD extends React.Component {
                           disabled
                         />
                       </td>
-                      <td>
+                      <td nowrap="true">
                         <input
                           type="text"
                           class="form-control"
@@ -464,7 +468,7 @@ class addPromotionD extends React.Component {
                           disabled
                         />
                       </td>
-                      <td>
+                      <td nowrap="true">
                         <input
                           type="text"
                           class="form-control"
@@ -472,7 +476,7 @@ class addPromotionD extends React.Component {
                           disabled
                         />
                       </td>
-                      <td>
+                      <td nowrap="true">
                         <input
                           type="text"
                           class="form-control"
@@ -480,7 +484,7 @@ class addPromotionD extends React.Component {
                           disabled
                         />
                       </td>
-                      <td>
+                      <td nowrap="true">
                         <input
                           type="text"
                           class="form-control"
@@ -488,7 +492,7 @@ class addPromotionD extends React.Component {
                           disabled
                         />
                       </td>
-                      <td>
+                      <td nowrap="true">
                         <input
                           type="date"
                           class="form-control"
@@ -496,7 +500,7 @@ class addPromotionD extends React.Component {
                           disabled
                         />
                       </td>
-                      <td>
+                      <td nowrap="true">
                         <input
                           type="date"
                           class="form-control"
@@ -504,7 +508,7 @@ class addPromotionD extends React.Component {
                           disabled
                         />
                       </td>
-                      <td>
+                      <td nowrap="true">
                         <input
                           type="text"
                           class="form-control"
@@ -513,14 +517,22 @@ class addPromotionD extends React.Component {
                         />
                       </td>
                       <td>
-                        <button
-                          class="btn btn-primary"
-                          onClick={() => {
-                            window.location.href = "/promotion";
-                          }}
-                        >
-                          <SaveOutlinedIcon />
-                        </button>
+                        <a href="#!" data-tip="Download File">
+                          <button
+                            class="btn btn-primary"
+                            onClick={() => {
+                              window.location.href = "/promotion";
+                            }}
+                          >
+                            <SaveOutlinedIcon />
+                          </button>
+
+                          <ReactTooltip
+                            place="top"
+                            type="dark"
+                            effect="solid"
+                          />
+                        </a>
                       </td>
                     </tr>
                   ))}
@@ -612,14 +624,22 @@ class addPromotionD extends React.Component {
                             />
                           </td>
                           <td>
-                            <button
-                              class="btn btn-primary"
-                              onClick={() => {
-                                window.location.href = "/promotion";
-                              }}
-                            >
-                              <SaveOutlinedIcon />
-                            </button>
+                            <a href="#!" data-tip="Download File">
+                              <button
+                                class="btn btn-primary"
+                                onClick={() => {
+                                  window.location.href = "/promotion";
+                                }}
+                              >
+                                <SaveOutlinedIcon />
+
+                                <ReactTooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
+                              </button>
+                            </a>
                           </td>
                         </tr>
                       ))}
