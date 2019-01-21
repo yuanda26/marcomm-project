@@ -135,29 +135,15 @@ const designData = {
       }
     );
   },
-  closeRequestData: (callback, data, code) => {
-    db.collection("t_design").updateOne(
-      { code: code },
-      { $set: data },
-      (err, docs) => {
-        // Return Data to Callback
-        if (err) {
-          callback(err);
-        } else {
-          callback(data);
-        }
-      }
-    );
-  },
-  uploadItemFiles: (callback, formdata) => {
-    let designFile = formdata.map(data => new T_Design_File(data));
+  closeRequestData: (callback, formdata) => {
+    let closeData = formdata.map(data => new T_Design_File(data));
 
-    db.collection("t_design_item_file").insertMany(designFile, (err, docs) => {
+    db.collection("t_design_item_file").insertMany(closeData, (err, docs) => {
       // Return Data to Callback
       if (err) {
         callback(err);
       } else {
-        callback(designFile);
+        callback(closeData);
       }
     });
   },

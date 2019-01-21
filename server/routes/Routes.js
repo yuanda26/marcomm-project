@@ -108,7 +108,7 @@ module.exports = server => {
   server.put(
     "/api/design/close/:code",
     authenticate,
-    tDesignLogic.closeReqHandler
+    tDesignLogic.closeDesignHandler
   );
   server.get(
     "/api/design/files/:itemId",

@@ -7,9 +7,13 @@ const T_Design_Logic = {
     const roleId = req.params.roleId;
     const employeeId = req.params.employeeId;
 
-    designData.readAllData(design => {
-      responseHelper.sendResponse(res, 200, design);
-    }, roleId, employeeId);
+    designData.readAllData(
+      design => {
+        responseHelper.sendResponse(res, 200, design);
+      },
+      roleId,
+      employeeId
+    );
   },
   readByCodeHandler: (req, res, next) => {
     const code = req.params.code;
@@ -143,16 +147,12 @@ const T_Design_Logic = {
       code
     );
   },
-  closeReqHandler: (req, res, next) => {
-    const code = req.params.code;
+  closeDesignHandler: (req, res, next) => {
+    const closeData = req.body;
 
-    designData.closeRequestData(
-      items => {
-        responseHelper.sendResponse(res, 200, items);
-      },
-      { status: 3 },
-      code
-    );
+    designData.closeRequestData(items => {
+      responseHelper.sendResponse(res, 200, items);
+    }, closeData);
   },
   createDesignItemFile: (req, res, next) => {
     let data = req.body.data;
