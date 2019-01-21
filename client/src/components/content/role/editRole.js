@@ -53,43 +53,45 @@ class EditRole extends React.Component {
         <ModalBody>
           <div className="table-responsive">
             <table className="table table-borderless">
-              <tr>
-                <td nowrap="true">Role Code</td>
-                <td>
-                  <input
-                    type="text"
-                    className="form-control"
-                    readOnly
-                    name="code"
-                    value={this.state.formdata.code}
-                    onChange={this.changeHandler}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td nowrap="true">Role Name</td>
-                <td>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="name"
-                    value={this.state.formdata.name}
-                    onChange={this.changeHandler}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td nowrap="true">Description</td>
-                <td>
-                  <textarea
-                    type="text"
-                    className="form-control"
-                    name="description"
-                    value={this.state.formdata.description}
-                    onChange={this.changeHandler}
-                  />
-                </td>
-              </tr>
+              <tbody>
+                <tr>
+                  <td nowrap="true">Role Code</td>
+                  <td>
+                    <input
+                      type="text"
+                      className="form-control"
+                      readOnly
+                      name="code"
+                      value={this.state.formdata.code}
+                      onChange={this.changeHandler}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td nowrap="true">Role Name</td>
+                  <td>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="name"
+                      value={this.state.formdata.name}
+                      onChange={this.changeHandler}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td nowrap="true">Description</td>
+                  <td>
+                    <textarea
+                      type="text"
+                      className="form-control"
+                      name="description"
+                      value={this.state.formdata.description}
+                      onChange={this.changeHandler}
+                    />
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </ModalBody>
