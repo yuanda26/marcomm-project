@@ -123,29 +123,33 @@ const tEventDatalayer = {
 	},
 
 	getEmployee : (callback, param) => {
-		let newName = param.split(" ")
-		let first_name = ""
-		let last_name = ""
-		newName.map((row, index)=>{
-			if(index == 0){
-				first_name = row
-			}else{
-				last_name += row
-				if(newName.length > 1 && index < newName.length-1){
-					last_name += " "
-				}
-			}
-		})
-		db.collection('m_employee').findOne({ 
-			first_name : new RegExp(first_name), 
-			last_name : new RegExp(last_name) 
-			}, (err, docs) => {
-				if(err){
-					callback(first_name + " " + last_name)
+		if(param === ""){
+			callback(param)
+		}else{
+			let newName = param.split(" ")
+			let first_name = ""
+			let last_name = ""
+			newName.map((row, index)=>{
+				if(index == 0){
+					first_name = row
 				}else{
-					callback(docs)
+					last_name += row
+					if(newName.length > 1 && index < newName.length-1){
+						last_name += " "
+					}
 				}
-		})
+			})
+			db.collection('m_employee').findOne({ 
+				first_name : new RegExp(first_name), 
+				last_name : new RegExp(last_name) 
+				}, (err, docs) => {
+					if(err){
+						callback(first_name + " " + last_name)
+					}else{
+						callback(docs)
+					}
+			})
+		}
 	},
 
 	// code, request_by, request_date, status, created_date, created_by

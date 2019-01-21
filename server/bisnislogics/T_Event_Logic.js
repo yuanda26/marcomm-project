@@ -32,10 +32,10 @@ const tEventBisnislogic = {
 		}
 		dtl.getUser((user) => {
 			let created_by = "";
-			user === null || user === undefined ? ( created_by = paramUser ) : ( created_by = user.m_employee_id )
+			user === null || user === undefined || user === "" ? ( created_by = paramUser ) : ( created_by = user.m_employee_id )
 			dtl.getEmployee((employee)=>{
 				let request_by = "";
-				employee === null ? ( request_by = paramEmployee ) : ( request_by = employee.employee_number )
+				employee === null || employee === undefined || employee === "" ? ( request_by = paramEmployee ) : ( request_by = employee.employee_number )
 				dtl.searchHandlerData((items) => {
 					responseHelper.sendResponse(res, 200, items);
 				}, code, request_by, request_date, status, created_date, created_by);
