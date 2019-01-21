@@ -1,15 +1,6 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import {
-  Col,
-  Row,
-  FormGroup,
-  Label,
-  Input,
-  Button
-  // FormFeedback,
-  // Form
-} from "reactstrap";
+import { Button } from "reactstrap";
 import { Alert } from "reactstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -18,10 +9,10 @@ import { getAllSouvenir } from "../../../actions/souvenirAction";
 import { getAllEmployee } from "../../../actions/tsouvenirAction";
 import TextFieldGroup from "../../common/TextFieldGroup";
 import TextAreaGroup from "../../common/TextAreaGroup";
-import SelectList from "../../common/SelectListGroup";
+import SelectListGroup from "../../common/SelectListGroup";
+import SelectList from "../../common/SelectList";
 import isEmpty from "../../../validation/isEmpty";
-import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
-import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
+import { Delete, Create } from "@material-ui/icons";
 import moment from "moment";
 
 class CreateTsouvenir extends React.Component {
@@ -38,12 +29,10 @@ class CreateTsouvenir extends React.Component {
         message: ""
       },
       labelWidth: 0,
-      selectedOption: "",
-      selectedOption2: "",
       employee: [],
-      souvenirs: [],
       userdata: {},
-      invalidReceivedDate: false
+      invalidReceivedDate: false,
+      souvenirOptions: []
     };
 
     this.submitHandler = this.submitHandler.bind(this);
@@ -57,49 +46,59 @@ class CreateTsouvenir extends React.Component {
 
   componentWillReceiveProps(newProps) {
     this.setState({
-      souvenirs: newProps.souvenirReducer.souvenirs,
       employee: newProps.employeeReducer.myEmployee,
       status: newProps.tsouvenirReducer.statusADD,
-      userdata: newProps.auth.user
+      userdata: newProps.auth.user,
+      souvenirOptions: [{ label: "*Select Souvenir", value: "" }].concat(
+        newProps.souvenirReducer.souvenirs.map(row => ({
+          label: row.name,
+          value: row.code
+        }))
+      )
     });
   }
 
   changeHandler(e) {
-    if (
-      e.target.name === "received_date" &&
-      moment(e.target.value) < moment().subtract(1, "day")
-    ) {
-      this.setState({
-        invalidReceivedDate: true
-      });
-    } else {
-      this.setState({
-        invalidReceivedDate: false
-      });
-    }
-    if (e.target.name === "recieved_by") {
+    if (e.target.name === "received_by") {
       this.setState({ errorReceivedBy: "" });
     }
     if (e.target.name === "received_date") {
       this.setState({ errorReceivedDate: "" });
     }
+
+    if (
+      e.target.name === "received_date" &&
+      moment(e.target.value) < moment().subtract(1, "day")
+    ) {
+      this.setState({
+        errorReceivedDate: "Received date must be after today"
+      });
+    }
+
     this.setState({
       [e.target.name]: e.target.value
     });
   }
 
-  handleShareholderItemChange = idx => evt => {
+  handleShareholderItemChange = idx => event => {
+    // Clear Error State Message
+    const errors = {};
+    if (event.target.name === "m_souvenir_id") {
+      errors.errorSouvenir = "";
+    }
+    if (event.target.name === "qty") {
+      errors.errorQty = "";
+    }
+
     const newShareholders = this.state.item.map((shareholder, sidx) => {
       if (idx !== sidx) return shareholder;
-      return { ...shareholder, [evt.target.name]: evt.target.value };
+      return {
+        ...shareholder,
+        ...errors,
+        [event.target.name]: event.target.value
+      };
     });
-
     this.setState({ item: newShareholders });
-  };
-
-  handleSubmit = evt => {
-    const { item, shareholders } = this.state;
-    alert(`Incorporated: ${item} with ${shareholders.length} shareholders`);
   };
 
   handleAddItem = () => {
@@ -111,15 +110,15 @@ class CreateTsouvenir extends React.Component {
           note: "",
           created_by: this.state.userdata.m_employee_id,
           disable: true,
-          readOnly: true
+          readOnly: true,
+          errorSouvenir: "",
+          errorQty: ""
         }
-      ])
-    });
-  };
-
-  handleRemoveItem = idx => () => {
-    this.setState({
-      item: this.state.item.filter((s, sidx) => idx !== sidx)
+      ]),
+      alertData: {
+        status: false,
+        message: ""
+      }
     });
   };
 
@@ -136,145 +135,209 @@ class CreateTsouvenir extends React.Component {
     this.setState({ item: newShareholders });
   };
 
-  handleChange1 = selectedOption => {
+  handleRemoveItem = idx => () => {
     this.setState({
-      selectedOption,
-      received_by: selectedOption.value
+      item: this.state.item.filter((s, sidx) => idx !== sidx)
     });
+    this.closeModal();
   };
 
-  handleChange2 = selectedOption2 => {
-    this.setState({
-      selectedOption2,
-      shareholder: selectedOption2.value
+  validateDuplicateItem = input => {
+    let duplicate = { status: false, index: null };
+    input.forEach((content, i) => {
+      input.forEach((element, index) => {
+        if (element.m_souvenir_id === content.m_souvenir_id && i !== index)
+          duplicate = { status: true, index: [index, i] };
+      });
     });
+    return duplicate;
   };
-
-  validateQty(qty) {
-    let regex = new RegExp(/[0-9-]/);
-    return regex.test(qty);
-  }
 
   submitHandler() {
-    const formdata = {
-      code: this.state.code,
-      received_by: this.state.received_by,
-      received_date: this.state.received_date,
-      note: this.state.note,
-      created_by: this.state.userdata.m_employee_id
-    };
-
-    let dataItem = this.state.item.map((content, index) => {
-      return {
-        m_souvenir_id: content.m_souvenir_id,
-        qty: parseInt(content.qty),
-        note: content.note,
-        created_by: content.created_by,
-        created_date: content.created_date,
-        is_delete: false
-      };
-    });
-
     if (isEmpty(this.state.received_by)) {
       this.setState({ errorReceivedBy: "This Field is Required" });
-    } else if (isEmpty(this.state.received_date)) {
-      this.setState({ errorReceivedBy: "This Field is Required" });
-    } else if (moment(this.state.received_date) < moment().subtract(1, "day")) {
-      alert("Pilih Tnaggal Baru");
-    } else {
-      let error = 0;
-      let sama = false;
-      this.state.item.forEach((item, index) => {
-        if (item.m_souvenir_id === "") {
-          error = 1;
-        } else if (item.qty === "") {
-          error = 2;
-        } else if (this.validateQty(item.qty) === false) {
-          error = 3;
+    }
+    if (isEmpty(this.state.received_date)) {
+      this.setState({ errorReceivedDate: "This Field is Required" });
+    }
+    if (moment(this.state.received_date) < moment().subtract(1, "day")) {
+      this.setState({ errorReceivedDate: "Received date must be after today" });
+    }
+
+    // Souvenir Item Form Validation
+    // Set Error Counter
+    let errorCounter = 0;
+    this.state.item.forEach((item, idx) => {
+      const items = this.state.item;
+      // Check for Empty Souvenir Name
+      if (isEmpty(item.m_souvenir_id)) {
+        errorCounter += 1;
+        items[idx].errorSouvenir = "This Field is Required!";
+        this.setState({ items });
+      }
+      // Check for Empty Qty
+      if (isEmpty(item.qty)) {
+        errorCounter += 1;
+        items[idx].errorQty = "This Field is Required!";
+        this.setState({ items });
+      }
+      // Check Duplicate Item
+      if (this.validateDuplicateItem(this.state.item).status === true) {
+        let a = this.validateDuplicateItem(this.state.item).index[0];
+        let b = this.validateDuplicateItem(this.state.item).index[1];
+        errorCounter += 1;
+        items[a].errorSouvenir = "Can't Add Same Item Twice!";
+        items[b].errorSouvenir = "Can't Add Same Item Twice!";
+        this.setState({ items });
+      }
+    });
+
+    // Validate min one item to added
+    if (this.state.item.length === 0) {
+      this.setState({
+        alertData: {
+          status: true,
+          message: "Add minimal one item!"
         }
       });
-      if (error === 1) {
-        this.setState({
-          alertData: {
-            status: true,
-            message: "Souvenir item form must be filled!"
-          }
-        });
-      } else if (error === 2) {
-        this.setState({
-          alertData: {
-            status: true,
-            message: "Qty item form must be filled!"
-          }
-        });
-      } else if (error === 3) {
-        this.setState({
-          alertData: {
-            status: true,
-            message: "Qty input only number!"
-          }
-        });
-      } else {
-        let i;
-        let j;
-        for (i = 0; i <= this.state.item.length - 1; i++) {
-          for (j = 0; j <= this.state.item.length - 1; j++) {
-            if (i === j) {
-              error = 0;
-            } else {
-              if (
-                this.state.item[i].m_souvenir_id ===
-                this.state.item[j].m_souvenir_id
-              ) {
-                sama = true;
-              } else {
-                sama = false;
-              }
-            }
-          }
-        }
-        if (sama === true) {
-          this.setState({
-            alertData: {
-              status: true,
-              message: "Item sudah ditambahkan!"
-            }
-          });
-        } else {
-          this.setState({
-            alertData: {
-              status: false,
-              message: ""
-            }
-          });
-          let datas = [formdata, dataItem];
-          this.props.createTsouvenir(datas);
-          this.props.closeHandler();
-        }
-      }
+    }
+
+    // let duplicateItem = false;
+    // let i, j;
+    // for (i = 0; i <= this.state.item.length - 1; i++) {
+    //   for (j = 0; j <= this.state.item.length - 1; j++) {
+    //     if (i === j) {
+    //       duplicateItem = false;
+    //     } else {
+    //       if (
+    //         this.state.item[i].m_souvenir_id ===
+    //         this.state.item[j].m_souvenir_id
+    //       ) {
+    //         duplicateItem = true;
+    //       } else {
+    //         duplicateItem = false;
+    //       }
+    //     }
+    //   }
+    // }
+    // if (duplicateItem === true) {
+    //   this.setState({
+    //     alertData: {
+    //       status: true,
+    //       message: "Item sudah ditambahkan!"
+    //     }
+    //   });
+    // } else {
+    //   this.setState({
+    //     alertData: {
+    //       status: false,
+    //       message: ""
+    //     }
+    //   });
+    // }
+
+    if (
+      !isEmpty(this.state.received_by) &&
+      !isEmpty(this.state.received_date) &&
+      !moment(this.state.received_date) < moment().subtract(1, "day") &&
+      this.state.item.length > 0 &&
+      //duplicateItem === false &&
+      errorCounter === 0
+    ) {
+      const formdata = {
+        code: this.state.code,
+        received_by: this.state.received_by,
+        received_date: this.state.received_date,
+        note: this.state.note,
+        created_by: this.state.userdata.m_employee_id
+      };
+      let dataItem = this.state.item.map((content, index) => {
+        return {
+          m_souvenir_id: content.m_souvenir_id,
+          qty: parseInt(content.qty),
+          note: content.note,
+          created_by: content.created_by,
+          created_date: content.created_date,
+          is_delete: false
+        };
+      });
+      let datas = [formdata, dataItem];
+      this.props.createTsouvenir(datas, this.props.modalStatus);
+      this.props.closeHandler();
     }
   }
 
+  handleRemoveModal = () => {
+    this.setState({ deleteModal: true });
+  };
+
+  closeModal = () => {
+    this.setState({
+      deleteModal: false
+    });
+  };
+
+  filterOption = item => {
+    let first = this.state.souvenirOptions;
+    let whatFilter = item.map(content => content.m_souvenir_id);
+    for (let i = 0; i < whatFilter.length; i++) {
+      first = first.filter(content => content.value !== whatFilter[i]);
+    }
+    console.log("ini", first);
+    return first;
+  };
+
+  theOption = (all, len, arr) => {
+    let proto = Array.from(Array(len), () => {
+      let index = 0;
+      return Array.from(Array(all.length), () => {
+        let data = {
+          label: all[index].label,
+          value: all[index].value
+        };
+        index++;
+        return data;
+      });
+    });
+    for (let i = 0; i < arr.length; i++) {
+      proto = proto.map(content => content.filter(row => row.value !== arr[i]));
+    }
+    console.log({
+      semua: all,
+      panjang: len,
+      dipilih: arr,
+      akhir: proto
+    });
+    return proto[len - 1];
+  };
+
   render() {
-    const options1 = [];
-    options1.push({ label: "*Select Received By", value: "" });
+    const employeeOptions = [];
+    employeeOptions.push({ label: "*Select Received By", value: "" });
     this.state.employee.forEach(row => {
-      options1.push({
+      employeeOptions.push({
         value: row.employee_number,
         label: row.first_name + " " + row.last_name
       });
     });
-    const options2 = [];
-    this.state.souvenirs.forEach(row => {
-      options2.push({
-        value: row.code,
-        label: row.name
-      });
-    });
+
+    // display and undisplay table design item form
+    // based on items state length
+    const display = this.state.item.length === 0 ? "none" : "table-row-group";
+    const style = {
+      display: display
+    };
     return (
-      <Modal isOpen={this.props.create} className={this.props.className}>
+      <Modal
+        isOpen={this.props.create}
+        className={this.props.className}
+        size="lg"
+      >
         <ModalHeader> Add Souvenir</ModalHeader>
         <ModalBody>
+          {this.state.alertData.status === true && (
+            <Alert color="danger">{this.state.alertData.message} </Alert>
+          )}
           <form>
             <TextFieldGroup
               label="*Transaction Code"
@@ -282,13 +345,13 @@ class CreateTsouvenir extends React.Component {
               name="code"
               disabled={true}
             />
-            <SelectList
+            <SelectListGroup
               label="*Received By"
               placeholder="*Select Received By"
               name="received_by"
-              value={this.state.selectedOption}
-              onChange={this.handleChange1}
-              options={options1}
+              value={this.state.received_by}
+              onChange={this.changeHandler}
+              options={employeeOptions}
               errors={this.state.errorReceivedBy}
             />
             <TextFieldGroup
@@ -300,167 +363,117 @@ class CreateTsouvenir extends React.Component {
               onChange={this.changeHandler}
               errors={this.state.errorReceivedDate}
             />
-            {/* <Form horizontal>
-              <FormGroup controlId="formHorizontalReceivedDate">
-                <Col sm={4}>Received date</Col>
-                <Col sm={8}>
-                  <Input
-                    type="date"
-                    name="received_date"
-                    placeholder=""
-                    value={this.state.received_date}
-                    onChange={this.changeHandler}
-                    invalid={this.state.invalidReceivedDate}
-                  />
-                  <FormFeedback invalid={this.state.invalidReceivedDate}>
-                    Received date must be today or onwards.
-                  </FormFeedback>
-                </Col>
-              </FormGroup>
-            </Form> */}
             <TextAreaGroup
               label="Notes"
               placeholder="Type Notes"
               name="note"
               value={this.state.note}
               onChange={this.changeHandler}
+              maxLength="255"
             />
           </form>
-          {/*<FormGroup>
-            <Label for="">Code</Label>
-            <Input
-              type="text"
-              name="code"
-              placeholder="Auto Generate"
-              readOnly
-            />
-          </FormGroup>
-          <formControl variant="outlined">
-            <Label for="">Received By</Label>
-            <Select
-              value={this.state.selectedOption}
-              onChange={this.handleChange1}
-              options={options1}
-            />
-          </formControl>
-          <FormGroup>
-            <Label for="">Received date</Label>
-            <Input
-              type="date"
-              name="received_date"
-              placeholder=""
-              value={this.state.received_date}
-              onChange={this.changeHandler}
-              invalid={this.state.invalid}
-            />
-            <FormFeedback invalid={this.state.invalid}>
-              Oh noes! that date is already taken
-            </FormFeedback>
-          </FormGroup>
-          <FormGroup>
-            <Label for="">Note</Label>
-            <Input
-              type="textarea"
-              name="note"
-              placeholder=""
-              value={this.state.note}
-              onChange={this.changeHandler}
-            />
-          </FormGroup> */}
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            onClick={this.handleAddItem}
-          >
-            Add Item
-          </Button>
-          <br />
-          <Row>
-            <Col md={5}>
-              <Label>
-                <b>Souvenir Item</b>
-              </Label>
-            </Col>
-            <Col md={2}>
-              <Label>
-                <b>Qty</b>
-              </Label>
-            </Col>
-            <Col md={2}>
-              <Label>
-                <b>Note</b>
-              </Label>
-            </Col>
-          </Row>
-          {this.state.item.map((shareholder, idx) => (
-            <div className="shareholder">
-              <Row form>
-                <Col md={5}>
-                  <FormGroup>
-                    <select
-                      name="m_souvenir_id"
-                      id="m_souvenir_id"
-                      class="form-control"
-                      value={shareholder.m_souvenir_id}
-                      onChange={this.handleShareholderItemChange(idx)}
-                      disabled={shareholder.disable}
-                    >
-                      {this.state.souvenirs.map(row => (
-                        <option value={row.code}>{row.name}</option>
-                      ))}
-                      <option value="" disabled>
-                        {" "}
-                        -{" "}
-                      </option>
-                    </select>
-                  </FormGroup>
-                </Col>
-                <Col md={2}>
-                  <FormGroup>
-                    <Input
-                      type="text"
-                      name="qty"
-                      id="exampleQty"
-                      onChange={this.handleShareholderItemChange(idx)}
-                      value={shareholder.qty}
-                      readOnly={shareholder.readOnly}
-                    />
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Input
-                      type="text"
-                      name="note"
-                      id="exampleNote"
-                      onChange={this.handleShareholderItemChange(idx)}
-                      readOnly={shareholder.readOnly}
-                    />
-                  </FormGroup>
-                </Col>
-                <Col md={1}>
-                  <CreateOutlinedIcon
-                    onClick={this.handleEditItem(idx)}
-                    size="small"
-                  />
-                </Col>
-                <Col md={1}>
-                  <DeleteOutlinedIcon
-                    onClick={this.handleRemoveItem(idx)}
-                    size="small"
-                  />
-                </Col>
-              </Row>
-            </div>
-          ))}
+          <div className="col-md-12 mb-4 form-inline">
+            <button
+              className="btn btn-primary"
+              type="button"
+              onClick={this.handleAddItem}
+            >
+              Add Item
+            </button>
+            <table className="table table-responsive mt-2 mb-2">
+              <thead style={style}>
+                <tr className="text-center">
+                  <th>Souvenir</th>
+                  <th>Qty</th>
+                  <th>Note</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.item.map((shareholder, idx) => (
+                  <tr>
+                    <td>
+                      <SelectList
+                        name="m_souvenir_id"
+                        value={shareholder.m_souvenir_id}
+                        onChange={this.handleShareholderItemChange(idx)}
+                        disabled={shareholder.disable}
+                        options={
+                          this.state.souvenirOptions
+                          // idx === 0
+                          //   ? this.state.souvenirOptions
+                          //   : this.theOption(
+                          //       this.state.souvenirOptions,
+                          //       idx,
+                          //       this.state.item.map(
+                          //         content => content.m_souvenir_id
+                          //       )
+                          //     )
+                        }
+                        errors={shareholder.errorSouvenir}
+                      />
+                    </td>
+                    <td>
+                      <TextFieldGroup
+                        type="number"
+                        name="qty"
+                        onChange={this.handleShareholderItemChange(idx)}
+                        value={shareholder.qty}
+                        errors={shareholder.errorQty}
+                        disabled={shareholder.disable}
+                      />
+                    </td>
+                    <td>
+                      <TextFieldGroup
+                        type="text"
+                        name="note"
+                        onChange={this.handleShareholderItemChange(idx)}
+                        value={shareholder.note}
+                        readOnly={shareholder.readOnly}
+                        disabled={shareholder.disable}
+                      />
+                    </td>
+                    <td>
+                      <Create
+                        className="mr-1"
+                        onClick={this.handleEditItem(idx)}
+                        size="small"
+                      />
+                      <Delete onClick={this.handleRemoveModal} size="small" />
+                      {/* Delete Design Items Modal */}
+                      <Modal isOpen={this.state.deleteModal}>
+                        <ModalHeader>
+                          <div className="lead">Delete Item?</div>
+                        </ModalHeader>
+                        <ModalBody>
+                          <form>
+                            <div className="form-group text-right">
+                              <button
+                                type="button"
+                                className="btn btn-primary mr-2"
+                                onClick={this.handleRemoveItem(idx)}
+                              >
+                                Delete
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-default"
+                                onClick={this.closeModal}
+                              >
+                                Close
+                              </button>
+                            </div>
+                          </form>
+                        </ModalBody>
+                      </Modal>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </ModalBody>
         <ModalFooter>
-          {this.state.alertData.status === true ? (
-            <Alert color="danger">{this.state.alertData.message} </Alert>
-          ) : (
-            ""
-          )}
           <Button
             variant="contained"
             color="primary"
@@ -482,11 +495,8 @@ class CreateTsouvenir extends React.Component {
 }
 
 CreateTsouvenir.propTypes = {
-  createTsouveniritem: PropTypes.func.isRequired,
-  classes: PropTypes.object.isRequired,
   createTsouvenir: PropTypes.func.isRequired,
-  getAllSouvenir: PropTypes.func.isRequired,
-  tsouveniritem: PropTypes.object.isRequired
+  getAllSouvenir: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

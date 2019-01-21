@@ -5,10 +5,15 @@ import {
   CREATE_EVENT,
   UPDATE_EVENT,
   SEARCH_EVENT,
-  ERASE_STATUS
+  ERASE_STATUS,
+  APPROVE_EVENT,
+  REJECT_EVENT,
+  CLOSE_EVENT,
+  ERRORS
 } from "./types";
 import HostConfig from "../config/Host_Config";
 import ApiConfig from "../config/Api_Config";
+
 // Get All EVENT
 export const getAllEvent = () => dispatch => {
   axios({
@@ -33,7 +38,7 @@ export const getAllEvent = () => dispatch => {
 };
 
 // Get Single Emloye
-export const getEventId = (param) => dispatch => {
+export const getEventId = param => dispatch => {
   let options = {
     url: `${HostConfig}/${ApiConfig.event}/${param}`,
     method: "get",
@@ -57,21 +62,21 @@ export const getEventId = (param) => dispatch => {
 };
 
 // Add New EVENT
-export const createEvent = (body) => dispatch => {
+export const createEvent = body => dispatch => {
   let options = {
     url: `${HostConfig}/${ApiConfig.event}`,
     method: "post",
     headers: {
       Authorization: localStorage.token
     },
-    data : body,
+    data: body
   };
   axios(options)
     .then(res => {
       dispatch({
         type: CREATE_EVENT,
         payload: res.data.message,
-        status: res.data.code,
+        status: res.data.code
       });
     })
     .catch(error => {
@@ -82,7 +87,6 @@ export const createEvent = (body) => dispatch => {
     });
 };
 
-
 // Update EVENT
 export const updateEvent = (param, body) => dispatch => {
   let options = {
@@ -91,7 +95,7 @@ export const updateEvent = (param, body) => dispatch => {
     headers: {
       Authorization: localStorage.token
     },
-    data : body,
+    data: body
   };
   axios(options)
     .then(res => {
@@ -111,9 +115,18 @@ export const updateEvent = (param, body) => dispatch => {
 };
 
 // Search EVENT
-export const searchEvent = ( param1, param2, param3, param4, param5, param6 ) => dispatch => {
+export const searchEvent = (
+  param1,
+  param2,
+  param3,
+  param4,
+  param5,
+  param6
+) => dispatch => {
   let options = {
-    url: `${HostConfig}/${ApiConfig.event}/${param1}/${param2}/${param3}/${param4}/${param5}/${param6}`,
+    url: `${HostConfig}/${
+      ApiConfig.event
+    }/${param1}/${param2}/${param3}/${param4}/${param5}/${param6}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -139,4 +152,79 @@ export const eraseStatus = () => dispatch => {
     type: ERASE_STATUS,
     payload: null
   });
+};
+
+// Approve Transaction Event API
+export const approveEvent = (eventId, approveData) => dispatch => {
+  axios({
+    url: `${HostConfig}/${ApiConfig.approve_event}/${eventId}`,
+    method: "put",
+    headers: {
+      Authorization: localStorage.token
+    },
+    data: approveData
+  })
+    .then(res => {
+      dispatch({
+        type: APPROVE_EVENT,
+        payload: res.data.message,
+        eventId
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: ERRORS,
+        payload: err
+      });
+    });
+};
+
+// Reject Transaction Event API
+export const rejectEvent = (eventId, rejectData) => dispatch => {
+  axios({
+    url: `${HostConfig}/${ApiConfig.reject_event}/${eventId}`,
+    method: "put",
+    headers: {
+      Authorization: localStorage.token
+    },
+    data: rejectData
+  })
+    .then(res => {
+      dispatch({
+        type: REJECT_EVENT,
+        payload: res.data.message,
+        eventId
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: ERRORS,
+        payload: err
+      });
+    });
+};
+
+// Close Transaction Event API
+export const closeEvent = (eventId, closeData) => dispatch => {
+  axios({
+    url: `${HostConfig}/${ApiConfig.close_event}/${eventId}`,
+    method: "put",
+    headers: {
+      Authorization: localStorage.token
+    },
+    data: closeData
+  })
+    .then(res => {
+      dispatch({
+        type: CLOSE_EVENT,
+        payload: res.data.message,
+        eventId
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: ERRORS,
+        payload: err
+      });
+    });
 };

@@ -21,6 +21,8 @@ import TextField from "../../common/TextField";
 import SelectList from "../../common/SelectList";
 import Alert from "../../common/Alert";
 import ReactTooltip from "react-tooltip";
+// Form Validation
+import isEmpty from "../../../validation/isEmpty";
 // Pagination with Material IU
 import Pagination from "../../common/Pagination";
 import { TablePagination } from "@material-ui/core";
@@ -43,9 +45,11 @@ class SouvenirList extends Component {
       viewModal: false,
       editModal: false,
       deleteModal: false,
+      search: false,
       currentSouvenir: {},
-      units: [],
-      souvenirs: [],
+      units: null,
+      souvenirs: null,
+      employee: null,
       errorName: "",
       errorUnit: "",
       searchCode: "",
@@ -53,8 +57,6 @@ class SouvenirList extends Component {
       searchUnit: "",
       searchDate: "",
       searchCreated: "",
-      search: false,
-      employee: [],
       page: 0,
       rowsPerPage: 5
     };
@@ -241,7 +243,7 @@ class SouvenirList extends Component {
 
   render() {
     const { souvenirs, units, status, message, data } = this.props.souvenir;
-    const { user } = this.props.auth;
+    const { m_employee_id } = this.props.user;
 
     const options = [];
     options.push({ label: "~Select Unit Name~", value: "" });
@@ -253,11 +255,7 @@ class SouvenirList extends Component {
     );
 
     // Table Vars
-    let souvenirLabel;
     let souvenirList;
-
-    // Inline Table Style]
-    const capitalize = { textTransform: "capitalize" };
 
     if (souvenirs.length > 0) {
       souvenirList = this.state.souvenirs
@@ -268,7 +266,7 @@ class SouvenirList extends Component {
         .map(souvenir => (
           <tr key={souvenir._id} className="text-center">
             <td>{souvenir.code}</td>
-            <td style={capitalize}>{souvenir.name}</td>
+            <td style={{ textTransform: "capitalize" }}>{souvenir.name}</td>
             <td>{this.getUnits(souvenir.m_unit_id)}</td>
             <td>{souvenir.created_date}</td>
             <td>{this.getEmployee(souvenir.created_by)}</td>
@@ -300,109 +298,19 @@ class SouvenirList extends Component {
             </td>
           </tr>
         ));
-
-      souvenirLabel = (
-        <Fragment>
-          {/* Search Form */}
-          <tr>
-            <td>
-              <TextField
-                className="search-form"
-                placeholder="Souvenir Code"
-                name="searchCode"
-                value={this.state.searchCode}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <TextField
-                className="search-form"
-                placeholder="Souvenir Name"
-                name="searchName"
-                value={this.state.searchName}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <SelectList
-                className="search-form"
-                placeholder="~Select Unit Name~"
-                name="searchUnit"
-                value={this.state.searchUnit}
-                onChange={this.onSearch}
-                options={options}
-              />
-            </td>
-            <td>
-              <TextField
-                className="search-form"
-                type="date"
-                min="2018-01-01"
-                name="searchDate"
-                value={this.state.searchDate}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <TextField
-                className="search-form"
-                placeholder="Created By"
-                name="searchCreated"
-                value={this.state.searchCreated}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td nowrap="true">
-              <div className="form-group">
-                {this.state.search === true ? (
-                  <a href="#!" data-tip="Refresh Result!">
-                    <button
-                      className="btn btn-warning"
-                      onClick={this.onRestore}
-                    >
-                      <Refresh />
-                    </button>
-                    <ReactTooltip place="top" type="dark" effect="solid" />
-                  </a>
-                ) : (
-                  <button type="submit" className="btn btn-primary">
-                    <Search />
-                  </button>
-                )}
-                <Fragment>
-                  <Link to="#" data-tip="Add New Souvenir">
-                    <button
-                      onClick={this.showHandler}
-                      type="button"
-                      className="btn btn-primary ml-1"
-                    >
-                      <Add />
-                    </button>
-                  </Link>
-                  <ReactTooltip place="top" type="dark" effect="solid" />
-                </Fragment>
-              </div>
-            </td>
-          </tr>
-          <tr className="text-center font-weight-bold">
-            <td>Souvenir Code</td>
-            <td>Souvenir Name</td>
-            <td>Unit</td>
-            <td>Created Date</td>
-            <td>Created By</td>
-            <td>Action</td>
-          </tr>
-        </Fragment>
-      );
     } else {
-      souvenirLabel = (
+      souvenirList = (
         <tr className="text-center">
-          <td>Oops, No Souvenir List Found!</td>
+          <td colSpan="6">Oops, No Souvenir Data Found!</td>
         </tr>
       );
     }
 
-    if (souvenirs.length === 0 && units.length === 0) {
+    if (
+      isEmpty(this.state.souvenirs) &&
+      isEmpty(this.state.units) &&
+      isEmpty(this.state.employee)
+    ) {
       return (
         <div className="container">
           <div className="row">
@@ -419,7 +327,7 @@ class SouvenirList extends Component {
             <div className="col-md-12">
               {/* Create Souvenir Modal */}
               <CreateSouvenir
-                m_employee_id={user.m_employee_id}
+                m_employee_id={m_employee_id}
                 units={units}
                 create={this.state.showCreate}
                 closeHandler={this.closeHandler}
@@ -429,7 +337,7 @@ class SouvenirList extends Component {
               />
               {/* Update Souvenir Modal */}
               <UpdateSouvenir
-                m_employee_id={user.m_employee_id}
+                m_employee_id={m_employee_id}
                 units={units}
                 update={this.state.editModal}
                 souvenir={this.state.currentSouvenir}
@@ -446,7 +354,7 @@ class SouvenirList extends Component {
               />
               {/* Delete Souvenir Modal */}
               <DeleteSouvenir
-                m_employee_id={user.m_employee_id}
+                m_employee_id={m_employee_id}
                 delete={this.state.deleteModal}
                 souvenir={this.state.currentSouvenir}
                 closeModal={this.closeModal}
@@ -498,7 +406,107 @@ class SouvenirList extends Component {
                     <form onSubmit={this.submitSearch}>
                       <div className="table-responsive">
                         <table className="table table-stripped">
-                          <thead>{souvenirLabel}</thead>
+                          <thead>
+                            <tr>
+                              <td>
+                                <TextField
+                                  className="search-form"
+                                  placeholder="Souvenir Code"
+                                  name="searchCode"
+                                  value={this.state.searchCode}
+                                  onChange={this.onSearch}
+                                />
+                              </td>
+                              <td>
+                                <TextField
+                                  className="search-form"
+                                  placeholder="Souvenir Name"
+                                  name="searchName"
+                                  value={this.state.searchName}
+                                  onChange={this.onSearch}
+                                />
+                              </td>
+                              <td>
+                                <SelectList
+                                  className="search-form"
+                                  placeholder="~Select Unit Name~"
+                                  name="searchUnit"
+                                  value={this.state.searchUnit}
+                                  onChange={this.onSearch}
+                                  options={options}
+                                />
+                              </td>
+                              <td>
+                                <TextField
+                                  className="search-form"
+                                  type="date"
+                                  min="2018-01-01"
+                                  name="searchDate"
+                                  value={this.state.searchDate}
+                                  onChange={this.onSearch}
+                                />
+                              </td>
+                              <td>
+                                <TextField
+                                  className="search-form"
+                                  placeholder="Created By"
+                                  name="searchCreated"
+                                  value={this.state.searchCreated}
+                                  onChange={this.onSearch}
+                                />
+                              </td>
+                              <td nowrap="true">
+                                <div className="form-group">
+                                  {this.state.search === true ? (
+                                    <a href="#!" data-tip="Refresh Result!">
+                                      <button
+                                        className="btn btn-warning"
+                                        onClick={this.onRestore}
+                                      >
+                                        <Refresh />
+                                      </button>
+                                      <ReactTooltip
+                                        place="top"
+                                        type="dark"
+                                        effect="solid"
+                                      />
+                                    </a>
+                                  ) : (
+                                    <button
+                                      type="submit"
+                                      className="btn btn-primary"
+                                    >
+                                      <Search />
+                                    </button>
+                                  )}
+                                  <Fragment>
+                                    <Link to="#" data-tip="Add New Souvenir">
+                                      <button
+                                        onClick={this.showHandler}
+                                        type="button"
+                                        className="btn btn-primary ml-1"
+                                      >
+                                        <Add />
+                                      </button>
+                                    </Link>
+                                    <ReactTooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
+                                    />
+                                  </Fragment>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr className="text-center font-weight-bold">
+                              <td>Souvenir Code</td>
+                              <td>Souvenir Name</td>
+                              <td>Unit</td>
+                              <td>Created Date</td>
+                              <td>Created By</td>
+                              <td>Action</td>
+                            </tr>
+                          </thead>
                           <tbody>{souvenirList}</tbody>
                           <tfoot>
                             <tr className="text-center">
@@ -533,13 +541,13 @@ SouvenirList.propTypes = {
   getAllSouvenir: PropTypes.func.isRequired,
   getUnits: PropTypes.func.isRequired,
   souvenir: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
   clearAlert: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   souvenir: state.souvenir,
-  auth: state.auth,
+  user: state.auth.user,
   design: state.design
 });
 

@@ -13,9 +13,9 @@ import {
 } from "./types";
 import HostConfig from "../config/Host_Config";
 
-export const getAllTSouvenirItem = () => dispatch => {
+export const getAllTSouvenirItem = (m_role_id, m_employee_id) => dispatch => {
   let options = {
-    url: `${HostConfig}/tsouveniritem`,
+    url: `${HostConfig}/tsouveniritem/${m_role_id}/${m_employee_id}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -60,7 +60,7 @@ export const getAllTSouvenirItemDetil = () => dispatch => {
     });
 };
 
-export const createTSouvenirItem = body => dispatch => {
+export const createTSouvenirItem = (body, modalStatus) => dispatch => {
   let option = {
     url: `${HostConfig}/tsouveniritem`,
     method: "post",
@@ -77,6 +77,12 @@ export const createTSouvenirItem = body => dispatch => {
         payload: body,
         status: res.data.code
       });
+      modalStatus(
+        1,
+        `Souvenir Request with Code ${
+          res.data.message[0].code
+        } has been Created!`
+      );
     })
     .catch(error => {
       dispatch({
@@ -86,7 +92,10 @@ export const createTSouvenirItem = body => dispatch => {
     });
 };
 
-export const updateTSouvenirItem = newTSouvenirItem => dispatch => {
+export const updateTSouvenirItem = (
+  newTSouvenirItem,
+  modalStatus
+) => dispatch => {
   let option = {
     url: `${HostConfig}/tsouveniritem/${newTSouvenirItem.souv.code}`,
     method: "put",
@@ -103,6 +112,12 @@ export const updateTSouvenirItem = newTSouvenirItem => dispatch => {
         payload: newTSouvenirItem,
         status: res.data.code
       });
+      modalStatus(
+        1,
+        `Souvenir Request with Code ${
+          newTSouvenirItem.souv.code
+        } has been Updated!`
+      );
     })
     .catch(error => {
       dispatch({
@@ -112,7 +127,7 @@ export const updateTSouvenirItem = newTSouvenirItem => dispatch => {
     });
 };
 
-export const adminRequestApprove = tsouveniritem => dispatch => {
+export const adminRequestApprove = (tsouveniritem, modalStatus) => dispatch => {
   let option = {
     url: `${HostConfig}/tsouveniritem/adminrequestapprove/${
       tsouveniritem.code
@@ -131,6 +146,10 @@ export const adminRequestApprove = tsouveniritem => dispatch => {
         payload: tsouveniritem,
         status: res.data.code
       });
+      modalStatus(
+        1,
+        `Souvenir Request with Code ${tsouveniritem.code} has been Approved!`
+      );
     })
     .catch(error => {
       dispatch({
@@ -140,7 +159,7 @@ export const adminRequestApprove = tsouveniritem => dispatch => {
     });
 };
 
-export const adminRequestReject = tsouveniritem => dispatch => {
+export const adminRequestReject = (tsouveniritem, modalStatus) => dispatch => {
   let option = {
     url: `${HostConfig}/tsouveniritem/adminrequestreject/${tsouveniritem.code}`,
     method: "put",
@@ -157,6 +176,10 @@ export const adminRequestReject = tsouveniritem => dispatch => {
         payload: tsouveniritem,
         status: res.data.code
       });
+      modalStatus(
+        2,
+        `Souvenir Request with Code ${tsouveniritem.code} has been Rejected!`
+      );
     })
     .catch(error => {
       dispatch({
@@ -167,7 +190,7 @@ export const adminRequestReject = tsouveniritem => dispatch => {
     });
 };
 
-export const putReceivedSouvenir = tsouveniritem => dispatch => {
+export const putReceivedSouvenir = (tsouveniritem, modalStatus) => dispatch => {
   let option = {
     url: `${HostConfig}/tsouveniritem/receivedsouvenir/${tsouveniritem.code}`,
     method: "put",
@@ -184,6 +207,10 @@ export const putReceivedSouvenir = tsouveniritem => dispatch => {
         payload: tsouveniritem,
         status: res.data.code
       });
+      modalStatus(
+        1,
+        `Souvenir Request with Code ${tsouveniritem.code} has been Received!`
+      );
     })
     .catch(error => {
       dispatch({
@@ -193,7 +220,10 @@ export const putReceivedSouvenir = tsouveniritem => dispatch => {
     });
 };
 
-export const adminApproveSettlement = tsouveniritem => dispatch => {
+export const adminApproveSettlement = (
+  tsouveniritem,
+  modalStatus
+) => dispatch => {
   let option = {
     url: `${HostConfig}/tsouveniritem/adminapprovesettlement/${
       tsouveniritem.code
@@ -212,6 +242,10 @@ export const adminApproveSettlement = tsouveniritem => dispatch => {
         payload: tsouveniritem,
         status: res.data.code
       });
+      modalStatus(
+        1,
+        `Souvenir Settlement with Code ${tsouveniritem.code} has been Approved!`
+      );
     })
     .catch(error => {
       dispatch({
@@ -221,7 +255,7 @@ export const adminApproveSettlement = tsouveniritem => dispatch => {
     });
 };
 
-export const putCloseOrder = tsouveniritem => dispatch => {
+export const putCloseOrder = (tsouveniritem, modalStatus) => dispatch => {
   let option = {
     url: `${HostConfig}/tsouveniritem/colseorder/${tsouveniritem.code}`,
     method: "put",
@@ -238,6 +272,10 @@ export const putCloseOrder = tsouveniritem => dispatch => {
         payload: tsouveniritem,
         status: res.data.code
       });
+      modalStatus(
+        1,
+        `Souvenir Request with Code ${tsouveniritem.code} has been Closed!`
+      );
     })
     .catch(error => {
       dispatch({

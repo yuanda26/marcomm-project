@@ -26,8 +26,7 @@ import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import Spinner from "../../common/Spinner";
-import ReactTooltip from "react-tooltip";
-
+import Tooltip from "react-tooltip";
 const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
@@ -139,7 +138,7 @@ class ListRole extends React.Component {
     this.state = {
       page: 0,
       rowsPerPage: 5,
-      number: 0,
+      number: true,
       showCreateRole: false,
       roleItem: {
         code: null,
@@ -246,7 +245,8 @@ class ListRole extends React.Component {
   };
   // handle keypress
   keyHandler = event => {
-    if (event.key === "Enter") this.search();
+    if (event.key === "Enter" && this.state.number) this.search();
+    else if (event.key === "Enter" && !this.state.number) this.refresh();
   };
   //Search Handler
   search = () => {
@@ -264,7 +264,7 @@ class ListRole extends React.Component {
           regBy.test(content.created_by) ||
           regCode.test(content.code) ||
           regName.test(content.name) ||
-          regDate.test(moment(content.created_date).format("DD/MM/YYYY"))
+          regDate.test(content.created_date)
         )
           return content;
         else return false;
@@ -272,14 +272,14 @@ class ListRole extends React.Component {
       .filter(a => a !== false);
     this.setState({
       dummyRole: data,
-      number: this.state.number + 1
+      number: false
     });
   };
   //Go Back before search
   refresh = () => {
     this.setState({
       dummyRole: this.state.role,
-      number: this.state.number + 1
+      number: true
     });
   };
 
@@ -384,7 +384,7 @@ class ListRole extends React.Component {
                           />
                         </td>
                         <td>
-                          {this.state.number % 2 === 0 ? (
+                          {this.state.number ? (
                             <a href="#!" data-tip="Search">
                               <button
                                 className="btn btn-primary btn-block"
@@ -392,11 +392,7 @@ class ListRole extends React.Component {
                               >
                                 <Search />
                               </button>
-                              <ReactTooltip
-                                place="top"
-                                type="dark"
-                                effect="solid"
-                              />
+                              <Tooltip place="top" type="dark" effect="solid" />
                             </a>
                           ) : (
                             <a href="#!" data-tip="Refresh Search">
@@ -406,11 +402,7 @@ class ListRole extends React.Component {
                               >
                                 <Refresh />
                               </button>
-                              <ReactTooltip
-                                place="top"
-                                type="dark"
-                                effect="solid"
-                              />
+                              <Tooltip place="top" type="dark" effect="solid" />
                             </a>
                           )}
                         </td>
@@ -422,13 +414,8 @@ class ListRole extends React.Component {
                                 className="btn btn-primary"
                               >
                                 <Add />
-
-                                <ReactTooltip
-                                  place="top"
-                                  type="dark"
-                                  effect="solid"
-                                />
                               </button>
+                              <Tooltip place="top" type="dark" effect="solid" />
                             </a>
                           </div>
                         </td>
@@ -440,6 +427,10 @@ class ListRole extends React.Component {
                 {this.state.dummyRole.length === 0 &&
                 this.state.role.length === 0 ? (
                   <Spinner />
+                ) : this.state.dummyRole.length === 0 ? (
+                  <div className="text-center font-weight-bold">
+                    No Data Found
+                  </div>
                 ) : (
                   <div className="table-responsive">
                     <table className="table">
@@ -461,18 +452,18 @@ class ListRole extends React.Component {
                           )
                           .map(content => (
                             <tr className="text-center" key={content.code}>
-                              <td nowrap="true">{content.code}</td>
-                              <td nowrap="true">{content.name}</td>
-                              <td nowrap="true">{content.created_by}</td>
-                              <td nowrap="true">{content.created_date}</td>
-                              <td nowrap="true">
-                                <Link to="#" data-tip="View role">
+                              <td>{content.code}</td>
+                              <td>{content.name}</td>
+                              <td>{content.created_by}</td>
+                              <td>{content.created_date}</td>
+                              <td>
+                                <Link to="#" data-tip="View Role">
                                   <SearchIcon
                                     onClick={() => {
                                       this.viewModalHandler(content._id);
                                     }}
                                   />
-                                  <ReactTooltip
+                                  <Tooltip
                                     place="top"
                                     type="dark"
                                     effect="solid"
@@ -484,6 +475,11 @@ class ListRole extends React.Component {
                                       this.editModalHandler(content._id);
                                     }}
                                   />
+                                  <Tooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
                                 </Link>
                                 <Link to="#" data-tip="Delete Role">
                                   <DeleteOutlinedIcon
@@ -491,7 +487,7 @@ class ListRole extends React.Component {
                                       this.deleteModalHandler(content._id);
                                     }}
                                   />
-                                  <ReactTooltip
+                                  <Tooltip
                                     place="top"
                                     type="dark"
                                     effect="solid"

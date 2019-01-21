@@ -38,8 +38,8 @@ class CreateRole extends React.Component {
         <ModalHeader>Add Role</ModalHeader>
         <ModalBody>
           <form>
-            <div class="input-group mb-4 input-group-sm">
-              <label for="code" class="col-md-3">
+            <div className="input-group mb-4 input-group-sm">
+              <label htmlFor="code" className="col-md-3">
                 Role ID
               </label>
               <input
@@ -52,8 +52,8 @@ class CreateRole extends React.Component {
                 onChange={this.changeHandler}
               />
             </div>
-            <div class="input-group mb-4 input-group-sm">
-              <label for="text" class="col-md-3">
+            <div className="input-group mb-4 input-group-sm">
+              <label htmlFor="text" className="col-md-3">
                 Name Role
               </label>
               <input
@@ -66,8 +66,8 @@ class CreateRole extends React.Component {
                 required
               />
             </div>
-            <div class="input-group mb-4 input-group-sm">
-              <label for="text" class="col-md-3">
+            <div className="input-group mb-4 input-group-sm">
+              <label htmlFor="text" className="col-md-3">
                 Description
               </label>
               <input

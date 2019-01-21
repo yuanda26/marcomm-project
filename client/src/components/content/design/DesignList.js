@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
 // Redux Actions
@@ -34,16 +34,21 @@ class DesignList extends Component {
       searchCreatedDate: "",
       searchCreatedBy: "",
       search: false,
-      employee: [],
-      designs: [],
-      event: [],
+      employee: null,
+      designs: null,
+      event: null,
       page: 0,
       rowsPerPage: 5
     };
   }
 
   componentDidMount() {
-    this.props.getAllDesign();
+    // Get All Design Depends on it's Role ID & Employee Number
+    const { m_role_id, m_employee_id } = this.props.user;
+    if (m_role_id) {
+      this.props.getAllDesign(m_role_id, m_employee_id);
+    }
+
     this.props.getAssignToName();
     this.props.getEvent();
   }
@@ -191,7 +196,6 @@ class DesignList extends Component {
     );
 
     let designList;
-    let designLabel;
 
     if (designs.length > 0) {
       designList = this.state.designs
@@ -223,127 +227,19 @@ class DesignList extends Component {
             </td>
           </tr>
         ));
-
-      designLabel = (
-        <Fragment>
-          <tr>
-            <td>
-              <TextField
-                className="search-form"
-                placeholder="Transaction Code"
-                name="searchCode"
-                value={this.state.searchCode}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <TextField
-                className="search-form"
-                placeholder="Request By"
-                name="searchRequestBy"
-                value={this.state.searchRequestBy}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <TextField
-                className="search-form"
-                type="date"
-                min="2018-01-01"
-                name="searchRequestDate"
-                value={this.state.searchRequestDate}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <SelectList
-                className="search-form"
-                name="searchAssign"
-                value={this.state.searchAssign}
-                onChange={this.onSearch}
-                options={options}
-              />
-            </td>
-            <td>
-              <TextField
-                className="search-form"
-                placeholder="Status"
-                name="searchStatus"
-                value={this.state.searchStatus}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <TextField
-                className="search-form"
-                type="date"
-                min="2018-01-01"
-                max={moment().format("YYYY-MM-DD")}
-                name="searchCreatedDate"
-                value={this.state.searchCreatedDate}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td>
-              <TextField
-                className="search-form"
-                placeholder="Created By"
-                name="searchCreatedBy"
-                value={this.state.searchCreatedBy}
-                onChange={this.onSearch}
-              />
-            </td>
-            <td nowrap="true">
-              <div className="form-group">
-                {this.state.search === true ? (
-                  <a href="#!" data-tip="Refresh Result!">
-                    <button
-                      className="btn btn-warning"
-                      onClick={this.onRestore}
-                    >
-                      <Refresh />
-                    </button>
-                    <ReactTooltip place="top" type="dark" effect="solid" />
-                  </a>
-                ) : (
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    title="Search!"
-                  >
-                    <Search />
-                  </button>
-                )}
-                <a href="/design/add" data-tip="Request New Design!">
-                  <button className="btn btn-primary ml-1" type="button">
-                    <Add />
-                  </button>
-                  <ReactTooltip place="top" type="dark" effect="solid" />
-                </a>
-              </div>
-            </td>
-          </tr>
-          <tr className="text-center font-weight-bold">
-            <td nowrap="true">Transaction Code</td>
-            <td nowrap="true">Request By</td>
-            <td nowrap="true">Request Date</td>
-            <td nowrap="true">Assign To</td>
-            <td nowrap="true">Status</td>
-            <td nowrap="true">Created Date</td>
-            <td nowrap="true">Created By</td>
-            <td nowrap="true">Action</td>
-          </tr>
-        </Fragment>
-      );
     } else {
       designList = (
         <tr className="text-center">
-          <td>Oops, No Design List Found!</td>
+          <td colSpan="8">Oops, No Design Request Found!</td>
         </tr>
       );
     }
 
-    if (isEmpty(designs) && isEmpty(assign)) {
+    if (
+      isEmpty(this.state.designs) &&
+      isEmpty(this.state.employee) &&
+      isEmpty(this.state.event)
+    ) {
       return (
         <div className="container">
           <div className="row">
@@ -379,7 +275,131 @@ class DesignList extends Component {
                   <div className="table-responsive">
                     <form onSubmit={this.submitSearch}>
                       <table className="table table-stripped">
-                        <thead>{designLabel}</thead>
+                        <thead>
+                          <tr>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                placeholder="Transaction Code"
+                                name="searchCode"
+                                value={this.state.searchCode}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                placeholder="Request By"
+                                name="searchRequestBy"
+                                value={this.state.searchRequestBy}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                type="date"
+                                min="2018-01-01"
+                                name="searchRequestDate"
+                                value={this.state.searchRequestDate}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <SelectList
+                                className="search-form"
+                                name="searchAssign"
+                                value={this.state.searchAssign}
+                                onChange={this.onSearch}
+                                options={options}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                placeholder="Status"
+                                name="searchStatus"
+                                value={this.state.searchStatus}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                type="date"
+                                min="2018-01-01"
+                                max={moment().format("YYYY-MM-DD")}
+                                name="searchCreatedDate"
+                                value={this.state.searchCreatedDate}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                placeholder="Created By"
+                                name="searchCreatedBy"
+                                value={this.state.searchCreatedBy}
+                                onChange={this.onSearch}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <div className="form-group">
+                                {this.state.search === true ? (
+                                  <a href="#!" data-tip="Refresh Result!">
+                                    <button
+                                      className="btn btn-warning"
+                                      onClick={this.onRestore}
+                                    >
+                                      <Refresh />
+                                    </button>
+                                    <ReactTooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
+                                    />
+                                  </a>
+                                ) : (
+                                  <button
+                                    type="submit"
+                                    className="btn btn-primary"
+                                    title="Search!"
+                                  >
+                                    <Search />
+                                  </button>
+                                )}
+                                {this.props.user.m_role_id === "RO0005" && (
+                                  <a
+                                    href="/design/add"
+                                    data-tip="Request New Design!"
+                                  >
+                                    <button
+                                      className="btn btn-primary ml-1"
+                                      type="button"
+                                    >
+                                      <Add />
+                                    </button>
+                                    <ReactTooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
+                                    />
+                                  </a>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                          <tr className="text-center font-weight-bold">
+                            <td nowrap="true">Transaction Code</td>
+                            <td nowrap="true">Request By</td>
+                            <td nowrap="true">Request Date</td>
+                            <td nowrap="true">Assign To</td>
+                            <td nowrap="true">Status</td>
+                            <td nowrap="true">Created Date</td>
+                            <td nowrap="true">Created By</td>
+                            <td nowrap="true">Action</td>
+                          </tr>
+                        </thead>
                         <tbody>{designList}</tbody>
                         <tfoot>
                           <tr className="text-center">
@@ -414,7 +434,8 @@ DesignList.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  design: state.design
+  design: state.design,
+  user: state.auth.user
 });
 
 export default connect(

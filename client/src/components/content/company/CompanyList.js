@@ -28,6 +28,8 @@ import {
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import moment from "moment";
+import SpinnerTable from "../../common/SpinnerTable";
+import ReactTooltip from "react-tooltip";
 
 const actionsStyles = theme => ({
   root: {
@@ -139,7 +141,7 @@ class ListCompany extends React.Component {
         created_by: /(?:)/
       },
       companies: [],
-      companiesSearch: [],
+      companiesSearch: [null],
       page: 0,
       rowsPerPage: 5,
       currentCompany: {},
@@ -356,63 +358,86 @@ class ListCompany extends React.Component {
                 <div className="table-responsive">
                   <table className="table table-stripped">
                     <thead>
-                      <td>
-                        <input
-                          placeholder="Search by Code"
-                          name="code"
-                          className="form-control"
-                          onChange={this.searchHandler}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          placeholder="Search by Name"
-                          name="name"
-                          className="form-control"
-                          onChange={this.searchHandler}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          placeholder="Search by Date"
-                          type="date"
-                          className="form-control"
-                          name="created_date"
-                          onChange={this.searchHandler}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          placeholder="Search by Create by"
-                          name="created_by"
-                          className="form-control"
-                          onChange={this.searchHandler}
-                        />
-                      </td>
-                      <td nowrap="true">
-                        {this.state.search === true && (
-                          <button
-                            className="mr-2 btn btn-primary"
-                            onClick={this.search}
-                          >
-                            <Search />
-                          </button>
-                        )}
-                        {this.state.search === false && (
-                          <button
-                            className="mr-2 btn btn-warning"
-                            onClick={this.refreshSearch}
-                          >
-                            <Refresh />
-                          </button>
-                        )}
-                        <button
-                          className="mr-2 btn btn-primary"
-                          onClick={this.showHandler}
-                        >
-                          <Add />
-                        </button>
-                      </td>
+                      <tr>
+                        <td>
+                          <input
+                            placeholder="Search by Code"
+                            name="code"
+                            className="form-control"
+                            onChange={this.searchHandler}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            placeholder="Search by Name"
+                            name="name"
+                            className="form-control"
+                            onChange={this.searchHandler}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            placeholder="Search by Date"
+                            type="date"
+                            className="form-control"
+                            name="created_date"
+                            onChange={this.searchHandler}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            placeholder="Search by Create by"
+                            name="created_by"
+                            className="form-control"
+                            onChange={this.searchHandler}
+                          />
+                        </td>
+                        <td nowrap="true">
+                          {this.state.search === true && (
+                            <a href="#!" data-tip="Search">
+                              <button
+                                className="mr-2 btn btn-primary"
+                                onClick={this.search}
+                              >
+                                <Search />
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
+                          )}
+                          {this.state.search === false && (
+                            <a href="#!" data-tip="Refresh Result">
+                              <button
+                                className="mr-2 btn btn-warning"
+                                onClick={this.refreshSearch}
+                              >
+                                <Refresh />
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
+                          )}
+                          <a href="#!" data-tip="Add Company">
+                            <button
+                              className="mr-2 btn btn-primary"
+                              onClick={this.showHandler}
+                            >
+                              <Add />
+                            </button>
+                            <ReactTooltip
+                              place="top"
+                              type="dark"
+                              effect="solid"
+                            />
+                          </a>
+                        </td>
+                      </tr>
                     </thead>
                     <thead>
                       <tr
@@ -427,45 +452,68 @@ class ListCompany extends React.Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.companiesSearch
-                        .slice(
-                          this.state.page * this.state.rowsPerPage,
-                          this.state.page * this.state.rowsPerPage +
-                            this.state.rowsPerPage
-                        )
-                        .map((company, index) => (
-                          <tr className="text-center" key={company._id}>
-                            <td component="th">{company.code}</td>
-                            <td>{company.name}</td>
-                            <td>
-                              {this.changeDateFormat(company.created_date)}
-                            </td>
-                            <td>{company.created_by}</td>
-                            <td nowrap="true">
-                              <Link to="#">
-                                <RemoveRedEye
-                                  onClick={() => {
-                                    this.viewModalHandler(company._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <Create
-                                  onClick={() => {
-                                    this.editModalHandler(company._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <Delete
-                                  onClick={() => {
-                                    this.deleteModalHandler(company._id);
-                                  }}
-                                />
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
+                      {this.state.companiesSearch[0] === null ? (
+                        <SpinnerTable />
+                      ) : this.state.companiesSearch.length === 0 ? (
+                        <tr className="text-center">
+                          <td colSpan="6">No Company Data Found</td>
+                        </tr>
+                      ) : (
+                        this.state.companiesSearch
+                          .slice(
+                            this.state.page * this.state.rowsPerPage,
+                            this.state.page * this.state.rowsPerPage +
+                              this.state.rowsPerPage
+                          )
+                          .map((company, index) => (
+                            <tr className="text-center" key={company._id}>
+                              <td component="th">{company.code}</td>
+                              <td>{company.name}</td>
+                              <td>
+                                {this.changeDateFormat(company.created_date)}
+                              </td>
+                              <td>{company.created_by}</td>
+                              <td nowrap="true">
+                                <Link to="#" data-tip="View Company">
+                                  <RemoveRedEye
+                                    onClick={() => {
+                                      this.viewModalHandler(company._id);
+                                    }}
+                                  />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </Link>
+                                <Link to="#" data-tip="Update Company">
+                                  <Create
+                                    onClick={() => {
+                                      this.editModalHandler(company._id);
+                                    }}
+                                  />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </Link>
+                                <Link to="#" data-tip="Delete Company">
+                                  <Delete
+                                    onClick={() => {
+                                      this.deleteModalHandler(company._id);
+                                    }}
+                                  />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </Link>
+                              </td>
+                            </tr>
+                          ))
+                      )}
                     </tbody>
                     <TableFooter>
                       <TableRow>

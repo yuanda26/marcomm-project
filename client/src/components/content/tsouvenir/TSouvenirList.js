@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Alert } from "reactstrap";
-import { getAllTsouvenir } from "../../../actions/tsouvenirAction";
+import {
+  getAllTsouvenir,
+  getListTsouvenirItem
+} from "../../../actions/tsouvenirAction";
 import host from "../../../config/Host_Config";
 import axios from "axios";
 import { connect } from "react-redux";
@@ -28,6 +31,8 @@ import {
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import moment from "moment";
+import SpinnerTable from "../../common/SpinnerTable";
+import ReactTooltip from "react-tooltip";
 
 const actionsStyles = theme => ({
   root: {
@@ -130,7 +135,7 @@ class ListTsouvenir extends React.Component {
       showCreateTsouvenir: false,
       getitem: "",
       allSouvenirStock: [],
-      souvenirStockSearch: [],
+      souvenirStockSearch: [null],
       currentTsouvenir: {},
       alertData: {
         status: 0,
@@ -152,14 +157,17 @@ class ListTsouvenir extends React.Component {
   }
 
   componentDidMount() {
-    this.props.getAllTsouvenir();
+    const { m_role_id, m_employee_id } = this.props.user;
+    if (m_role_id) {
+      this.props.getAllTsouvenir(m_role_id, m_employee_id);
+    }
   }
 
   componentWillReceiveProps(newProps) {
     this.setState({
       allSouvenirStock: newProps.tsouvenirReducer.ts,
       souvenirStockSearch: newProps.tsouvenirReducer.ts,
-      userdata: newProps.auth.user
+      userdata: newProps.user
     });
   }
 
@@ -284,11 +292,12 @@ class ListTsouvenir extends React.Component {
       viewTsouvenir: false,
       EditTsouvenir: false
     });
-    this.props.getAllTsouvenir();
   }
 
   modalStatus(status, message, code) {
-    this.props.getAllTsouvenir();
+    const { m_role_id, m_employee_id } = this.props.user;
+    this.props.getAllTsouvenir(m_role_id, m_employee_id);
+    this.props.getListTsouvenirItem();
     this.setState({
       alertData: {
         status: status,
@@ -406,27 +415,48 @@ class ListTsouvenir extends React.Component {
                         </td>
                         <td nowrap="true">
                           {this.state.search === true && (
-                            <button
-                              className="mr-2 btn btn-primary"
-                              onClick={this.search}
-                            >
-                              <Search />
-                            </button>
+                            <a href="#!" data-tip="Search">
+                              <button
+                                className="mr-2 btn btn-primary"
+                                onClick={this.search}
+                              >
+                                <Search />
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
                           )}
                           {this.state.search === false && (
-                            <button
-                              className="mr-2 btn btn-warning"
-                              onClick={this.refreshSearch}
-                            >
-                              <Refresh />
-                            </button>
+                            <a href="#!" data-tip="Refresh Result">
+                              <button
+                                className="mr-2 btn btn-warning"
+                                onClick={this.refreshSearch}
+                              >
+                                <Refresh />
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
                           )}
-                          <button
-                            className="mr-2 btn btn-primary"
-                            onClick={this.showHandler}
-                          >
-                            <Add />
-                          </button>
+                          <a href="#!" data-tip="Add Souvenir Stock">
+                            <button
+                              className="mr-2 btn btn-primary"
+                              onClick={this.showHandler}
+                            >
+                              <Add />
+                            </button>
+                            <ReactTooltip
+                              place="top"
+                              type="dark"
+                              effect="solid"
+                            />
+                          </a>
                         </td>
                       </tr>
                       <tr
@@ -442,44 +472,64 @@ class ListTsouvenir extends React.Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.souvenirStockSearch
-                        .slice(
-                          this.state.page * this.state.rowsPerPage,
-                          this.state.page * this.state.rowsPerPage +
-                            this.state.rowsPerPage
-                        )
-                        .map((tsouvenir, index) => (
-                          <tr className="text-center" key={tsouvenir._id}>
-                            <td component="th">{tsouvenir.code}</td>
-                            <td>{tsouvenir.received_by}</td>
-                            <td>
-                              {this.changeDateFormat(tsouvenir.received_date)}
-                            </td>
-                            <td>{tsouvenir.created_by}</td>
-                            <td>
-                              {this.changeDateFormat(tsouvenir.created_date)}
-                            </td>
-                            <td>
-                              <Link to="#">
-                                <RemoveRedEye
-                                  onClick={() => {
-                                    this.viewModalHandler(tsouvenir._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <Create
-                                  onClick={() => {
-                                    this.editModalHandler(
-                                      tsouvenir.code,
-                                      tsouvenir._id
-                                    );
-                                  }}
-                                />
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
+                      {this.state.souvenirStockSearch[0] === null ? (
+                        <SpinnerTable />
+                      ) : this.state.souvenirStockSearch.length === 0 ? (
+                        <tr className="text-center">
+                          <td colSpan="6">
+                            No Transaction Souvenir Data Found
+                          </td>
+                        </tr>
+                      ) : (
+                        this.state.souvenirStockSearch
+                          .slice(
+                            this.state.page * this.state.rowsPerPage,
+                            this.state.page * this.state.rowsPerPage +
+                              this.state.rowsPerPage
+                          )
+                          .map((tsouvenir, index) => (
+                            <tr className="text-center" key={tsouvenir._id}>
+                              <td component="th">{tsouvenir.code}</td>
+                              <td>{tsouvenir.received_by}</td>
+                              <td>
+                                {this.changeDateFormat(tsouvenir.received_date)}
+                              </td>
+                              <td>{tsouvenir.created_by}</td>
+                              <td>
+                                {this.changeDateFormat(tsouvenir.created_date)}
+                              </td>
+                              <td>
+                                <Link to="#" data-tip="View Souvenir Stock">
+                                  <RemoveRedEye
+                                    onClick={() => {
+                                      this.viewModalHandler(tsouvenir._id);
+                                    }}
+                                  />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </Link>
+                                <Link to="#" data-tip="Edit Souvenir Stock">
+                                  <Create
+                                    onClick={() => {
+                                      this.editModalHandler(
+                                        tsouvenir.code,
+                                        tsouvenir._id
+                                      );
+                                    }}
+                                  />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </Link>
+                              </td>
+                            </tr>
+                          ))
+                      )}
                     </tbody>
                     <TableFooter>
                       <TableRow>
@@ -506,16 +556,15 @@ class ListTsouvenir extends React.Component {
 }
 
 ListTsouvenir.propTypes = {
-  getAllTsouvenir: PropTypes.func.isRequired,
-  classes: PropTypes.object.isRequired
+  getAllTsouvenir: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   tsouvenirReducer: state.tsouvenirIndexReducer,
-  auth: state.auth
+  user: state.auth.user
 });
 
 export default connect(
   mapStateToProps,
-  { getAllTsouvenir }
+  { getAllTsouvenir, getListTsouvenirItem }
 )(ListTsouvenir);

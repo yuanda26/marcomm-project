@@ -6,18 +6,52 @@ const T_Design_File = require("../models/T_Design_Item_File_Model");
 
 const db = Database.getConnection();
 const designData = {
-  readAllData: callback => {
-    db.collection("t_design")
-      .find({ is_delete: false })
-      .sort({ code: -1 })
-      .toArray((err, designs) => {
-        // Return Data to Callback
-        if (err) {
-          callback(err);
-        } else {
-          callback(designs);
-        }
-      });
+  readAllData: (callback, roleId, employeeId) => {
+    // Show Local Field Based on Role Id
+    const localField = roleId === "RO0005" ? "created_by" : "assign_to";
+
+    // Show Result Based on Role ID
+    if (roleId !== "RO0001") {
+      db.collection("t_design")
+        .aggregate([
+          {
+            $lookup: {
+              from: "m_employee",
+              localField: localField,
+              foreignField: "employee_number",
+              as: "employee"
+            }
+          },
+          { $unwind: "$employee" },
+          { $match: { "employee.employee_number": employeeId } },
+          {
+            $project: {
+              employee: 0
+            }
+          }
+        ])
+        .sort({ code: -1 })
+        .toArray((err, designs) => {
+          // Return Data to Callback
+          if (err) {
+            callback(err);
+          } else {
+            callback(designs);
+          }
+        });
+    } else {
+      db.collection("t_design")
+        .find()
+        .sort({ code: -1 })
+        .toArray((err, designs) => {
+          // Return Data to Callback
+          if (err) {
+            callback(err);
+          } else {
+            callback(designs);
+          }
+        });
+    }
   },
   readByCodeData: (callback, code) => {
     db.collection("t_design").findOne(

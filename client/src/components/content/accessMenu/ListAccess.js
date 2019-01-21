@@ -11,7 +11,6 @@ import ViewAccess from "./ViewAccess";
 import PropTypes from "prop-types";
 import {
   withStyles,
-  TableBody,
   TableRow,
   TableFooter,
   TablePagination,
@@ -21,13 +20,13 @@ import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
-import SearchIcon from "@material-ui/icons/RemoveRedEye";
+import SearchIcon from "@material-ui/icons/Search";
 import DeleteOutlinedIcon from "@material-ui/icons/Delete";
 import CreateOutlinedIcon from "@material-ui/icons/Create";
 import moment from "moment";
 import Spinner from "../../common/Spinner";
 import { Search, Refresh } from "@material-ui/icons";
-import ReactTooltip from "react-tooltip";
+import Tooltip from "react-tooltip";
 const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
@@ -257,9 +256,9 @@ class ListAccess extends React.Component {
       this.closeHandler();
       this.modalStatus(1, "Menu Access has been updated!", 200);
     }, 0);
-    setTimeout(() => {
-      window.location.href = "/accessmenu";
-    }, 1000);
+    // setTimeout(() => {
+    //   window.location.href = "/accessmenu";
+    // }, 1000);
   }
   getTheAccess(code) {
     let token = localStorage.token;
@@ -419,12 +418,12 @@ class ListAccess extends React.Component {
                                   onClick={this.search}
                                 >
                                   <Search />
-                                  <ReactTooltip
-                                    place="top"
-                                    type="dark"
-                                    effect="solid"
-                                  />
                                 </button>
+                                <Tooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
                               </a>
                             ) : (
                               <a href="#!" data-tip="Refresh Search">
@@ -434,7 +433,7 @@ class ListAccess extends React.Component {
                                 >
                                   <Refresh />
                                 </button>
-                                <ReactTooltip
+                                <Tooltip
                                   place="top"
                                   type="dark"
                                   effect="solid"
@@ -446,14 +445,14 @@ class ListAccess extends React.Component {
                       </thead>
                       <thead>
                         <tr className="text-center font-weight-bold">
-                          <td>Role Code</td>
-                          <td>Role Name</td>
-                          <td>Created By</td>
-                          <td>Created Date</td>
-                          <td>Action</td>
+                          <td nowrap="true">Role Code</td>
+                          <td nowrap="true">Role Name</td>
+                          <td nowrap="true">Created By</td>
+                          <td nowrap="true">Created Date</td>
+                          <td nowrap="true">Action</td>
                         </tr>
                       </thead>
-                      <TableBody>
+                      <tbody>
                         {this.state.hasil
                           .slice(
                             this.state.page * this.state.rowsPerPage,
@@ -475,7 +474,8 @@ class ListAccess extends React.Component {
                                         this.showHandler2(row.name, row.code);
                                       }}
                                     />
-                                    <ReactTooltip
+
+                                    <Tooltip
                                       place="top"
                                       type="dark"
                                       effect="solid"
@@ -488,7 +488,8 @@ class ListAccess extends React.Component {
                                         this.showHandler(row.name, row.code);
                                       }}
                                     />
-                                    <ReactTooltip
+
+                                    <Tooltip
                                       place="top"
                                       type="dark"
                                       effect="solid"
@@ -500,7 +501,8 @@ class ListAccess extends React.Component {
                                         this.deleteModalHandler(row._id);
                                       }}
                                     />
-                                    <ReactTooltip
+
+                                    <Tooltip
                                       place="top"
                                       type="dark"
                                       effect="solid"
@@ -510,7 +512,7 @@ class ListAccess extends React.Component {
                               </tr>
                             );
                           })}
-                      </TableBody>
+                      </tbody>
                       <TableFooter>
                         <TableRow>
                           <TablePagination
@@ -541,11 +543,8 @@ class ListAccess extends React.Component {
         />
         <ViewAccess
           create={this.state.showViewAccess}
+          modalStatus={this.modalStatus2}
           closeHandler={this.closeHandler2}
-          modalStatus={this.modalStatus}
-          modalStatus2={this.modalStatus2}
-          view={this.state.viewAccess}
-          closeModalHandler={this.closeModalHandler}
           access={this.state.currentAccess}
           theAccess={this.state.theAccess}
         />

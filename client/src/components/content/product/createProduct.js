@@ -68,6 +68,22 @@ class CreateProduct extends React.Component {
     }
   }
 
+  cancelHandler = () => {
+    let validate = {
+      validateNameProduct : "form-control", 
+      validateDescription : "form-control",
+    }
+    this.setState({
+      validate: validate, 
+      code: "",
+      name: "",
+      description: "",
+      created_by: this.props.user.m_employee_id,
+      update_by: "",
+    })
+    this.props.closeHandler()
+  }
+
   submitHandler(){
     if(this.state.name === "" && this.state.description === " "){
       this.setState({
@@ -199,7 +215,7 @@ class CreateProduct extends React.Component {
           >
             Save
           </Button>
-          <Button variant="contained" onClick={this.props.closeHandler}>
+          <Button variant="contained" onClick={this.cancelHandler}>
             Cancel
           </Button>
         </ModalFooter>

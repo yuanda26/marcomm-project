@@ -14,8 +14,11 @@ import {
 import DesignApprove from "./DesignApprove";
 import DesignClose from "./DesignClose";
 import DesignRead from "./DesignRead";
-// Import Form Components
+// Form Components
 import Spinner from "../../common/Spinner";
+import DeniedPage from "../../common/DeniedPage";
+// Form Validation
+import isEmpty from "../../../validation/isEmpty";
 
 class DesignView extends Component {
   componentDidMount() {
@@ -56,15 +59,16 @@ class DesignView extends Component {
       staff,
       event
     } = this.props.design;
+    const { m_employee_id, m_role_id } = this.props.user;
 
     if (
-      Object.keys(design).length === 0 &&
-      items.length === 0 &&
-      requester.length === 0 &&
-      product.length === 0 &&
-      assign.length === 0 &&
-      staff.length === 0 &&
-      event.length === 0
+      isEmpty(design) &&
+      isEmpty(items) &&
+      isEmpty(requester) &&
+      isEmpty(product) &&
+      isEmpty(assign) &&
+      isEmpty(staff) &&
+      isEmpty(event)
     ) {
       return (
         <div className="container">
@@ -77,35 +81,42 @@ class DesignView extends Component {
       );
     } else {
       if (design.status === 1) {
-        return (
-          <DesignApprove
-            title={this.pageTitle(design.status)}
-            code={code}
-            design={design}
-            items={items}
-            employee={assign}
-            product={product}
-            staff={staff}
-            requester={requester}
-          />
-        );
+        if (m_role_id !== "RO0001") {
+          return <DeniedPage />;
+        } else {
+          return (
+            <DesignApprove
+              title={this.pageTitle(design.status)}
+              code={code}
+              design={design}
+              items={items}
+              employee={assign}
+              product={product}
+              staff={staff}
+              requester={requester}
+            />
+          );
+        }
       } else if (design.status === 2) {
-        return (
-          <DesignClose
-            title={this.pageTitle(design.status)}
-            code={code}
-            design={design}
-            items={items}
-            employee={assign}
-            product={product}
-            staff={staff}
-            requester={requester}
-          />
-        );
+        if (design.assign_to !== m_employee_id) {
+          return <DeniedPage />;
+        } else {
+          return (
+            <DesignClose
+              title={this.pageTitle(design.status)}
+              code={code}
+              design={design}
+              items={items}
+              employee={assign}
+              product={product}
+              staff={staff}
+              requester={requester}
+            />
+          );
+        }
       } else {
         return (
           <DesignRead
-            title={this.pageTitle(design.status)}
             code={code}
             design={design}
             items={items}
@@ -131,7 +142,8 @@ DesignView.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  design: state.design
+  design: state.design,
+  user: state.auth.user
 });
 
 export default connect(

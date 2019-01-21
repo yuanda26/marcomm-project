@@ -1,16 +1,19 @@
-import { 
+import {
   GET_EVENT,
   UPDATE_EVENT,
   CREATE_EVENT,
   SEARCH_EVENT,
-  ERASE_STATUS
+  ERASE_STATUS,
+  APPROVE_EVENT,
+  REJECT_EVENT,
+  CLOSE_EVENT
 } from "../actions/types";
 
 const initialState = {
   myEvent: [],
   statusUpdate: null,
   statusCreate: null,
-  code : null
+  code: null
 };
 
 export default function(state = initialState, action) {
@@ -36,7 +39,7 @@ export default function(state = initialState, action) {
     case SEARCH_EVENT:
       return {
         ...state,
-        myEvent: action.payload,
+        myEvent: action.payload
       };
     case ERASE_STATUS:
       return {
@@ -44,6 +47,46 @@ export default function(state = initialState, action) {
         statusCreate: action.payload,
         statusUpdate: action.payload
       };
+
+    case APPROVE_EVENT:
+      const approvedEvent = state.myEvent.map(event => {
+        if (event._id === action.eventId) {
+          return { ...event, ...action.payload };
+        }
+        return event;
+      });
+
+      return {
+        ...state,
+        myEvent: approvedEvent
+      };
+
+    case REJECT_EVENT:
+      const rejectedEvent = state.myEvent.map(event => {
+        if (event._id === action.eventId) {
+          return { ...event, ...action.payload };
+        }
+        return event;
+      });
+
+      return {
+        ...state,
+        myEvent: rejectedEvent
+      };
+
+    case CLOSE_EVENT:
+      const closedEvent = state.myEvent.map(event => {
+        if (event._id === action.eventId) {
+          return { ...event, ...action.payload };
+        }
+        return event;
+      });
+
+      return {
+        ...state,
+        myEvent: closedEvent
+      };
+
     default:
       return state;
   }

@@ -1,34 +1,38 @@
 import React from "react";
 import axios from "axios";
-import ApiConfig from "../../../config/Host_Config";
+import host from "../../../config/Host_Config";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import moment from "moment";
 import Spinner from "../../common/Spinner";
 
-import { Alert, Button } from "reactstrap";
+import { Alert } from "reactstrap";
 import {
   TableFooter,
   TableRow,
   TablePagination,
   IconButton
 } from "@material-ui/core";
+import { Search, Refresh, Create, RemoveRedEye, Add } from "@material-ui/icons";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
-import SearchIcon from "@material-ui/icons/Search";
-import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import { withStyles } from "@material-ui/core/styles";
 
-import { getAllTSouvenirItem } from "../../../actions/tsouveniritemAction";
+import {
+  getAllTSouvenirItem,
+  getAllTSouvenirItemDetil
+} from "../../../actions/tsouveniritemAction";
 
 import CreateTsouveniritem from "./CreateTSouvenirRequest";
 import ViewTsouveniritem from "./ReadTSouvenirRequest";
 import EditTsouveniritem from "./UpdateTSouvenirRequest";
 import AdminHandler from "./AdminHandler";
 import RequesterHandler from "./RequesterHandler";
+import ReactTooltip from "react-tooltip";
+import SpinnerTable from "../../common/SpinnerTable";
 
 const actionsStyles = theme => ({
   root: {
@@ -121,7 +125,6 @@ class ListTsouveniritem extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      search: "",
       showCreateTsouveniritem: false,
       currentTsouveniritem: {},
       alertData: {
@@ -139,19 +142,19 @@ class ListTsouveniritem extends React.Component {
         created_date: /(?:)/,
         created_by: /(?:)/
       },
-      hasil: [],
-      result: [],
+      tsouveniritem: [],
+      tsouveniritemSearch: [null],
       page: 0,
       rowsPerPage: 5,
-      userdata: {}
+      userdata: {},
+      search: true
     };
     this.showHandler = this.showHandler.bind(this);
-    this.changeHandler = this.changeHandler.bind(this);
-    this.closeModalHandler = this.closeModalHandler.bind(this);
     this.closeHandler = this.closeHandler.bind(this);
     this.viewModalHandler = this.viewModalHandler.bind(this);
     this.editModalHandler = this.editModalHandler.bind(this);
     this.adminButtonHandler = this.adminButtonHandler.bind(this);
+    this.closeModalHandler = this.closeModalHandler.bind(this);
     this.modalStatus = this.modalStatus.bind(this);
   }
 
@@ -175,14 +178,18 @@ class ListTsouveniritem extends React.Component {
   };
 
   componentDidMount() {
-    this.props.getAllTSouvenirItem();
+    const { m_role_id, m_employee_id } = this.props.user;
+    if (m_role_id) {
+      this.props.getAllTSouvenirItem(m_role_id, m_employee_id);
+    }
+    this.props.getAllTSouvenirItemDetil();
   }
 
   componentWillReceiveProps(newProps) {
     this.setState({
-      result: newProps.tsouveniritemReducer.ts,
-      hasil: newProps.tsouveniritemReducer.ts,
-      userdata: newProps.auth.user
+      tsouveniritem: newProps.tsouveniritemReducer.ts,
+      tsouveniritemSearch: newProps.tsouveniritemReducer.ts,
+      userdata: newProps.user
     });
   }
 
@@ -204,7 +211,7 @@ class ListTsouveniritem extends React.Component {
 
   viewModalHandler(tsouveniritemid) {
     let tmp = {};
-    this.state.result.forEach(ele => {
+    this.state.tsouveniritem.forEach(ele => {
       if (tsouveniritemid === ele._id) {
         tmp = ele;
       }
@@ -217,7 +224,7 @@ class ListTsouveniritem extends React.Component {
 
   adminButtonHandler(tsouveniritemid) {
     let tmp = {};
-    this.state.result.forEach(ele => {
+    this.state.tsouveniritem.forEach(ele => {
       if (tsouveniritemid === ele._id) {
         tmp = ele;
       }
@@ -256,7 +263,7 @@ class ListTsouveniritem extends React.Component {
   editModalHandler(dataItem, tsouveniritemid) {
     const getOldFile = code => {
       let option = {
-        url: `${ApiConfig.host}/tsouveniritem/${code}`,
+        url: `${host}/tsouveniritem/${code}`,
         method: "get",
         headers: {
           Authorization: localStorage.token
@@ -275,12 +282,12 @@ class ListTsouveniritem extends React.Component {
     getOldFile(dataItem);
     localStorage.setItem("Code T SOUVENIR", JSON.stringify(dataItem));
     let tmp = {};
-    this.state.result.forEach(ele => {
+    this.state.tsouveniritem.forEach(ele => {
       if (tsouveniritemid === ele._id) {
         tmp = {
           _id: ele._id,
-          t_event_id: ele.t_event_id,
           code: ele.code,
+          t_event_id: ele.t_event_id,
           request_by: ele.request_by,
           request_date: ele.request_date,
           request_due_date: ele.request_due_date,
@@ -328,7 +335,7 @@ class ListTsouveniritem extends React.Component {
     });
   }
 
-  changeHandler = event => {
+  changeHanlderSearch = event => {
     let tmp = this.state.formSearch;
     if (event.target.name) {
       tmp[event.target.name] = new RegExp(event.target.value.toLowerCase());
@@ -338,10 +345,9 @@ class ListTsouveniritem extends React.Component {
     this.setState({
       formSearch: tmp
     });
-    this.change();
   };
 
-  change = () => {
+  searchHandler = () => {
     const {
       code,
       request_by,
@@ -352,7 +358,7 @@ class ListTsouveniritem extends React.Component {
       created_by
     } = this.state.formSearch;
     let temp = [];
-    this.state.result.map(ele => {
+    this.state.tsouveniritem.map(ele => {
       if (
         code.test(ele.code.toLowerCase()) &&
         request_by.test(ele.request_by.toLowerCase()) &&
@@ -367,7 +373,15 @@ class ListTsouveniritem extends React.Component {
       return temp;
     });
     this.setState({
-      hasil: temp
+      tsouveniritemSearch: temp,
+      search: false
+    });
+  };
+
+  refreshSearch = () => {
+    this.setState({
+      tsouveniritemSearch: this.state.tsouveniritem,
+      search: true
     });
   };
 
@@ -382,6 +396,9 @@ class ListTsouveniritem extends React.Component {
   }
 
   modalStatus(status, message, code) {
+    const { m_role_id, m_employee_id } = this.props.user;
+    this.props.getAllTSouvenirItem(m_role_id, m_employee_id);
+    this.props.getAllTSouvenirItemDetil();
     this.setState({
       alertData: {
         status: status,
@@ -393,9 +410,14 @@ class ListTsouveniritem extends React.Component {
       adminHandler: false,
       requesterHandler: false
     });
-    this.props.getAllTSouvenirItem();
     setTimeout(() => {
-      window.location.href = "/tsouveniritem";
+      this.setState({
+        alertData: {
+          status: 0,
+          message: "",
+          code: ""
+        }
+      });
     }, 3000);
   }
 
@@ -403,9 +425,25 @@ class ListTsouveniritem extends React.Component {
     return moment(tanggal).format("DD/MM/YYYY");
   };
 
+  keyHandler = event => {
+    if (event.key === "Enter") this.searchHandler();
+  };
+
+  designDatatip = status => {
+    let datatip = "";
+    if (status === 1) {
+      datatip = "Edit Souvenir Request";
+    } else if (status === 2) {
+      datatip = "Receive Souvenir Request";
+    } else {
+      datatip = "Haha";
+    }
+    return datatip;
+  };
+
   render() {
     const columnWidth = { width: "100%" };
-    const { m_role_id } = this.props.auth.user;
+    const { m_role_id } = this.props.user;
     if (m_role_id) {
       if (m_role_id === "RO0001") {
         return (
@@ -413,7 +451,9 @@ class ListTsouveniritem extends React.Component {
             <div className="row">
               <div className="col-md-12">
                 <div className="card border-primary mb-2">
-                  <div className="card-header lead">Souvenir Request List</div>
+                  <div className="card-header bg-primary text-white lead">
+                    Souvenir Request List
+                  </div>
                   <div className="card-body">
                     <nav aria-label="breadcrumb mb-4">
                       <ol className="breadcrumb">
@@ -430,15 +470,12 @@ class ListTsouveniritem extends React.Component {
                     </nav>
                     {this.state.alertData.status === 1 && (
                       <Alert color="success">
-                        <b>Data {this.state.alertData.message} ! </b>
-                        Transaction souvenir request with code{" "}
-                        <strong>{this.state.alertData.code} </strong>
-                        has been {this.state.alertData.message} !
+                        {this.state.alertData.message}
                       </Alert>
                     )}
                     {this.state.alertData.status === 2 && (
                       <Alert color="danger">
-                        {this.state.alertData.message}{" "}
+                        {this.state.alertData.message}
                       </Alert>
                     )}
                     <ViewTsouveniritem
@@ -453,84 +490,107 @@ class ListTsouveniritem extends React.Component {
                       modalStatus={this.modalStatus}
                       getlist={this.props.getAllTSouvenirItem}
                     />
-                    <div className="form-row">
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Code"
-                          name="code"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Requester"
-                          name="request_by"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Request Date"
-                          type="date"
-                          name="request_date"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Request Due Date"
-                          type="date"
-                          name="request_due_date"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Status"
-                          name="status"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Create by"
-                          name="created_by"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Create Date"
-                          type="date"
-                          name="created_date"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      {/* <Button
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        onClick={this.showHandler}
-                      >
-                        Add Souvenir Request
-                      </Button> */}
-                    </div>
-                    <br />
                     <div className="table-responsive">
                       <table className="table table-stripped">
                         <thead>
+                          <tr>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Code"
+                                name="code"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Requester"
+                                name="request_by"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Request Date"
+                                type="date"
+                                name="request_date"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Request Due Date"
+                                type="date"
+                                name="request_due_date"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Status"
+                                name="status"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Create by"
+                                name="created_by"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Create Date"
+                                type="date"
+                                name="created_date"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              {this.state.search === true && (
+                                <button
+                                  className="mr-2 btn btn-primary"
+                                  onClick={this.searchHandler}
+                                >
+                                  <Search />
+                                </button>
+                              )}
+                              {this.state.search === false && (
+                                <button
+                                  className="mr-2 btn btn-warning"
+                                  onClick={this.refreshSearch}
+                                >
+                                  <Refresh />
+                                </button>
+                              )}
+                              {/* <Button
+                                variant="contained"
+                                color="primary"
+                                size="small"
+                                onClick={this.showHandler}
+                              >
+                                Add Souvenir Request
+                              </Button> */}
+                            </td>
+                          </tr>
                           <tr
                             className="text-center font-weight-bold"
                             style={columnWidth}
                           >
-                            <td>No.</td>
                             <td>Transaction Code</td>
                             <td>Request By</td>
                             <td>Request Date</td>
@@ -542,71 +602,78 @@ class ListTsouveniritem extends React.Component {
                           </tr>
                         </thead>
                         <tbody>
-                          {this.state.hasil
-                            .slice(
-                              this.state.page * this.state.rowsPerPage,
-                              this.state.page * this.state.rowsPerPage +
-                                this.state.rowsPerPage
-                            )
-                            .map((tsouveniritem, index) => (
-                              <tr
-                                className="text-center"
-                                key={tsouveniritem._id}
-                              >
-                                <td>
-                                  {index +
-                                    1 +
-                                    this.state.page * this.state.rowsPerPage}
-                                </td>
-                                <td component="th">{tsouveniritem.code}</td>
-                                <td>{tsouveniritem.request_by}</td>
-                                <td>
-                                  {this.changeDateFormat(
-                                    tsouveniritem.request_date
-                                  )}
-                                </td>
-                                <td>
-                                  {this.changeDateFormat(
-                                    tsouveniritem.request_due_date
-                                  )}
-                                </td>
-                                <td>
-                                  {this.designStatus(tsouveniritem.status)}
-                                </td>
-                                <td>{tsouveniritem.created_by}</td>
-                                <td>
-                                  {this.changeDateFormat(
-                                    tsouveniritem.created_date
-                                  )}
-                                </td>
-                                <td>
-                                  <Link to="#">
-                                    <SearchIcon
-                                      onClick={() => {
-                                        this.viewModalHandler(
-                                          tsouveniritem._id
-                                        );
-                                      }}
-                                    />
-                                  </Link>
-                                  <Link to="#">
-                                    <CreateOutlinedIcon
-                                      onClick={() => {
-                                        this.adminButtonHandler(
-                                          tsouveniritem._id
-                                        );
-                                      }}
-                                    />
-                                  </Link>
-                                </td>
-                              </tr>
-                            ))}
+                          {this.state.tsouveniritemSearch[0] === null ? (
+                            <SpinnerTable />
+                          ) : this.state.tsouveniritemSearch.length === 0 ? (
+                            <tr className="text-center">
+                              <td colSpan="8">No Souvenir Request Found</td>
+                            </tr>
+                          ) : (
+                            this.state.tsouveniritemSearch
+                              .slice(
+                                this.state.page * this.state.rowsPerPage,
+                                this.state.page * this.state.rowsPerPage +
+                                  this.state.rowsPerPage
+                              )
+                              .map((tsouveniritem, index) => (
+                                <tr
+                                  className="text-center"
+                                  key={tsouveniritem._id}
+                                >
+                                  <td component="th">{tsouveniritem.code}</td>
+                                  <td nowrap="true">
+                                    {tsouveniritem.request_by}
+                                  </td>
+                                  <td>
+                                    {this.changeDateFormat(
+                                      tsouveniritem.request_date
+                                    )}
+                                  </td>
+                                  <td nowrap="true">
+                                    {this.changeDateFormat(
+                                      tsouveniritem.request_due_date
+                                    )}
+                                  </td>
+                                  <td nowrap="true">
+                                    {this.designStatus(tsouveniritem.status)}
+                                  </td>
+                                  <td nowrap="true">
+                                    {tsouveniritem.created_by}
+                                  </td>
+                                  <td nowrap="true">
+                                    {this.changeDateFormat(
+                                      tsouveniritem.created_date
+                                    )}
+                                  </td>
+                                  <td nowrap="true">
+                                    <Link to="#">
+                                      <RemoveRedEye
+                                        onClick={() => {
+                                          this.viewModalHandler(
+                                            tsouveniritem._id
+                                          );
+                                        }}
+                                      />
+                                    </Link>
+                                    <Link to="#">
+                                      <Create
+                                        onClick={() => {
+                                          this.adminButtonHandler(
+                                            tsouveniritem._id
+                                          );
+                                        }}
+                                      />
+                                    </Link>
+                                  </td>
+                                </tr>
+                              ))
+                          )}
                         </tbody>
                         <TableFooter>
                           <TableRow>
                             <TablePagination
                               colSpan={6}
-                              count={this.state.hasil.length}
+                              count={this.state.tsouveniritemSearch.length}
                               rowsPerPage={this.state.rowsPerPage}
                               page={this.state.page}
                               onChangePage={this.handleChangePage}
@@ -623,13 +690,15 @@ class ListTsouveniritem extends React.Component {
             </div>
           </div>
         );
-      } else if (m_role_id === "RO0002") {
+      } else if (m_role_id === "RO0002" || "RO0005") {
         return (
           <div className="container">
             <div className="row">
               <div className="col-md-12">
                 <div className="card border-primary mb-2">
-                  <div className="card-header lead">Souvenir Request List</div>
+                  <div className="card-header bg-primary text-white lead">
+                    Souvenir Request List
+                  </div>
                   <div className="card-body">
                     <nav aria-label="breadcrumb mb-4">
                       <ol className="breadcrumb">
@@ -646,15 +715,12 @@ class ListTsouveniritem extends React.Component {
                     </nav>
                     {this.state.alertData.status === 1 && (
                       <Alert color="success">
-                        <b>Data {this.state.alertData.message} ! </b>
-                        Transaction souvenir request with code{" "}
-                        <strong>{this.state.alertData.code} </strong>
-                        has been {this.state.alertData.message} !
+                        {this.state.alertData.message}
                       </Alert>
                     )}
                     {this.state.alertData.status === 2 && (
                       <Alert color="danger">
-                        {this.state.alertData.message}{" "}
+                        {this.state.alertData.message}
                       </Alert>
                     )}
                     <ViewTsouveniritem
@@ -683,161 +749,227 @@ class ListTsouveniritem extends React.Component {
                       modalStatus={this.modalStatus}
                       getlist={this.props.getAllTSouvenirItem}
                     />
-                    <div className="form-row">
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Code"
-                          name="code"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Requester"
-                          name="request_by"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Request Date"
-                          type="date"
-                          name="request_date"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Request Due Date"
-                          type="date"
-                          name="request_due_date"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Status"
-                          name="status"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Create by"
-                          name="created_by"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        <input
-                          placeholder="Search by Create Date"
-                          type="date"
-                          name="created_date"
-                          className="form-control"
-                          onChange={this.changeHandler}
-                        />
-                      </div>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        onClick={this.showHandler}
-                      >
-                        Add Souvenir Request
-                      </Button>
-                    </div>
-                    <br />
-                    <div className="table responsive">
-                      <table className="table  table-stripped">
+                    <div className="table-responsive">
+                      <table className="table table-stripped">
                         <thead>
+                          <tr>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Code"
+                                name="code"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Requester"
+                                name="request_by"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Request Date"
+                                type="date"
+                                name="request_date"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Request Due Date"
+                                type="date"
+                                name="request_due_date"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Status"
+                                name="status"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Create by"
+                                name="created_by"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <input
+                                placeholder="Search by Create Date"
+                                type="date"
+                                name="created_date"
+                                className="form-control"
+                                onChange={this.changeHanlderSearch}
+                                onKeyPress={this.keyHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              {this.state.search === true && (
+                                <a href="#!" data-tip="Search">
+                                  <button
+                                    className="mr-2 btn btn-primary"
+                                    onClick={this.searchHandler}
+                                  >
+                                    <Search />
+                                  </button>
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </a>
+                              )}
+                              {this.state.search === false && (
+                                <a href="#!" data-tip="Refresh Result">
+                                  <button
+                                    className="mr-2 btn btn-warning"
+                                    onClick={this.refreshSearch}
+                                  >
+                                    <Refresh />
+                                  </button>
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </a>
+                              )}
+                              <a href="#!" data-tip="Add Souvenir Request">
+                                <button
+                                  className="mr-2 btn btn-primary"
+                                  onClick={this.showHandler}
+                                >
+                                  <Add />
+                                </button>
+                                <ReactTooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
+                              </a>
+                            </td>
+                          </tr>
                           <tr
                             className="text-center font-weight-bold"
                             style={columnWidth}
                           >
-                            <td>No.</td>
-                            <td>Transaction Code</td>
-                            <td>Request By</td>
-                            <td>Request Date</td>
-                            <td>Request Due Date</td>
-                            <td>Status</td>
-                            <td>Created By</td>
-                            <td>Created Date</td>
-                            <td>Action</td>
+                            <td nowrap="true">Transaction Code</td>
+                            <td nowrap="true">Request By</td>
+                            <td nowrap="true">Request Date</td>
+                            <td nowrap="true">Request Due Date</td>
+                            <td nowrap="true">Status</td>
+                            <td nowrap="true">Created By</td>
+                            <td nowrap="true">Created Date</td>
+                            <td nowrap="true">Action</td>
                           </tr>
                         </thead>
                         <tbody>
-                          {this.state.hasil
-                            .slice(
-                              this.state.page * this.state.rowsPerPage,
-                              this.state.page * this.state.rowsPerPage +
-                                this.state.rowsPerPage
-                            )
-                            .map((tsouveniritem, index) => (
-                              <tr
-                                className="text-center"
-                                key={tsouveniritem._id}
-                              >
-                                <td>
-                                  {index +
-                                    1 +
-                                    this.state.page * this.state.rowsPerPage}
-                                </td>
-                                <td component="th">{tsouveniritem.code}</td>
-                                <td>{tsouveniritem.request_by}</td>
-                                <td>
-                                  {this.changeDateFormat(
-                                    tsouveniritem.request_date
-                                  )}
-                                </td>
-                                <td>
-                                  {this.changeDateFormat(
-                                    tsouveniritem.request_due_date
-                                  )}
-                                </td>
-                                <td>
-                                  {this.designStatus(tsouveniritem.status)}
-                                </td>
-                                <td>{tsouveniritem.created_by}</td>
-                                <td>
-                                  {this.changeDateFormat(
-                                    tsouveniritem.created_date
-                                  )}
-                                </td>
-                                <td>
-                                  <Link to="#">
-                                    <SearchIcon
-                                      onClick={() => {
-                                        this.viewModalHandler(
-                                          tsouveniritem._id
-                                        );
-                                      }}
-                                    />
-                                  </Link>
-                                  <Link to="#">
-                                    <CreateOutlinedIcon
-                                      onClick={() => {
-                                        this.editModalHandler(
-                                          tsouveniritem.code,
-                                          tsouveniritem._id
-                                        );
-                                      }}
-                                    />
-                                  </Link>
-                                </td>
-                              </tr>
-                            ))}
+                          {this.state.tsouveniritemSearch[0] === null ? (
+                            <SpinnerTable />
+                          ) : this.state.tsouveniritemSearch.length === 0 ? (
+                            <tr className="text-center">
+                              <td colSpan="8">No Souvenir Request Found</td>
+                            </tr>
+                          ) : (
+                            this.state.tsouveniritemSearch
+                              .slice(
+                                this.state.page * this.state.rowsPerPage,
+                                this.state.page * this.state.rowsPerPage +
+                                  this.state.rowsPerPage
+                              )
+                              .map((tsouveniritem, index) => (
+                                <tr className="text-center" key={index}>
+                                  <td component="th" nowrap="true">
+                                    {tsouveniritem.code}
+                                  </td>
+                                  <td nowrap="true">
+                                    {tsouveniritem.request_by}
+                                  </td>
+                                  <td nowrap="true">
+                                    {this.changeDateFormat(
+                                      tsouveniritem.request_date
+                                    )}
+                                  </td>
+                                  <td nowrap="true">
+                                    {this.changeDateFormat(
+                                      tsouveniritem.request_due_date
+                                    )}
+                                  </td>
+                                  <td nowrap="true">
+                                    {this.designStatus(tsouveniritem.status)}
+                                  </td>
+                                  <td nowrap="true">
+                                    {tsouveniritem.created_by}
+                                  </td>
+                                  <td nowrap="true">
+                                    {this.changeDateFormat(
+                                      tsouveniritem.created_date
+                                    )}
+                                  </td>
+                                  <td nowrap="true">
+                                    <Link
+                                      to="#"
+                                      data-tip="View Souvenir Request"
+                                    >
+                                      <RemoveRedEye
+                                        onClick={() => {
+                                          this.viewModalHandler(
+                                            tsouveniritem._id
+                                          );
+                                        }}
+                                      />
+                                      <ReactTooltip
+                                        place="top"
+                                        type="dark"
+                                        effect="solid"
+                                      />
+                                    </Link>
+                                    <Link
+                                      to="#"
+                                      data-tip={this.designDatatip(
+                                        tsouveniritem.status
+                                      )}
+                                    >
+                                      <Create
+                                        onClick={() => {
+                                          this.editModalHandler(
+                                            tsouveniritem.code,
+                                            tsouveniritem._id
+                                          );
+                                        }}
+                                      />
+                                      <ReactTooltip
+                                        place="top"
+                                        type="dark"
+                                        effect="solid"
+                                      />
+                                    </Link>
+                                  </td>
+                                </tr>
+                              ))
+                          )}
                         </tbody>
                         <TableFooter>
                           <TableRow>
                             <TablePagination
-                              colSpan={6}
-                              count={this.state.hasil.length}
+                              colSpan={3}
+                              count={this.state.tsouveniritemSearch.length}
                               rowsPerPage={this.state.rowsPerPage}
                               page={this.state.page}
                               onChangePage={this.handleChangePage}
@@ -868,10 +1000,10 @@ ListTsouveniritem.propTypes = {
 
 const mapStateToProps = state => ({
   tsouveniritemReducer: state.tsouveniritemIndexReducer,
-  auth: state.auth
+  user: state.auth.user
 });
 
 export default connect(
   mapStateToProps,
-  { getAllTSouvenirItem }
+  { getAllTSouvenirItem, getAllTSouvenirItemDetil }
 )(ListTsouveniritem);

@@ -7,9 +7,15 @@ const moment = require("moment");
 const T_Souvenir_Data = {
   //GET TRANSACTION SOUVENIR
   readAllHandler: (req, res, next) => {
-    dtl.readSouvenirAllHandler(items => {
-      ResponseHelper.sendResponse(res, 200, items);
-    });
+    let m_role_id = req.params.m_role_id;
+    let m_employee_id = req.params.m_employee_id;
+    dtl.readSouvenirAllHandler(
+      items => {
+        ResponseHelper.sendResponse(res, 200, items);
+      },
+      m_role_id,
+      m_employee_id
+    );
   },
   //GET TRANSACTION SOUVENIR BY ID
   readByIdHandler: (req, res, next) => {
@@ -41,7 +47,7 @@ const T_Souvenir_Data = {
     dtl.updateHandler(
       items => {
         dti.readByIdHandler(const1 => {
-          let dataOldFile = req.body.oldFile.map((content, idx) => {
+          let dataOldItem = req.body.oldItem.map((content, idx) => {
             return {
               _id: new ObjectId(const1[idx]._id),
               m_souvenir_id: content.m_souvenir_id,
@@ -57,15 +63,15 @@ const T_Souvenir_Data = {
           });
           dtl.deleteData(deleteitem => {
             dtl.createItem(updateOldFile => {
-              if (req.body.newFile.length > 0) {
-                dataNewFile = req.body.newFile.map((ele, idx) => {
+              if (req.body.newItem.length > 0) {
+                dataNewItem = req.body.newItem.map((ele, idx) => {
                   return {
                     m_souvenir_id: ele.m_souvenir_id,
                     qty: ele.qty,
                     note: ele.note,
-                    created_date: req.body.oldFile[idx].created_date,
-                    created_by: req.body.oldFile[idx].created_by,
-                    t_souvenir_id: req.body.oldFile[idx].t_souvenir_id,
+                    created_date: req.body.oldItem[idx].created_date,
+                    created_by: req.body.oldItem[idx].created_by,
+                    t_souvenir_id: req.body.oldItem[idx].t_souvenir_id,
                     is_delete: false,
                     updated_by: data.updated_by,
                     updated_date: CD
@@ -73,11 +79,11 @@ const T_Souvenir_Data = {
                 });
                 dtl.createItem(createNewFile => {
                   ResponseHelper.sendResponse(res, 200, createNewFile);
-                }, dataNewFile);
+                }, dataNewItem);
               } else {
                 ResponseHelper.sendResponse(res, 200, updateOldFile);
               }
-            }, dataOldFile);
+            }, dataOldItem);
           }, req.body.souv.code);
         }, req.body.souv.code);
       },

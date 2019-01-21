@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import moment from "moment";
@@ -17,6 +17,8 @@ import SelectList from "../../common/SelectList";
 import Spinner from "../../common/Spinner";
 import Alert from "../../common/Alert";
 import ReactTooltip from "react-tooltip";
+// Form Validation
+import isEmpty from "../../../validation/isEmpty";
 // Pagination with Material IU
 import Pagination from "../../common/Pagination";
 import { TablePagination } from "@material-ui/core";
@@ -42,15 +44,13 @@ class UnitList extends Component {
         created_date: "",
         created_by: ""
       },
-      unit: [],
+      units: null,
+      employee: null,
       currentData: {},
-      hasil: [],
-      coba: null,
       viewUnit: false,
       editUnit: false,
       deleteUnit: false,
       addUnit: false,
-      employee: [],
       page: 0,
       rowsPerPage: 5
     };
@@ -64,17 +64,16 @@ class UnitList extends Component {
 
   UNSAFE_componentWillReceiveProps(newProps) {
     this.setState({
-      unit: newProps.units.unitData,
-      hasil: newProps.units.unitData,
+      units: newProps.units.unitData,
       employee: newProps.design.employee
     });
   }
 
   viewModalHandler = unitid => {
     let tmp = {};
-    this.state.unit.forEach(ele => {
-      if (unitid === ele.code) {
-        tmp = ele;
+    this.state.units.forEach(unit => {
+      if (unitid === unit.code) {
+        tmp = unit;
       }
     });
     this.setState({
@@ -89,15 +88,16 @@ class UnitList extends Component {
 
   editModalHandler = unitid => {
     let tmp = {};
-    this.state.unit.forEach(ele => {
-      if (unitid === ele.code) {
+    this.state.units.forEach(unit => {
+      if (unitid === unit.code) {
         tmp = {
-          _id: ele._id,
-          code: ele.code,
-          name: ele.name,
-          description: ele.description,
-          updated_by: ele.updated_by
+          _id: unit._id,
+          code: unit.code,
+          name: unit.name,
+          description: unit.description,
+          updated_by: unit.updated_by
         };
+
         this.setState({
           currentData: tmp,
           editUnit: true
@@ -108,9 +108,9 @@ class UnitList extends Component {
 
   deleteModalHandler = unitid => {
     let tmp = {};
-    this.state.unit.forEach(ele => {
-      if (unitid === ele.code) {
-        tmp = ele;
+    this.state.units.forEach(unit => {
+      if (unitid === unit.code) {
+        tmp = unit;
       }
     });
     this.setState({
@@ -142,19 +142,19 @@ class UnitList extends Component {
     created_by = new RegExp(created_by, "i");
 
     let result = [];
-    this.state.unit.forEach(row => {
+    this.state.units.forEach(unit => {
       if (
-        code.test(row.code.toLowerCase()) &&
-        name.test(row.name.toLowerCase()) &&
-        created_by.test(this.rename(row.created_by).toLowerCase()) &&
-        created_date.test(row.created_date)
+        code.test(unit.code.toLowerCase()) &&
+        name.test(unit.name.toLowerCase()) &&
+        created_by.test(this.rename(unit.created_by).toLowerCase()) &&
+        created_date.test(unit.created_date)
       ) {
-        result.push(row);
+        result.push(unit);
       }
     });
 
     this.setState({
-      hasil: result,
+      units: result,
       search: true
     });
   };
@@ -196,23 +196,22 @@ class UnitList extends Component {
   // Restore Units Data
   onRestore = e => {
     e.preventDefault();
+
     this.setState({
-      hasil: this.props.units.unitData,
+      units: this.props.units.unitData,
       search: false
     });
   };
 
   render() {
-    const { user } = this.props.auth;
+    const user = this.props.user;
     const { unitData, status, data, message } = this.props.units;
-    const { unit, hasil } = this.state;
 
     let unitList;
-    let unitLabel;
 
     let optionsCode = [];
     optionsCode.push({ label: "~Select Unit Code~", value: "" });
-    unit.forEach(row =>
+    unitData.forEach(row =>
       optionsCode.push({
         label: row.code,
         value: row.code
@@ -221,7 +220,7 @@ class UnitList extends Component {
 
     let optionsName = [];
     optionsName.push({ label: "~Select Unit Name~", value: "" });
-    unit.forEach(row =>
+    unitData.forEach(row =>
       optionsName.push({
         label: row.name,
         value: row.name
@@ -229,22 +228,22 @@ class UnitList extends Component {
     );
 
     if (unitData.length > 0) {
-      unitList = hasil
+      unitList = this.state.units
         .slice(
           this.state.page * this.state.rowsPerPage,
           this.state.page * this.state.rowsPerPage + this.state.rowsPerPage
         )
-        .map(row => (
-          <tr key={row._id} className="text-center">
-            <td>{row.code}</td>
-            <td>{row.name}</td>
-            <td>{row.created_date}</td>
-            <td>{this.rename(row.created_by)}</td>
+        .map(unit => (
+          <tr key={unit._id} className="text-center">
+            <td>{unit.code}</td>
+            <td>{unit.name}</td>
+            <td>{unit.created_date}</td>
+            <td>{this.rename(unit.created_by)}</td>
             <td nowrap="true">
               <Link to="#" data-tip="See Detail">
                 <RemoveRedEye
                   onClick={() => {
-                    this.viewModalHandler(row.code);
+                    this.viewModalHandler(unit.code);
                   }}
                 />
                 <ReactTooltip place="top" type="dark" effect="solid" />
@@ -252,7 +251,7 @@ class UnitList extends Component {
               <Link to="#" data-tip="Edit Unit">
                 <Create
                   onClick={() => {
-                    this.editModalHandler(row.code);
+                    this.editModalHandler(unit.code);
                   }}
                 />
                 <ReactTooltip place="top" type="dark" effect="solid" />
@@ -260,7 +259,7 @@ class UnitList extends Component {
               <Link to="#" data-tip="Delete Unit">
                 <Delete
                   onClick={() => {
-                    this.deleteModalHandler(row.code);
+                    this.deleteModalHandler(unit.code);
                   }}
                 />
                 <ReactTooltip place="top" type="dark" effect="solid" />
@@ -268,96 +267,15 @@ class UnitList extends Component {
             </td>
           </tr>
         ));
-
-      unitLabel = (
-        <Fragment>
-          {/* Search Form */}
-          <tr>
-            <td>
-              <SelectList
-                className="search-form"
-                name="code"
-                value={this.state.initialSearch.code}
-                onChange={this.changeHandler}
-                options={optionsCode}
-              />
-            </td>
-            <td>
-              <SelectList
-                className="search-form"
-                name="name"
-                value={this.state.initialSearch.name}
-                onChange={this.changeHandler}
-                options={optionsName}
-              />
-            </td>
-            <td>
-              <TextField
-                className="search-form"
-                type="date"
-                min="2018-01-01"
-                name="created_date"
-                value={this.state.created_date}
-                onChange={this.changeHandler}
-              />
-            </td>
-            <td>
-              <TextField
-                className="search-form"
-                placeholder="Created By"
-                name="created_by"
-                value={this.state.initialSearch.created_by}
-                onChange={this.changeHandler}
-              />
-            </td>
-            <td nowrap="true">
-              <div className="form-group">
-                {this.state.search === true ? (
-                  <a href="#!" data-tip="Refresh Result!">
-                    <button
-                      className="btn btn-warning"
-                      onClick={this.onRestore}
-                    >
-                      <Refresh />
-                    </button>
-                    <ReactTooltip place="top" type="dark" effect="solid" />
-                  </a>
-                ) : (
-                  <button type="submit" className="btn btn-primary">
-                    <Search />
-                  </button>
-                )}
-                <Link to="#" data-tip="Add New Unit">
-                  <button
-                    onClick={this.addModalHandler}
-                    className="btn btn-primary ml-1"
-                    type="button"
-                  >
-                    <Add />
-                  </button>
-                  <ReactTooltip place="top" type="dark" effect="solid" />
-                </Link>
-              </div>
-            </td>
-          </tr>
-          <tr className="text-center font-weight-bold">
-            <td>Unit Code</td>
-            <td>Unit Name</td>
-            <td>Created Date</td>
-            <td>Created By</td>
-            <td>Action</td>
-          </tr>
-        </Fragment>
-      );
     } else {
       unitList = (
         <tr className="text-center">
-          <td>Oops, Unit Data Not Found!</td>
+          <td colSpan="5">Oops, Unit Data Not Found!</td>
         </tr>
       );
     }
 
-    if (unitData.length === 0) {
+    if (isEmpty(this.state.units) && isEmpty(this.state.employee)) {
       return (
         <div className="container">
           <div className="row">
@@ -435,12 +353,99 @@ class UnitList extends Component {
                   <div className="table-responsive mt-4">
                     <form onSubmit={this.SearchHandler}>
                       <table className="table table-stripped ">
-                        <thead>{unitLabel}</thead>
+                        <thead>
+                          <tr>
+                            <td>
+                              <SelectList
+                                className="search-form"
+                                name="code"
+                                value={this.state.initialSearch.code}
+                                onChange={this.changeHandler}
+                                options={optionsCode}
+                              />
+                            </td>
+                            <td>
+                              <SelectList
+                                className="search-form"
+                                name="name"
+                                value={this.state.initialSearch.name}
+                                onChange={this.changeHandler}
+                                options={optionsName}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                type="date"
+                                min="2018-01-01"
+                                name="created_date"
+                                value={this.state.created_date}
+                                onChange={this.changeHandler}
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                className="search-form"
+                                placeholder="Created By"
+                                name="created_by"
+                                value={this.state.initialSearch.created_by}
+                                onChange={this.changeHandler}
+                              />
+                            </td>
+                            <td nowrap="true">
+                              <div className="form-group">
+                                {this.state.search === true ? (
+                                  <a href="#!" data-tip="Refresh Result!">
+                                    <button
+                                      className="btn btn-warning"
+                                      onClick={this.onRestore}
+                                    >
+                                      <Refresh />
+                                    </button>
+                                    <ReactTooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
+                                    />
+                                  </a>
+                                ) : (
+                                  <button
+                                    type="submit"
+                                    className="btn btn-primary"
+                                  >
+                                    <Search />
+                                  </button>
+                                )}
+                                <Link to="#" data-tip="Add New Unit">
+                                  <button
+                                    onClick={this.addModalHandler}
+                                    className="btn btn-primary ml-1"
+                                    type="button"
+                                  >
+                                    <Add />
+                                  </button>
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </Link>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr className="text-center font-weight-bold">
+                            <td>Unit Code</td>
+                            <td>Unit Name</td>
+                            <td>Created Date</td>
+                            <td>Created By</td>
+                            <td>Action</td>
+                          </tr>
+                        </thead>
                         <tbody>{unitList}</tbody>
                         <tfoot>
                           <tr className="text-center">
                             <TablePagination
-                              count={this.state.hasil.length}
+                              count={this.state.units.length}
                               rowsPerPage={this.state.rowsPerPage}
                               page={this.state.page}
                               onChangePage={this.handleChangePage}
@@ -468,14 +473,14 @@ UnitList.propTypes = {
   getEmployee: PropTypes.func.isRequired,
   units: PropTypes.object.isRequired,
   design: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
   clearAlert: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   units: state.units,
   design: state.design,
-  auth: state.auth
+  user: state.auth.user
 });
 
 export default connect(

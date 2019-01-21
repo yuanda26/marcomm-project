@@ -29,6 +29,8 @@ import EditMenu from "./UpdateMenu";
 import CreateMenu from "./CreateMenu";
 import DeleteMenu from "./DeleteMenu";
 import ViewMenu from "./ReadMenu";
+import SpinnerTable from "../../common/SpinnerTable";
+import ReactTooltip from "react-tooltip";
 
 const actionsStyles = theme => ({
   root: {
@@ -129,7 +131,7 @@ class ListMenu extends React.Component {
       },
       showCreateMenu: false,
       allMenu: [],
-      menuSearch: [],
+      menuSearch: [null],
       currentMenu: {},
       alertData: {
         status: 0,
@@ -301,7 +303,9 @@ class ListMenu extends React.Component {
         <div className="row">
           <div className="col-md-12">
             <div className="card border-primary mb-2">
-              <div className="card-header lead">Menu List</div>
+              <div className="card-header bg-primary text-white lead">
+                Menu List
+              </div>
               <div className="card-body">
                 <nav aria-label="breadcrumb mb-4">
                   <ol className="breadcrumb">
@@ -382,27 +386,48 @@ class ListMenu extends React.Component {
                         </td>
                         <td nowrap="true">
                           {this.state.search === true && (
+                            <a href="#!" data-tip="Search">
                             <button
                               className="mr-2 btn btn-primary"
                               onClick={this.search}
                             >
                               <Search />
                             </button>
+                            <ReactTooltip
+                            place="top"
+                            type="dark"
+                            effect="solid"
+                          />
+                          </a>
                           )}
                           {this.state.search === false && (
+                            <a href="#!" data-tip="Search">
                             <button
                               className="mr-2 btn btn-warning"
                               onClick={this.refreshSearch}
                             >
                               <Refresh />
                             </button>
+                            <ReactTooltip
+                            place="top"
+                            type="dark"
+                            effect="solid"
+                          />
+                            </a>
                           )}
+                          <a href="#!" data-tip="Add Menu">
                           <button
                             className="mr-2 btn btn-primary"
                             onClick={this.showHandler}
                           >
                             <Add />
                           </button>
+                          <ReactTooltip
+                            place="top"
+                            type="dark"
+                            effect="solid"
+                          />
+                          </a>
                         </td>
                       </tr>
                       <tr
@@ -417,43 +442,68 @@ class ListMenu extends React.Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.menuSearch
-                        .slice(
-                          this.state.page * this.state.rowsPerPage,
-                          this.state.page * this.state.rowsPerPage +
-                            this.state.rowsPerPage
-                        )
-                        .map((menu, index) => (
-                          <tr className="text-center" key={menu._id}>
-                            <td component="th">{menu.code}</td>
-                            <td>{menu.name}</td>
-                            <td>{menu.created_by}</td>
-                            <td>{this.changeDateFormat(menu.created_date)}</td>
-                            <td nowrap>
-                              <Link to="#">
-                                <RemoveRedEye
-                                  onClick={() => {
-                                    this.viewModalHandler(menu._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <Create
-                                  onClick={() => {
-                                    this.editModalHandler(menu._id);
-                                  }}
-                                />
-                              </Link>
-                              <Link to="#">
-                                <Delete
-                                  onClick={() => {
-                                    this.deleteModalHandler(menu._id);
-                                  }}
-                                />
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
+                      {this.state.menuSearch[0] === null ? (
+                        <SpinnerTable />
+                      ) : this.state.menuSearch.length === 0 ? (
+                        <tr>
+                          <td colSpan="3">No Menu Data Found</td>
+                        </tr>
+                      ) : (
+                        this.state.menuSearch
+                          .slice(
+                            this.state.page * this.state.rowsPerPage,
+                            this.state.page * this.state.rowsPerPage +
+                              this.state.rowsPerPage
+                          )
+                          .map((menu, index) => (
+                            <tr className="text-center" key={menu._id}>
+                              <td component="th">{menu.code}</td>
+                              <td>{menu.name}</td>
+                              <td>{menu.created_by}</td>
+                              <td>
+                                {this.changeDateFormat(menu.created_date)}
+                              </td>
+                              <td nowrap="true">
+                                <Link to="#" data-tip="View Menu">
+                                  <RemoveRedEye
+                                    onClick={() => {
+                                      this.viewModalHandler(menu._id);
+                                    }}
+                                  />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </Link>
+                                <Link to="#" data-tip="Update Menu">
+                                  <Create
+                                    onClick={() => {
+                                      this.editModalHandler(menu._id);
+                                    }}
+                                  />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </Link>
+                                <Link to="#" data-tip="Delete Menu">
+                                  <Delete
+                                    onClick={() => {
+                                      this.deleteModalHandler(menu._id);
+                                    }}
+                                  />
+                                  <ReactTooltip
+                                    place="top"
+                                    type="dark"
+                                    effect="solid"
+                                  />
+                                </Link>
+                              </td>
+                            </tr>
+                          ))
+                      )}
                     </tbody>
                     <TableFooter>
                       <TableRow>
@@ -481,8 +531,7 @@ class ListMenu extends React.Component {
 
 ListMenu.propTypes = {
   getAllMenu: PropTypes.func.isRequired,
-  menuIndexReducer: PropTypes.object.isRequired,
-  classes: PropTypes.object.isRequired
+  menuIndexReducer: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({

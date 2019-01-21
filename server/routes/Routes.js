@@ -87,7 +87,11 @@ module.exports = server => {
 
   // Transaction Design Route
   // Made By: Dian Yuanda
-  server.get("/api/design", authenticate, tDesignLogic.readAllDesignHandler);
+  server.get(
+    "/api/design/:roleId/:employeeId",
+    authenticate,
+    tDesignLogic.readAllDesignHandler
+  );
   server.get("/api/design/code", authenticate, tDesignLogic.getCodeHandler);
   server.get("/api/design/:code", authenticate, tDesignLogic.readByCodeHandler);
   server.post("/api/design", authenticate, tDesignLogic.createDesignHandler);
@@ -174,7 +178,7 @@ module.exports = server => {
   // T Event Route
   // Made By: Purwanto
   server.get("/api/event", event.readAllHandler);
-  server.get("/api/event/:eventId", event.readByIdHandler);
+  server.get("/api/event/:eventId", authenticate, event.readByIdHandler);
   server.get(
     // code, request_by, request_date, , status, created_date, created_by)
     "/api/event/:code/:request_by/:request_date/:status/:created_date/:created_by",
@@ -183,6 +187,9 @@ module.exports = server => {
   server.post("/api/event", event.createHandler);
   server.put("/api/event/:eventId", event.updateHandler);
   server.del("/api/event/:eventId", event.deleteHandler);
+  server.put("/api/event/approve/:eventId", authenticate, event.approveHandler);
+  server.put("/api/event/reject/:eventId", authenticate, event.rejectHandler);
+  server.put("/api/event/close/:eventId", authenticate, event.closeHandler);
   //== End of T Event Route
 
   // Master User Route - Login Process
@@ -201,7 +208,11 @@ module.exports = server => {
 
   // Transaction Souvenir Route
   // Made By: Deovani Anugrah
-  server.get("/api/tsouvenir", authenticate, tSouvenirLogic.readAllHandler);
+  server.get(
+    "/api/tsouvenir/:m_role_id/:m_employee_id",
+    authenticate,
+    tSouvenirLogic.readAllHandler
+  );
   server.get(
     "/api/tsouvenir/:souvenirId",
     authenticate,
@@ -218,7 +229,7 @@ module.exports = server => {
   // Transaction Souvenir Item Route
   // Made By: Deovani Anugrah
   server.get(
-    "/api/tsouveniritem",
+    "/api/tsouveniritem/:m_role_id/:m_employee_id",
     authenticate,
     tSouvenirItemLogic.readSouvenirAllHandler
   );
@@ -379,4 +390,5 @@ module.exports = server => {
     authenticate,
     promotionLogic.closePromotionHandler
   );
+  server.get("/api/theAccess", authenticate, accessLogic.getAccess);
 };
