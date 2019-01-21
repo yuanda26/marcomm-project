@@ -11,17 +11,7 @@ class EditEvent extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      formdata : {
-        code : '',
-        event_name : '',
-        place : '',
-        start_date : '',
-        end_date : '',
-        budget : '',
-        request_by : '',
-        request_date : '',
-        created_by : ''
-      },
+      formdata : {},
       readOnly : false,
       currentEmployee : '',
       startDate : null,
@@ -40,14 +30,27 @@ class EditEvent extends React.Component {
   componentWillReceiveProps(newProps){
     let { currentEvent, statusUpdate, modalStatus } = newProps
     let formdata = {
-      code : currentEvent.code,
-      event_name : currentEvent.event_name,
-      place : currentEvent.place,
-      start_date : currentEvent.start_date,
-      end_date : currentEvent.end_date,
-      budget : currentEvent.budget,
-      request_by : currentEvent.request_by,
-      created_by : currentEvent.created_by
+      _id: currentEvent._id,
+      code          : currentEvent.code,
+      event_name    : currentEvent.event_name,
+      start_date    : currentEvent.start_date,
+      end_date      : currentEvent.end_date,
+      place         : currentEvent.place,
+      budget        : currentEvent.budget,
+      request_by    : currentEvent.request_by,
+      request_date  : currentEvent.request_date,
+      approved_by   : currentEvent.approved_by,
+      approved_date : currentEvent.approved_date,
+      assign_to     : currentEvent.assign_to,
+      closed_date   : currentEvent.closed_date,
+      note          : currentEvent.note,
+      status        : currentEvent.status,
+      reject_reason : currentEvent.reject_reason,
+      is_delete     : currentEvent.is_delete,
+      created_by    : currentEvent.created_by,
+      created_date  : currentEvent.created_date,
+      updated_by    : currentEvent.updated_by,
+      updated_date  : currentEvent.updated_date
     }
     let { readOnly } = this.state
     let { request_by_first_name, request_by_last_name } = currentEvent
@@ -91,7 +94,6 @@ class EditEvent extends React.Component {
   }
 
   cancelhandler = () => {
-    let newCurrentEvent = this.props.currentEvent
     let validate = {
       validateEventName : "form-control",
       validateEventPlace : "form-control",
@@ -99,16 +101,17 @@ class EditEvent extends React.Component {
       validateEventEndDate : "form-control",
       validateBudget : "form-control",
     }
-    this.setState({validate: validate, formdata: newCurrentEvent})
+    this.setState({validate: validate, formdata: this.props.currentEvent})
     this.props.closeModalHandler()
   }
   
   submitHandler = () => {
     let { formdata, regexBudget } = this.state
     let { 
-      _id, event_name, place, start_date, end_date, budget 
+      event_name, place, start_date, end_date, budget 
     } = formdata;
     formdata["updated_by"] = this.props.user.m_employee_id
+    formdata["status"] = "1"
     if(event_name === ''){
       alert("Please Type Name!")
     }else if(place === ''){
@@ -127,7 +130,7 @@ class EditEvent extends React.Component {
     }else if(!regexBudget.test(budget)){
       alert("Budget Is Invalid!")
     }else{
-      this.props.updateEvent(_id, formdata)
+      this.props.updateEvent(formdata._id, formdata, this.props.user.m_employee_id, this.props.user.m_role_id)
       let validate = {
         validateEventName : "form-control",
         validateEventPlace : "form-control",

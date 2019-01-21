@@ -6,7 +6,7 @@ const tEventBisnislogic = {
 	readAllHandler : (req, res, next) => {
 		dtl.readAllHandlerData(function (items) {
 			responseHelper.sendResponse(res, 200, items);
-		});
+		}, req.params.empId, req.params.roleId);
 	},
 
 	readByIdHandler : (req, res, next) => {
@@ -55,10 +55,11 @@ const tEventBisnislogic = {
 			let body = req.body;
 			body.code = codeTEvent;
 			body.created_date = moment().format("DD/MM/YYYY")
+			body.assign_to = ""
 			dtl.createHandlerData(function(items, date) {
 				dtl.readAllHandlerData(function (callbackReadData) {
 					responseHelper.sendResponse(res, 200, callbackReadData);
-				});
+				}, req.params.empId, req.params.roleId);
 			}, body);
 		}, date)
 	},
@@ -80,7 +81,7 @@ const tEventBisnislogic = {
 			assign_to     : req.body.assign_to,
 			closed_date   : req.body.closed_date,
 			note          : req.body.note,
-			status        : "1",
+			status        : req.body.status,
 			reject_reason : req.body.reject_reason,
 			is_delete     : false,
 			created_by    : req.body.created_by,
@@ -91,7 +92,7 @@ const tEventBisnislogic = {
 		dtl.updateHandlerData((items) => {
 			dtl.readAllHandlerData(function (callbackReadData) {
 				responseHelper.sendResponse(res, 200, callbackReadData);
-			});
+			}, req.params.empId, req.params.roleId);
 		}, param, body);
 	},
 

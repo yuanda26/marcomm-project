@@ -4,7 +4,22 @@ const tEventModel = require('../models/T_Event_Model');
 const db = DB.getConnection();
 
 const tEventDatalayer = {
-	readAllHandlerData : (callback) => {
+	readAllHandlerData : (callback, empId, roleId) => {
+		let paramEmployee;
+		let paramAsignTo;
+		if ( roleId === "RO0001") {//Admin
+			paramEmployee = ""
+			paramAsignTo = "" 
+		} else if ( roleId === "RO0005" ) {//Requester
+			paramEmployee = empId
+			paramAsignTo = ""
+		} else if ( roleId === "RO0006" ) {//Staff
+			paramEmployee = ""
+			paramAsignTo = empId
+		}else{
+			paramEmployee = "unknown"
+			paramAsignTo = "unknown"
+		}
 		db.collection('t_event').aggregate([
 			{
 	    	$lookup : {
@@ -23,7 +38,13 @@ const tEventDatalayer = {
 	        as : 'user'
 	        }
 	    }, {$unwind : "$user"},
-	    {$match : { "is_delete" : false }},
+	    {
+	    	$match : { 
+		    	"is_delete" : false, 
+		    	"request_by" : new RegExp(paramEmployee), 
+		    	"assign_to" : new RegExp(paramAsignTo)
+	    	}
+	    },
 	    { $sort : { code : -1 } },
 	    {
 	      $project : {

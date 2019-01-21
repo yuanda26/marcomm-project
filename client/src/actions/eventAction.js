@@ -10,9 +10,9 @@ import {
 import HostConfig from "../config/Host_Config";
 import ApiConfig from "../config/Api_Config";
 // Get All EVENT
-export const getAllEvent = () => dispatch => {
+export const getAllEvent = (empId, roleId) => dispatch => {
   axios({
-    url: `${HostConfig}/${ApiConfig.event}`,
+    url: `${HostConfig}/${ApiConfig.event}/${empId}/${roleId}`,
     method: "get",
     headers: {
       Authorization: localStorage.token
@@ -57,9 +57,9 @@ export const getEventId = (param) => dispatch => {
 };
 
 // Add New EVENT
-export const createEvent = (body) => dispatch => {
+export const createEvent = (body, empId, roleId) => dispatch => {
   let options = {
-    url: `${HostConfig}/${ApiConfig.event}`,
+    url: `${HostConfig}/${ApiConfig.event}/${empId}/${roleId}`,
     method: "post",
     headers: {
       Authorization: localStorage.token
@@ -84,9 +84,9 @@ export const createEvent = (body) => dispatch => {
 
 
 // Update EVENT
-export const updateEvent = (param, body) => dispatch => {
+export const updateEvent = (param, body, empId, roleId) => dispatch => {
   let options = {
-    url: `${HostConfig}/${ApiConfig.event}/${param}`,
+    url: `${HostConfig}/${ApiConfig.event}/${param}/${empId}/${roleId}`,
     method: "put",
     headers: {
       Authorization: localStorage.token

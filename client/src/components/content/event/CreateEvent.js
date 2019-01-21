@@ -125,7 +125,7 @@ class CreateEvent extends React.Component{
     }else if(!regexBudget.test(budget)){
       alert("Budget Is Invalid!")
     }else{
-      this.props.createEvent(formdata)
+      this.props.createEvent(formdata, this.props.user.m_employee_id, this.props.user.m_role_id)
       this.props.closeHandler() 
       let validate = {
         validateEventName : "form-control",

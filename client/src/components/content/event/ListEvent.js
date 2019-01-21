@@ -12,7 +12,7 @@ import { withStyles } from "@material-ui/core/styles";
 import EditEvent from "./EditEvent";
 import CreateEvent from "./CreateEvent";
 import ViewEvent from "./ViewEvent";
-import Spinner from "../../common/Spinner";
+import SpinnerTable from "../../common/SpinnerTable";
 import ReactTooltip from "react-tooltip";
 
 import {
@@ -195,6 +195,32 @@ class ListEvent extends React.Component {
     });
   };
 
+  approvalModalHandler = eventid => {
+    let tmp = {};
+    this.props.event.myEvent.forEach(ele => {
+      if (eventid === ele._id) {
+        tmp = ele;
+        this.setState({
+          currentEvent: tmp,
+          approveEvent: true
+        });
+      }
+    });
+  };
+
+  closeRequestModalHandler = eventid => {
+    let tmp = {};
+    this.props.event.myEvent.forEach(ele => {
+      if (eventid === ele._id) {
+        tmp = ele;
+        this.setState({
+          currentEvent: tmp,
+          closeRequest: true
+        });
+      }
+    });
+  };
+
   handleChangeCreatedDate = date => {
     let { initialSearch } = this.state;
     if (date) {
@@ -274,7 +300,9 @@ class ListEvent extends React.Component {
     this.setState({
       viewEvent: false,
       editEvent: false,
-      deleteEvent: false
+      deleteEvent: false,
+      approveEvent  : false,
+      closeRequest: false
     });
   };
 
@@ -288,7 +316,10 @@ class ListEvent extends React.Component {
   };
 
   componentDidMount = () => {
-    this.props.getAllEvent();
+    this.props.getAllEvent(
+      this.props.user.m_employee_id,
+      this.props.user.m_role_id
+    );
   };
 
   modalStatus = (status, message) => {
@@ -397,7 +428,6 @@ class ListEvent extends React.Component {
                     currentEvent={this.state.currentEvent}
                   />
                   <EditEvent
-                    event={this.state.event}
                     edit={this.state.editEvent}
                     closeModalHandler={this.closeModalHandler}
                     currentEvent={this.state.currentEvent}
@@ -527,9 +557,7 @@ class ListEvent extends React.Component {
                       <tbody>
                         {
                         this.state.loading === null ? (
-                          <div className="container justify-content-center">
-                            <Spinner/>
-                          </div>
+                          <SpinnerTable/>
                         ) : (
                         this.props.event.myEvent
                           .slice(
@@ -598,12 +626,12 @@ ListEvent.propTypes = {
   getAllEvent: PropTypes.func.isRequired,
   searchEvent: PropTypes.func.isRequired,
   eraseStatus: PropTypes.func.isRequired,
-  event: PropTypes.object.isRequired
+  event: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   event: state.event,
-  employee: state.employee
+  user: state.auth.user
 });
 
 export default connect(

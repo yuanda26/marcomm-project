@@ -173,15 +173,15 @@ module.exports = server => {
 
   // T Event Route
   // Made By: Purwanto
-  server.get("/api/event", event.readAllHandler);
+  server.get("/api/event/:empId/:roleId", event.readAllHandler);
   server.get("/api/event/:eventId", event.readByIdHandler);
   server.get(
     // code, request_by, request_date, , status, created_date, created_by)
     "/api/event/:code/:request_by/:request_date/:status/:created_date/:created_by",
     event.searchHandler
   );
-  server.post("/api/event", event.createHandler);
-  server.put("/api/event/:eventId", event.updateHandler);
+  server.post("/api/event/:empId/:roleId", event.createHandler);
+  server.put("/api/event/:eventId/:empId/:roleId", event.updateHandler);
   server.del("/api/event/:eventId", event.deleteHandler);
   //== End of T Event Route
 
