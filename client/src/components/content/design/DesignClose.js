@@ -1,16 +1,51 @@
 import React, { Component } from "react";
+import moment from "moment";
 import PropTypes from "prop-types";
 // Redux Actions
 import { connect } from "react-redux";
-import { clearAlert } from "../../../actions/designAction";
+import {
+  clearAlert,
+  updateDesign,
+  updateDesignItem,
+  closeDesign,
+  uploadDesign
+} from "../../../actions/designAction";
 // Forms Components
+import TextField from "../../common/TextField";
 import TextFieldGroup from "../../common/TextFieldGroup";
 import TextAreaGroup from "../../common/TextAreaGroup";
+import isEmpty from "../../../validation/isEmpty";
 
 class DesignClose extends Component {
-  state = {
-    assign_to: ""
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      assign_to: "",
+      items: []
+    };
+  }
+
+  UNSAFE_componentWillReceiveProps(props, state) {
+    const newItems = [];
+    props.items.map(item =>
+      newItems.push({
+        ...item,
+        start_date: "",
+        end_date: "",
+        uploads: {
+          name: "",
+          type: "",
+          size: 0
+        },
+        errorStartDate: "",
+        errorEndDate: "",
+        errorUpload: ""
+      })
+    );
+
+    this.setState({ items: newItems });
+  }
 
   // Function to Get User with 'Requester' Role
   getRequester(request_pic) {
@@ -81,12 +116,115 @@ class DesignClose extends Component {
     }
   }
 
-  onChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
+  handleItemChange = idx => e => {
+    const newItems = this.state.items.map((item, sidx) => {
+      if (idx !== sidx) return item;
+
+      // Clear Error Message State
+      const errors = {};
+      if (e.target.name === "start_date") {
+        errors.errorStartDate = "";
+      }
+      if (e.target.name === "end_date") {
+        errors.errorEndDate = "";
+      }
+
+      return { ...item, ...errors, [e.target.name]: e.target.value };
+    });
+
+    this.setState({ items: newItems });
   };
 
-  onClose = e => {
+  handleItemUpload = idx => e => {
+    const newItems = this.state.items.map((item, sidx) => {
+      if (idx !== sidx) return item;
+
+      // Clear Error Message State
+      const error = {};
+      if (e.target.name === "uploads") {
+        error.errorUpload = "";
+      }
+      return { ...item, ...error, [e.target.name]: e.target.files[0] };
+    });
+
+    this.setState({ items: newItems });
+  };
+
+  onSubmit = e => {
     e.preventDefault();
+
+    // Design Item Form Validation
+    // Set Error Counter
+    let errorCounter = 0;
+    this.state.items.forEach((item, idx) => {
+      const items = this.state.items;
+      // Check for Empty Start Date Field
+      if (isEmpty(item.start_date)) {
+        errorCounter += 1;
+        items[idx].errorStartDate = "This Field is Required!";
+        this.setState({ items });
+      }
+      // Check for Empty End Date Field
+      if (isEmpty(item.end_date)) {
+        errorCounter += 1;
+        items[idx].errorEndDate = "This Field is Required!";
+        this.setState({ items });
+      }
+      // Check for Empty Upload Field
+      if (isEmpty(item.uploads.name)) {
+        errorCounter += 1;
+        items[idx].errorUpload = "This Field is Required!";
+        this.setState({ items });
+      }
+    });
+
+    // Final Validation
+    // Design Form & Design Item Form
+    if (errorCounter !== 0) {
+      // Container Updated Design Request Data
+      const designData = {
+        status: 3,
+        updated_by: this.props.user.m_employee_id,
+        updated_date: moment().format("DD/MM/YYYY")
+      };
+
+      // Contain Updated Design Items Data
+      const designItemUpdate = [];
+      this.state.items.map(item =>
+        designItemUpdate.push({
+          _id: item._id,
+          start_date: item.start_date,
+          end_date: item.end_date,
+          updated_by: this.props.user.m_employee_id,
+          created_date: moment().format("DD/MM/YYYY")
+        })
+      );
+
+      // Contain Design Item File Data
+      const designFileData = [];
+      const formdata = new FormData();
+
+      this.state.items.forEach(item => {
+        // Append Formdata Instance
+        formdata.append("uploads", item.uploads);
+
+        designFileData.push({
+          t_design_item_id: item._id,
+          filename: item.uploads.name,
+          size: item.uploads.size,
+          extention: item.uploads.type,
+          is_delete: false,
+          created_by: this.props.user.m_employee_id,
+          created_date: moment().format("DD/MM/YYYY")
+        });
+      });
+
+      // Close Design Request & Upload Data
+      this.props.updateDesign(this.props.design.code, designData);
+      this.props.updateDesignItem(designItemUpdate);
+      this.props.closeDesign(designFileData);
+      this.props.uploadDesign(formdata);
+    }
   };
 
   onCancel = e => {
@@ -101,7 +239,7 @@ class DesignClose extends Component {
   };
 
   render() {
-    const { design, items, staff, code, title } = this.props;
+    const { design, staff, code, title } = this.props;
 
     // Set Assign to Options
     const staffOptions = [];
@@ -135,7 +273,7 @@ class DesignClose extends Component {
                 {title}: {code}
               </div>
               <div className="card-body">
-                <form>
+                <form encType="multipart/form-data">
                   <div className="row">
                     <div className="col-md-6">
                       <TextFieldGroup
@@ -160,7 +298,6 @@ class DesignClose extends Component {
                       />
                       <TextFieldGroup
                         label="Assign to"
-                        name="assign_to"
                         value={this.assignToName(design.assign_to)}
                         disabled={true}
                       />
@@ -198,125 +335,89 @@ class DesignClose extends Component {
                           </tr>
                         </thead>
                         <tbody>
-                          {items.map((item, idx) => (
+                          {this.state.items.map((item, idx) => (
                             <tr key={idx}>
                               <td>
-                                <div className="form-group">
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="*Select Product"
-                                    name="m_product_id"
-                                    value={this.getProductName(
-                                      item.m_product_id
-                                    )}
-                                    disabled={true}
-                                  />
-                                </div>
+                                <TextField
+                                  value={this.getProductName(item.m_product_id)}
+                                  disabled={true}
+                                />
                               </td>
                               <td>
-                                <div className="form-group">
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder={this.getDescription(
-                                      item.m_product_id
-                                    )}
-                                    disabled={true}
-                                  />
-                                </div>
+                                <TextField
+                                  value={this.getDescription(item.m_product_id)}
+                                  disabled={true}
+                                />
                               </td>
                               <td>
-                                <div className="form-group">
-                                  <input
-                                    type="text"
-                                    name="title_item"
-                                    value={item.title_item}
-                                    className="form-control"
-                                    placeholder="Type Title"
-                                    disabled={true}
-                                  />
-                                </div>
+                                <TextField
+                                  value={item.title_item}
+                                  disabled={true}
+                                />
                               </td>
                               <td>
-                                <div className="form-group">
-                                  <input
-                                    type="text"
-                                    placeholder="*Select PIC"
-                                    className="form-control"
-                                    name="request_pic"
-                                    value={this.getRequester(item.request_pic)}
-                                    disabled={true}
-                                  />
-                                </div>
+                                <TextField
+                                  value={this.getRequester(item.request_pic)}
+                                  disabled={true}
+                                />
                               </td>
                               <td>
-                                <div className="form-group">
-                                  <input
-                                    type="date"
-                                    className="form-control"
-                                    placeholder="Due Date"
-                                    name="request_due_date"
-                                    value={item.request_due_date}
-                                    disabled={true}
-                                  />
-                                </div>
+                                <TextField
+                                  value={item.request_due_date}
+                                  disabled={true}
+                                />
                               </td>
                               <td>
-                                <div className="form-group">
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Start Date"
-                                    disabled={true}
-                                  />
-                                </div>
+                                <TextField
+                                  type="date"
+                                  name="start_date"
+                                  min={moment().format("YYYY-MM-DD")}
+                                  value={item.start_date}
+                                  onChange={this.handleItemChange(idx)}
+                                  errors={item.errorStartDate}
+                                />
                               </td>
                               <td>
-                                <div className="form-group">
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="End Date"
-                                    disabled={true}
-                                  />
-                                </div>
+                                <TextField
+                                  type="date"
+                                  name="end_date"
+                                  min={item.start_date}
+                                  value={item.end_date}
+                                  onChange={this.handleItemChange(idx)}
+                                  errors={item.errorEndDate}
+                                />
                               </td>
                               <td>
-                                <div className="form-group">
-                                  <input
-                                    type="text"
-                                    name="note"
-                                    className="form-control"
-                                    placeholder="Note"
-                                    value={item.note}
-                                    disabled={true}
-                                  />
-                                </div>
+                                <TextField value={item.note} disabled={true} />
+                              </td>
+                              <td>
+                                <TextField
+                                  type="file"
+                                  name="uploads"
+                                  onChange={this.handleItemUpload(idx)}
+                                  errors={item.errorUpload}
+                                />
                               </td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
-                    <div className="col-md-12 text-right">
-                      {design.status === 1 && (
-                        <div className="form-group">
-                          <button
-                            onClick={this.onClose}
-                            className="btn btn-primary mr-2"
-                          >
-                            Close Request
-                          </button>
-                          <button
-                            onClick={this.onCancel}
-                            className="btn btn-warning mr-2"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                  </div>
+                  <div className="mt-2 text-right">
+                    <input
+                      type="submit"
+                      value="Close Request"
+                      className="btn btn-primary mr-1"
+                      onClick={this.onSubmit}
+                    />
+                    <button
+                      className="btn btn-warning"
+                      type="button"
+                      onClick={this.onCancel}
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </form>
               </div>
@@ -337,10 +438,18 @@ DesignClose.propTypes = {
   product: PropTypes.array.isRequired,
   staff: PropTypes.array.isRequired,
   requester: PropTypes.array.isRequired,
-  clearAlert: PropTypes.func.isRequired
+  clearAlert: PropTypes.func.isRequired,
+  updateDesign: PropTypes.func.isRequired,
+  updateDesignItem: PropTypes.func.isRequired,
+  closeDesign: PropTypes.func.isRequired,
+  uploadDesign: PropTypes.func.isRequired
 };
 
+const mapStateToProps = state => ({
+  user: state.auth.user
+});
+
 export default connect(
-  null,
-  { clearAlert }
+  mapStateToProps,
+  { clearAlert, updateDesign, updateDesignItem, closeDesign, uploadDesign }
 )(DesignClose);

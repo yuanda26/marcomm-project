@@ -26,6 +26,7 @@ export const CLEAR_DESIGN_ALERT = "CLEAR_DESIGN_ALERT";
 export const APPROVE_DESIGN = "APPROVE_DESIGN";
 export const REJECT_DESIGN = "REJECT_DESIGN";
 export const CLOSE_DESIGN = "CLOSE_DESIGN";
+export const UPLOAD_DESIGN = "UPLOAD_DESIGN";
 
 // Master Souvenir
 export const GET_SOUVENIRS = "GET_SOUVENIRS";

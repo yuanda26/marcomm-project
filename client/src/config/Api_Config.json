@@ -19,7 +19,7 @@
     "design_approve": "design/approve",
     "design_reject": "design/reject",
     "design_close": "design/close",
-    "design_files": "design/files",
+    "design_uploads": "design/uploads",
     "design_requester": "design/requester",
     "design_staff": "design/staff",
     "design_item": "design/item",

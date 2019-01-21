@@ -16,6 +16,8 @@ import {
   UPDATE_DESIGN_ITEM,
   APPROVE_DESIGN,
   REJECT_DESIGN,
+  CLOSE_DESIGN,
+  UPLOAD_DESIGN,
   CLEAR_DESIGN_ALERT,
   ERRORS
 } from "./types";
@@ -27,9 +29,7 @@ export const getAllDesign = (roleId, employeeId) => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.design}/${roleId}/${employeeId}`,
     method: "get",
-    headers: {
-      Authorization: localStorage.token
-    }
+    headers: { Authorization: localStorage.token }
   })
     .then(res =>
       dispatch({
@@ -50,9 +50,7 @@ export const getDesign = code => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.design}/${code}`,
     method: "get",
-    headers: {
-      Authorization: localStorage.token
-    }
+    headers: { Authorization: localStorage.token }
   })
     .then(res =>
       dispatch({
@@ -73,9 +71,7 @@ export const getItems = code => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.design_item}/${code}`,
     method: "get",
-    headers: {
-      Authorization: localStorage.token
-    }
+    headers: { Authorization: localStorage.token }
   })
     .then(res =>
       dispatch({
@@ -96,9 +92,7 @@ export const getCode = () => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.design_code}`,
     method: "get",
-    headers: {
-      Authorization: localStorage.token
-    }
+    headers: { Authorization: localStorage.token }
   })
     .then(res =>
       dispatch({
@@ -119,9 +113,7 @@ export const getEvent = () => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.event}`,
     method: "get",
-    headers: {
-      Authorization: localStorage.token
-    }
+    headers: { Authorization: localStorage.token }
   })
     .then(res =>
       dispatch({
@@ -142,9 +134,7 @@ export const getProduct = () => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.product}`,
     method: "get",
-    headers: {
-      Authorization: localStorage.token
-    }
+    headers: { Authorization: localStorage.token }
   })
     .then(res =>
       dispatch({
@@ -165,9 +155,7 @@ export const getRequester = () => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.design_requester}`,
     method: "get",
-    headers: {
-      Authorization: localStorage.token
-    }
+    headers: { Authorization: localStorage.token }
   })
     .then(res =>
       dispatch({
@@ -188,9 +176,7 @@ export const getAssignToName = () => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.employee}`,
     method: "get",
-    headers: {
-      Authorization: localStorage.token
-    }
+    headers: { Authorization: localStorage.token }
   })
     .then(res =>
       dispatch({
@@ -253,9 +239,7 @@ export const createDesign = designData => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.design}`,
     method: "post",
-    headers: {
-      Authorization: localStorage.token
-    },
+    headers: { Authorization: localStorage.token },
     data: designData
   })
     .then(res => {
@@ -277,9 +261,7 @@ export const createDesignItem = designItemData => dispatch => {
   axios({
     url: `${HostConfig}/${ApiConfig.design_item}`,
     method: "post",
-    headers: {
-      Authorization: localStorage.token
-    },
+    headers: { Authorization: localStorage.token },
     data: { designItemData }
   })
     .then(res => {
@@ -341,22 +323,6 @@ export const updateDesignItem = designItemUpdate => dispatch => {
     );
 };
 
-// Close Design Request
-export const uploadFiles = formdata => dispatch => {
-  axios({
-    method: "post",
-    url: `${HostConfig}/${ApiConfig.design_files}`,
-    data: formdata
-  })
-    .then(res => console.log(res))
-    .catch(err =>
-      dispatch({
-        type: ERRORS,
-        payload: err.response.data
-      })
-    );
-};
-
 // Approve Design Request
 export const approveDesign = (code, formdata) => dispatch => {
   axios({
@@ -385,8 +351,8 @@ export const rejectDesign = (code, formdata) => dispatch => {
   axios({
     method: "put",
     url: `${HostConfig}/${ApiConfig.design_reject}/${code}`,
-    headers: { Authorization: localStorage.token },
-    data: formdata
+    data: formdata,
+    headers: { Authorization: localStorage.token }
   })
     .then(res => {
       dispatch({
@@ -401,6 +367,52 @@ export const rejectDesign = (code, formdata) => dispatch => {
         payload: err.response.data
       });
     });
+};
+
+// Close Design Request
+export const closeDesign = closeData => dispatch => {
+  axios({
+    method: "post",
+    url: `${HostConfig}/${ApiConfig.design_close}`,
+    headers: { Authorization: localStorage.token },
+    data: closeData
+  })
+    .then(res =>
+      dispatch({
+        type: CLOSE_DESIGN,
+        payload: res.data.message
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+// Close Design Request
+export const uploadDesign = formdata => dispatch => {
+  axios({
+    method: "post",
+    url: `${HostConfig}/${ApiConfig.design_uploads}`,
+    headers: {
+      Authorization: localStorage.token,
+      "Content-Type": "multipart/form-data"
+    },
+    data: formdata
+  })
+    .then(res =>
+      dispatch({
+        type: UPLOAD_DESIGN
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: ERRORS,
+        payload: err
+      })
+    );
 };
 
 // Clear Design Status & Messages
