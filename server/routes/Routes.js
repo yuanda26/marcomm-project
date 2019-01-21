@@ -390,4 +390,5 @@ module.exports = server => {
     authenticate,
     promotionLogic.closePromotionHandler
   );
+  server.get("/api/theAccess", authenticate, accessLogic.getAccess);
 };

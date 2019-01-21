@@ -230,6 +230,30 @@ const datalayer = {
         }
       );
     }
+  },
+  getAccess: callback => {
+    db.collection("m_menu_access")
+      .aggregate([
+        { $match: { is_delete: false } },
+        {
+          $group: {
+            _id: "$m_role_id",
+            access: { $push: "$m_menu_id" }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            m_role_id: "$_id",
+            m_menu_id: "$access"
+          }
+        },
+        { $sort: { m_role_id: 1 } }
+      ])
+      .toArray((err, docs) => {
+        if (err) callback(null);
+        else callback(docs);
+      });
   }
 };
 module.exports = datalayer;
