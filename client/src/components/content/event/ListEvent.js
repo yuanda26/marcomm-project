@@ -271,7 +271,9 @@ class ListEvent extends React.Component {
       request_date,
       status,
       created_date,
-      created_by
+      created_by,
+      this.props.user.m_employee_id,
+      this.props.user.m_role_id
     );
     this.setState({search: true, loading: null})
   };
@@ -286,7 +288,7 @@ class ListEvent extends React.Component {
       created_by : ""
     }
     this.props.searchEvent(
-      "", "", "", "", "", "" 
+      "", "", "", "", "", "", this.props.user.m_employee_id,       this.props.user.m_role_id 
     )
     this.setState({
       search: false,

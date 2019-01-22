@@ -177,7 +177,7 @@ module.exports = server => {
   server.get("/api/event/:eventId", event.readByIdHandler);
   server.get(
     // code, request_by, request_date, , status, created_date, created_by)
-    "/api/event/:code/:request_by/:request_date/:status/:created_date/:created_by",
+    "/api/event/:code/:request_by/:request_date/:status/:created_date/:created_by/:empId/:roleId",
     event.searchHandler
   );
   server.post("/api/event/:empId/:roleId", event.createHandler);

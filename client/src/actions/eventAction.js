@@ -111,9 +111,9 @@ export const updateEvent = (param, body, empId, roleId) => dispatch => {
 };
 
 // Search EVENT
-export const searchEvent = ( param1, param2, param3, param4, param5, param6 ) => dispatch => {
+export const searchEvent = ( param1, param2, param3, param4, param5, param6, empId, roleId ) => dispatch => {
   let options = {
-    url: `${HostConfig}/${ApiConfig.event}/${param1}/${param2}/${param3}/${param4}/${param5}/${param6}`,
+    url: `${HostConfig}/${ApiConfig.event}/${param1}/${param2}/${param3}/${param4}/${param5}/${param6}/${empId}/${roleId}`,
     method: "get",
     headers: {
       Authorization: localStorage.token

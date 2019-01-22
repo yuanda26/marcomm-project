@@ -38,7 +38,7 @@ const tEventBisnislogic = {
 				employee === null || employee === undefined || employee === "" ? ( request_by = paramEmployee ) : ( request_by = employee.employee_number )
 				dtl.searchHandlerData((items) => {
 					responseHelper.sendResponse(res, 200, items);
-				}, code, request_by, request_date, status, created_date, created_by);
+				}, code, request_by, request_date, status, created_date, created_by, req.params.empId, req.params.roleId);
 			}, paramEmployee)
 		}, paramUser)
 	},

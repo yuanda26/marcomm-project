@@ -153,7 +153,22 @@ const tEventDatalayer = {
 	},
 
 	// code, request_by, request_date, status, created_date, created_by
-	searchHandlerData : (callback, code, request_by, request_date, status, created_date, created_by) => {
+	searchHandlerData : (callback, code, request_by, request_date, status, created_date, created_by, empId, roleId) => {
+		let paramEmployee;
+		let paramAsignTo;
+		if ( roleId === "RO0001") {//Admin
+			paramEmployee = request_by
+			paramAsignTo = "" 
+		} else if ( roleId === "RO0005" ) {//Requester
+			paramEmployee = empId
+			paramAsignTo = ""
+		} else if ( roleId === "RO0006" ) {//Staff
+			paramEmployee = request_by
+			paramAsignTo = empId
+		}else{
+			paramEmployee = "unknown"
+			paramAsignTo = "unknown"
+		}
 		db.collection('t_event').aggregate([
 			{
 	    	$lookup : {
@@ -174,12 +189,13 @@ const tEventDatalayer = {
 	    }, {$unwind : "$user"},
 			{ $match : {
 					code : new RegExp(code),
-					request_by : new RegExp(request_by), 
 					request_date : new RegExp(request_date),
 					status : new RegExp(status), 
 					created_date : new RegExp(created_date),
 					created_by : new RegExp(created_by), 
-					is_delete : false
+					is_delete : false,
+					"request_by" : new RegExp(paramEmployee), 
+		    	"assign_to" : new RegExp(paramAsignTo)
 				}
 			},{ $sort : { code : -1 } },
 			 {
