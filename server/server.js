@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const corsMidlleware = require("restify-cors-middleware");
 const databaseConnection = require("./models/Database");
 const path = require("path");
+const multer = require("multer");
 
 // Connect to Database
 databaseConnection.connect((err, db) => {
@@ -11,10 +12,6 @@ databaseConnection.connect((err, db) => {
   } else {
     // Create Server
     const server = restify.createServer();
-    // Body Parser Middleware
-    server.use(restify.plugins.queryParser()); // parse query data from url
-    server.use(restify.plugins.bodyParser({ mapParams: false })); // parsing data from form input
-
     // CORS Middleware
     const cors = corsMidlleware({
       origins: ["*"],
@@ -27,7 +24,62 @@ databaseConnection.connect((err, db) => {
     server.use(morgan("dev"));
 
     // Route
-    require("./routes/Routes")(server);
+    require("./routes/Routes")(server, restify);
+
+    // Set Multer
+    // Set Storage Engine
+    const storage = multer.diskStorage({
+      destination: path.resolve(__dirname, "./public/uploads/"),
+      filename: (req, file, cb) => {
+        cb(null, file.originalname.toLowerCase());
+      }
+    });
+
+    // Initialize Uploads Instance
+    const uploads = multer({
+      storage: storage,
+      limits: {
+        fileSize: 1000000
+      },
+      fileFilter: (req, file, callback) => {
+        checkFileType(file, callback);
+      }
+    }).array("uploads");
+
+    // Check File Type Function
+    checkFileType = (file, callback) => {
+      // Allowed Extentions
+      const filetypes = /jpeg|jpg|png|gif/;
+      // Check Extentions
+      const extname = filetypes.test(
+        path.extname(file.originalname).toLocaleLowerCase()
+      );
+      // Check MIME Types
+      const mimetype = filetypes.test(file.mimetype);
+
+      if (mimetype && extname) {
+        return callback(null, true);
+      } else {
+        callback("Error: Images Only!");
+      }
+    };
+
+    // Close Design Request - Upload Files
+    server.post("/api/design/uploads", (req, res, next) => {
+      uploads(req, res, err => {
+        if (err) {
+          if (err) throw new Error();
+        } else {
+          res.send({
+            data: {
+              code: 200,
+              message:
+                "Upload Succeed! Transaction Design Request Has Been Closed."
+            }
+          });
+        }
+      });
+    });
 
     // Server Static Assets if in Production
     if (process.env.NODE_ENV === "production") {

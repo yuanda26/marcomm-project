@@ -80,40 +80,19 @@ const T_Design_Logic = {
 
     designData.readByCodeData(design => {
       if (design) {
-        if (design.status === 1) {
-          const t_event_id =
-            req.body.t_event_id === ""
-              ? design.t_event_id
-              : req.body.t_event_id;
-          const title_header =
-            req.body.title_header === ""
-              ? design.title_header
-              : req.body.title_header;
-          const note = req.body.note === "" ? design.note : req.body.note;
+        // contain formdata to an object
+        const formdata = {
+          ...req.body,
+          updated_date: moment().format("DD/MM/YYYY")
+        };
 
-          // contain formdata to an object
-          const formdata = {
-            t_event_id,
-            title_header,
-            note,
-            updated_by: req.body.updated_by,
-            updated_date: moment().format("DD/MM/YYYY")
-          };
-
-          designData.updateData(
-            design => {
-              responseHelper.sendResponse(res, 200, design);
-            },
-            code,
-            formdata
-          );
-        } else {
-          responseHelper.sendResponse(
-            res,
-            401,
-            "We Are Sorry. Transaction Design Cannot be Changed."
-          );
-        }
+        designData.updateData(
+          design => {
+            responseHelper.sendResponse(res, 200, design);
+          },
+          code,
+          formdata
+        );
       } else {
         responseHelper.sendResponse(
           res,
