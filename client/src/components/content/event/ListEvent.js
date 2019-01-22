@@ -12,7 +12,7 @@ import { withStyles } from "@material-ui/core/styles";
 import EditEvent from "./EditEvent";
 import CreateEvent from "./CreateEvent";
 import ViewEvent from "./ViewEvent";
-import Spinner from "../../common/Spinner";
+import SpinnerTable from "../../common/SpinnerTable";
 import ReactTooltip from "react-tooltip";
 
 import {
@@ -195,6 +195,32 @@ class ListEvent extends React.Component {
     });
   };
 
+  approvalModalHandler = eventid => {
+    let tmp = {};
+    this.props.event.myEvent.forEach(ele => {
+      if (eventid === ele._id) {
+        tmp = ele;
+        this.setState({
+          currentEvent: tmp,
+          approveEvent: true
+        });
+      }
+    });
+  };
+
+  closeRequestModalHandler = eventid => {
+    let tmp = {};
+    this.props.event.myEvent.forEach(ele => {
+      if (eventid === ele._id) {
+        tmp = ele;
+        this.setState({
+          currentEvent: tmp,
+          closeRequest: true
+        });
+      }
+    });
+  };
+
   handleChangeCreatedDate = date => {
     let { initialSearch } = this.state;
     if (date) {
@@ -245,36 +271,47 @@ class ListEvent extends React.Component {
       request_date,
       status,
       created_date,
-      created_by
+      created_by,
+      this.props.user.m_employee_id,
+      this.props.user.m_role_id
     );
-    this.setState({search: true, loading: null})
+    this.setState({ search: true, loading: null });
   };
 
   onRestore = () => {
     let restore = {
-      code : "",
-      request_by : "",
-      request_date : "",
-      status : "",
-      created_date : "",
-      created_by : ""
-    }
+      code: "",
+      request_by: "",
+      request_date: "",
+      status: "",
+      created_date: "",
+      created_by: ""
+    };
     this.props.searchEvent(
-      "", "", "", "", "", "" 
-    )
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      this.props.user.m_employee_id,
+      this.props.user.m_role_id
+    );
     this.setState({
       search: false,
       initialSearch: restore,
       loading: null
-   })
-  }
+    });
+  };
 
   closeModalHandler = () => {
     this.props.eraseStatus();
     this.setState({
       viewEvent: false,
       editEvent: false,
-      deleteEvent: false
+      deleteEvent: false,
+      approveEvent: false,
+      closeRequest: false
     });
   };
 
@@ -288,7 +325,10 @@ class ListEvent extends React.Component {
   };
 
   componentDidMount = () => {
-    this.props.getAllEvent();
+    this.props.getAllEvent(
+      this.props.user.m_employee_id,
+      this.props.user.m_role_id
+    );
   };
 
   modalStatus = (status, message) => {
@@ -318,11 +358,11 @@ class ListEvent extends React.Component {
     });
   };
 
-  UNSAFE_componentWillReceiveProps = ( newProps ) => {
+  UNSAFE_componentWillReceiveProps = newProps => {
     if (newProps.event.myEvent.length > 0) {
-      this.setState({ loading: newProps.event.myEvent })
+      this.setState({ loading: newProps.event.myEvent });
     }
-  }
+  };
 
   render() {
     return (
@@ -398,7 +438,6 @@ class ListEvent extends React.Component {
                     currentEvent={this.state.currentEvent}
                   />
                   <EditEvent
-                    event={this.state.event}
                     edit={this.state.editEvent}
                     closeModalHandler={this.closeModalHandler}
                     currentEvent={this.state.currentEvent}
@@ -408,7 +447,7 @@ class ListEvent extends React.Component {
                     <table id="mytable" className="table table-hover">
                       <thead>
                         <tr>
-                          <td className='text-nowrap text-centered'>
+                          <td className="text-nowrap text-centered">
                             <input
                               placeholder="Transaction Code"
                               className="form-control"
@@ -416,7 +455,7 @@ class ListEvent extends React.Component {
                               onChange={this.changeHandler}
                             />
                           </td>
-                          <td className='text-nowrap text-centered'>
+                          <td className="text-nowrap text-centered">
                             <input
                               placeholder="Request By"
                               className="form-control"
@@ -424,7 +463,7 @@ class ListEvent extends React.Component {
                               onChange={this.changeHandler}
                             />
                           </td>
-                          <td className='text-nowrap text-centered' >
+                          <td className="text-nowrap text-centered">
                             <DatePicker
                               className="form-control"
                               placeholderText="Request Date"
@@ -433,7 +472,7 @@ class ListEvent extends React.Component {
                               onChange={this.handleChangeRequestDate}
                             />
                           </td>
-                          <td className='text-nowrap text-centered'>
+                          <td className="text-nowrap text-centered">
                             <select
                               name="status"
                               className="form-control"
@@ -450,7 +489,7 @@ class ListEvent extends React.Component {
                               })}
                             </select>
                           </td>
-                          <td className='text-nowrap text-centered'>
+                          <td className="text-nowrap text-centered">
                             <DatePicker
                               className="form-control"
                               placeholderText="Created"
@@ -459,7 +498,7 @@ class ListEvent extends React.Component {
                               onChange={this.handleChangeCreatedDate}
                             />
                           </td>
-                          <td className='text-nowrap text-centered'>
+                          <td className="text-nowrap text-centered">
                             <input
                               placeholder="Created By"
                               name="created_by"
@@ -469,109 +508,135 @@ class ListEvent extends React.Component {
                           </td>
                           <td className="text-nowrap">
                             {this.state.search === true ? (
-                            <a href="#!" data-tip="Refresh Result!">
-                              <button 
-                                type="button" 
-                                className="btn mr-2 btn-warning"
-                                onClick={this.onRestore}
-                              >
-                                <RefreshOutlined />
-                              </button>
-                              <ReactTooltip
-                                place="top"
-                                type="dark"
-                                effect="solid"
-                              />
-                            </a>
-                              ):(
-                            <a href="#!" data-tip="Search Event!">
-                              <button 
-                                type="button" 
-                                className="btn mr-2 btn-primary"
-                                onClick={this.SearchHandler}
-                              >
-                                <Search />
-                              </button>
-                              <ReactTooltip
-                                place="top"
-                                type="dark"
-                                effect="solid"
-                              />
-                            </a>
-                              )}
+                              <a href="#!" data-tip="Refresh Result!">
+                                <button
+                                  type="button"
+                                  className="btn mr-2 btn-warning"
+                                  onClick={this.onRestore}
+                                >
+                                  <RefreshOutlined />
+                                </button>
+                                <ReactTooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
+                              </a>
+                            ) : (
+                              <a href="#!" data-tip="Search Event!">
+                                <button
+                                  type="button"
+                                  className="btn mr-2 btn-primary"
+                                  onClick={this.SearchHandler}
+                                >
+                                  <Search />
+                                </button>
+                                <ReactTooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
+                              </a>
+                            )}
                             <Link to="#" data-tip="Add New Event">
-                            <button 
-                              type="button" 
-                              className="btn btn-primary"
-                              onClick={this.showHandler}
-                            >
-                              <Add />
-                            </button>
-                          </Link>
-                          <ReactTooltip
-                            place="top"
-                            type="dark"
-                            effect="solid"
-                          />
+                              <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={this.showHandler}
+                              >
+                                <Add />
+                              </button>
+                            </Link>
+                            <ReactTooltip
+                              place="top"
+                              type="dark"
+                              effect="solid"
+                            />
                           </td>
                         </tr>
                       </thead>
                       <thead>
                         <tr>
-                          <th className='text-nowrap text-centered'>Transaction Code</th>
-                          <th className='text-nowrap text-centered'>Request By</th>
-                          <th className='text-nowrap text-centered'>Request Date</th>
-                          <th className='text-nowrap text-centered'>Status</th>
-                          <th className='text-nowrap text-centered'>Created Date</th>
-                          <th className='text-nowrap text-centered'>Created By</th>
-                          <th className='text-nowrap text-centered'>Action</th>
+                          <th className="text-nowrap text-centered">
+                            Transaction Code
+                          </th>
+                          <th className="text-nowrap text-centered">
+                            Request By
+                          </th>
+                          <th className="text-nowrap text-centered">
+                            Request Date
+                          </th>
+                          <th className="text-nowrap text-centered">Status</th>
+                          <th className="text-nowrap text-centered">
+                            Created Date
+                          </th>
+                          <th className="text-nowrap text-centered">
+                            Created By
+                          </th>
+                          <th className="text-nowrap text-centered">Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {
-                        this.state.loading === null ? (
-                          <div className="container justify-content-center">
-                            <Spinner/>
-                          </div>
+                        {this.state.loading === null ? (
+                          <SpinnerTable />
                         ) : (
-                        this.props.event.myEvent
-                          .slice(
-                            this.state.page * this.state.rowsPerPage,
-                            this.state.page * this.state.rowsPerPage +
-                              this.state.rowsPerPage
-                          )
-                          .map((row, x) => (
-                            <tr key={row._id}>
-                              <td className='text-nowrap text-centered'>{row.code}</td>
-                              <td className='text-nowrap text-centered'>
-                                {row.request_by_first_name +
-                                  " " +
-                                  row.request_by_last_name}
-                              </td>
-                              <td className='text-nowrap text-centered'>{row.request_date}</td>
-                              <td className='text-nowrap text-centered'>{row.status}</td>
-                              <td className='text-nowrap text-centered'>{row.created_date}</td>
-                              <td className='text-nowrap text-centered'>{row.created_by_employee}</td>
-                              <td className='text-nowrap text-centered'>
-                                <Link to="#" data-tip="View Event">
-                                <RemoveRedEyeOutlined
-                                  onClick={() => {
-                                  this.viewModalHandler(row._id);
-                                  }}
-                                />
-                                <ReactTooltip place="top" type="dark" effect="solid" />
-                                </Link>
-                                <Link to="#" data-tip="Edit Event">
-                                  <CreateOutlined
-                                    onClick={() => {
-                                    this.editModalHandler(row._id);
-                                    }}
-                                  />
-                                  <ReactTooltip place="top" type="dark" effect="solid" />
-                                </Link>
-                              </td>
-                            </tr>
-                          )))}
+                          this.props.event.myEvent
+                            .slice(
+                              this.state.page * this.state.rowsPerPage,
+                              this.state.page * this.state.rowsPerPage +
+                                this.state.rowsPerPage
+                            )
+                            .map((row, x) => (
+                              <tr key={row._id}>
+                                <td className="text-nowrap text-centered">
+                                  {row.code}
+                                </td>
+                                <td className="text-nowrap text-centered">
+                                  {row.request_by_first_name +
+                                    " " +
+                                    row.request_by_last_name}
+                                </td>
+                                <td className="text-nowrap text-centered">
+                                  {row.request_date}
+                                </td>
+                                <td className="text-nowrap text-centered">
+                                  {row.status}
+                                </td>
+                                <td className="text-nowrap text-centered">
+                                  {row.created_date}
+                                </td>
+                                <td className="text-nowrap text-centered">
+                                  {row.created_by_employee}
+                                </td>
+                                <td className="text-nowrap text-centered">
+                                  <Link to="#" data-tip="View Event">
+                                    <RemoveRedEyeOutlined
+                                      onClick={() => {
+                                        this.viewModalHandler(row._id);
+                                      }}
+                                    />
+                                    <ReactTooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
+                                    />
+                                  </Link>
+                                  <Link to="#" data-tip="Edit Event">
+                                    <CreateOutlined
+                                      onClick={() => {
+                                        this.editModalHandler(row._id);
+                                      }}
+                                    />
+                                    <ReactTooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
+                                    />
+                                  </Link>
+                                </td>
+                              </tr>
+                            ))
+                        )}
                       </tbody>
                       <TableFooter>
                         <TableRow>

@@ -48,7 +48,9 @@ const tEventBisnislogic = {
           request_date,
           status,
           created_date,
-          created_by
+          created_by,
+          req.params.empId,
+          req.params.roleId
         );
       }, paramEmployee);
     }, paramUser);

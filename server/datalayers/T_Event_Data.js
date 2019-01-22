@@ -4,7 +4,25 @@ const tEventModel = require("../models/T_Event_Model");
 const db = DB.getConnection();
 
 const tEventDatalayer = {
-  readAllHandlerData: callback => {
+  readAllHandlerData: (callback, empId, roleId) => {
+    let paramEmployee;
+    let paramAsignTo;
+    if (roleId === "RO0001") {
+      //Admin
+      paramEmployee = "";
+      paramAsignTo = "";
+    } else if (roleId === "RO0005") {
+      //Requester
+      paramEmployee = empId;
+      paramAsignTo = "";
+    } else if (roleId === "RO0006") {
+      //Staff
+      paramEmployee = "";
+      paramAsignTo = empId;
+    } else {
+      paramEmployee = "unknown";
+      paramAsignTo = "unknown";
+    }
     db.collection("t_event")
       .aggregate([
         {
@@ -25,7 +43,13 @@ const tEventDatalayer = {
           }
         },
         { $unwind: "$user" },
-        { $match: { is_delete: false } },
+        {
+          $match: {
+            is_delete: false,
+            request_by: new RegExp(paramEmployee),
+            assign_to: new RegExp(paramAsignTo)
+          }
+        },
         { $sort: { code: -1 } },
         {
           $project: {
@@ -57,33 +81,41 @@ const tEventDatalayer = {
         }
       ])
       .toArray((err, docs) => {
-        let mTEventData = docs.map(row => {
-          if (row.status === "1") {
-            row.status = "Submitted";
-          } else if (row.status === "2") {
-            row.status = "In Progress";
-          } else if (row.status === "3") {
-            row.status = "Done";
-          } else if (row.status === "0") {
-            row.status = "Rejected";
-          }
-          return new tEventModel(row);
-        });
-        callback(mTEventData);
-      });
-  },
-  readByIdHandlerData: (callback, param) => {
-    db.collection("t_event").findOne(
-      { _id: new objectId(param), is_delete: false },
-      (err, docs) => {
         if (err) {
           callback(err);
         } else {
-          callback(docs);
+          let mTEventData = docs.map(row => {
+            if (row.status === "1") {
+              row.status = "Submitted";
+            } else if (row.status === "2") {
+              row.status = "In Progress";
+            } else if (row.status === "3") {
+              row.status = "Done";
+            } else if (row.status === "0") {
+              row.status = "Rejected";
+            }
+            return new tEventModel(row);
+          });
+          callback(mTEventData);
         }
-      }
-    );
+      });
   },
+
+  readByIdHandlerData: (callback, param) => {
+    db.collection("t_event")
+      .find({ _id: new objectId(param) }, { is_delete: false })
+      .toArray((err, docs) => {
+        if (err) {
+          callback(err);
+        } else {
+          let mTEventData = docs.map(row => {
+            return new tEventModel(row);
+          });
+          callback(mTEventData);
+        }
+      });
+  },
+
   getUser: (callback, param) => {
     if (param === "") {
       callback(param);
@@ -92,7 +124,7 @@ const tEventDatalayer = {
         { username: new RegExp(param), is_delete: false },
         (err, docs) => {
           if (err) {
-            callback(err);
+            callback("");
           } else {
             callback(docs);
           }
@@ -100,34 +132,40 @@ const tEventDatalayer = {
       );
     }
   },
+
   getEmployee: (callback, param) => {
-    let newName = param.split(" ");
-    let first_name = "";
-    let last_name = "";
-    newName.map((row, index) => {
-      if (index == 0) {
-        first_name = row;
-      } else {
-        last_name += row;
-        if (newName.length > 1 && index < newName.length - 1) {
-          last_name += " ";
-        }
-      }
-    });
-    db.collection("m_employee").findOne(
-      {
-        first_name: new RegExp(first_name),
-        last_name: new RegExp(last_name)
-      },
-      (err, docs) => {
-        if (err) {
-          callback(first_name + " " + last_name);
+    if (param === "") {
+      callback(param);
+    } else {
+      let newName = param.split(" ");
+      let first_name = "";
+      let last_name = "";
+      newName.map((row, index) => {
+        if (index == 0) {
+          first_name = row;
         } else {
-          callback(docs);
+          last_name += row;
+          if (newName.length > 1 && index < newName.length - 1) {
+            last_name += " ";
+          }
         }
-      }
-    );
+      });
+      db.collection("m_employee").findOne(
+        {
+          first_name: new RegExp(first_name),
+          last_name: new RegExp(last_name)
+        },
+        (err, docs) => {
+          if (err) {
+            callback(first_name + " " + last_name);
+          } else {
+            callback(docs);
+          }
+        }
+      );
+    }
   },
+
   // code, request_by, request_date, status, created_date, created_by
   searchHandlerData: (
     callback,
@@ -136,8 +174,28 @@ const tEventDatalayer = {
     request_date,
     status,
     created_date,
-    created_by
+    created_by,
+    empId,
+    roleId
   ) => {
+    let paramEmployee;
+    let paramAsignTo;
+    if (roleId === "RO0001") {
+      //Admin
+      paramEmployee = request_by;
+      paramAsignTo = "";
+    } else if (roleId === "RO0005") {
+      //Requester
+      paramEmployee = empId;
+      paramAsignTo = "";
+    } else if (roleId === "RO0006") {
+      //Staff
+      paramEmployee = request_by;
+      paramAsignTo = empId;
+    } else {
+      paramEmployee = "unknown";
+      paramAsignTo = "unknown";
+    }
     db.collection("t_event")
       .aggregate([
         {
@@ -161,12 +219,13 @@ const tEventDatalayer = {
         {
           $match: {
             code: new RegExp(code),
-            request_by: new RegExp(request_by),
             request_date: new RegExp(request_date),
             status: new RegExp(status),
             created_date: new RegExp(created_date),
             created_by: new RegExp(created_by),
-            is_delete: false
+            is_delete: false,
+            request_by: new RegExp(paramEmployee),
+            assign_to: new RegExp(paramAsignTo)
           }
         },
         { $sort: { code: -1 } },
@@ -200,28 +259,38 @@ const tEventDatalayer = {
         }
       ])
       .toArray((err, docs) => {
-        let mEvent = docs.map(row => {
-          if (row.status === "1") {
-            row.status = "Submitted";
-          } else if (row.status === "2") {
-            row.status = "In Progress";
-          } else if (row.status === "3") {
-            row.status = "Done";
-          } else if (row.status === "0") {
-            row.status = "Rejected";
-          }
-          return new tEventModel(row);
-        });
-        callback(mEvent);
+        if (err) {
+          callback(err);
+        } else {
+          let mEvent = docs.map(row => {
+            if (row.status === "1") {
+              row.status = "Submitted";
+            } else if (row.status === "2") {
+              row.status = "In Progress";
+            } else if (row.status === "3") {
+              row.status = "Done";
+            } else if (row.status === "0") {
+              row.status = "Rejected";
+            }
+            return new tEventModel(row);
+          });
+          callback(mEvent);
+        }
       });
   },
+
   countTEvent: (callback, newDate) => {
     db.collection("t_event")
       .find({ code: { $regex: new RegExp(newDate) } })
       .count((err, count) => {
-        callback(count);
+        if (err) {
+          callback(err);
+        } else {
+          callback(count);
+        }
       });
   },
+
   createHandlerData: (callback, body) => {
     let newBody = {
       _id: body._id,
@@ -247,62 +316,37 @@ const tEventDatalayer = {
       updated_date: body.updated_date
     };
     db.collection("t_event").insertOne(newBody, (err, docs) => {
-      callback(newBody);
+      if (err) {
+        callback(err);
+      } else {
+        callback(newBody);
+      }
     });
   },
+
   updateHandlerData: (callback, param, body) => {
     db.collection("t_event").updateOne(
       { _id: objectId(param) },
       { $set: body },
       (err, docs) => {
-        callback(docs);
+        if (err) {
+          callback(err);
+        } else {
+          callback(docs);
+        }
       }
     );
   },
+
   deleteHandlerData: (callback, param) => {
     db.collection("t_event").updateOne(
       { _id: objectId(param) },
       { $set: { is_delete: true } },
       (err, docs) => {
-        callback(docs);
-      }
-    );
-  },
-  approveData: (callback, eventId, approveData) => {
-    db.collection("t_event").updateOne(
-      { _id: new objectId(eventId) },
-      { $set: approveData },
-      (err, result) => {
         if (err) {
           callback(err);
         } else {
-          callback(approveData);
-        }
-      }
-    );
-  },
-  rejectData: (callback, eventId, rejectData) => {
-    db.collection("t_event").updateOne(
-      { _id: new objectId(eventId) },
-      { $set: rejectData },
-      (err, result) => {
-        if (err) {
-          callback(err);
-        } else {
-          callback(rejectData);
-        }
-      }
-    );
-  },
-  closeData: (callback, eventId, closeData) => {
-    db.collection("t_event").updateOne(
-      { _id: new objectId(eventId) },
-      { $set: closeData },
-      (err, result) => {
-        if (err) {
-          callback(err);
-        } else {
-          callback(closeData);
+          callback(docs);
         }
       }
     );
