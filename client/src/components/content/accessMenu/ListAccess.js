@@ -11,7 +11,6 @@ import ViewAccess from "./ViewAccess";
 import PropTypes from "prop-types";
 import {
   withStyles,
-  TableBody,
   TableRow,
   TableFooter,
   TablePagination,
@@ -22,11 +21,12 @@ import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import SearchIcon from "@material-ui/icons/Search";
-import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
-import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
+import DeleteOutlinedIcon from "@material-ui/icons/Delete";
+import CreateOutlinedIcon from "@material-ui/icons/Create";
 import moment from "moment";
 import Spinner from "../../common/Spinner";
 import { Search, Refresh } from "@material-ui/icons";
+import Tooltip from "react-tooltip";
 const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
@@ -256,9 +256,9 @@ class ListAccess extends React.Component {
       this.closeHandler();
       this.modalStatus(1, "Menu Access has been updated!", 200);
     }, 0);
-    setTimeout(() => {
-      window.location.href = "/accessmenu";
-    }, 1000);
+    // setTimeout(() => {
+    //   window.location.href = "/accessmenu";
+    // }, 1000);
   }
   getTheAccess(code) {
     let token = localStorage.token;
@@ -410,33 +410,47 @@ class ListAccess extends React.Component {
                           </td>
                           <td>
                             {this.state.number % 2 === 0 ? (
-                              <button
-                                className="btn btn-primary"
-                                onClick={this.search}
-                              >
-                                <Search />
-                              </button>
+                              <a href="#!" data-tip="Search">
+                                <button
+                                  className="btn btn-primary"
+                                  onClick={this.search}
+                                >
+                                  <Search />
+                                </button>
+                                <Tooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
+                              </a>
                             ) : (
-                              <button
-                                onClick={this.refresh}
-                                className="btn btn-warning"
-                              >
-                                <Refresh />
-                              </button>
+                              <a href="#!" data-tip="Refresh Search">
+                                <button
+                                  onClick={this.refresh}
+                                  className="btn btn-warning"
+                                >
+                                  <Refresh />
+                                </button>
+                                <Tooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
+                              </a>
                             )}
                           </td>
                         </tr>
                       </thead>
                       <thead>
                         <tr className="text-center font-weight-bold">
-                          <td>Role Code</td>
-                          <td>Role Name</td>
-                          <td>Created By</td>
-                          <td>Created Date</td>
-                          <td>Action</td>
+                          <td nowrap="true">Role Code</td>
+                          <td nowrap="true">Role Name</td>
+                          <td nowrap="true">Created By</td>
+                          <td nowrap="true">Created Date</td>
+                          <td nowrap="true">Action</td>
                         </tr>
                       </thead>
-                      <TableBody>
+                      <tbody>
                         {this.state.hasil
                           .slice(
                             this.state.page * this.state.rowsPerPage,
@@ -446,43 +460,57 @@ class ListAccess extends React.Component {
                           .map(row => {
                             return (
                               <tr key={row._id} className="text-center">
-                                <td>{row.code}</td>
-                                <td>{row.name}</td>
-                                <td>{row.created_by}</td>
-                                <td>
-                                  {moment(row.created_date).format(
-                                    "DD/MM/YYYY"
-                                  )}
-                                </td>
-                                <td>
-                                  <Link to="#">
+                                <td nowrap="true">{row.code}</td>
+                                <td nowrap="true">{row.name}</td>
+                                <td nowrap="true">{row.created_by}</td>
+                                <td nowrap="true">{row.created_date}</td>
+                                <td nowrap="true">
+                                  <Link to="#" data-tip="View Access">
                                     <SearchIcon
                                       onClick={() => {
                                         this.getTheAccess(row.code);
                                         this.showHandler2(row.name, row.code);
                                       }}
                                     />
+
+                                    <Tooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
+                                    />
                                   </Link>
-                                  <Link to="#">
+                                  <Link to="#" data-tip="Edit Access">
                                     <CreateOutlinedIcon
                                       onClick={() => {
                                         this.getTheAccess(row.code);
                                         this.showHandler(row.name, row.code);
                                       }}
                                     />
+
+                                    <Tooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
+                                    />
                                   </Link>
-                                  <Link to="#">
+                                  <Link to="#" data-tip="Delete Role">
                                     <DeleteOutlinedIcon
                                       onClick={() => {
                                         this.deleteModalHandler(row._id);
                                       }}
+                                    />
+
+                                    <Tooltip
+                                      place="top"
+                                      type="dark"
+                                      effect="solid"
                                     />
                                   </Link>
                                 </td>
                               </tr>
                             );
                           })}
-                      </TableBody>
+                      </tbody>
                       <TableFooter>
                         <TableRow>
                           <TablePagination
@@ -513,11 +541,8 @@ class ListAccess extends React.Component {
         />
         <ViewAccess
           create={this.state.showViewAccess}
+          modalStatus={this.modalStatus2}
           closeHandler={this.closeHandler2}
-          modalStatus={this.modalStatus}
-          modalStatus2={this.modalStatus2}
-          view={this.state.viewAccess}
-          closeModalHandler={this.closeModalHandler}
           access={this.state.currentAccess}
           theAccess={this.state.theAccess}
         />

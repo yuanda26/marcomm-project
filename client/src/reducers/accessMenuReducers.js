@@ -1,5 +1,6 @@
 const initialState = {
   dataAccess: [],
+  dataAccessMenu: [],
   statusGET: "",
   statusDEL: "",
   statusADD: "",
@@ -20,7 +21,11 @@ export default function(state = initialState, action) {
         ...state,
         statusPUT: action.status
       };
-
+    case "GET_ACCESS_MENU":
+      return {
+        ...state,
+        dataAccessMenu: action.payload
+      };
     default:
       return state;
   }

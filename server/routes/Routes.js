@@ -542,4 +542,5 @@ module.exports = (server, restify) => {
     routeMiddleware,
     promotionLogic.closePromotionHandler
   );
+  server.get("/api/theAccess", authenticate, accessLogic.getAccess);
 };

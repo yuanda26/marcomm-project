@@ -1,22 +1,10 @@
 import React from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
+import { getAllMenu } from "../../../actions/menuActions";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { createAccessMenu } from "../../../actions/accessMenuActions";
-import { getAllMenu } from "../../../actions/menuActions";
-import { Alert } from "reactstrap";
-import PropTypes from "prop-types";
-import {
-  FormLabel,
-  FormControl,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-  withStyles,
-  Table,
-  TableCell,
-  TableRow,
-  TableFooter
-} from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
 
 const styles = theme => ({
   container: {
@@ -37,208 +25,171 @@ class CreateAccess extends React.Component {
     super(props);
     this.state = {
       formdata: {
-        m_role_id: "",
-        name_role: "",
+        m_role_id: this.props.access[1],
         m_menu_id: []
       },
-      accessData: "",
-      theAccess: [],
-      alertData: {
-        status: false,
-        message: ""
-      },
-      labelWidth: 0,
       menu: [],
-      samsul: [],
-      checkedOne: false,
-      theRole: "",
-      open: false,
-      nilai: len => {
-        let arr = [];
-        for (let i = 0; i < len; i++) {
-          arr.push(0);
-        }
-        return arr;
-      },
-      nilai2: [],
-      nilai3: []
+      partOne: [],
+      partTwo: [],
+      checkVariable: {}
     };
-
-    this.submitHandler = this.submitHandler.bind(this);
-    this.changeHandler = this.changeHandler.bind(this);
-    this.handleChange = this.handleChange.bind(this);
   }
   componentDidMount() {
     this.props.getAllMenu();
   }
   UNSAFE_componentWillReceiveProps(propsData) {
-    this.setState({
-      accessData: propsData.accessData,
-      menu: propsData.menuData.menuArr,
-      nilai3: this.state.nilai(propsData.menuData.menuArr.length)
+    const half = propsData.menuData.menuArr.length / 2;
+    let test = {};
+    propsData.menuData.menuArr.forEach((content, index) => {
+      let data = this.props.theAccess.filter(a => a === content.controller);
+      if (data.length === 0) {
+        test[content.code] = false;
+      } else {
+        test[content.code] = true;
+      }
     });
-  }
-  changeHandler(e) {
-    let tmp = this.state.formdata;
-    tmp[e.target.name] = e.target.value;
     this.setState({
-      alertData: {
-        status: false,
-        message: ""
+      formdata: {
+        m_menu_id: propsData.menuData.menuArr
+          .map(content => {
+            if (test[content.code] === true) return content.code;
+            else return false;
+          })
+          .filter(a => a !== false),
+        m_role_id: propsData.access[1]
       },
-      formdata: tmp
+      checkVariable: test,
+      partOne: propsData.menuData.menuArr
+        .map((content, index) => {
+          if (index < half && content.controller !== false) return content;
+          else return false;
+        })
+        .filter(a => a !== false),
+      partTwo: propsData.menuData.menuArr
+        .map((content, index) => {
+          if (index >= half && content.controller !== false) return content;
+          else return false;
+        })
+        .filter(a => a !== false),
+      menu: propsData.menuData.menuArr
     });
   }
-
-  submitHandler() {
-    let temp = this.state.formdata;
-    temp.m_role_id = this.props.access[1];
-    temp.m_menu_id = this.state.nilai2;
-    this.setState({
-      formdata: temp
-    });
-    this.props.createAccessMenu(this.state.formdata);
-    this.props.modalStatus2();
-  }
-
-  handleChange = name => event => {
-    this.setState({ [name]: event.target.checked });
-    let index = parseInt(event.target.value);
-    if (event.target.checked) {
-      let old = this.state.nilai3.map((content, ind) => {
-        if (ind === index) return this.state.menu[index].code;
-        return content;
-      });
-      this.setState({
-        nilai3: old.map(content => content),
-        nilai2: old.filter(e => e !== 0)
-      });
+  getChecked = code => {
+    let data = this.props.theAccess.filter(a => a === code);
+    if (data.length !== 0) {
+      return true;
     } else {
-      let old = this.state.nilai3.map((content, ind) => {
-        if (ind === index) return 0;
-        return content;
-      });
-      this.setState({
-        nilai3: old.map(content => content),
-        nilai2: old.filter(e => e !== 0)
-      });
+      return false;
     }
   };
-
-  handleClose = () => {
-    this.setState({ open: false });
+  changeCheck = event => {
+    let temp = this.state.checkVariable;
+    temp[event.target.name] = event.target.checked;
+    this.setState({
+      formdata: {
+        m_menu_id: this.state.menu
+          .map(content => {
+            if (temp[content.code] === true) return content.code;
+            else return false;
+          })
+          .filter(a => a !== false),
+        m_role_id: this.props.access[1]
+      },
+      checkVariable: temp
+    });
   };
-
-  handleOpen = () => {
-    this.setState({ open: true });
+  submit = () => {
+    this.props.createAccessMenu(this.state.formdata);
+    this.props.modalStatus2();
   };
   render() {
-    const { classes } = this.props;
-    const half = ["test1", "test2"];
     return (
       <Modal isOpen={this.props.create} className={this.props.className}>
-        <ModalHeader>Add/Edit Access</ModalHeader>
+        <ModalHeader>{`Edit Access (${this.props.access[0]})`}</ModalHeader>
         <ModalBody>
-          <div className={classes.container}>
-            <FormControl component="fieldset" className={classes.formControl}>
-              <label htmlFor="text">
-                <h5>{this.props.access[0]}</h5>
-              </label>
-              <br />
-              <FormLabel>Select the role</FormLabel>
-              <br />
-              <FormGroup>
-                <Table>
-                  <TableFooter>
-                    {half.map((content, id) => {
-                      return id === 0 ? (
-                        <TableCell key={content._id}>
-                          {this.state.menu.map((row, index) =>
-                            index < this.state.menu.length / 2 ? (
-                              <TableRow>
-                                <FormControlLabel
-                                  control={
-                                    <Checkbox
-                                      onChange={this.handleChange(
-                                        String(row.name)
-                                      )}
-                                      value={index}
-                                    />
-                                  }
-                                  label={row.name}
-                                />
-                              </TableRow>
-                            ) : (
-                              <div />
-                            )
-                          )}
-                        </TableCell>
-                      ) : (
-                        <TableCell>
-                          {this.state.menu.map((row, index) =>
-                            index >= this.state.menu.length / 2 ? (
-                              <TableRow>
-                                <FormControlLabel
-                                  control={
-                                    <Checkbox
-                                      onChange={this.handleChange(
-                                        String(row.name)
-                                      )}
-                                      value={index}
-                                    />
-                                  }
-                                  label={row.name}
-                                />
-                              </TableRow>
-                            ) : (
-                              <div />
-                            )
-                          )}
-                        </TableCell>
-                      );
-                    })}
-                  </TableFooter>
-                </Table>
-              </FormGroup>
-            </FormControl>
+          <div className="table-responsive">
+            <table className="table table-borderless">
+              <tbody>
+                {this.state.partOne.map((row, rowIndex) => (
+                  <tr>
+                    {["satu", "dua"].map((column, columnIndex) => (
+                      <td>
+                        {columnIndex % 2 === 0 ? (
+                          <div className="form-check">
+                            <input
+                              type="checkbox"
+                              className="form-check-input"
+                              name={row.code}
+                              onChange={this.changeCheck}
+                              checked={this.state.checkVariable[row.code]}
+                              id={`defaultCheck${rowIndex + columnIndex}`}
+                            />
+                            <label
+                              htmlFor={`defaultCheck${rowIndex + columnIndex}`}
+                              className="form-check-label"
+                            >
+                              {row.name}
+                            </label>
+                          </div>
+                        ) : (
+                          <div className="form-check">
+                            <input
+                              type="checkbox"
+                              className="form-check-input"
+                              checked={
+                                this.state.checkVariable[
+                                  this.state.partTwo[rowIndex].code
+                                ]
+                              }
+                              name={this.state.partTwo[rowIndex].code}
+                              onChange={this.changeCheck}
+                              id={`defaultCheck${rowIndex + columnIndex}`}
+                            />
+                            <label
+                              htmlFor={`defaultCheck${rowIndex + columnIndex}`}
+                              className="form-check-label"
+                            >
+                              {this.state.partTwo[rowIndex].name}
+                            </label>
+                          </div>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </ModalBody>
         <ModalFooter>
-          {this.state.alertData.status === true ? (
-            <Alert color="danger">{this.state.alertData.message} </Alert>
-          ) : (
-            ""
-          )}
           <Button
+            color="danger"
             variant="contained"
-            color="primary"
-            onClick={this.submitHandler}
+            onClick={this.props.closeHandler}
           >
-            Save
+            Close
           </Button>
-          <Button variant="contained" onClick={this.props.closeHandler}>
-            Cancel
+          <Button color="primary" variant="contained" onClick={this.submit}>
+            Save
           </Button>
         </ModalFooter>
       </Modal>
     );
   }
 }
+
 const mapStateToProps = state => ({
   auth: state.auth,
-  accessData: state.accessMenuData,
   menuData: state.menu
 });
 CreateAccess.propTypes = {
-  createAccessMenu: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired,
-  accessData: PropTypes.object.isRequired,
   getAllMenu: PropTypes.func.isRequired,
-  menuData: PropTypes.object.isRequired
+  menuData: PropTypes.object.isRequired,
+  createAccessMenu: PropTypes.func.isRequired
 };
 const style = withStyles(styles)(CreateAccess);
 export default connect(
   mapStateToProps,
-  { createAccessMenu, getAllMenu }
+  { getAllMenu, createAccessMenu }
 )(style);
