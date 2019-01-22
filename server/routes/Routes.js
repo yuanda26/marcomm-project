@@ -17,7 +17,13 @@ const promotionLogic = require("../bisnislogics/T_Promotion_Logic");
 const promotionItemLogic = require("../bisnislogics/T_Promotion_Item_Logic");
 const promotionFileLogic = require("../bisnislogics/T_Promotion_Item_File_Logic");
 
-module.exports = server => {
+module.exports = (server, restify) => {
+  // Instantite Route Middleware
+  const routeMiddleware = [
+    restify.plugins.queryParser(), // parse query data from url
+    restify.plugins.bodyParser({ mapParams: false }) // parsing data from form input
+  ];
+
   // Root Route
   server.get("/", (req, res, next) => {});
 
@@ -29,15 +35,22 @@ module.exports = server => {
     authenticate,
     companyLogic.readCompanyByID
   );
-  server.post("/api/company", authenticate, companyLogic.createCompany);
+  server.post(
+    "/api/company",
+    authenticate,
+    routeMiddleware,
+    companyLogic.createCompany
+  );
   server.put(
     "/api/company/:companyId",
     authenticate,
+    routeMiddleware,
     companyLogic.updateCompany
   );
   server.del(
     "/api/company/:companyId",
     authenticate,
+    routeMiddleware,
     companyLogic.deleteCompany
   );
   //== End of Company Route
@@ -46,16 +59,31 @@ module.exports = server => {
   // Made By: Randika Alditia
   server.get("/api/role", authenticate, roleLogic.readAllRole);
   server.get("/api/role/:id", authenticate, roleLogic.readOneRole);
-  server.post("/api/role", authenticate, roleLogic.createRole);
-  server.put("/api/role/:id", authenticate, roleLogic.updateRole);
-  server.del("/api/role/:id", authenticate, roleLogic.deleteRole);
+  server.post("/api/role", authenticate, routeMiddleware, roleLogic.createRole);
+  server.put(
+    "/api/role/:id",
+    authenticate,
+    routeMiddleware,
+    roleLogic.updateRole
+  );
+  server.del(
+    "/api/role/:id",
+    authenticate,
+    routeMiddleware,
+    roleLogic.deleteRole
+  );
   //== End of Master Role Route
 
   // Master Access Menu Route
   // Made By: Randika Alditia
   server.get("/api/access", authenticate, accessLogic.readAllAccess);
   server.get("/api/access/:id", authenticate, accessLogic.readOneAccess);
-  server.put("/api/access/:id", authenticate, accessLogic.updateAccess);
+  server.put(
+    "/api/access/:id",
+    authenticate,
+    routeMiddleware,
+    accessLogic.updateAccess
+  );
   //== End of Master Access Menu Route
 
   // Master Menu Route
@@ -63,26 +91,66 @@ module.exports = server => {
   server.get("/api/menu", authenticate, menuLogic.readMenuAllHandler);
   server.get("/api/menusidebar", authenticate, menuLogic.readMenuSidebar);
   server.get("/api/menu/:menuid", authenticate, menuLogic.readMenuOneById);
-  server.post("/api/menu", authenticate, menuLogic.createMenuHandler);
-  server.put("/api/menu/:menuid", authenticate, menuLogic.updateMenuHandler);
-  server.del("/api/menu/:menuid", authenticate, menuLogic.deleteMenuHandler);
+  server.post(
+    "/api/menu",
+    authenticate,
+    routeMiddleware,
+    menuLogic.createMenuHandler
+  );
+  server.put(
+    "/api/menu/:menuid",
+    authenticate,
+    routeMiddleware,
+    menuLogic.updateMenuHandler
+  );
+  server.del(
+    "/api/menu/:menuid",
+    authenticate,
+    routeMiddleware,
+    menuLogic.deleteMenuHandler
+  );
   //== End of Master Menu Route
 
   // Master Souvenir Route
   // Made By: Dian Yuanda
   server.get("/api/souvenir", authenticate, souvenirLogic.readAllSouvenir);
   server.get("/api/souvenir/:code", authenticate, souvenirLogic.readOneByCode);
-  server.post("/api/souvenir", authenticate, souvenirLogic.createSouvenir);
-  server.put("/api/souvenir/:code", authenticate, souvenirLogic.updateSouvenir);
-  server.del("/api/souvenir/:code", authenticate, souvenirLogic.deleteSouvenir);
+  server.post(
+    "/api/souvenir",
+    authenticate,
+    routeMiddleware,
+    souvenirLogic.createSouvenir
+  );
+  server.put(
+    "/api/souvenir/:code",
+    authenticate,
+    routeMiddleware,
+    souvenirLogic.updateSouvenir
+  );
+  server.del(
+    "/api/souvenir/:code",
+    authenticate,
+    routeMiddleware,
+    souvenirLogic.deleteSouvenir
+  );
   //== End of Master Souvenir Route
 
   // Master Unit Route
   server.get("/api/unit", authenticate, unitLogic.readAllUnit);
   server.get("/api/unit/:code", authenticate, unitLogic.readOneByCode);
-  server.post("/api/unit", authenticate, unitLogic.createUnit);
-  server.put("/api/unit/:code", authenticate, unitLogic.updateUnit);
-  server.del("/api/unit/:code", authenticate, unitLogic.deleteUnit);
+  server.post("/api/unit", authenticate, routeMiddleware, unitLogic.createUnit);
+  server.put(
+    "/api/unit/:code",
+    authenticate,
+    routeMiddleware,
+    unitLogic.updateUnit
+  );
+  server.del(
+    "/api/unit/:code",
+    authenticate,
+    routeMiddleware,
+    unitLogic.deleteUnit
+  );
   //==End of Master Unit Route
 
   // Transaction Design Route
@@ -94,20 +162,28 @@ module.exports = server => {
   );
   server.get("/api/design/code", authenticate, tDesignLogic.getCodeHandler);
   server.get("/api/design/:code", authenticate, tDesignLogic.readByCodeHandler);
-  server.post("/api/design", authenticate, tDesignLogic.createDesignHandler);
+  server.post(
+    "/api/design",
+    authenticate,
+    routeMiddleware,
+    tDesignLogic.createDesignHandler
+  );
   server.put(
     "/api/design/:code",
     authenticate,
+    routeMiddleware,
     tDesignLogic.updateDesignHandler
   );
   server.put(
     "/api/design/approve/:code",
     authenticate,
+    routeMiddleware,
     tDesignLogic.approveHandler
   );
-  server.put(
-    "/api/design/close/:code",
+  server.post(
+    "/api/design/close",
     authenticate,
+    routeMiddleware,
     tDesignLogic.closeDesignHandler
   );
   server.get(
@@ -120,6 +196,7 @@ module.exports = server => {
   server.put(
     "/api/design/reject/:code",
     authenticate,
+    routeMiddleware,
     tDesignLogic.rejectHandler
   );
   //== End of Transaction Design Route
@@ -134,16 +211,19 @@ module.exports = server => {
   server.post(
     "/api/design/item",
     authenticate,
+    routeMiddleware,
     tDesignItemLogic.createItemHandler
   );
   server.put(
     "/api/design/item",
     authenticate,
+    routeMiddleware,
     tDesignItemLogic.updateItemHandler
   );
   server.del(
     "/api/design/item/:itemId",
     authenticate,
+    routeMiddleware,
     tDesignItemLogic.deleteItemHandler
   );
   //== End of Transaction Design Item Route
@@ -156,9 +236,17 @@ module.exports = server => {
     "/api/product/:Code/:Name/:Description/:createdDate/:createdBy",
     productLogic.searchHandler
   );
-  server.post("/api/product", productLogic.createHandler);
-  server.put("/api/product/:productId", productLogic.updateHandler);
-  server.del("/api/product/:productId", productLogic.deleteHandler);
+  server.post("/api/product", routeMiddleware, productLogic.createHandler);
+  server.put(
+    "/api/product/:productId",
+    routeMiddleware,
+    productLogic.updateHandler
+  );
+  server.del(
+    "/api/product/:productId",
+    routeMiddleware,
+    productLogic.deleteHandler
+  );
   //== End of Master Product Item Route
 
   // Employee Route
@@ -170,9 +258,17 @@ module.exports = server => {
     "/api/employee/:empId/:empName/:company/:createdDate/:createdBy",
     employeeLogic.searchHandler
   );
-  server.post("/api/employee", employeeLogic.createHandler);
-  server.put("/api/employee/:employeeId", employeeLogic.updateHandler);
-  server.del("/api/employee/:employeeId", employeeLogic.deleteHandler);
+  server.post("/api/employee", routeMiddleware, employeeLogic.createHandler);
+  server.put(
+    "/api/employee/:employeeId",
+    routeMiddleware,
+    employeeLogic.updateHandler
+  );
+  server.del(
+    "/api/employee/:employeeId",
+    routeMiddleware,
+    employeeLogic.deleteHandler
+  );
   //== End of Employee Route
 
   // T Event Route
@@ -184,26 +280,56 @@ module.exports = server => {
     "/api/event/:code/:request_by/:request_date/:status/:created_date/:created_by",
     event.searchHandler
   );
-  server.post("/api/event", event.createHandler);
-  server.put("/api/event/:eventId", event.updateHandler);
-  server.del("/api/event/:eventId", event.deleteHandler);
-  server.put("/api/event/approve/:eventId", authenticate, event.approveHandler);
-  server.put("/api/event/reject/:eventId", authenticate, event.rejectHandler);
-  server.put("/api/event/close/:eventId", authenticate, event.closeHandler);
+  server.post("/api/event", routeMiddleware, event.createHandler);
+  server.put("/api/event/:eventId", routeMiddleware, event.updateHandler);
+  server.del("/api/event/:eventId", routeMiddleware, event.deleteHandler);
+  server.put(
+    "/api/event/approve/:eventId",
+    authenticate,
+    routeMiddleware,
+    event.approveHandler
+  );
+  server.put(
+    "/api/event/reject/:eventId",
+    authenticate,
+    routeMiddleware,
+    event.rejectHandler
+  );
+  server.put(
+    "/api/event/close/:eventId",
+    authenticate,
+    routeMiddleware,
+    event.closeHandler
+  );
   //== End of T Event Route
 
   // Master User Route - Login Process
   // Made By: Hanif Al Baaits (Edited by: Randika Alditia)
-  server.post("/api/user/login", userLogic.loginUserHandler);
-  server.put("/api/user/repass/:userid", authenticate, userLogic.rePassword);
+  server.post("/api/user/login", routeMiddleware, userLogic.loginUserHandler);
+  server.put(
+    "/api/user/repass/:userid",
+    authenticate,
+    routeMiddleware,
+    userLogic.rePassword
+  );
   server.put("/api/user/forgot/:userid", userLogic.forgotPassword);
   // Master User Route - CRUD - ADMIN
   server.get("/api/useremployee", authenticate, userLogic.readEmployeeFromUser);
   server.get("/api/user", authenticate, userLogic.readUserAllHandler);
   server.get("/api/user/:userid", authenticate, userLogic.readUserByUsername);
-  server.post("/api/user", authenticate, userLogic.createUserHandler);
+  server.post(
+    "/api/user",
+    authenticate,
+    routeMiddleware,
+    userLogic.createUserHandler
+  );
   server.put("/api/user/:id", userLogic.updateUserById);
-  server.del("/api/user/:id", authenticate, userLogic.deleteUserHandler);
+  server.del(
+    "/api/user/:id",
+    authenticate,
+    routeMiddleware,
+    userLogic.deleteUserHandler
+  );
   //== End of T Event Route
 
   // Transaction Souvenir Route
@@ -218,10 +344,16 @@ module.exports = server => {
     authenticate,
     tSouvenirLogic.readByIdHandler
   );
-  server.post("/api/tsouvenir", authenticate, tSouvenirLogic.createHandlerItem);
+  server.post(
+    "/api/tsouvenir",
+    authenticate,
+    routeMiddleware,
+    tSouvenirLogic.createHandlerItem
+  );
   server.put(
     "/api/tsouvenir/:souvenirId",
     authenticate,
+    routeMiddleware,
     tSouvenirLogic.updateHandler
   );
   //== End of Transaction Souvenir Route
@@ -246,42 +378,50 @@ module.exports = server => {
   server.post(
     "/api/tsouveniritem",
     authenticate,
+    routeMiddleware,
     tSouvenirItemLogic.createHandlerItem
   );
   server.put(
     "/api/tsouveniritem/:souvenirId",
     authenticate,
+    routeMiddleware,
     tSouvenirItemLogic.updateHandler
   );
   server.put(
     "/api/tsouveniritem/adminrequestapprove/:souvenirId",
     authenticate,
+    routeMiddleware,
     tSouvenirItemLogic.approveHandler
   );
   server.put(
     "/api/tsouveniritem/adminrequestreject/:souvenirId",
     authenticate,
+    routeMiddleware,
     tSouvenirItemLogic.rejectHandler
   );
 
   server.put(
     "/api/tsouveniritem/receivedsouvenir/:souvenirId",
     authenticate,
+    routeMiddleware,
     tSouvenirItemLogic.receivedHandler
   );
   server.put(
     "/api/tsouveniritemsettlement/:souvenirId",
     authenticate,
+    routeMiddleware,
     tSouvenirItemLogic.settlementHandler
   );
   server.put(
     "/api/tsouveniritem/adminapprovesettlement/:souvenirId",
     authenticate,
+    routeMiddleware,
     tSouvenirItemLogic.approveSettlementHandler
   );
   server.put(
     "/api/tsouveniritem/colseorder/:souvenirId",
     authenticate,
+    routeMiddleware,
     tSouvenirItemLogic.closeOrderHandler
   );
 
@@ -301,17 +441,20 @@ module.exports = server => {
   server.post(
     "/api/promotion",
     authenticate,
+    routeMiddleware,
     promotionLogic.createPromotionHandler
   );
   //== End of edit
   server.put(
     "/api/promotion/:promotionId",
     authenticate,
+    routeMiddleware,
     promotionLogic.updatePromotionHandler
   );
   server.del(
     "/api/promotion/:promotionId",
     authenticate,
+    routeMiddleware,
     promotionLogic.deletePromotionHandler
   );
 
@@ -334,16 +477,19 @@ module.exports = server => {
   server.post(
     "/api/promotionitem",
     authenticate,
+    routeMiddleware,
     promotionItemLogic.createPromotionHandler
   );
   server.put(
     "/api/promotionitem/:promotionId",
     authenticate,
+    routeMiddleware,
     promotionItemLogic.updatePromotionHandler
   );
   server.del(
     "/api/promotionitem/:promotionId",
     authenticate,
+    routeMiddleware,
     promotionItemLogic.deletePromotionHandler
   );
 
@@ -360,16 +506,19 @@ module.exports = server => {
   server.post(
     "/api/promotionfile",
     authenticate,
+    routeMiddleware,
     promotionFileLogic.createPromotionHandler
   );
   server.put(
     "/api/promotionfile/:promotionId",
     authenticate,
+    routeMiddleware,
     promotionFileLogic.updatePromotionHandler
   );
   server.del(
     "/api/promotionfile/:promotionId",
     authenticate,
+    routeMiddleware,
     promotionFileLogic.deletePromotionHandler
   );
   //== End of Transaction Promotion Route
@@ -378,16 +527,19 @@ module.exports = server => {
   server.post(
     "/api/promotion_design",
     authenticate,
+    routeMiddleware,
     promotionLogic.handlerAddWithDesign
   );
   server.put(
     "/api/promotion_approve",
     authenticate,
+    routeMiddleware,
     promotionLogic.approvePromotionHandler
   );
   server.put(
     "/api/promotion_close",
     authenticate,
+    routeMiddleware,
     promotionLogic.closePromotionHandler
   );
 };
