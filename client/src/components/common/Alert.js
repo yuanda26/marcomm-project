@@ -8,7 +8,12 @@ const Alert = ({ alert, action, message, data, onClick }) => {
         className={`alert alert-${alert} alert-dismissible show`}
         role="alert"
       >
-        <strong>{action}</strong> {message} {data && <strong>{data}</strong>}
+        <strong>{action}</strong> {message}{" "}
+        {data && (
+          <span>
+            with code <strong>{data}</strong>
+          </span>
+        )}
         <button
           type="button"
           className="close"
