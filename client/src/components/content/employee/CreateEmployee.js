@@ -1,5 +1,6 @@
-import React from 'react'
-import PropTypes from "prop-types"
+import React from 'react';
+import PropTypes from "prop-types";
+
 import {
   Modal,
   ModalBody,
@@ -19,29 +20,29 @@ class CreateEmployee extends React.Component{
     this.state={
       formdata:{
         employee_number: '',
-        m_company_id:'',
-        first_name:'',
-        last_name:'',
-        email:'',
+        m_company_id: '',
+        first_name: '',
+        last_name: '',
+        email: '',
         created_by: ''
       },
-      validate : {
-        validateFirsname : "form-control", 
-        validateEmail : "form-control",
-        validateCompany : "form-control"
+      validate: {
+        validateFirsname: "form-control", 
+        validateEmail: "form-control",
+        validateCompany: "form-control"
       },
-      regexEmail : /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      regexEmail: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     }
   }
 
-  componentDidMount=()=>{
+  componentDidMount = () => {
     this.props.getAllCompany()
   }
 
-  componentWillReceiveProps(newProps){
-    if (newProps.statusCreated) {
-      if(newProps.statusCreated === 200){
-        newProps.modalStatus(1, `Succes, New Employee with code ${newProps.empNumber} has been add`)
+  componentWillReceiveProps = (newProps) => {
+    if ( newProps.statusCreated ) {
+      if( newProps.statusCreated === 200 ){
+        newProps.modalStatus( 1, `Succes, New Employee with code ${newProps.empNumber} has been add` )
       }
     }
   }
@@ -50,23 +51,19 @@ class CreateEmployee extends React.Component{
     let { formdata, validate, regexEmail } = this.state
     let { name, value, id } = e.target
     formdata[name] = value
-    if( name==="email" && regexEmail.test(value) && value !== '' ){
+    if( name === "email" && regexEmail.test(value) && value !== '' ){
       validate[id] = "form-control is-valid"
     }else if(
-      ( name==="email" && value !== '' ) ||
-      ( name==="m_company_id" && value==="" ) ||
-      ( name==="first_name" && value==="" ) ||
-      ( name==="first_name" && value===" " )
+      ( name === "email" && value !== '' ) ||
+      ( name === "m_company_id" && value === "" ) ||
+      ( name === "first_name" && value === "" ) ||
+      ( name === "first_name" && value === " " )
     ){
       validate[id] = "form-control is-invalid"
     }else{
       validate[id] = "form-control is-valid"
     }
-    
-    this.setState({
-      formdata:formdata,
-      validate: validate,
-    })
+    this.setState({ formdata:formdata, validate: validate })
   }
 
   cancelHandler = () => {
@@ -77,13 +74,13 @@ class CreateEmployee extends React.Component{
       }
     let newFormdata = {
         employee_number: '',
-        m_company_id:'',
-        first_name:'',
-        last_name:'',
-        email:'',
+        m_company_id: '',
+        first_name: '',
+        last_name: '',
+        email: '',
         created_by: ''
       }
-    this.setState({validate: validate, formdata: newFormdata})
+    this.setState({ validate: validate, formdata: newFormdata })
     this.props.closeHandler()
   }
 
@@ -91,40 +88,37 @@ class CreateEmployee extends React.Component{
     let { formdata,  regexEmail } = this.state
     let { email, first_name, m_company_id } = formdata
     let emailJikaAda = null
-    this.props.employee.myEmployee.forEach((ele)=>{
-        if(ele.email === email && ele.email !== ''){
-          emailJikaAda = ele.email
-        }
-      })
     let arrFirstName = first_name.split(" ")
+    this.props.employee.myEmployee.forEach((ele)=>{
+      if( ele.email === email && ele.email !== '' ){
+        emailJikaAda = ele.email
+      }
+    })
     formdata['created_by'] = this.props.user.m_employee_id
-    if( m_company_id === "" ){
+    if ( m_company_id === "" ) {
       alert( "Select Company!" )
-    }else if( first_name === '' ){
+    } else if ( first_name === '' ) {
       alert( "Type First Name!" )
-    }else if( arrFirstName.length > 0 ){
-      alert( "Please Type First Name Without Space!" )
-    }
-    else if(  email === emailJikaAda ) {
+    } else if ( arrFirstName.length > 0 ) {
+      alert( "Please Type Just First Name!" )
+    } else if (  email === emailJikaAda ) {
       alert( "Email Sudah Ada!" )
-    }
-    else if( !regexEmail.test(email) && email !== ''){
+    } else if ( !regexEmail.test(email) && email !== '') {
       alert( "Email Incorrect!" )
-    }else{
+    } else {
       this.props.createEmployee(formdata)
       let validate = {
-        validateFirsname : "form-control", 
-        validateEmail : "form-control",
-        validateCompany : "form-control"
+        validateFirsname: "form-control", 
+        validateEmail: "form-control",
+        validateCompany: "form-control"
       }
       let newFormdata = {
-        first_name : '',
+        first_name: '',
         last_name: '',
         email: ''
       } 
-      this.setState({validate: validate, formdata: newFormdata})
+      this.setState({ validate: validate, formdata: newFormdata })
       this.props.closeHandler()
-
     }
   }
 
@@ -242,8 +236,7 @@ class CreateEmployee extends React.Component{
             onClick={this.cancelHandler}
           >Cancel</Button>
         </ModalFooter>
-      </Modal>
-    
+      </Modal>  
     )
   }
 }

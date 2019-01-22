@@ -107,7 +107,7 @@ class EditEmployee extends React.Component {
     }else if( first_name === '' ){
       alert( "Type First Name!" )
     }else if( arrFirstName.length > 0 ){
-      alert( "Please Type First Name Without Space!" )
+      alert( "Please Type Just First Name!" )
     }else if( email === emailJikaAda) {
       alert( "Email Sudah Ada!" )
     }else if( !regexEmail.test(email) && email !== ''){

@@ -1,15 +1,23 @@
 import React from 'react'
-import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from 'reactstrap'
 import PropTypes from "prop-types"
+
+import {
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Button
+} from 'reactstrap'
+
 import { connect } from "react-redux";
 import { deleteEmployee } from "../../../actions/employeeAction";
 
 class DeleteCompany extends React.Component {
-  componentWillReceiveProps(newProps){
-    if (newProps.statusDeleted) {
-      if(newProps.statusDeleted === 200){
+  UNSAFE_componentWillReceiveProps = ( newProps) => {
+    if ( newProps.statusDeleted ) {
+      if ( newProps.statusDeleted === 200 ){
         newProps.modalStatus(1, "Deleted")
-      }else if(newProps.statusDeleted === 403){
+      } else if ( newProps.statusDeleted === 403 ){
         newProps.modalStatus(2, `Failed, Data Employee with Employee ID  ${newProps.currentEmployee.employee_number} has been Relation With User!`)
       }
     }
@@ -22,22 +30,22 @@ class DeleteCompany extends React.Component {
 
   render(){
     return(
-    <Modal isOpen={this.props.delete} className={this.props.className}>
-      <ModalHeader> Delete Company </ModalHeader>
-      <ModalBody >
-        <p> Delete Data </p>
-      </ModalBody>
-      <ModalFooter>
-      <Button 
-        color="primary" 
-        onClick={this.deleteHandler}
-      >Yes</Button>
-      <Button 
-        color="danger" 
-        onClick={this.props.closeModalHandler}
-      >No</Button>
-      </ModalFooter>
-    </Modal>
+      <Modal isOpen={this.props.delete} className={this.props.className}>
+        <ModalHeader> Delete Company </ModalHeader>
+        <ModalBody >
+          <p> Delete Data </p>
+        </ModalBody>
+        <ModalFooter>
+        <Button 
+          color="primary" 
+          onClick={this.deleteHandler}
+        >Yes</Button>
+        <Button 
+          color="danger" 
+          onClick={this.props.closeModalHandler}
+        >No</Button>
+        </ModalFooter>
+      </Modal>
     )
   }
 }

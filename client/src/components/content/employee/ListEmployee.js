@@ -3,6 +3,7 @@ import PropTypes from "prop-types"
 import moment from "moment"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ReactTooltip from "react-tooltip";
 
 import { Alert } from 'reactstrap';
 import { Link } from 'react-router-dom';
@@ -20,6 +21,7 @@ import EditEmployee from './EditEmployee'
 import CreateEmployee from './CreateEmployee'
 import DeleteEmployee from './DeleteEmployee'
 import ViewEmployee from './ViewEmployee'
+import Spinner from "../../common/Spinner";
 
 import {
   TableRow,
@@ -131,6 +133,7 @@ class ListEmployee extends React.Component {
   constructor(props){
     super(props)
     this.state={
+      loading: null,
       initialSearch:{
         employee_id : '',
         employee_name : '',
@@ -231,7 +234,7 @@ class ListEmployee extends React.Component {
     this.props.searchEmployee(
       employee_id, employee_name, company, created_date, created_by 
     )
-    this.setState({search: true})
+    this.setState({search: true, loading: null })
   }
 
   onRestore = () => {
@@ -245,7 +248,11 @@ class ListEmployee extends React.Component {
     this.props.searchEmployee(
       "", "", "", "", "" 
     )
-    this.setState({search: false, initialSearch: restore})
+    this.setState({
+      search: false,
+      initialSearch: restore,
+      loading: null
+    })
   }
 
   closeModalHandler = () => {
@@ -296,6 +303,12 @@ class ListEmployee extends React.Component {
         message: ""
       }
     });
+  }
+
+  UNSAFE_componentWillReceiveProps = ( newProps ) => {
+    if (newProps.employee.myEmployee.length > 0) {
+      this.setState({ loading: newProps.employee.myEmployee })
+    }
   }
 
   render() {
@@ -423,27 +436,48 @@ class ListEmployee extends React.Component {
                         </td>
                         <td className='text-nowrap'>
                           {this.state.search === true ? (
-                            <button 
-                              type="button" 
-                              className="btn mr-2 btn-warning"
-                              onClick ={this.onRestore}
-                            ><RefreshOutlined/>
-                            </button>
+                            <a href="#!" data-tip="Refresh Result!">
+                              <button 
+                                type="button" 
+                                className="btn mr-2 btn-warning"
+                                onClick ={this.onRestore}
+                              ><RefreshOutlined/>
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
                             ):(
+                            <a href="#!" data-tip="Search Employee!">
+                              <button 
+                                type="button" 
+                                className="btn mr-2 btn-primary"
+                                onClick ={this.SearchHandler}
+                              ><Search/>
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
+                            )}
+                          <Link to="#" data-tip="Add New Employee">
                             <button 
                               type="button" 
-                              className="btn mr-2 btn-primary"
-                              onClick ={this.SearchHandler}
-                            ><Search/>
+                              className="btn btn-primary"
+                              onClick ={this.showHandler}
+                            >
+                              <Add/>  
                             </button>
-                            )}
-                          <button 
-                            type="button" 
-                            className="btn btn-primary"
-                            onClick ={this.showHandler}
-                          >
-                            <Add/>  
-                          </button>
+                          </Link>
+                          <ReactTooltip
+                            place="top"
+                            type="dark"
+                            effect="solid"
+                          />
                         </td>
                       </tr>
                     </thead>
@@ -458,7 +492,13 @@ class ListEmployee extends React.Component {
                       </tr>
                     </thead>
                       <tbody>
-                        {employee.myEmployee
+                      {
+                        this.state.loading === null ? (
+                          <div className="container justify-content-center">
+                            <Spinner/>
+                          </div>
+                        ) : (
+                        employee.myEmployee
                         .slice(
                           this.state.page * this.state.rowsPerPage,
                           this.state.page * this.state.rowsPerPage +
@@ -472,26 +512,35 @@ class ListEmployee extends React.Component {
                           <td className="text-nowrap text-center">{row.created_date}</td>
                           <td className="text-nowrap text-center">{row.created_by}</td>
                           <td className="text-nowrap text-center">
-                          <Link to="#">
-                              <RemoveRedEyeOutlined
-                                onClick={() => {
-                                this.viewModalHandler(row._id);
-                                }}
-                              />
-                              <CreateOutlined
-                                onClick={() => {
-                                this.editModalHandler(row._id);
-                                }}
-                              />
-                              <DeleteOutlined
-                                onClick={() => {
-                                this.deleteModalHandler(row._id);
-                                }}
-                              />
+                          <Link to="#" data-tip="View Employee">
+                            <RemoveRedEyeOutlined
+                              onClick={() => {
+                              this.viewModalHandler(row._id);
+                              }}
+                            />
+                            <ReactTooltip place="top" type="dark" effect="solid" />
+                          </Link>
+                          <Link to="#" data-tip="Edit Employee">
+                            <CreateOutlined
+                              onClick={() => {
+                              this.editModalHandler(row._id);
+                              }}
+                            />
+                            <ReactTooltip place="top" type="dark" effect="solid" />
+                          </Link>
+                          <Link to="#" data-tip="Delete Employee">
+                            <DeleteOutlined
+                              onClick={() => {
+                              this.deleteModalHandler(row._id);
+                              }}
+                            />
+                            <ReactTooltip place="top" type="dark" effect="solid" />
                             </Link>
                           </td>
                         </tr>
-                      )}
+                      )
+                    )
+                  }
                      </tbody>
                      <TableFooter>
                       <TableRow>
