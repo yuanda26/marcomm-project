@@ -14,6 +14,7 @@ import {
 import TextField from "../../common/TextField";
 import TextFieldGroup from "../../common/TextFieldGroup";
 import TextAreaGroup from "../../common/TextAreaGroup";
+// Form Validation
 import isEmpty from "../../../validation/isEmpty";
 
 class DesignClose extends Component {
@@ -180,12 +181,11 @@ class DesignClose extends Component {
 
     // Final Validation
     // Design Form & Design Item Form
-    if (errorCounter !== 0) {
+    if (errorCounter === 0) {
       // Container Updated Design Request Data
       const designData = {
         status: 3,
-        updated_by: this.props.user.m_employee_id,
-        updated_date: moment().format("DD/MM/YYYY")
+        updated_by: this.props.user.m_employee_id
       };
 
       // Contain Updated Design Items Data
@@ -222,7 +222,7 @@ class DesignClose extends Component {
       // Close Design Request & Upload Data
       this.props.updateDesign(this.props.design.code, designData);
       this.props.updateDesignItem(designItemUpdate);
-      this.props.closeDesign(designFileData);
+      this.props.closeDesign(this.props.design.code, designFileData);
       this.props.uploadDesign(formdata);
     }
   };

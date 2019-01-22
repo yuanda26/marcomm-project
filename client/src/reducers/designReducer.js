@@ -15,6 +15,7 @@ import {
   GET_EMPLOYEE,
   APPROVE_DESIGN,
   REJECT_DESIGN,
+  CLOSE_DESIGN,
   CLEAR_DESIGN_ALERT,
   ERRORS
 } from "../actions/types";
@@ -119,7 +120,7 @@ export default function(state = initialState, action) {
         ...state,
         design: { ...state.design, ...action.payload },
         designStatus: 2,
-        designMessage: "Transaction Design Request Has Been Updated",
+        designMessage: "Transaction Design Request Has Been Updated ",
         designData: action.code
       };
 
@@ -144,6 +145,15 @@ export default function(state = initialState, action) {
         design: { ...state.design, ...action.payload },
         designStatus: 4,
         designMessage: "Transaction Design Request Has Been Rejected!"
+      };
+
+    case CLOSE_DESIGN:
+      return {
+        ...state,
+        design: { ...state.design, ...action.payload },
+        designStatus: 2,
+        designMessage: "Transaction Design Request Has Been Closed ",
+        designData: action.code
       };
 
     case CLEAR_DESIGN_ALERT:

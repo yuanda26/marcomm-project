@@ -370,7 +370,7 @@ export const rejectDesign = (code, formdata) => dispatch => {
 };
 
 // Close Design Request
-export const closeDesign = closeData => dispatch => {
+export const closeDesign = (code, closeData) => dispatch => {
   axios({
     method: "post",
     url: `${HostConfig}/${ApiConfig.design_close}`,
@@ -380,7 +380,8 @@ export const closeDesign = closeData => dispatch => {
     .then(res =>
       dispatch({
         type: CLOSE_DESIGN,
-        payload: res.data.message
+        payload: res.data.message,
+        code
       })
     )
     .catch(err =>

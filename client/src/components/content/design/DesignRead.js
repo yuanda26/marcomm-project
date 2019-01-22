@@ -84,7 +84,7 @@ class DesignRead extends Component {
   };
 
   render() {
-    const { designStatus, designMessage } = this.props.design;
+    const { designStatus, designMessage, designData } = this.props.design;
 
     const {
       design: { design },
@@ -111,6 +111,14 @@ class DesignRead extends Component {
                 </ol>
               </nav>
               {/* Alert Message */}
+              {designStatus === 2 && (
+                <Alert
+                  action="Design Uploaded! "
+                  message={designMessage}
+                  data={designData}
+                  onClick={this.onClearAlert}
+                />
+              )}
               {designStatus === 4 && (
                 <Alert
                   action="Design Rejected! "
