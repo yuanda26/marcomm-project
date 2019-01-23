@@ -17,6 +17,7 @@ class CreateEvent extends React.Component{
         start_date : '',
         end_date : '',
         budget : '',
+        asign_to: '',
         request_by : this.props.user.m_employee_id,
         request_date : moment().format("DD/MM/YYYY"),
         created_by : this.props.user.m_employee_id

@@ -286,9 +286,13 @@ module.exports = (server, restify) => {
     authenticate,
     event.searchHandler
   );
-  server.post("/api/event", routeMiddleware, event.createHandler);
+  server.post(
+    "/api/event/:empId/:roleId",
+    routeMiddleware,
+    event.createHandler
+  );
   server.put(
-    "/api/event/:eventId",
+    "/api/event/:eventId/:empId/:roleId",
     authenticate,
     routeMiddleware,
     event.updateHandler

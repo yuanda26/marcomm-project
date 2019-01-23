@@ -6,7 +6,7 @@ const tEventBisnislogic = {
   readAllHandler: (req, res, next) => {
     dtl.readAllHandlerData(function(items) {
       responseHelper.sendResponse(res, 200, items);
-    });
+    }, req.params.empId, req.params.roleId);
   },
   readAllWithoutFilter: (req, res, next) => {
     dtl.readAllWithoutFilterData(items => {
@@ -30,12 +30,12 @@ const tEventBisnislogic = {
 
     dtl.getUser(user => {
       let created_by = "";
-      user === null || user === undefined
+      user === null || user === undefined || user === ""
         ? (created_by = paramUser)
         : (created_by = user.m_employee_id);
       dtl.getEmployee(employee => {
         let request_by = "";
-        employee === null
+        employee === null || employee === undefined || employee === ""
           ? (request_by = paramEmployee)
           : (request_by = employee.employee_number);
         dtl.searchHandlerData(
@@ -69,7 +69,7 @@ const tEventBisnislogic = {
       dtl.createHandlerData(function(items, date) {
         dtl.readAllHandlerData(function(callbackReadData) {
           responseHelper.sendResponse(res, 200, callbackReadData);
-        });
+        }, req.params.empId, req.params.roleId);
       }, body);
     }, date);
   },
@@ -103,7 +103,7 @@ const tEventBisnislogic = {
       items => {
         dtl.readAllHandlerData(function(callbackReadData) {
           responseHelper.sendResponse(res, 200, callbackReadData);
-        });
+        }, req.params.empId, req.params.roleId);
       },
       param,
       body
