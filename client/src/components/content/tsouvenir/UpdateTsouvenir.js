@@ -20,6 +20,8 @@ import SelectListGroup from "../../common/SelectListGroup";
 import SelectList from "../../common/SelectList";
 import Spinner from "../../common/Spinner";
 import SpinnerTable from "../../common/SpinnerTable";
+import isEmpty from "../../../validation/isEmpty";
+//import moment from "moment";
 
 class EditTsouvenir extends React.Component {
   constructor(props) {
@@ -54,38 +56,65 @@ class EditTsouvenir extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    this.setState({
-      formdata: newProps.tsouvenirTest,
-      employee: newProps.employeeReducer.myEmployee,
-      oldItem: newProps.getAllItem,
-      status: newProps.tsouvenirReducer.statusPUT,
-      souvenirOptions: [{ label: "*Select Souvenir", value: "" }].concat(
-        newProps.souvenirReducer.souvenirs.map(row => ({
-          label: row.name,
-          value: row.code
-        }))
-      )
-    });
+    if (newProps.getAllItem) {
+      this.setState({
+        formdata: newProps.tsouvenirTest,
+        employee: newProps.employeeReducer.myEmployee,
+        oldItem: newProps.getAllItem.map(element => {
+          return {
+            ...element,
+            readOnly: true,
+            disable: true,
+            errorSouvenir: "",
+            errorQty: ""
+          };
+        }),
+        status: newProps.tsouvenirReducer.statusPUT,
+        souvenirOptions: [{ label: "*Select Souvenir", value: "" }].concat(
+          newProps.souvenirReducer.souvenirs.map(row => ({
+            label: row.name,
+            value: row.code
+          }))
+        )
+      });
+    }
   }
 
   handleOldItemChange = idx => evt => {
+    // Clear Error State Message
+    const errors = {};
+    if (evt.target.name === "m_souvenir_id") {
+      errors.errorSouvenir = "";
+    }
+    if (evt.target.name === "qty") {
+      errors.errorQty = "";
+    }
+
     const newOldItem = this.state.oldItem.map((oldItem, sidx) => {
       if (idx !== sidx) return oldItem;
-      return { ...oldItem, [evt.target.name]: evt.target.value };
+      return { ...oldItem, ...errors, [evt.target.name]: evt.target.value };
     });
 
     this.setState({ oldItem: newOldItem });
+  };
+
+  handleEditOldItem = idx => () => {
+    const oldItem = this.state.oldItem.map((oldItem, sidx) => {
+      if (idx !== sidx) return oldItem;
+      return {
+        ...oldItem,
+        disable: !oldItem.disable,
+        readOnly: !oldItem.readOnly
+      };
+    });
+
+    this.setState({ oldItem: oldItem });
   };
 
   handleRemoveOldItem = idx => () => {
     this.setState({
       oldItem: this.state.oldItem.filter((s, sidx) => idx !== sidx)
     });
-  };
-
-  handleSubmit = evt => {
-    const { newItem, shareholders } = this.state;
-    alert(`Incorporated: ${newItem} with ${shareholders.length} shareholders`);
   };
 
   handleAddNewItem = () => {
@@ -105,9 +134,18 @@ class EditTsouvenir extends React.Component {
   };
 
   handleAddedItemChange = idx => evt => {
+    // Clear Error State Message
+    const errors = {};
+    if (evt.target.name === "m_souvenir_id") {
+      errors.errorSouvenir = "";
+    }
+    if (evt.target.name === "qty") {
+      errors.errorQty = "";
+    }
+
     const newAddedItem = this.state.newItem.map((newItem, sidx) => {
       if (idx !== sidx) return newItem;
-      return { ...newItem, [evt.target.name]: evt.target.value };
+      return { ...newItem, ...errors, [evt.target.name]: evt.target.value };
     });
 
     this.setState({ newItem: newAddedItem });
@@ -133,6 +171,22 @@ class EditTsouvenir extends React.Component {
   };
 
   changeHandler(e) {
+    if (e.target.name === "received_by") {
+      this.setState({ errorReceivedBy: "" });
+    }
+    if (e.target.name === "received_date") {
+      this.setState({ errorReceivedDate: "" });
+    }
+
+    // if (
+    //   e.target.name === "received_date" &&
+    //   moment(e.target.value) < moment().subtract(1, "day")
+    // ) {
+    //   this.setState({
+    //     errorReceivedDate: "Received date must be after today"
+    //   });
+    // }
+
     let tmp = this.state.formdata;
     tmp[e.target.name] = e.target.value;
     this.setState({
@@ -140,63 +194,93 @@ class EditTsouvenir extends React.Component {
     });
   }
 
-  submitHandler() {
-    let newItem = this.state.newItem.map((content, index) => {
-      return {
-        m_souvenir_id: content.m_souvenir_id,
-        qty: parseInt(content.qty),
-        note: content.note,
-        created_by: content.created_by,
-        created_date: content.created_date,
-        is_delete: false
-      };
+  validateDuplicateItem = input => {
+    let duplicate = { status: false, index: null };
+    input.forEach((content, i) => {
+      input.forEach((element, index) => {
+        if (element.m_souvenir_id === content.m_souvenir_id && i !== index)
+          duplicate = {
+            status: true,
+            index: [index, i - this.state.oldItem.length]
+          };
+      });
     });
-    const validate = (header, body, footer) => {
-      const validateHeader = input => {
-        if (input.received_date === "") return false;
-        else return true;
-      };
-      const validateBody = input => {
-        let reg = /^[1234567890]+$/;
-        let data = input
-          .map(content => {
-            if (content.m_souvenir_id === "" || !reg.test(content.qty)) {
-              return false;
-            }
-            return true;
-          })
-          .filter(a => a !== true);
-        if (data.length === 0) {
-          return true;
-        } else return false;
-      };
-      const validateFooter = input => {
-        if (input.length === 0) {
-          return true;
-        } else {
-          let reg = /^[1234567890]+$/;
-          let data = input
-            .map(content => {
-              if (content.m_souvenir_id === "" || !reg.test(content.qty)) {
-                return false;
-              }
-              return true;
-            })
-            .filter(a => a !== true);
-          if (data.length === 0) {
-            return true;
-          } else return false;
+    return duplicate;
+  };
+
+  submitHandler() {
+    if (isEmpty(this.state.formdata.received_by)) {
+      this.setState({ errorReceivedBy: "This Field is Required" });
+    }
+    if (isEmpty(this.state.formdata.received_date)) {
+      this.setState({ errorReceivedDate: "This Field is Required" });
+    }
+    // if (
+    //   moment(this.state.formdata.received_date) <
+    //   moment(this.props.tsouvenirTest.received_date)
+    // ) {
+    //   this.setState({ errorReceivedDate: "Received date must not older than the old one" });
+    // }
+
+    // Souvenir Item Form Validation
+    // Set Error Counter
+    let errorCounter = 0;
+    this.state.newItem.forEach((item, idx) => {
+      const newItems = this.state.newItem;
+      const oldItems = this.state.oldItem;
+      // Check for Empty Souvenir Name
+      if (isEmpty(item.m_souvenir_id)) {
+        errorCounter += 1;
+        newItems[idx].errorSouvenir = "This Field is Required!";
+        this.setState({ newItems });
+      }
+      // Check for Empty Qty
+      if (isEmpty(item.qty)) {
+        errorCounter += 1;
+        newItems[idx].errorQty = "This Field is Required!";
+        this.setState({ newItems });
+      }
+      // Check Duplicate Item
+      let cekItems = this.state.oldItem.concat(this.state.newItem);
+      if (this.validateDuplicateItem(cekItems).status === true) {
+        let a = this.validateDuplicateItem(cekItems).index[0];
+        let b = this.validateDuplicateItem(cekItems).index[1];
+        errorCounter += 1;
+        oldItems[a].errorSouvenir = "Can't Add Same Item Twice!";
+        newItems[b].errorSouvenir = "Can't Add Same Item Twice!";
+        this.setState({ oldItems, newItems });
+      }
+    });
+
+    // Validate min one item to added
+    if (this.state.oldItem.length === 0 && this.state.newItem.length === 0) {
+      this.setState({
+        alertData: {
+          status: true,
+          message: "Add minimal one item!"
         }
-      };
-      if (
-        validateHeader(header) &&
-        validateBody(body) &&
-        validateFooter(footer)
-      ) {
-        return true;
-      } else return false;
-    };
-    if (validate(this.state.formdata, this.state.oldItem, this.state.newItem)) {
+      });
+      errorCounter += 1;
+    }
+
+    if (
+      !isEmpty(this.state.formdata.received_by) &&
+      !isEmpty(this.state.formdata.received_date) &&
+      // !moment(this.state.received_date) < moment().subtract(1, "day") &&
+      //this.state.item.length > 0 &&
+      //duplicateItem === false &&
+      errorCounter === 0
+    ) {
+      let newItem = this.state.newItem.map((content, index) => {
+        return {
+          m_souvenir_id: content.m_souvenir_id,
+          qty: parseInt(content.qty),
+          note: content.note,
+          created_by: content.created_by,
+          created_date: content.created_date,
+          is_delete: false
+        };
+      });
       let data = {
         souv: this.state.formdata,
         oldItem: this.state.oldItem,
@@ -204,21 +288,6 @@ class EditTsouvenir extends React.Component {
       };
       this.props.updateTsouvenir(data, this.props.modalStatus);
       this.props.closeModalHandler();
-    } else {
-      setTimeout(() => {
-        this.setState({
-          alertData: {
-            status: false,
-            message: "Data Item not correct"
-          }
-        });
-      }, 2000);
-      this.setState({
-        alertData: {
-          status: true,
-          message: "Data Item not correct"
-        }
-      });
     }
   }
 
@@ -238,9 +307,15 @@ class EditTsouvenir extends React.Component {
         className={this.props.className}
         size="lg"
       >
-        <ModalHeader> Edit Souvenir Stock</ModalHeader>
+        <ModalHeader>
+          {" "}
+          Edit Souvenir Stock - {this.state.formdata.code}
+        </ModalHeader>
         <ModalBody>
           <form>
+            {this.state.alertData.status === true && (
+              <Alert color="danger">{this.state.alertData.message} </Alert>
+            )}
             <TextFieldGroup
               label="*Transaction Code"
               type="text"
@@ -319,6 +394,7 @@ class EditTsouvenir extends React.Component {
                             value={oldItem.m_souvenir_id}
                             onChange={this.handleOldItemChange(idx)}
                             options={this.state.souvenirOptions}
+                            disabled={oldItem.disable}
                             errors={oldItem.errorSouvenir}
                           />
                         </td>
@@ -329,6 +405,7 @@ class EditTsouvenir extends React.Component {
                             placeholder="*Qty"
                             value={oldItem.qty}
                             onChange={this.handleOldItemChange(idx)}
+                            readOnly={oldItem.readOnly}
                             errors={oldItem.errorQty}
                           />
                         </td>
@@ -340,13 +417,14 @@ class EditTsouvenir extends React.Component {
                             class="form-control"
                             value={oldItem.note}
                             onChange={this.handleOldItemChange(idx)}
+                            readOnly={oldItem.readOnly}
                             placeholder="Note"
                           />
                         </td>
                         <td>
                           <Create
                             className="mr-1"
-                            onClick={this.handleEditNewItem(idx)}
+                            onClick={this.handleEditOldItem(idx)}
                             size="small"
                           />
                           <Delete
@@ -363,33 +441,35 @@ class EditTsouvenir extends React.Component {
                         <SelectList
                           type="text"
                           name="m_souvenir_id"
-                          className="form-control"
                           placeholder="*Souvenir Item"
+                          className="form-control"
                           value={newItem.m_souvenir_id}
-                          disabled={newItem.disable}
-                          onChange={this.handleAddedItemChange(idx)}
                           options={this.state.souvenirOptions}
+                          onChange={this.handleAddedItemChange(idx)}
+                          disabled={newItem.disable}
+                          errors={newItem.errorSouvenir}
                         />
                       </td>
                       <td>
                         <TextField
                           type="number"
                           name="qty"
+                          placeholder="*Qty"
                           className="form-control"
                           value={newItem.qty}
                           onChange={this.handleAddedItemChange(idx)}
-                          placeholder="*Qty"
                           readOnly={newItem.readOnly}
+                          errors={newItem.errorQty}
                         />
                       </td>
                       <td>
                         <TextField
                           type="text"
                           name="note"
+                          placeholder="Note"
                           className="form-control"
                           value={newItem.note}
                           onChange={this.handleAddedItemChange(idx)}
-                          placeholder="Note"
                           readOnly={newItem.readOnly}
                         />
                       </td>
@@ -412,9 +492,6 @@ class EditTsouvenir extends React.Component {
           </div>
         </ModalBody>
         <ModalFooter>
-          {this.state.alertData.status === true && (
-            <Alert color="danger">{this.state.alertData.message} </Alert>
-          )}
           <Button color="primary" onClick={this.submitHandler}>
             Update
           </Button>

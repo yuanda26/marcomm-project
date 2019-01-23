@@ -15,6 +15,7 @@ import SelectList from "../../common/SelectList";
 import SelectListGroup from "../../common/SelectListGroup";
 import TextFieldGroup from "../../common/TextFieldGroup";
 import TextAreaGroup from "../../common/TextAreaGroup";
+import isEmpty from "../../../validation/isEmpty";
 
 class CreateTsouveniritem extends React.Component {
   componentDidMount() {
@@ -48,7 +49,6 @@ class CreateTsouveniritem extends React.Component {
       selectedEvent: "",
       eventcode: [], //eventcode get from t_event
       souvenir: [], //souvenir get from m_souvenir
-      invalid: false,
       userdata: {}
     };
 
@@ -57,18 +57,22 @@ class CreateTsouveniritem extends React.Component {
   }
 
   changeHandler(e) {
-    // if (
-    //   e.target.name === "due_date" &&
-    //   moment(e.target.value) < moment().subtract(1, "day")
-    // ) {
-    //   this.setState({
-    //     invalid: true
-    //   });
-    // } else {
-    //   this.setState({
-    //     invalid: false
-    //   });
-    // }
+    if (e.target.name === "event_code") {
+      this.setState({ errorEventCode: "" });
+    }
+    if (e.target.name === "due_date") {
+      this.setState({ errorRequestDueDate: "" });
+    }
+
+    if (
+      e.target.name === "due_date" &&
+      moment(e.target.value) < moment().subtract(1, "day")
+    ) {
+      this.setState({
+        errorRequestDueDate: "Due date must be after request date"
+      });
+    }
+
     this.setState({
       [e.target.name]: e.target.value,
       alertData: {
@@ -79,11 +83,19 @@ class CreateTsouveniritem extends React.Component {
   }
 
   handleShareholderItemChange = idx => evt => {
+    // Clear Error State Message
+    const errors = {};
+    if (evt.target.name === "m_souvenir_id") {
+      errors.errorSouvenir = "";
+    }
+    if (evt.target.name === "qty") {
+      errors.errorQty = "";
+    }
+
     const newShareholders = this.state.shareholders.map((shareholder, sidx) => {
       if (idx !== sidx) return shareholder;
-      return { ...shareholder, [evt.target.name]: evt.target.value };
+      return { ...shareholder, ...errors, [evt.target.name]: evt.target.value };
     });
-
     this.setState({ shareholders: newShareholders });
   };
 
@@ -98,7 +110,9 @@ class CreateTsouveniritem extends React.Component {
           created_date: moment().format("YYYY-MM-DD"),
           is_delete: false,
           readonly: true,
-          disable: true
+          disable: true,
+          errorSouvenir: "",
+          errorQty: ""
         }
       ])
     });
@@ -108,6 +122,7 @@ class CreateTsouveniritem extends React.Component {
     this.setState({
       shareholders: this.state.shareholders.filter((s, sidx) => idx !== sidx)
     });
+    this.closeModalRemoveItem();
   };
 
   handleEditButtonShareholder = idx => evt => {
@@ -137,127 +152,104 @@ class CreateTsouveniritem extends React.Component {
     });
   };
 
-  validateQty(qty) {
-    let regex = new RegExp(/[0-9-]/);
-    return regex.test(qty);
-  }
+  validateDuplicateItem = input => {
+    let duplicate = { status: false, index: null };
+    input.forEach((content, i) => {
+      input.forEach((element, index) => {
+        if (element.m_souvenir_id === content.m_souvenir_id && i !== index)
+          duplicate = { status: true, index: [index, i] };
+      });
+    });
+    return duplicate;
+  };
 
   submitHandler() {
-    const formdata = {
-      code: this.state.code,
-      t_event_id: this.state.event_code,
-      request_by: this.state.userdata.m_employee_id,
-      request_date: moment().format("YYYY-MM-DD"),
-      request_due_date: this.state.due_date,
-      status: 1,
-      note: this.state.note,
-      created_by: this.state.userdata.m_employee_id,
-      created_date: moment().format("YYYY-MM-DD")
-    };
-    let items = this.state.shareholders.map((content, index) => {
-      return {
-        m_souvenir_id: content.m_souvenir_id,
-        qty: parseInt(content.qty),
-        note: content.note,
-        created_by: content.created_by,
-        created_date: content.created_date,
-        is_delete: false
-      };
-    });
-    if (formdata.t_event_id === "") {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "Event Code form must be filled!"
-        }
-      });
-    } else if (formdata.request_due_date === "") {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "Request due date form must be filled!"
-        }
-      });
-    } else if (
-      moment(formdata.request_due_date) < moment().subtract(1, "day")
-    ) {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "Request due date must after request date!"
-        }
-      });
-    } else {
-      let error = 0;
-      let sama = false;
-      this.state.shareholders.forEach((item, index) => {
-        if (item.m_souvenir_id === "") {
-          error = 1;
-        } else if (item.qty === "") {
-          error = 2;
-        } else if (this.validateQty(item.qty) === false) {
-          error = 3;
-        }
-      });
-      if (error === 1) {
-        this.setState({
-          alertData: {
-            status: true,
-            message: "Souvenir item form must be filled!"
-          }
-        });
-      } else if (error === 2) {
-        this.setState({
-          alertData: {
-            status: true,
-            message: "Qty item form must be filled!"
-          }
-        });
-      } else if (error === 3) {
-        this.setState({
-          alertData: {
-            status: true,
-            message: "Qty input only number!"
-          }
-        });
-      } else {
-        let i;
-        let j;
-        for (i = 0; i <= this.state.shareholders.length - 1; i++) {
-          for (j = 0; j <= this.state.shareholders.length - 1; j++) {
-            if (i === j) {
-              error = 0;
-            } else {
-              if (
-                this.state.shareholders[i].m_souvenir_id ===
-                this.state.shareholders[j].m_souvenir_id
-              ) {
-                sama = true;
-              } else {
-                sama = false;
-              }
-            }
-          }
-        }
-        if (sama === true) {
-          this.setState({
-            alertData: {
-              status: true,
-              message: "Item sudah ditambahkan!"
-            }
-          });
-        } else {
-          this.setState({
-            alertData: {
-              status: false,
-              message: ""
-            }
-          });
-          let datas = [formdata, items];
-          this.props.createTSouvenirItem(datas, this.props.modalStatus);
-          this.props.closeHandler();
-        }
+    if (isEmpty(this.state.event_code)) {
+      this.setState({ errorEventCode: "This Field is Required" });
+    }
+    if (isEmpty(this.state.due_date)) {
+      this.setState({ errorRequestDueDate: "This Field is Required" });
+    }
+
+    // Souvenir Item Form Validation
+    // Set Error Counter
+    let errorCounter = 0;
+    this.state.shareholders.forEach((item, idx) => {
+      const items = this.state.shareholders;
+      // Check for Empty Souvenir Name
+      if (isEmpty(item.m_souvenir_id)) {
+        errorCounter += 1;
+        items[idx].errorSouvenir = "This Field is Required!";
+        this.setState({ items });
       }
+      // Check for Empty Qty
+      if (isEmpty(item.qty)) {
+        errorCounter += 1;
+        items[idx].errorQty = "This Field is Required!";
+        this.setState({ items });
+      }
+      // Check Duplicate Item
+      if (this.validateDuplicateItem(this.state.shareholders).status === true) {
+        let a = this.validateDuplicateItem(this.state.shareholders).index[0];
+        let b = this.validateDuplicateItem(this.state.shareholders).index[1];
+        errorCounter += 1;
+        items[a].errorSouvenir = "Can't Add Same Item Twice!";
+        items[b].errorSouvenir = "Can't Add Same Item Twice!";
+        this.setState({ items });
+      }
+    });
+
+    // Validate min one item to added
+    if (this.state.shareholders.length === 0) {
+      this.setState({
+        alertData: {
+          status: true,
+          message: "Add minimal one item!"
+        }
+      });
+    }
+
+    if (
+      !isEmpty(this.state.event_code) &&
+      !isEmpty(this.state.due_date) &&
+      !moment(this.state.due_date) < moment().subtract(1, "day") &&
+      this.state.shareholders.length > 0 &&
+      //duplicateItem === false &&
+      errorCounter === 0
+    ) {
+      const formdata = {
+        code: this.state.code,
+        t_event_id: this.state.event_code,
+        request_by: this.state.userdata.m_employee_id,
+        request_date: moment().format("YYYY-MM-DD"),
+        request_due_date: this.state.due_date,
+        status: 1,
+        note: this.state.note,
+        created_by: this.state.userdata.m_employee_id,
+        created_date: moment().format("YYYY-MM-DD")
+      };
+      let items = this.state.shareholders.map((content, index) => {
+        return {
+          m_souvenir_id: content.m_souvenir_id,
+          qty: parseInt(content.qty),
+          note: content.note,
+          created_by: content.created_by,
+          created_date: content.created_date,
+          is_delete: false
+        };
+      });
+      let datas = [formdata, items];
+      this.props.createTSouvenirItem(datas, this.props.modalStatus);
+      this.props.closeHandler();
+      setTimeout(() => {
+        this.setState({
+          code: "",
+          event_code: "",
+          due_date: "",
+          note: "",
+          shareholders: []
+        });
+      }, 1000);
     }
   }
 
@@ -265,9 +257,20 @@ class CreateTsouveniritem extends React.Component {
     this.setState({ deleteModal: true });
   };
 
-  closeModal = () => {
+  closeModalRemoveItem = () => {
     this.setState({
       deleteModal: false
+    });
+  };
+
+  closeModalCreate = () => {
+    this.props.closeHandler();
+    this.setState({
+      code: "",
+      event_code: "",
+      due_date: "",
+      note: "",
+      shareholders: []
     });
   };
 
@@ -306,6 +309,9 @@ class CreateTsouveniritem extends React.Component {
       >
         <ModalHeader> Add Souvenir Request </ModalHeader>
         <ModalBody>
+          {this.state.alertData.status === true && (
+            <Alert color="danger">{this.state.alertData.message} </Alert>
+          )}
           <form>
             <TextFieldGroup
               label="*Transaction Code"
@@ -333,12 +339,13 @@ class CreateTsouveniritem extends React.Component {
             />
             <TextFieldGroup
               label="*Request Date"
-              type="date"
+              type="text"
               placeholder="Type Request Date"
               name="request_date"
-              value={this.state.request_date}
+              value={moment().format("DD/MM/YYYY")}
               onChange={this.changeHandler}
               errors={this.state.errorRequestDate}
+              disabled={true}
             />
             <TextFieldGroup
               label="*Request Due Date"
@@ -434,7 +441,7 @@ class CreateTsouveniritem extends React.Component {
                               <button
                                 type="button"
                                 className="btn btn-default"
-                                onClick={this.closeModal}
+                                onClick={this.closeModalRemoveItem}
                               >
                                 Close
                               </button>
@@ -450,9 +457,6 @@ class CreateTsouveniritem extends React.Component {
           </div>
         </ModalBody>
         <ModalFooter>
-          {this.state.alertData.status === true && (
-            <Alert color="danger">{this.state.alertData.message} </Alert>
-          )}
           <Button
             variant="contained"
             color="primary"
@@ -460,7 +464,7 @@ class CreateTsouveniritem extends React.Component {
           >
             Save
           </Button>
-          <Button variant="contained" onClick={this.props.closeHandler}>
+          <Button variant="contained" onClick={this.closeModalCreate}>
             Cancel
           </Button>
         </ModalFooter>
