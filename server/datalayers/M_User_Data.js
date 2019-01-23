@@ -52,6 +52,7 @@ const userData = {
           }
         }
       ])
+      .sort({ created_date: 1 })
       .toArray((err, docs) => {
         let m_user = docs.map(row => {
           return new M_user(row);

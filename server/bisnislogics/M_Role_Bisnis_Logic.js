@@ -34,7 +34,7 @@ const roleLogic = {
     let data = {
       name: req.body.name,
       description: req.body.description,
-      updated_date: moment(new Date().toDateString()).format("DD/MM/YYYY"),
+      updated_date: moment().format("DD/MM/YYYY"),
       updated_by: req.userdata.m_employee_id
     };
     datalayer.updateRole(
@@ -48,7 +48,7 @@ const roleLogic = {
   deleteRole: (req, res, next) => {
     let id = req.params.id;
     let data = {
-      updated_date: moment(new Date().toDateString()).format("DD/MM/YYYY"),
+      updated_date: moment().format("DD/MM/YYYY"),
       updated_by: req.userdata.m_employee_id,
       is_delete: true
     };

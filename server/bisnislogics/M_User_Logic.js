@@ -3,7 +3,7 @@ const userData = require("../datalayers/M_User_Data");
 const authConfig = require("../config/Auth_Config.json");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
+const moment = require("moment");
 const M_user_Logic = {
   loginUserHandler: (req, res, nex) => {
     const userdata = {
@@ -71,7 +71,7 @@ const M_user_Logic = {
           m_employee_id: req.body.m_employee_id,
           is_delete: false,
           created_by: req.body.created_by,
-          created_date: new Date().toDateString()
+          created_date: moment().format("DD/MM/YYYY")
         };
 
         bcrypt.genSalt(10, (err, salt) => {
@@ -94,7 +94,7 @@ const M_user_Logic = {
       m_role_id: req.body.m_role_id,
       m_employee_id: req.body.m_employee_id,
       updated_by: req.body.updated_by,
-      updated_date: new Date().toDateString()
+      updated_date: moment().format("DD/MM/YYYY")
     };
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(data.password, salt, (err, hash) => {
@@ -120,7 +120,7 @@ const M_user_Logic = {
           const data = {
             password: req.body.newPassword,
             updated_by: username,
-            updated_date: new Date().toDateString()
+            updated_date: moment().format("DD/MM/YYYY")
           };
 
           bcrypt.genSalt(10, (err, salt) => {
@@ -151,7 +151,7 @@ const M_user_Logic = {
         const data = {
           password: req.body.password,
           updated_by: username,
-          updated_date: new Date().toDateString()
+          updated_date: moment().format("DD/MM/YYYY")
         };
         bcrypt.genSalt(10, (err, salt) => {
           bcrypt.hash(data.password, salt, (err, hash) => {
