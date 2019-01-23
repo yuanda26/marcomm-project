@@ -101,9 +101,9 @@ const tEventDatalayer = {
       });
   },
 
-  readByIdHandlerData: (callback, param) => {
+  readAllWithoutFilterData: (callback) => {
     db.collection("t_event")
-      .find({ _id: new objectId(param) }, { is_delete: false })
+      .find({ is_delete: false })
       .toArray((err, docs) => {
         if (err) {
           callback(err);
