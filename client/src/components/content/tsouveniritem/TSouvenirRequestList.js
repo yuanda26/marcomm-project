@@ -672,7 +672,7 @@ class ListTsouveniritem extends React.Component {
                         <TableFooter>
                           <TableRow>
                             <TablePagination
-                              colSpan={6}
+                              colSpan={5}
                               count={this.state.tsouveniritemSearch.length}
                               rowsPerPage={this.state.rowsPerPage}
                               page={this.state.page}
@@ -968,7 +968,7 @@ class ListTsouveniritem extends React.Component {
                         <TableFooter>
                           <TableRow>
                             <TablePagination
-                              colSpan={3}
+                              colSpan={5}
                               count={this.state.tsouveniritemSearch.length}
                               rowsPerPage={this.state.rowsPerPage}
                               page={this.state.page}

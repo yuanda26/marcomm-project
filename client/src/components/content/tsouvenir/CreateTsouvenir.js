@@ -31,7 +31,6 @@ class CreateTsouvenir extends React.Component {
       labelWidth: 0,
       employee: [],
       userdata: {},
-      invalidReceivedDate: false,
       souvenirOptions: []
     };
 
@@ -66,14 +65,14 @@ class CreateTsouvenir extends React.Component {
       this.setState({ errorReceivedDate: "" });
     }
 
-    if (
-      e.target.name === "received_date" &&
-      moment(e.target.value) < moment().subtract(1, "day")
-    ) {
-      this.setState({
-        errorReceivedDate: "Received date must be after today"
-      });
-    }
+    // if (
+    //   e.target.name === "received_date" &&
+    //   moment(e.target.value) < moment().subtract(1, "day")
+    // ) {
+    //   this.setState({
+    //     errorReceivedDate: "Received date must be after today"
+    //   });
+    // }
 
     this.setState({
       [e.target.name]: e.target.value
@@ -109,6 +108,7 @@ class CreateTsouvenir extends React.Component {
           qty: "",
           note: "",
           created_by: this.state.userdata.m_employee_id,
+          created_date: moment().format("YYYY-MM-DD"),
           disable: true,
           readOnly: true,
           errorSouvenir: "",
@@ -139,7 +139,7 @@ class CreateTsouvenir extends React.Component {
     this.setState({
       item: this.state.item.filter((s, sidx) => idx !== sidx)
     });
-    this.closeModal();
+    this.closeModalRemoveItem();
   };
 
   validateDuplicateItem = input => {
@@ -160,9 +160,9 @@ class CreateTsouvenir extends React.Component {
     if (isEmpty(this.state.received_date)) {
       this.setState({ errorReceivedDate: "This Field is Required" });
     }
-    if (moment(this.state.received_date) < moment().subtract(1, "day")) {
-      this.setState({ errorReceivedDate: "Received date must be after today" });
-    }
+    // if (moment(this.state.received_date) < moment().subtract(1, "day")) {
+    //   this.setState({ errorReceivedDate: "Received date must be after today" });
+    // }
 
     // Souvenir Item Form Validation
     // Set Error Counter
@@ -202,44 +202,10 @@ class CreateTsouvenir extends React.Component {
       });
     }
 
-    // let duplicateItem = false;
-    // let i, j;
-    // for (i = 0; i <= this.state.item.length - 1; i++) {
-    //   for (j = 0; j <= this.state.item.length - 1; j++) {
-    //     if (i === j) {
-    //       duplicateItem = false;
-    //     } else {
-    //       if (
-    //         this.state.item[i].m_souvenir_id ===
-    //         this.state.item[j].m_souvenir_id
-    //       ) {
-    //         duplicateItem = true;
-    //       } else {
-    //         duplicateItem = false;
-    //       }
-    //     }
-    //   }
-    // }
-    // if (duplicateItem === true) {
-    //   this.setState({
-    //     alertData: {
-    //       status: true,
-    //       message: "Item sudah ditambahkan!"
-    //     }
-    //   });
-    // } else {
-    //   this.setState({
-    //     alertData: {
-    //       status: false,
-    //       message: ""
-    //     }
-    //   });
-    // }
-
     if (
       !isEmpty(this.state.received_by) &&
       !isEmpty(this.state.received_date) &&
-      !moment(this.state.received_date) < moment().subtract(1, "day") &&
+      //!moment(this.state.received_date) < moment().subtract(1, "day") &&
       this.state.item.length > 0 &&
       //duplicateItem === false &&
       errorCounter === 0
@@ -264,6 +230,15 @@ class CreateTsouvenir extends React.Component {
       let datas = [formdata, dataItem];
       this.props.createTsouvenir(datas, this.props.modalStatus);
       this.props.closeHandler();
+      setTimeout(() => {
+        this.setState({
+          code: "",
+          received_by: "",
+          received_date: "",
+          note: "",
+          item: []
+        });
+      }, 1000);
     }
   }
 
@@ -271,44 +246,21 @@ class CreateTsouvenir extends React.Component {
     this.setState({ deleteModal: true });
   };
 
-  closeModal = () => {
+  closeModalRemoveItem = () => {
     this.setState({
       deleteModal: false
     });
   };
 
-  filterOption = item => {
-    let first = this.state.souvenirOptions;
-    let whatFilter = item.map(content => content.m_souvenir_id);
-    for (let i = 0; i < whatFilter.length; i++) {
-      first = first.filter(content => content.value !== whatFilter[i]);
-    }
-    console.log("ini", first);
-    return first;
-  };
-
-  theOption = (all, len, arr) => {
-    let proto = Array.from(Array(len), () => {
-      let index = 0;
-      return Array.from(Array(all.length), () => {
-        let data = {
-          label: all[index].label,
-          value: all[index].value
-        };
-        index++;
-        return data;
-      });
+  closeModalCreate = () => {
+    this.props.closeHandler();
+    this.setState({
+      code: "",
+      received_by: "",
+      received_date: "",
+      note: "",
+      item: []
     });
-    for (let i = 0; i < arr.length; i++) {
-      proto = proto.map(content => content.filter(row => row.value !== arr[i]));
-    }
-    console.log({
-      semua: all,
-      panjang: len,
-      dipilih: arr,
-      akhir: proto
-    });
-    return proto[len - 1];
   };
 
   render() {
@@ -398,18 +350,7 @@ class CreateTsouvenir extends React.Component {
                         value={shareholder.m_souvenir_id}
                         onChange={this.handleShareholderItemChange(idx)}
                         disabled={shareholder.disable}
-                        options={
-                          this.state.souvenirOptions
-                          // idx === 0
-                          //   ? this.state.souvenirOptions
-                          //   : this.theOption(
-                          //       this.state.souvenirOptions,
-                          //       idx,
-                          //       this.state.item.map(
-                          //         content => content.m_souvenir_id
-                          //       )
-                          //     )
-                        }
+                        options={this.state.souvenirOptions}
                         errors={shareholder.errorSouvenir}
                       />
                     </td>
@@ -458,7 +399,7 @@ class CreateTsouvenir extends React.Component {
                               <button
                                 type="button"
                                 className="btn btn-default"
-                                onClick={this.closeModal}
+                                onClick={this.closeModalRemoveItem}
                               >
                                 Close
                               </button>
@@ -484,7 +425,7 @@ class CreateTsouvenir extends React.Component {
           <Button
             color="warning"
             variant="contained"
-            onClick={this.props.closeHandler}
+            onClick={this.closeModalCreate}
           >
             Cancel
           </Button>
