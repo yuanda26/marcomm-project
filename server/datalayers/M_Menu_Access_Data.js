@@ -3,17 +3,15 @@ const ObjectID = require("mongodb").ObjectID;
 const accessModel = require("../models/M_Menu_Access_Model");
 const roleModel = require("../models/M_Role_Model");
 const db = DB.getConnection();
-
+const moment = require("moment");
 const datalayer = {
   readAllAccess: callback => {
-    db.collection("m_role")
+    db.collection("m_menu_access")
       .find({ is_delete: false })
       .sort({ code: -1 })
       .toArray((err, docs) => {
-        let access = docs.map(row => {
-          return new roleModel(row);
-        });
-        callback(access);
+        if (err) callback(null);
+        else callback(docs);
       });
   },
 
@@ -163,7 +161,7 @@ const datalayer = {
           $set: {
             is_delete: false,
             updated_by: username,
-            updated_date: new Date().toDateString()
+            updated_date: moment().format("DD/MM/YYYY")
           }
         },
         (err, docs) => {
@@ -184,7 +182,7 @@ const datalayer = {
             m_menu_id: content,
             is_delete: false,
             created_by: username,
-            created_date: new Date().toDateString(),
+            created_date: moment().format("DD/MM/YYYY"),
             updated_by: null,
             updated_date: null
           };
@@ -222,7 +220,7 @@ const datalayer = {
           $set: {
             is_delete: true,
             updated_by: username,
-            updated_date: new Date().toDateString()
+            updated_date: moment().format("DD/MM/YYYY")
           }
         },
         (err, docs) => {
@@ -231,29 +229,70 @@ const datalayer = {
       );
     }
   },
-  getAccess: callback => {
-    db.collection("m_menu_access")
-      .aggregate([
-        { $match: { is_delete: false } },
-        {
-          $group: {
-            _id: "$m_role_id",
-            access: { $push: "$m_menu_id" }
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            m_role_id: "$_id",
-            m_menu_id: "$access"
-          }
-        },
-        { $sort: { m_role_id: 1 } }
-      ])
-      .toArray((err, docs) => {
-        if (err) callback(null);
-        else callback(docs);
-      });
+  getAccess: (callback, flag = true) => {
+    if (flag) {
+      db.collection("m_role")
+        .aggregate([
+          {
+            $lookup: {
+              from: "m_menu_access",
+              localField: "code",
+              foreignField: "m_role_id",
+              as: "access"
+            }
+          },
+          {
+            $project: {
+              code: "$code",
+              name: "$name",
+              description: "$description",
+              is_delete: "$is_delete",
+              created_by: "$created_by",
+              created_date: "$created_date",
+              updated_by: "$updated_by",
+              updated_date: "$updated_date",
+              access: "$access.is_delete"
+            }
+          },
+          { $match: { access: false } }
+        ])
+        .sort({ code: -1 })
+        .toArray((err, docs) => {
+          if (err) callback(null);
+          else callback(docs);
+        });
+    } else {
+      db.collection("m_role")
+        .aggregate([
+          {
+            $lookup: {
+              from: "m_menu_access",
+              localField: "code",
+              foreignField: "m_role_id",
+              as: "access"
+            }
+          },
+          {
+            $project: {
+              code: "$code",
+              name: "$name",
+              description: "$description",
+              is_delete: "$is_delete",
+              created_by: "$created_by",
+              created_date: "$created_date",
+              updated_by: "$updated_by",
+              updated_date: "$updated_date",
+              access: "$access.is_delete"
+            }
+          },
+          { $match: { access: { $ne: false } } }
+        ])
+        .sort({ code: -1 })
+        .toArray((err, docs) => {
+          if (err) callback(null);
+          else callback(docs);
+        });
+    }
   }
 };
 module.exports = datalayer;

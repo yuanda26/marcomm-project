@@ -3,9 +3,56 @@ import { GET_ROLE, DEL_ROLE, ADD_ROLE, PUT_ROLE } from "./types"; //, CREATE_ROL
 import HostConfig from "../config/Host_Config";
 let token = localStorage.token;
 
-export const getAllRoles = () => dispatch => {
+export const getAllRoles = (mode = "role") => dispatch => {
+  if (mode === "role") {
+    let options = {
+      url: `${HostConfig}/role`,
+      method: "get",
+      headers: {
+        Authorization: token
+      }
+    };
+    axios(options)
+      .then(res => {
+        dispatch({
+          type: GET_ROLE,
+          payload: res.data.message,
+          status: res.data.code
+        });
+      })
+      .catch(error => {
+        dispatch({
+          type: GET_ROLE,
+          payload: error
+        });
+      });
+  } else {
+    let options = {
+      url: `${HostConfig}/theAccess`,
+      method: "get",
+      headers: {
+        Authorization: token
+      }
+    };
+    axios(options)
+      .then(res => {
+        dispatch({
+          type: GET_ROLE,
+          payload: res.data.message,
+          status: res.data.code
+        });
+      })
+      .catch(error => {
+        dispatch({
+          type: GET_ROLE,
+          payload: error
+        });
+      });
+  }
+};
+export const getnoAccess = () => dispatch => {
   let options = {
-    url: `${HostConfig}/role`,
+    url: `${HostConfig}/noAccess`,
     method: "get",
     headers: {
       Authorization: token
@@ -14,19 +61,18 @@ export const getAllRoles = () => dispatch => {
   axios(options)
     .then(res => {
       dispatch({
-        type: GET_ROLE,
+        type: "GET_NO_ACCESS",
         payload: res.data.message,
         status: res.data.code
       });
     })
     .catch(error => {
       dispatch({
-        type: GET_ROLE,
+        type: "GET_NO_ACCESS",
         payload: error
       });
     });
 };
-
 export const deleteRole = (param, modalStatus) => dispatch => {
   let options = {
     url: `${HostConfig}/role/${param}`,

@@ -25,10 +25,12 @@ class DeleteUser extends React.Component {
   }
 
   render() {
-    this.state.status === 200
-      ? this.props.modalStatus(1, "Deleted!", this.props.user.username)
-      : console.log(this.state.status);
-
+    this.state.status === 200 &&
+      this.props.modalStatus(
+        1,
+        "User has been Deleted!",
+        this.props.user.username
+      );
     return (
       <Modal isOpen={this.props.delete} className={this.props.className}>
         <ModalHeader> Delete Company </ModalHeader>

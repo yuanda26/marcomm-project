@@ -133,7 +133,7 @@ class addPromotionD extends React.Component {
       .filter(a => a !== null);
     return (
       // Header Setting
-      <div class="container-fluid">
+      <div className="container-fluid">
         {/* <<----------------Link to back------------>> */}
         <Grid container spacing={8}>
           <Grid item xs={12}>
@@ -166,39 +166,39 @@ class addPromotionD extends React.Component {
         {/* End of Header Setting */}
         <form>
           {/* Render of MARKETING HEADER PROMOTION */}
-          <div class="card mb-3">
-            <div class="card-body">
-              <h6 class="card-title">MARKETING HEADER PROMOTION</h6>
+          <div className="card mb-3">
+            <div className="card-body">
+              <h6 className="card-title">MARKETING HEADER PROMOTION</h6>
               <hr />
-              <div class="form-row">
-                <div class="form-group col-md-6 row">
+              <div className="form-row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="transactioncode"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="transactioncode"
+                    className="col-4 col-form-label text-right"
                   >
                     * Transaction Code
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="transactioncode"
                       placeholder={this.state.marketHeader.code}
                       disabled
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="eventcode"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="eventcode"
+                    className="col-4 col-form-label text-right"
                   >
                     * Event Code
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="eventcode"
                       placeholder={this.t_event_id}
                       disabled
@@ -206,35 +206,35 @@ class addPromotionD extends React.Component {
                   </div>
                 </div>
               </div>
-              <div class="form-row">
-                <div class="form-group col-md-6 row">
+              <div className="form-row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="requestby"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="requestby"
+                    className="col-4 col-form-label text-right"
                   >
                     * Request By
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="requestby"
                       placeholder={this.state.marketHeader.request_by}
                       disabled
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="requestdate"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="requestdate"
+                    className="col-4 col-form-label text-right"
                   >
                     * Request Date
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="requestdate"
                       placeholder={this.state.marketHeader.request_date}
                       disabled
@@ -242,36 +242,36 @@ class addPromotionD extends React.Component {
                   </div>
                 </div>
               </div>
-              <div class="form-row">
-                <div class="form-group col-md-6 row">
+              <div className="form-row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="titleheader"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="titleheader"
+                    className="col-4 col-form-label text-right"
                   >
                     * Title Header
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       name="title"
                       value={this.state.marketHeader.title}
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="titleheader"
                       onChange={this.changeHandler}
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="requestdate"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="requestdate"
+                    className="col-4 col-form-label text-right"
                   >
                     Status
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       placeholder={this.showStatus(
                         this.state.marketHeader.status
                       )}
@@ -279,13 +279,16 @@ class addPromotionD extends React.Component {
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
-                  <label for="note" class="col-4 col-form-label text-right">
+                <div className="form-group col-md-6 row">
+                  <label
+                    htmlFor="note"
+                    className="col-4 col-form-label text-right"
+                  >
                     * Note
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <textarea
-                      class="form-control"
+                      className="form-control"
                       aria-label="With textarea"
                       name="note"
                       value={this.state.marketHeader.note}
@@ -293,11 +296,14 @@ class addPromotionD extends React.Component {
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
-                  <label for="note" class="col-4 col-form-label text-right">
+                <div className="form-group col-md-6 row">
+                  <label
+                    htmlFor="note"
+                    className="col-4 col-form-label text-right"
+                  >
                     * Select Employee
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
@@ -312,14 +318,14 @@ class addPromotionD extends React.Component {
           {/* End of Render MARKETING HEADER PROMOTION*/}
 
           {/* <<-----Render of UPLOAD FILE------------>>*/}
-          <div class="card mb-3">
-            <div class="card-body">
-              <h6 class="card-title">UPLOAD FILE</h6>
+          <div className="card mb-3">
+            <div className="card-body">
+              <h6 className="card-title">UPLOAD FILE</h6>
               <hr />
-              <div class="table-responsive">
-                <table class="table table-borderless table-sm">
+              <div className="table-responsive">
+                <table className="table table-borderless table-sm">
                   {this.state.oldFile.length === 0 ? (
-                    <div />
+                    <thead />
                   ) : (
                     <thead>
                       <tr>
@@ -333,12 +339,12 @@ class addPromotionD extends React.Component {
                         <th />
                       </tr>
                       {this.state.oldFile.map((content, index) => (
-                        <tr>
-                          <td colspan="1">
-                            <div class="custom-file">
+                        <tr key={index.toString()}>
+                          <td colSpan="1">
+                            <div className="custom-file">
                               <input
                                 type="text"
-                                class="form-control"
+                                className="form-control"
                                 placeholder={content.filename}
                                 disabled
                               />
@@ -347,7 +353,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="text"
-                              class="form-control"
+                              className="form-control"
                               placeholder={content.qty}
                               disabled
                             />
@@ -355,7 +361,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="text"
-                              class="form-control"
+                              className="form-control"
                               placeholder={content.todo}
                               disabled
                             />
@@ -363,7 +369,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="text"
-                              class="form-control"
+                              className="form-control"
                               placeholder={content.request_due_date}
                               disabled
                             />
@@ -371,7 +377,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="date"
-                              class="form-control"
+                              className="form-control"
                               id="startdate"
                               disabled
                             />
@@ -379,7 +385,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="date"
-                              class="form-control"
+                              className="form-control"
                               id="enddate"
                               disabled
                             />
@@ -387,7 +393,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="text"
-                              class="form-control"
+                              className="form-control"
                               placeholder={content.note}
                               disabled
                             />
@@ -395,7 +401,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <a href="#!" data-tip="Download File">
                               <button
-                                class="btn btn-primary"
+                                className="btn btn-primary"
                                 onClick={() => {
                                   window.location.href = "/promotion";
                                 }}
@@ -434,12 +440,12 @@ class addPromotionD extends React.Component {
           </Grid>
           {/* End of Alert Setting */}
           {/* <<--------Render of Submit and Cancel button------>>*/}
-          <div class="form-group row">
-            <div class="col d-flex justify-content-end">
+          <div className="form-group row">
+            <div className="col d-flex justify-content-end">
               <button
                 onClick={this.submitHandler}
                 type="button"
-                class="btn btn-primary float-right mr-1"
+                className="btn btn-primary float-right mr-1"
               >
                 Approved
               </button>
@@ -450,13 +456,13 @@ class addPromotionD extends React.Component {
                   });
                 }}
                 type="button"
-                class="btn btn-danger float-right mr-1"
+                className="btn btn-danger float-right mr-1"
               >
                 Rejected
               </button>
               <button
                 type="button"
-                class="btn btn-warning  float-right ml-1"
+                className="btn btn-warning  float-right ml-1"
                 onClick={() => {
                   window.location.href = "/promotion";
                 }}

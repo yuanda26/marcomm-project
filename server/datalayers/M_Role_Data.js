@@ -1,8 +1,7 @@
 const DB = require("../models/Database");
-const ObjectID = require("mongodb").ObjectID;
 const roleModel = require("../models/M_Role_Model");
 const userModel = require("../models/M_User_Model");
-
+const moment = require("moment");
 const db = DB.getConnection();
 
 const datalayer = {
@@ -54,7 +53,7 @@ const datalayer = {
     prototypeCode += itemLen + 1;
     let roleObject = new roleModel(data);
     roleObject.code = prototypeCode;
-    roleObject.created_date = new Date().toDateString();
+    roleObject.created_date = moment().format("DD/MM/YYYY");
     roleObject.is_delete = false;
     roleObject.created_by = username;
 

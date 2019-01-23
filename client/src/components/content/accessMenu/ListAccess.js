@@ -5,7 +5,8 @@ import { getAllRoles } from "../../../actions/roleActions";
 import { Link } from "react-router-dom";
 import { Alert } from "reactstrap";
 import HostConfig from "../../../config/Host_Config";
-import CreateAccess from "./CreateAccess";
+import CreateAccess from "./EditAccess";
+import AddAccess from "./CreateAccess";
 import DeleteAccess from "./DeleteAccess";
 import ViewAccess from "./ViewAccess";
 import PropTypes from "prop-types";
@@ -20,9 +21,10 @@ import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
-import SearchIcon from "@material-ui/icons/Search";
+import SearchIcon from "@material-ui/icons/RemoveRedEye";
 import DeleteOutlinedIcon from "@material-ui/icons/Delete";
 import CreateOutlinedIcon from "@material-ui/icons/Create";
+import Add from "@material-ui/icons/Add";
 import moment from "moment";
 import Spinner from "../../common/Spinner";
 import { Search, Refresh } from "@material-ui/icons";
@@ -136,6 +138,7 @@ class ListAccess extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      temp: [],
       number: 0,
       getAccess: "",
       search: "",
@@ -147,6 +150,7 @@ class ListAccess extends React.Component {
       },
       showCreateAccess: false,
       showViewAccess: false,
+      showMakeAccess: false,
       access: [],
       theAccess: [],
       currentAccess: {},
@@ -178,7 +182,8 @@ class ListAccess extends React.Component {
     this.setState({ rowsPerPage: event.target.value });
   };
   componentDidMount() {
-    this.props.getAllRoles();
+    this.test();
+    this.props.getAllRoles("access");
   }
   UNSAFE_componentWillReceiveProps(newProps) {
     this.setState({
@@ -226,7 +231,7 @@ class ListAccess extends React.Component {
     });
   }
   closeHandler() {
-    this.setState({ showCreateAccess: false });
+    this.setState({ showCreateAccess: false, showMakeAccess: false });
   }
 
   modalStatus(status, message, code) {
@@ -238,6 +243,7 @@ class ListAccess extends React.Component {
         code: code
       },
       viewAccess: false,
+      showMakeAccess: false,
       editAccess: false,
       deleteAccess: false
     });
@@ -256,9 +262,6 @@ class ListAccess extends React.Component {
       this.closeHandler();
       this.modalStatus(1, "Menu Access has been updated!", 200);
     }, 0);
-    // setTimeout(() => {
-    //   window.location.href = "/accessmenu";
-    // }, 1000);
   }
   getTheAccess(code) {
     let token = localStorage.token;
@@ -282,7 +285,24 @@ class ListAccess extends React.Component {
         console.log(error);
       });
   }
-
+  test = () => {
+    axios({
+      url: `${HostConfig}/access`,
+      method: "get",
+      headers: {
+        Authorization: localStorage.token,
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => {
+        this.setState({
+          temp: res.data.message
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
   //handler Change for search
   changeHandler = event => {
     let temp = this.state.roleItem;
@@ -315,7 +335,7 @@ class ListAccess extends React.Component {
           regBy.test(content.created_by) ||
           regCode.test(content.code) ||
           regName.test(content.name) ||
-          regDate.test(moment(content.created_date).format("DD/MM/YYYY"))
+          regDate.test(content.created_date)
         )
           return content;
         else return false;
@@ -366,83 +386,96 @@ class ListAccess extends React.Component {
                 ) : (
                   ""
                 )}
+                <div className="table-responsive">
+                  <table className="table table-borderless">
+                    <tbody>
+                      <tr>
+                        <td>
+                          <input
+                            name="code"
+                            onKeyPress={this.keyHandler}
+                            onChange={this.changeHandler}
+                            className="form-control"
+                            placeholder="-Role Code-"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            name="name"
+                            onKeyPress={this.keyHandler}
+                            onChange={this.changeHandler}
+                            className="form-control"
+                            placeholder="-Role Name-"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            name="created_by"
+                            onKeyPress={this.keyHandler}
+                            onChange={this.changeHandler}
+                            className="form-control"
+                            placeholder="-Created By-"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            name="reqDate"
+                            onKeyPress={this.keyHandler}
+                            onChange={this.changeHandler}
+                            type="date"
+                            className="form-control"
+                          />
+                        </td>
+                        <td>
+                          {this.state.number % 2 === 0 ? (
+                            <a href="#!" data-tip="Search">
+                              <button
+                                className="btn btn-primary"
+                                onClick={this.search}
+                              >
+                                <Search />
+                              </button>
+                              <Tooltip place="top" type="dark" effect="solid" />
+                            </a>
+                          ) : (
+                            <a href="#!" data-tip="Refresh Search">
+                              <button
+                                onClick={this.refresh}
+                                className="btn btn-warning"
+                              >
+                                <Refresh />
+                              </button>
+                              <Tooltip place="top" type="dark" effect="solid" />
+                            </a>
+                          )}
+                        </td>
+
+                        <td>
+                          <a href="#!" data-tip="Add Acess">
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => {
+                                this.setState({
+                                  showMakeAccess: true
+                                });
+                              }}
+                            >
+                              <Add />
+                            </button>
+
+                            <Tooltip place="top" type="dark" effect="solid" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
                 {this.state.hasil.length === 0 &&
                 this.state.access.length === 0 ? (
                   <Spinner />
                 ) : (
                   <div className="table-responsive">
                     <table className="table">
-                      <thead>
-                        <tr>
-                          <td>
-                            <input
-                              name="code"
-                              onKeyPress={this.keyHandler}
-                              onChange={this.changeHandler}
-                              className="form-control"
-                              placeholder="-Role Code-"
-                            />
-                          </td>
-                          <td>
-                            <input
-                              name="name"
-                              onKeyPress={this.keyHandler}
-                              onChange={this.changeHandler}
-                              className="form-control"
-                              placeholder="-Role Name-"
-                            />
-                          </td>
-                          <td>
-                            <input
-                              name="created_by"
-                              onKeyPress={this.keyHandler}
-                              onChange={this.changeHandler}
-                              className="form-control"
-                              placeholder="-Created By-"
-                            />
-                          </td>
-                          <td>
-                            <input
-                              name="reqDate"
-                              onKeyPress={this.keyHandler}
-                              onChange={this.changeHandler}
-                              type="date"
-                              className="form-control"
-                            />
-                          </td>
-                          <td>
-                            {this.state.number % 2 === 0 ? (
-                              <a href="#!" data-tip="Search">
-                                <button
-                                  className="btn btn-primary"
-                                  onClick={this.search}
-                                >
-                                  <Search />
-                                </button>
-                                <Tooltip
-                                  place="top"
-                                  type="dark"
-                                  effect="solid"
-                                />
-                              </a>
-                            ) : (
-                              <a href="#!" data-tip="Refresh Search">
-                                <button
-                                  onClick={this.refresh}
-                                  className="btn btn-warning"
-                                >
-                                  <Refresh />
-                                </button>
-                                <Tooltip
-                                  place="top"
-                                  type="dark"
-                                  effect="solid"
-                                />
-                              </a>
-                            )}
-                          </td>
-                        </tr>
-                      </thead>
                       <thead>
                         <tr className="text-center font-weight-bold">
                           <td nowrap="true">Role Code</td>
@@ -470,6 +503,15 @@ class ListAccess extends React.Component {
                                   <Link to="#" data-tip="View Access">
                                     <SearchIcon
                                       onClick={() => {
+                                        this.setState({
+                                          temp: this.state.temp
+                                            .map(a => {
+                                              if (a.m_role_id === row.code)
+                                                return a.m_menu_id;
+                                              else return false;
+                                            })
+                                            .filter(b => b !== false)
+                                        });
                                         this.getTheAccess(row.code);
                                         this.showHandler2(row.name, row.code);
                                       }}
@@ -484,6 +526,15 @@ class ListAccess extends React.Component {
                                   <Link to="#" data-tip="Edit Access">
                                     <CreateOutlinedIcon
                                       onClick={() => {
+                                        this.setState({
+                                          temp: this.state.temp
+                                            .map(a => {
+                                              if (a.m_role_id === row.code)
+                                                return a.m_menu_id;
+                                              else return false;
+                                            })
+                                            .filter(b => b !== false)
+                                        });
                                         this.getTheAccess(row.code);
                                         this.showHandler(row.name, row.code);
                                       }}
@@ -540,6 +591,12 @@ class ListAccess extends React.Component {
           modalStatus2={this.modalStatus2}
           access={this.state.currentAccess}
           theAccess={this.state.theAccess}
+          test={this.state.temp}
+        />
+        <AddAccess
+          create={this.state.showMakeAccess}
+          closeHandler={this.closeHandler}
+          modalStatus={this.modalStatus}
         />
         <ViewAccess
           create={this.state.showViewAccess}
@@ -547,6 +604,7 @@ class ListAccess extends React.Component {
           closeHandler={this.closeHandler2}
           access={this.state.currentAccess}
           theAccess={this.state.theAccess}
+          test={this.state.temp}
         />
         <DeleteAccess
           delete={this.state.deleteAccess}

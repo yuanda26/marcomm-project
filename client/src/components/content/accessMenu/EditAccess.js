@@ -24,24 +24,81 @@ class CreateAccess extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      menu: []
+      formdata: {
+        m_role_id: this.props.access[1],
+        m_menu_id: []
+      },
+      menu: [],
+      partOne: [],
+      partTwo: [],
+      checkVariable: {}
     };
   }
   componentDidMount() {
     this.props.getAllMenu();
   }
   UNSAFE_componentWillReceiveProps(propsData) {
+    const half = propsData.menuData.menuArr.length / 2;
+    let test = {};
+    let data = [];
+    propsData.menuData.menuArr.forEach((content, index) => {
+      if (this.props.test !== undefined) {
+        data = this.props.test.filter(a => a === content.code);
+      }
+      if (this.props.test.length === 0) {
+        data = this.props.theAccess.filter(a => a === content.controller);
+      }
+      if (data.length === 0) {
+        test[content.code] = false;
+      } else {
+        test[content.code] = true;
+      }
+    });
     this.setState({
+      formdata: {
+        m_menu_id: propsData.menuData.menuArr
+          .map(content => {
+            if (test[content.code] === true) return content.code;
+            else return false;
+          })
+          .filter(a => a !== false),
+        m_role_id: propsData.access[1]
+      },
+      checkVariable: test,
+      partOne: propsData.menuData.menuArr
+        .map((content, index) => {
+          if (index < half && content.controller !== false) return content;
+          else return false;
+        })
+        .filter(a => a !== false),
+      partTwo: propsData.menuData.menuArr
+        .map((content, index) => {
+          if (index >= half && content.controller !== false) return content;
+          else return false;
+        })
+        .filter(a => a !== false),
       menu: propsData.menuData.menuArr.filter(a => a.controller !== false)
     });
   }
-  getChecked = code => {
-    let data = this.props.theAccess.filter(a => a === code);
-    if (data.length !== 0) {
-      return true;
-    } else {
-      return false;
-    }
+  changeCheck = event => {
+    let temp = this.state.checkVariable;
+    temp[event.target.name] = event.target.checked;
+    this.setState({
+      formdata: {
+        m_menu_id: this.state.menu
+          .map(content => {
+            if (temp[content.code] === true) return content.code;
+            else return false;
+          })
+          .filter(a => a !== false),
+        m_role_id: this.props.access[1]
+      },
+      checkVariable: temp
+    });
+  };
+  submit = () => {
+    this.props.createAccessMenu(this.state.formdata);
+    this.props.modalStatus2();
   };
   render() {
     return (
@@ -59,9 +116,10 @@ class CreateAccess extends React.Component {
                         <input
                           type="checkbox"
                           className="form-check-input"
-                          checked={this.getChecked(row.controller)}
+                          name={row.code}
+                          onChange={this.changeCheck}
+                          checked={this.state.checkVariable[row.code]}
                           id={`defaultCheck${index}`}
-                          disabled
                         />
                         <label
                           htmlFor={`defaultCheck${index}`}
@@ -82,9 +140,10 @@ class CreateAccess extends React.Component {
                         <input
                           type="checkbox"
                           className="form-check-input"
-                          checked={this.getChecked(row.controller)}
+                          name={row.code}
+                          onChange={this.changeCheck}
+                          checked={this.state.checkVariable[row.code]}
                           id={`defaultCheck${index}`}
-                          disabled
                         />
                         <label
                           htmlFor={`defaultCheck${index}`}
@@ -106,6 +165,9 @@ class CreateAccess extends React.Component {
             onClick={this.props.closeHandler}
           >
             Close
+          </Button>
+          <Button color="primary" variant="contained" onClick={this.submit}>
+            Save
           </Button>
         </ModalFooter>
       </Modal>

@@ -58,6 +58,11 @@ const accessLogic = {
     datalayer.getAccess(items => {
       response.sendResponse(res, 200, items);
     });
+  },
+  noAccess: (req, res) => {
+    datalayer.getAccess(items => {
+      response.sendResponse(res, 200, items);
+    }, false);
   }
 };
 

@@ -362,7 +362,7 @@ class ListPromotion extends React.Component {
                         <tr>
                           <td>
                             <input
-                              class="form-control"
+                              className="form-control"
                               placeholder="Transaction Code"
                               name="code"
                               onChange={this.changeHandler}
@@ -371,7 +371,7 @@ class ListPromotion extends React.Component {
                           </td>
                           <td>
                             <input
-                              class="form-control"
+                              className="form-control"
                               placeholder="Request By"
                               name="request_by"
                               onChange={this.changeHandler}
@@ -380,7 +380,7 @@ class ListPromotion extends React.Component {
                           </td>
                           <td>
                             <input
-                              class="form-control"
+                              className="form-control"
                               placeholder="Request Date"
                               name="request_date"
                               type="date"
@@ -390,7 +390,7 @@ class ListPromotion extends React.Component {
                           </td>
                           <td>
                             <input
-                              class="form-control"
+                              className="form-control"
                               placeholder="Assign to"
                               name="assign_to"
                               onChange={this.changeHandler}
@@ -399,7 +399,7 @@ class ListPromotion extends React.Component {
                           </td>
                           <td>
                             <input
-                              class="form-control"
+                              className="form-control"
                               placeholder="Created Date"
                               type="date"
                               name="created_date"
@@ -409,7 +409,7 @@ class ListPromotion extends React.Component {
                           </td>
                           <td>
                             <input
-                              class="form-control"
+                              className="form-control"
                               placeholder="Created By"
                               type="text"
                               name="created_by"

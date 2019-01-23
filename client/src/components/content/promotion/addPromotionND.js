@@ -121,7 +121,7 @@ class addPromotionD extends React.Component {
   };
   render() {
     return (
-      <div class="container-fluid">
+      <div className="container-fluid">
         <Grid container spacing={8}>
           <Grid item xs={12}>
             <br />
@@ -145,39 +145,39 @@ class addPromotionD extends React.Component {
           </Grid>
         </Grid>
         <form>
-          <div class="card mb-3">
-            <div class="card-body">
-              <h6 class="card-title">MARKETING HEADER PROMOTION</h6>
+          <div className="card mb-3">
+            <div className="card-body">
+              <h6 className="card-title">MARKETING HEADER PROMOTION</h6>
               <hr />
-              <div class="form-row">
-                <div class="form-group col-md-6 row">
+              <div className="form-row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="transactioncode"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="transactioncode"
+                    className="col-4 col-form-label text-right"
                   >
                     * Transaction Code
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="transactioncode"
                       placeholder="Auto Generated"
                       disabled
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="eventcode"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="eventcode"
+                    className="col-4 col-form-label text-right"
                   >
                     * Event Code
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="eventcode"
                       placeholder={this.t_event_id}
                       disabled
@@ -185,35 +185,35 @@ class addPromotionD extends React.Component {
                   </div>
                 </div>
               </div>
-              <div class="form-row">
-                <div class="form-group col-md-6 row">
+              <div className="form-row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="requestby"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="requestby"
+                    className="col-4 col-form-label text-right"
                   >
                     * Request By
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="requestby"
                       placeholder={this.username}
                       disabled
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="requestdate"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="requestdate"
+                    className="col-4 col-form-label text-right"
                   >
                     * Request Date
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="requestdate"
                       placeholder={new Date().toDateString()}
                       disabled
@@ -221,34 +221,37 @@ class addPromotionD extends React.Component {
                   </div>
                 </div>
               </div>
-              <div class="form-row">
-                <div class="form-group col-md-6 row">
+              <div className="form-row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="titleheader"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="titleheader"
+                    className="col-4 col-form-label text-right"
                   >
                     * Title Header
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       name="title"
                       value={this.state.marketHeader.title}
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="titleheader"
                       placeholder="Type Title"
                       onChange={this.changeHandler}
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
-                  <label for="note" class="col-4 col-form-label text-right">
+                <div className="form-group col-md-6 row">
+                  <label
+                    htmlFor="note"
+                    className="col-4 col-form-label text-right"
+                  >
                     * Note
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <textarea
                       placeholder="Type Note"
-                      class="form-control"
+                      className="form-control"
                       aria-label="With textarea"
                       name="note"
                       value={this.state.marketHeader.note}
@@ -272,23 +275,23 @@ class addPromotionD extends React.Component {
               ""
             )}
           </Grid>
-          <div class="card mb-3">
-            <div class="card-body">
-              <h6 class="card-title">UPLOAD FILE</h6>
+          <div className="card mb-3">
+            <div className="card-body">
+              <h6 className="card-title">UPLOAD FILE</h6>
               <hr />
-              <div class="form-group row">
-                <div class="col">
+              <div className="form-group row">
+                <div className="col">
                   <button
                     type="button"
                     onClick={this.handleAddShareholder}
-                    class="btn btn-primary"
+                    className="btn btn-primary"
                   >
                     Add Item
                   </button>
                 </div>
               </div>
-              <div class="table-responsive">
-                <table class="table table-borderless table-sm">
+              <div className="table-responsive">
+                <table className="table table-borderless table-sm">
                   {this.state.shareholders.map((shareholder, idx) =>
                     idx === 0 ? (
                       <div className="shareholder">
@@ -305,15 +308,18 @@ class addPromotionD extends React.Component {
                         </thead>
                         <tr>
                           <td colspan="1">
-                            <div class="custom-file">
+                            <div className="custom-file">
                               <input
                                 type="file"
                                 id="customFile"
-                                class="custom-file-input"
+                                className="custom-file-input"
                                 name="filename"
                                 onChange={this.handleShareholderNameChange(idx)}
                               />
-                              <label class="custom-file-label" for="customFile">
+                              <label
+                                className="custom-file-label"
+                                htmlFor="customFile"
+                              >
                                 {shareholder.filename}
                               </label>
                             </div>
@@ -321,7 +327,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="text"
-                              class="form-control"
+                              className="form-control"
                               placeholder="qty"
                               name="qty"
                               id="qty"
@@ -334,7 +340,7 @@ class addPromotionD extends React.Component {
                               name="todo"
                               value={shareholder.todo}
                               onChange={this.handleShareholderNameChange(idx)}
-                              class="form-control"
+                              className="form-control"
                             >
                               <option value="PRINT">Print</option>
                               <option value="UPLOAD SOSMED">
@@ -348,7 +354,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="date"
-                              class="form-control"
+                              className="form-control"
                               id="duedate"
                               name="request_due_date"
                               value={shareholder.request_due_date}
@@ -358,7 +364,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="date"
-                              class="form-control"
+                              className="form-control"
                               id="startdate"
                               disabled
                             />
@@ -366,7 +372,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="date"
-                              class="form-control"
+                              className="form-control"
                               id="enddate"
                               disabled
                             />
@@ -374,7 +380,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <textarea
                               type="text"
-                              class="form-control"
+                              className="form-control"
                               id="note"
                               placeholder="Type Note"
                               name="note"
@@ -387,7 +393,7 @@ class addPromotionD extends React.Component {
                               type="button"
                               color="primary"
                               onClick={this.handleRemoveShareholder(idx)}
-                              class="btn btn-danger"
+                              className="btn btn-danger"
                             >
                               {"X"}
                             </button>
@@ -398,15 +404,18 @@ class addPromotionD extends React.Component {
                       <div className="shareholder">
                         <tr>
                           <td colspan="1">
-                            <div class="custom-file">
+                            <div className="custom-file">
                               <input
                                 type="file"
-                                class="custom-file-input"
+                                className="custom-file-input"
                                 id="customFile"
                                 name="filename"
                                 onChange={this.handleShareholderNameChange(idx)}
                               />
-                              <label class="custom-file-label" for="customFile">
+                              <label
+                                className="custom-file-label"
+                                htmlFor="customFile"
+                              >
                                 {shareholder.filename}
                               </label>
                             </div>
@@ -414,7 +423,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="text"
-                              class="form-control"
+                              className="form-control"
                               id="qty"
                               placeholder="qty"
                               name="qty"
@@ -427,7 +436,7 @@ class addPromotionD extends React.Component {
                               name="todo"
                               value={shareholder.todo}
                               onChange={this.handleShareholderNameChange(idx)}
-                              class="form-control"
+                              className="form-control"
                             >
                               <option value="PRINT">Print</option>
                               <option value="UPLOAD SOSMED">
@@ -441,7 +450,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="date"
-                              class="form-control"
+                              className="form-control"
                               id="duedate"
                               name="request_due_date"
                               value={shareholder.request_due_date}
@@ -451,7 +460,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="date"
-                              class="form-control"
+                              className="form-control"
                               id="startdate"
                               disabled
                             />
@@ -459,7 +468,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="date"
-                              class="form-control"
+                              className="form-control"
                               id="enddate"
                               disabled
                             />
@@ -467,7 +476,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <textarea
                               type="text"
-                              class="form-control"
+                              className="form-control"
                               id="note"
                               placeholder="Type Note"
                               name="note"
@@ -480,7 +489,7 @@ class addPromotionD extends React.Component {
                               type="button"
                               color="primary"
                               onClick={this.handleRemoveShareholder(idx)}
-                              class="btn btn-danger"
+                              className="btn btn-danger"
                             >
                               {"X"}
                             </button>
@@ -493,18 +502,18 @@ class addPromotionD extends React.Component {
               </div>
             </div>
           </div>
-          <div class="form-group row">
-            <div class="col d-flex justify-content-end">
+          <div className="form-group row">
+            <div className="col d-flex justify-content-end">
               <button
                 onClick={this.submitHandler}
                 type="button"
-                class="btn btn-primary float-right mr-1"
+                className="btn btn-primary float-right mr-1"
               >
                 Save
               </button>
               <button
                 type="button"
-                class="btn btn-warning  float-right ml-1"
+                className="btn btn-warning  float-right ml-1"
                 onClick={() => {
                   window.location.href = "/promotion";
                 }}

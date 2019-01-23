@@ -172,9 +172,13 @@ class EditUser extends React.Component {
       };
     });
 
-    this.state.status === 200
-      ? this.props.modalStatus(1, "Updated!", this.state.formdata.username)
-      : console.log(this.state.status);
+    this.state.status === 200 &&
+      this.props.modalStatus(
+        1,
+        "User has been Updated!",
+        this.state.formdata.username
+      );
+
     return (
       <Modal isOpen={this.props.edit} className={this.props.className}>
         <ModalHeader> Edit User</ModalHeader>

@@ -1,5 +1,12 @@
 import React from "react";
-import { Modal, ModalFooter, ModalHeader, Button, Alert } from "reactstrap";
+import {
+  Modal,
+  ModalFooter,
+  ModalBody,
+  ModalHeader,
+  Button,
+  Alert
+} from "reactstrap";
 import PropTypes from "prop-types";
 import { putPromotion } from "../../../actions/promotionActions";
 import { connect } from "react-redux";
@@ -51,7 +58,16 @@ class RejectPromotion extends React.Component {
     return (
       <Modal isOpen={this.props.isReject}>
         <ModalHeader>Reject Reason</ModalHeader>
-        <textarea value={this.state.reject_reason} onChange={this.change} />
+        <ModalBody>
+          <div className="col-md-12">
+            <textarea
+              className="form-control"
+              value={this.state.reject_reason}
+              onChange={this.change}
+            />
+          </div>
+        </ModalBody>
+
         <ModalFooter>
           {this.state.alertData.status === true ? (
             <Alert color="danger">
@@ -75,7 +91,7 @@ class RejectPromotion extends React.Component {
     );
   }
 }
-RejectPromotion.PropTypes = {
+RejectPromotion.propTypes = {
   putPromotion: PropTypes.func.isRequired
 };
 const mapStateToProps = state => ({

@@ -436,11 +436,11 @@ class ListRole extends React.Component {
                     <table className="table">
                       <thead>
                         <tr className="text-center font-weight-bold">
-                          <td>Role Code</td>
-                          <td>Role Name</td>
-                          <td>Created By</td>
-                          <td>Created Date</td>
-                          <td>Action</td>
+                          <td nowrap="true">Role Code</td>
+                          <td nowrap="true">Role Name</td>
+                          <td nowrap="true">Created By</td>
+                          <td nowrap="true">Created Date</td>
+                          <td nowrap="true">Action</td>
                         </tr>
                       </thead>
                       <tbody>
@@ -452,11 +452,11 @@ class ListRole extends React.Component {
                           )
                           .map(content => (
                             <tr className="text-center" key={content.code}>
-                              <td>{content.code}</td>
-                              <td>{content.name}</td>
-                              <td>{content.created_by}</td>
-                              <td>{content.created_date}</td>
-                              <td>
+                              <td nowrap="true">{content.code}</td>
+                              <td nowrap="true">{content.name}</td>
+                              <td nowrap="true">{content.created_by}</td>
+                              <td nowrap="true">{content.created_date}</td>
+                              <td nowrap="true">
                                 <Link to="#" data-tip="View Role">
                                   <SearchIcon
                                     onClick={() => {

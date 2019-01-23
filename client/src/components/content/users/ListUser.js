@@ -7,30 +7,26 @@ import EditUser from "./EditUser";
 import CreateUser from "./CreateUser";
 import DeleteUser from "./DeleteUser";
 import ViewUser from "./ViewUser";
-
+import Add from "@material-ui/icons/Add";
+import Eye from "@material-ui/icons/RemoveRedEye";
+import Tooltip from "react-tooltip";
 import PropTypes from "prop-types";
+import Spinner from "../../common/Spinner";
+import Refresh from "@material-ui/icons/Refresh";
 import {
   withStyles,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
   TableRow,
   TableFooter,
   TablePagination,
-  IconButton,
-  Paper,
-  Input,
-  Button,
-  Grid
+  IconButton
 } from "@material-ui/core";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import SearchIcon from "@material-ui/icons/Search";
-import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
-import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
+import DeleteOutlinedIcon from "@material-ui/icons/Delete";
+import CreateOutlinedIcon from "@material-ui/icons/Create";
 import moment from "moment";
 
 const actionsStyles = theme => ({
@@ -124,6 +120,7 @@ class ListUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      num: true,
       formSearch: {
         name: /(?:)/,
         role_name: /(?:)/,
@@ -210,14 +207,19 @@ class ListUser extends React.Component {
   changeHandler = event => {
     let tmp = this.state.formSearch;
     if (event.target.name) {
-      tmp[event.target.name] = new RegExp(event.target.value.toLowerCase());
+      if (event.target.name === "created_date") {
+        tmp[event.target.name] = new RegExp(
+          moment(event.target.value).format("DD/MM/YYYY")
+        );
+      } else {
+        tmp[event.target.name] = new RegExp(event.target.value.toLowerCase());
+      }
     } else {
       tmp[event.target.name] = event.target.value;
     }
     this.setState({
       formSearch: tmp
     });
-    this.change();
   };
 
   change = () => {
@@ -242,10 +244,13 @@ class ListUser extends React.Component {
       return temp;
     });
     this.setState({
-      hasil: temp
+      hasil: temp,
+      num: false
     });
   };
-
+  enterKey = event => {
+    if (event.key === "Enter") this.change();
+  };
   closeModalHandler() {
     this.setState({
       viewUser: false,
@@ -284,9 +289,6 @@ class ListUser extends React.Component {
       editUser: false,
       deleteUser: false
     });
-    setTimeout(() => {
-      window.location.href = "/user";
-    }, 3000);
   }
 
   changeDateFormat = tanggal => {
@@ -295,8 +297,245 @@ class ListUser extends React.Component {
 
   render() {
     return (
-      <div>
-        <Grid container spacing={8}>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+            <div className="card border-primary mb-3">
+              <div className="card-header lead bg-primary text-white">
+                List User
+              </div>
+              <div className="card-body">
+                <nav aria-label="breadcrumb mb-4">
+                  <ol className="breadcrumb">
+                    <li className="breadcrumb-item">
+                      <Link to="/">Home</Link>
+                    </li>
+                    <li className="breadcrumb-item active" aria-current="page">
+                      List User
+                    </li>
+                  </ol>
+                </nav>
+                {this.state.alertData.status === 1 ? (
+                  <Alert color="success">
+                    {" "}
+                    {this.state.alertData.message}{" "}
+                  </Alert>
+                ) : (
+                  ""
+                )}
+                {this.state.alertData.status === 2 ? (
+                  <Alert color="danger"> {this.state.alertData.message} </Alert>
+                ) : (
+                  ""
+                )}
+                <div className="table-responsive">
+                  <table className="table table-borderless">
+                    <tbody>
+                      <tr>
+                        <td>
+                          <input
+                            className="form-control"
+                            placeholder="Employee Name"
+                            name="name"
+                            onKeyPress={this.enterKey}
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            className="form-control"
+                            placeholder="Role Name"
+                            name="role_name"
+                            onKeyPress={this.enterKey}
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            className="form-control"
+                            placeholder="Company Name"
+                            name="company_name"
+                            onKeyPress={this.enterKey}
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            className="form-control"
+                            placeholder="Username"
+                            name="username"
+                            onKeyPress={this.enterKey}
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            className="form-control"
+                            placeholder="Created Date"
+                            type="date"
+                            name="created_date"
+                            onKeyPress={this.enterKey}
+                            onChange={this.changeHandler}
+                          />
+                        </td>
+                        <td>
+                          {this.state.num ? (
+                            <a href="#!" data-tip="Search">
+                              <button
+                                className="btn btn-primary"
+                                onClick={this.change}
+                              >
+                                <SearchIcon />
+                              </button>
+                              <Tooltip place="top" type="dark" effect="solid" />
+                            </a>
+                          ) : (
+                            <a href="#!" data-tip="Refresh Search">
+                              <button
+                                className="btn btn-warning"
+                                onClick={() => {
+                                  this.setState({
+                                    hasil: this.state.allUser,
+                                    num: true
+                                  });
+                                }}
+                              >
+                                <Refresh />
+                              </button>
+                              <Tooltip place="top" type="dark" effect="solid" />
+                            </a>
+                          )}
+                        </td>
+                        <td>
+                          <a href="#!" data-tip="Add User">
+                            <button
+                              className="btn btn-primary"
+                              onClick={this.showHandler}
+                            >
+                              <Add />
+                            </button>
+                            <Tooltip place="top" type="dark" effect="solid" />
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  {this.state.hasil.length === 0 &&
+                  this.state.allUser.length === 0 ? (
+                    <Spinner />
+                  ) : this.state.hasil.length === 0 ? (
+                    <div className="text-center font-weight-bold">
+                      No Data Found
+                    </div>
+                  ) : (
+                    <div className="table-responsive">
+                      <table className="table">
+                        <thead>
+                          <tr className="text-center font-weight-bold">
+                            <td nowrap="true">Employee</td>
+                            <td nowrap="true">Role</td>
+                            <td nowrap="true">Company</td>
+                            <td nowrap="true">Username</td>
+                            <td nowrap="true">Created Date</td>
+                            <td nowrap="true">Created By</td>
+                            <td nowrap="true">Action</td>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {this.state.hasil
+                            .slice(
+                              this.state.page * this.state.rowsPerPage,
+                              this.state.page * this.state.rowsPerPage +
+                                this.state.rowsPerPage
+                            )
+                            .map((row, index) => {
+                              return (
+                                <tr
+                                  key={index.toString()}
+                                  className="text-center"
+                                >
+                                  <td nowrap="true">{row.name}</td>
+                                  <td nowrap="true">{row.role_name}</td>
+                                  <td nowrap="true">{row.company_name}</td>
+                                  <td nowrap="true">{row.username}</td>
+                                  <td nowrap="true">{row.created_date}</td>
+                                  <td nowrap="true">{row.created_by}</td>
+                                  <td nowrap="true">
+                                    <Link to="#">
+                                      <Eye
+                                        onClick={() => {
+                                          this.viewModalHandler(row._id);
+                                        }}
+                                      />
+                                    </Link>
+                                    <Link to="#">
+                                      <CreateOutlinedIcon
+                                        onClick={() => {
+                                          this.editModalHandler(row._id);
+                                        }}
+                                      />
+                                    </Link>
+                                    <Link to="#">
+                                      <DeleteOutlinedIcon
+                                        onClick={() => {
+                                          this.deleteModalHandler(row._id);
+                                        }}
+                                      />
+                                    </Link>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                        </tbody>
+                        <TableFooter>
+                          <TableRow>
+                            <TablePagination
+                              colSpan={4}
+                              count={this.state.hasil.length}
+                              rowsPerPage={this.state.rowsPerPage}
+                              page={this.state.page}
+                              onChangePage={this.handleChangePage}
+                              onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                              ActionsComponent={TablePaginationActionsWrapped}
+                            />
+                          </TableRow>
+                        </TableFooter>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <CreateUser
+              create={this.state.showCreateUser}
+              closeHandler={this.closeHandler}
+              modalStatus={this.modalStatus}
+              allUser={this.state.allUser}
+            />
+            <ViewUser
+              view={this.state.viewUser}
+              closeModalHandler={this.closeModalHandler}
+              user={this.state.currentUser}
+            />
+            <EditUser
+              edit={this.state.editUser}
+              closeModalHandler={this.closeModalHandler}
+              currentUser={this.state.currentUser}
+              username={this.state.currentUser.username}
+              modalStatus={this.modalStatus}
+              allUser={this.state.allUser}
+            />
+            <DeleteUser
+              delete={this.state.deleteUser}
+              user={this.state.currentUser}
+              closeModalHandler={this.closeModalHandler}
+              modalStatus={this.modalStatus}
+            />
+          </div>
+        </div>
+        {/* <Grid container spacing={8}>
           <Grid item xs={12}>
             <br />
             <ul className="breadcrumb">
@@ -313,7 +552,7 @@ class ListUser extends React.Component {
           <Grid item xs={12}>
             <h4>List User</h4>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={12}>
             <Input
               placeholder="Employee Name"
               name="name"
@@ -360,31 +599,7 @@ class ListUser extends React.Component {
             </Button>
           </Grid>
           <Grid item xs={6} />
-          <CreateUser
-            create={this.state.showCreateUser}
-            closeHandler={this.closeHandler}
-            modalStatus={this.modalStatus}
-            allUser={this.state.allUser}
-          />
-          <ViewUser
-            view={this.state.viewUser}
-            closeModalHandler={this.closeModalHandler}
-            user={this.state.currentUser}
-          />
-          <EditUser
-            edit={this.state.editUser}
-            closeModalHandler={this.closeModalHandler}
-            currentUser={this.state.currentUser}
-            username={this.state.currentUser.username}
-            modalStatus={this.modalStatus}
-            allUser={this.state.allUser}
-          />
-          <DeleteUser
-            delete={this.state.deleteUser}
-            user={this.state.currentUser}
-            closeModalHandler={this.closeModalHandler}
-            modalStatus={this.modalStatus}
-          />
+          
 
           <Grid item xs={12}>
             <br />
@@ -479,6 +694,7 @@ class ListUser extends React.Component {
             )}
           </Grid>
         </Grid>
+       */}
       </div>
     );
   }
