@@ -280,8 +280,8 @@ module.exports = (server, restify) => {
     "/api/event/:code/:request_by/:request_date/:status/:created_date/:created_by/:empId/:roleId", authenticate,
     event.searchHandler
   );
-  server.post("/api/event", routeMiddleware, event.createHandler);
-  server.put("/api/event/:eventId", authenticate, routeMiddleware, event.updateHandler);
+  server.post("/api/event/:empId/:roleId", routeMiddleware, event.createHandler);
+  server.put("/api/event/:eventId/:empId/:roleId", authenticate, routeMiddleware, event.updateHandler);
   server.del("/api/event/:eventId", authenticate, routeMiddleware, event.deleteHandler);
   server.put(
     "/api/event/approve/:eventId",

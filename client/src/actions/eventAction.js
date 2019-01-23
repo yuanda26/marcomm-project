@@ -167,9 +167,21 @@ export const approveEvent = (eventId, approveData) => dispatch => {
     data: approveData
   })
     .then(res => {
+      let newPayload = res.data.message.map(row=>{
+        if (row.status === "1") {
+          row.status = "Submitted";
+        } else if (row.status === "2") {
+          row.status = "In Progress";
+        } else if (row.status === "3") {
+          row.status = "Done";
+        } else if (row.status === "0") {
+          row.status = "Rejected";
+        }
+        return row
+      })
       dispatch({
         type: APPROVE_EVENT,
-        payload: res.data.message,
+        payload: newPayload,
         eventId
       });
     })
@@ -192,9 +204,21 @@ export const rejectEvent = (eventId, rejectData) => dispatch => {
     data: rejectData
   })
     .then(res => {
+      let newPayload = res.data.message.map(row=>{
+        if (row.status === "1") {
+          row.status = "Submitted";
+        } else if (row.status === "2") {
+          row.status = "In Progress";
+        } else if (row.status === "3") {
+          row.status = "Done";
+        } else if (row.status === "0") {
+          row.status = "Rejected";
+        }
+        return row
+      })
       dispatch({
         type: REJECT_EVENT,
-        payload: res.data.message,
+        payload: newPayload,
         eventId
       });
     })
@@ -217,9 +241,21 @@ export const closeEvent = (eventId, closeData) => dispatch => {
     data: closeData
   })
     .then(res => {
+      let newPayload = res.data.message.map(row=>{
+        if (row.status === "1") {
+          row.status = "Submitted";
+        } else if (row.status === "2") {
+          row.status = "In Progress";
+        } else if (row.status === "3") {
+          row.status = "Done";
+        } else if (row.status === "0") {
+          row.status = "Rejected";
+        }
+        return row
+      })
       dispatch({
         type: CLOSE_EVENT,
-        payload: res.data.message,
+        payload: newPayload,
         eventId
       });
     })

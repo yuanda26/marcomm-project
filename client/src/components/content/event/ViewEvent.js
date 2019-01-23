@@ -36,7 +36,10 @@ class ViewEvent extends Component {
   }
 
   UNSAFE_componentWillReceiveProps(props, state) {
-    this.setState({ eventId: props.currentEvent._id });
+    this.setState({ 
+      eventId: props.currentEvent._id,
+      assign_to: props.currentEvent.assign_to
+       });
   }
 
   onChange = e => {
@@ -206,16 +209,15 @@ class ViewEvent extends Component {
                       value={budget}
                       disabled={true}
                     />
-                    {status === "Submitted" && (
-                      <SelectListGroup
-                        label="*Assign To"
-                        name="assign_to"
-                        value={this.state.assign_to}
-                        onChange={this.onChange}
-                        options={options}
-                        errors={this.state.errorAssign}
-                      />
-                    )}
+                    <SelectListGroup
+                      label="*Assign To"
+                      name="assign_to"
+                      value={this.state.assign_to}
+                      onChange={this.onChange}
+                      options={options}
+                      errors={this.state.errorAssign}
+                      disabled={status === "Submitted" ? (false) : (true)}
+                    />
                   </div>
                   <div className="col-md-6">
                     <TextFieldGroup
@@ -257,10 +259,12 @@ class ViewEvent extends Component {
                     type="button"
                     className="btn btn-primary mr-1"
                     onClick={this.submitClose}
+                    disabled = {this.props.user.m_role_id === "RO0006" ? ( false ) : ( true )}
                   >
                     Close Request
                   </button>
-                )}
+                )
+              }
                 <button
                   type="button"
                   className="btn btn-warning"
@@ -285,7 +289,8 @@ ViewEvent.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  design: state.design
+  design: state.design,
+  user: state.auth.user
 });
 
 export default connect(

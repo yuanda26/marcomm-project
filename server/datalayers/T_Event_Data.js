@@ -304,7 +304,7 @@ const tEventDatalayer = {
       request_date: body.request_date,
       approved_by: body.approved_by,
       approved_date: body.approved_date,
-      assign_to: body.assign_to,
+      assign_to: "",
       closed_date: body.closed_date,
       note: body.note,
       status: "1",

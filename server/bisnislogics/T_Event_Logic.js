@@ -30,12 +30,12 @@ const tEventBisnislogic = {
 
     dtl.getUser(user => {
       let created_by = "";
-      user === null || user === undefined
+      user === null || user === undefined || user === ""
         ? (created_by = paramUser)
         : (created_by = user.m_employee_id);
       dtl.getEmployee(employee => {
         let request_by = "";
-        employee === null
+        employee === null || employee === undefined || employee === ""
           ? (request_by = paramEmployee)
           : (request_by = employee.employee_number);
         dtl.searchHandlerData(
