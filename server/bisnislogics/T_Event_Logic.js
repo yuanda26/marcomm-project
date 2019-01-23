@@ -6,7 +6,7 @@ const tEventBisnislogic = {
   readAllHandler: (req, res, next) => {
     dtl.readAllHandlerData(function(items) {
       responseHelper.sendResponse(res, 200, items);
-    });
+    }, req.params.empId, req.params.roleId);
   },
   readAllWithoutFilter: (req, res, next) => {
     dtl.readAllWithoutFilterData(items => {
@@ -69,7 +69,7 @@ const tEventBisnislogic = {
       dtl.createHandlerData(function(items, date) {
         dtl.readAllHandlerData(function(callbackReadData) {
           responseHelper.sendResponse(res, 200, callbackReadData);
-        });
+        }, req.params.empId, req.params.roleId);
       }, body);
     }, date);
   },
@@ -103,7 +103,7 @@ const tEventBisnislogic = {
       items => {
         dtl.readAllHandlerData(function(callbackReadData) {
           responseHelper.sendResponse(res, 200, callbackReadData);
-        });
+        }, req.params.empId, req.params.roleId);
       },
       param,
       body
