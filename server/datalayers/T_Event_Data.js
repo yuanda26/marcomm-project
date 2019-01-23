@@ -101,7 +101,7 @@ const tEventDatalayer = {
       });
   },
 
-  readAllWithoutFilterData: (callback) => {
+  readAllWithoutFilterData: callback => {
     db.collection("t_event")
       .find({ is_delete: false })
       .toArray((err, docs) => {
@@ -347,6 +347,45 @@ const tEventDatalayer = {
           callback(err);
         } else {
           callback(docs);
+        }
+      }
+    );
+  },
+  approveData: (callback, eventId, approveData) => {
+    db.collection("t_event").updateOne(
+      { _id: new objectId(eventId) },
+      { $set: approveData },
+      (err, result) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(approveData);
+        }
+      }
+    );
+  },
+  rejectData: (callback, eventId, rejectData) => {
+    db.collection("t_event").updateOne(
+      { _id: new objectId(eventId) },
+      { $set: rejectData },
+      (err, result) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(rejectData);
+        }
+      }
+    );
+  },
+  closeData: (callback, eventId, closeData) => {
+    db.collection("t_event").updateOne(
+      { _id: new objectId(eventId) },
+      { $set: closeData },
+      (err, result) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(closeData);
         }
       }
     );
