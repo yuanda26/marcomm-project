@@ -156,6 +156,11 @@ module.exports = (server, restify) => {
   // Transaction Design Route
   // Made By: Dian Yuanda
   server.get(
+    "/api/design",
+    authenticate,
+    tDesignLogic.readAllDesignWithoutFilterHandler
+  );
+  server.get(
     "/api/design/:roleId/:employeeId",
     authenticate,
     tDesignLogic.readAllDesignHandler
@@ -277,12 +282,23 @@ module.exports = (server, restify) => {
   server.get("/api/event", authenticate, event.readAllWithoutFilter);
   server.get(
     // code, request_by, request_date, status, created_date, created_by)
-    "/api/event/:code/:request_by/:request_date/:status/:created_date/:created_by/:empId/:roleId", authenticate,
+    "/api/event/:code/:request_by/:request_date/:status/:created_date/:created_by/:empId/:roleId",
+    authenticate,
     event.searchHandler
   );
   server.post("/api/event", routeMiddleware, event.createHandler);
-  server.put("/api/event/:eventId", authenticate, routeMiddleware, event.updateHandler);
-  server.del("/api/event/:eventId", authenticate, routeMiddleware, event.deleteHandler);
+  server.put(
+    "/api/event/:eventId",
+    authenticate,
+    routeMiddleware,
+    event.updateHandler
+  );
+  server.del(
+    "/api/event/:eventId",
+    authenticate,
+    routeMiddleware,
+    event.deleteHandler
+  );
   server.put(
     "/api/event/approve/:eventId",
     authenticate,
