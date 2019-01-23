@@ -287,7 +287,7 @@ class addPromotionD extends React.Component {
   render() {
     return (
       // Header Setting
-      <div class="container-fluid">
+      <div className="container-fluid">
         {/* <<----------------Link to back------------>> */}
         <Grid container spacing={8}>
           <Grid item xs={12}>
@@ -316,39 +316,39 @@ class addPromotionD extends React.Component {
         {/* End of Header Setting */}
         <form>
           {/* Render of MARKETING HEADER PROMOTION */}
-          <div class="card mb-3">
-            <div class="card-body">
-              <h6 class="card-title">MARKETING HEADER PROMOTION</h6>
+          <div className="card mb-3">
+            <div className="card-body">
+              <h6 className="card-title">MARKETING HEADER PROMOTION</h6>
               <hr />
-              <div class="form-row">
-                <div class="form-group col-md-6 row">
+              <div className="form-row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="transactioncode"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="transactioncode"
+                    className="col-4 col-form-label text-right"
                   >
                     * Transaction Code
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="transactioncode"
                       placeholder={this.state.marketHeader.code}
                       disabled
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="eventcode"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="eventcode"
+                    className="col-4 col-form-label text-right"
                   >
                     * Event Code
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="eventcode"
                       placeholder={this.t_event_id}
                       disabled
@@ -356,35 +356,35 @@ class addPromotionD extends React.Component {
                   </div>
                 </div>
               </div>
-              <div class="form-row">
-                <div class="form-group col-md-6 row">
+              <div className="form-row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="requestby"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="requestby"
+                    className="col-4 col-form-label text-right"
                   >
                     * Request By
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="requestby"
                       placeholder={this.state.marketHeader.request_by}
                       disabled
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="requestdate"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="requestdate"
+                    className="col-4 col-form-label text-right"
                   >
                     * Request Date
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="requestdate"
                       placeholder={this.state.marketHeader.request_date}
                       disabled
@@ -392,36 +392,36 @@ class addPromotionD extends React.Component {
                   </div>
                 </div>
               </div>
-              <div class="form-row">
-                <div class="form-group col-md-6 row">
+              <div className="form-row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="titleheader"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="titleheader"
+                    className="col-4 col-form-label text-right"
                   >
                     * Title Header
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       name="title"
                       value={this.state.marketHeader.title}
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="titleheader"
                       onChange={this.changeHandler}
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="requestdate"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="requestdate"
+                    className="col-4 col-form-label text-right"
                   >
                     Status
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       placeholder={this.showStatus(
                         this.state.marketHeader.status
                       )}
@@ -429,13 +429,16 @@ class addPromotionD extends React.Component {
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
-                  <label for="note" class="col-4 col-form-label text-right">
+                <div className="form-group col-md-6 row">
+                  <label
+                    htmlFor="note"
+                    className="col-4 col-form-label text-right"
+                  >
                     * Note
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <textarea
-                      class="form-control"
+                      className="form-control"
                       aria-label="With textarea"
                       name="note"
                       value={this.state.marketHeader.note}
@@ -449,39 +452,39 @@ class addPromotionD extends React.Component {
           {/* End of Render MARKETING HEADER PROMOTION*/}
 
           {/* Render of DESIGN HEADER INFORMATION */}
-          <div class="card mb-3">
-            <div class="card-body">
-              <h6 class="card-title">DESIGN HEADER INFORMATION</h6>
+          <div className="card mb-3">
+            <div className="card-body">
+              <h6 className="card-title">DESIGN HEADER INFORMATION</h6>
               <hr />
-              <div class="form-row">
-                <div class="form-group col-md-6 row">
+              <div className="form-row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="designcode"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="designcode"
+                    className="col-4 col-form-label text-right"
                   >
                     * Design Code
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="designcode"
                       placeholder={this.state.designHeader.code}
                       disabled
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="titleheader"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="titleheader"
+                    className="col-4 col-form-label text-right"
                   >
                     * Title Header
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="titleheader"
                       placeholder={this.state.designHeader.title_header}
                       disabled
@@ -489,35 +492,35 @@ class addPromotionD extends React.Component {
                   </div>
                 </div>
               </div>
-              <div class="form-row">
-                <div class="form-group col-md-6 row">
+              <div className="form-row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="requestby"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="requestby"
+                    className="col-4 col-form-label text-right"
                   >
                     * Request By
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id={"requestby"}
                       placeholder={this.state.designHeader.request_by}
                       disabled
                     />
                   </div>
                 </div>
-                <div class="form-group col-md-6 row">
+                <div className="form-group col-md-6 row">
                   <label
-                    for="requestdate"
-                    class="col-4 col-form-label text-right"
+                    htmlFor="requestdate"
+                    className="col-4 col-form-label text-right"
                   >
                     * Request Date
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="requestdate"
                       placeholder={this.state.designHeader.request_date}
                       disabled
@@ -525,14 +528,17 @@ class addPromotionD extends React.Component {
                   </div>
                 </div>
               </div>
-              <div class="form-row">
-                <div class="form-group col-md-6 row">
-                  <label for="note" class="col-4 col-form-label text-right">
+              <div className="form-row">
+                <div className="form-group col-md-6 row">
+                  <label
+                    htmlFor="note"
+                    className="col-4 col-form-label text-right"
+                  >
                     * Note
                   </label>
-                  <div class="col-8">
+                  <div className="col-8">
                     <textarea
-                      class="form-control"
+                      className="form-control"
                       aria-label="With textarea"
                       placeholder={this.state.designHeader.note}
                       disabled
@@ -545,12 +551,12 @@ class addPromotionD extends React.Component {
           {/* End of Render DESIGN HEADER INFORMATION */}
 
           {/* Render of DESIGN ITEM INFORMATION */}
-          <div class="card mb-3">
-            <div class="card-body">
-              <h6 class="card-title">DESIGN ITEM INFORMATION</h6>
+          <div className="card mb-3">
+            <div className="card-body">
+              <h6 className="card-title">DESIGN ITEM INFORMATION</h6>
               <hr />
-              <div class="table-responsive">
-                <table class="table-borderless table-sm">
+              <div className="table-responsive">
+                <table className="table-borderless table-sm">
                   <thead>
                     <tr>
                       <th>Product Name</th>
@@ -565,111 +571,116 @@ class addPromotionD extends React.Component {
                       <th />
                     </tr>
                   </thead>
-                  {this.state.designItem.map((content, index) => (
-                    <tr>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="product_name"
-                          name="product_name"
-                          value={content.product_name}
-                          disabled
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="productdescription"
-                          name="description"
-                          value={content.description}
-                          disabled
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="title"
-                          name="title"
-                          value={content.title_item}
-                          disabled
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="qty"
-                          name="qty"
-                          value={content.qty}
-                          onChange={this.changeByIndex(index, "item")}
-                        />
-                      </td>
-                      <td>
-                        <select
-                          name="todo"
-                          id="todo"
-                          class="form-control"
-                          value={content.todo}
-                          onChange={this.changeByIndex(index, "item")}
-                        >
-                          <option selected value={content.todo} disabled>
-                            {content.todo}
-                          </option>
-                          <option value="PRINT"> Print </option>
-                          <option value="UPLOAD SOSMED"> Upload Sosmed </option>
-                        </select>
-                      </td>
-                      <td>
-                        <input
-                          type="date"
-                          class="form-control"
-                          name="request_due_date"
-                          value={content.request_due_date}
-                          onChange={this.changeByIndex(index, "item", "date")}
-                          id="duedate"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="date"
-                          class="form-control"
-                          id="startdate"
-                          disabled
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="date"
-                          class="form-control"
-                          id="enddate"
-                          disabled
-                        />
-                      </td>
-                      <td>
-                        <textarea
-                          type="text"
-                          class="form-control"
-                          id="note"
-                          name="note"
-                          value={content.note}
-                          onChange={this.changeByIndex(index, "item")}
-                        />
-                      </td>
-                      <td>
-                        <button
-                          class="btn btn-primary"
-                          onClick={() => {
-                            window.location.href = "/promotion";
-                          }}
-                        >
-                          <SaveOutlinedIcon />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  <tbody>
+                    {this.state.designItem.map((content, index) => (
+                      <tr key={index.toString()}>
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="product_name"
+                            name="product_name"
+                            value={content.product_name}
+                            disabled
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="productdescription"
+                            name="description"
+                            value={content.description}
+                            disabled
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="title"
+                            name="title"
+                            value={content.title_item}
+                            disabled
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="qty"
+                            name="qty"
+                            value={content.qty}
+                            onChange={this.changeByIndex(index, "item")}
+                          />
+                        </td>
+                        <td>
+                          <select
+                            name="todo"
+                            id="todo"
+                            className="form-control"
+                            value={content.todo}
+                            onChange={this.changeByIndex(index, "item")}
+                          >
+                            <option value={content.todo} disabled>
+                              {content.todo}
+                            </option>
+                            <option value="PRINT"> Print </option>
+                            <option value="UPLOAD SOSMED">
+                              {" "}
+                              Upload Sosmed{" "}
+                            </option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            type="date"
+                            className="form-control"
+                            name="request_due_date"
+                            value={content.request_due_date}
+                            onChange={this.changeByIndex(index, "item", "date")}
+                            id="duedate"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="date"
+                            className="form-control"
+                            id="startdate"
+                            disabled
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="date"
+                            className="form-control"
+                            id="enddate"
+                            disabled
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="note"
+                            name="note"
+                            value={content.note}
+                            onChange={this.changeByIndex(index, "item")}
+                          />
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => {
+                              window.location.href = "/promotion";
+                            }}
+                          >
+                            <SaveOutlinedIcon />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
                 </table>
               </div>
             </div>
@@ -677,25 +688,25 @@ class addPromotionD extends React.Component {
           {/* End of Render DESIGN ITEM INFORMATION */}
 
           {/* <<-----Render of UPLOAD FILE------------>>*/}
-          <div class="card mb-3">
-            <div class="card-body">
-              <h6 class="card-title">UPLOAD FILE</h6>
+          <div className="card mb-3">
+            <div className="card-body">
+              <h6 className="card-title">UPLOAD FILE</h6>
               <hr />
-              <div class="form-group row">
-                <div class="col">
+              <div className="form-group row">
+                <div className="col">
                   <button
                     type="button"
                     onClick={this.handleAddShareholder}
-                    class="btn btn-primary"
+                    className="btn btn-primary"
                   >
                     Add Item
                   </button>
                 </div>
               </div>
-              <div class="table-responsive">
-                <table class="table table-borderless table-sm">
+              <div className="table-responsive">
+                <table className="table table-borderless table-sm">
                   {this.state.oldFile.length === 0 ? (
-                    <div />
+                    <thead />
                   ) : (
                     <thead>
                       <tr>
@@ -709,17 +720,20 @@ class addPromotionD extends React.Component {
                         <th />
                       </tr>
                       {this.state.oldFile.map((content, index) => (
-                        <tr>
-                          <td colspan="1">
-                            <div class="custom-file">
+                        <tr key={index.toString()}>
+                          <td colSpan="1">
+                            <div className="custom-file">
                               <input
                                 type="file"
                                 id="customFile"
-                                class="custom-file-input"
+                                className="custom-file-input"
                                 name="filename"
                                 onChange={this.changeByIndex(index, "oldFile")}
                               />
-                              <label class="custom-file-label" for="customFile">
+                              <label
+                                className="custom-file-label"
+                                htmlFor="customFile"
+                              >
                                 {content.filename}
                               </label>
                             </div>
@@ -727,7 +741,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="text"
-                              class="form-control"
+                              className="form-control"
                               name="qty"
                               id="qty"
                               value={content.qty}
@@ -738,7 +752,7 @@ class addPromotionD extends React.Component {
                             <select
                               name="todo"
                               id="todo"
-                              class="form-control"
+                              className="form-control"
                               value={content.todo}
                               onChange={this.changeByIndex(index, "oldFile")}
                             >
@@ -755,7 +769,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="date"
-                              class="form-control"
+                              className="form-control"
                               name="request_due_date"
                               value={content.request_due_date}
                               onChange={this.changeByIndex(index, "oldFile")}
@@ -765,7 +779,7 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="date"
-                              class="form-control"
+                              className="form-control"
                               id="startdate"
                               disabled
                             />
@@ -773,15 +787,15 @@ class addPromotionD extends React.Component {
                           <td>
                             <input
                               type="date"
-                              class="form-control"
+                              className="form-control"
                               id="enddate"
                               disabled
                             />
                           </td>
                           <td>
-                            <textarea
+                            <input
                               type="text"
-                              class="form-control"
+                              className="form-control"
                               id="note"
                               name="note"
                               value={content.note}
@@ -805,14 +819,14 @@ class addPromotionD extends React.Component {
                                 index,
                                 "oldFile"
                               )}
-                              class="btn btn-danger"
+                              className="btn btn-danger"
                             >
                               {"X"}
                             </button> */}
                           </td>
                           <td>
                             <button
-                              class="btn btn-primary"
+                              className="btn btn-primary"
                               onClick={() => {
                                 window.location.href = "/promotion";
                               }}
@@ -826,21 +840,24 @@ class addPromotionD extends React.Component {
                   )}
                 </table>
               </div>
-              <div class="table-responsive">
-                <table class="table table-borderless table-sm">
+              <div className="table-responsive">
+                <table className="table table-borderless table-sm">
                   {this.state.shareholders.map((shareholder, idx) => (
-                    <div className="shareholder">
+                    <div key={idx.toString()} className="shareholder">
                       <tr>
-                        <td colspan="1">
-                          <div class="custom-file">
+                        <td colSpan="1">
+                          <div className="custom-file">
                             <input
                               type="file"
-                              class="custom-file-input"
+                              className="custom-file-input"
                               id="customFile"
                               name="filename"
                               onChange={this.changeByIndex(idx)}
                             />
-                            <label class="custom-file-label" for="customFile">
+                            <label
+                              className="custom-file-label"
+                              htmlFor="customFile"
+                            >
                               {shareholder.filename}
                             </label>
                           </div>
@@ -848,7 +865,7 @@ class addPromotionD extends React.Component {
                         <td>
                           <input
                             type="text"
-                            class="form-control"
+                            className="form-control"
                             id="qty"
                             placeholder="qty"
                             name="qty"
@@ -861,7 +878,7 @@ class addPromotionD extends React.Component {
                             name="todo"
                             value={shareholder.todo}
                             onChange={this.changeByIndex(idx)}
-                            class="form-control"
+                            className="form-control"
                           >
                             <option value="PRINT">Print</option>
                             <option value="UPLOAD SOSMED">Upload Sosmed</option>
@@ -873,7 +890,7 @@ class addPromotionD extends React.Component {
                         <td>
                           <input
                             type="date"
-                            class="form-control"
+                            className="form-control"
                             id="duedate"
                             name="request_due_date"
                             value={shareholder.request_due_date}
@@ -883,7 +900,7 @@ class addPromotionD extends React.Component {
                         <td>
                           <input
                             type="date"
-                            class="form-control"
+                            className="form-control"
                             id="startdate"
                             disabled
                           />
@@ -891,15 +908,15 @@ class addPromotionD extends React.Component {
                         <td>
                           <input
                             type="date"
-                            class="form-control"
+                            className="form-control"
                             id="enddate"
                             disabled
                           />
                         </td>
                         <td>
-                          <textarea
+                          <input
                             type="text"
-                            class="form-control"
+                            className="form-control"
                             id="note"
                             placeholder="Type Note"
                             name="note"
@@ -917,7 +934,7 @@ class addPromotionD extends React.Component {
                             type="button"
                             color="primary"
                             onClick={this.handleRemoveShareholder(idx)}
-                            class="btn btn-danger"
+                            className="btn btn-danger"
                           >
                             {"X"}
                           </button> */}
@@ -945,18 +962,18 @@ class addPromotionD extends React.Component {
           </Grid>
           {/* End of Alert Setting */}
           {/* <<--------Render of Submit and Cancel button------>>*/}
-          <div class="form-group row">
-            <div class="col d-flex justify-content-end">
+          <div className="form-group row">
+            <div className="col d-flex justify-content-end">
               <button
                 onClick={this.submitHandler}
                 type="button"
-                class="btn btn-primary float-right mr-1"
+                className="btn btn-primary float-right mr-1"
               >
                 Save
               </button>
               <button
                 type="button"
-                class="btn btn-warning  float-right ml-1"
+                className="btn btn-warning  float-right ml-1"
                 onClick={() => {
                   window.location.href = "/promotion";
                 }}

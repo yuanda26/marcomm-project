@@ -44,7 +44,7 @@ class RouteSwitcher extends Component {
     }
   }
 
-  componentWillReceiveProps(propsData) {
+  UNSAFE_componentWillReceiveProps(propsData) {
     this.setState({
       dataAccess: propsData.theAccessData.dataAccess
     });
@@ -99,37 +99,63 @@ class RouteSwitcher extends Component {
         {this.state.dataAccess.map((content, index) => {
           // Routes for Transaction Promotion
           if (content === "/promotion") {
-            return (
-              <Switch key={index + Date.now()}>
-                <PrivateRoute
-                  path={content}
-                  component={this.func(this.state.dataAccess[index])}
-                />
-                <PrivateRoute path="/addpromot-nd" component={addPromotionND} />
-                <PrivateRoute path="/addpromot-d" component={addPromotionD} />
-                <PrivateRoute path="/editpromot-d" component={editPromotionD} />
-                <PrivateRoute
-                  path="/editpromot-nd"
-                  component={editPromotionND}
-                />
-                <PrivateRoute
-                  path="/approvepromot-d"
-                  component={ApprovalPromotionD}
-                />
-                <PrivateRoute
-                  path="/approvepromot-nd"
-                  component={ApprovalPromotionND}
-                />
-                <PrivateRoute
-                  path="/closepromot-d"
-                  component={ClosePromotionD}
-                />
-                <PrivateRoute
-                  path="/closepromot-nd"
-                  component={ClosePromotionND}
-                />
-              </Switch>
-            );
+            if (this.props.data.user.m_role_id === "RO0001") {
+              return (
+                <Switch key={index + Date.now()}>
+                  <PrivateRoute
+                    path={content}
+                    component={this.func(this.state.dataAccess[index])}
+                  />
+                  <PrivateRoute
+                    path="/approvepromot-d"
+                    component={ApprovalPromotionD}
+                  />
+                  <PrivateRoute
+                    path="/approvepromot-nd"
+                    component={ApprovalPromotionND}
+                  />
+                </Switch>
+              );
+            } else if (this.props.data.user.m_role_id === "RO0006") {
+              return (
+                <Switch key={index + Date.now()}>
+                  <PrivateRoute
+                    path={content}
+                    component={this.func(this.state.dataAccess[index])}
+                  />
+                  <PrivateRoute
+                    path="/closepromot-d"
+                    component={ClosePromotionD}
+                  />
+                  <PrivateRoute
+                    path="/closepromot-nd"
+                    component={ClosePromotionND}
+                  />
+                </Switch>
+              );
+            } else {
+              return (
+                <Switch key={index + Date.now()}>
+                  <PrivateRoute
+                    path={content}
+                    component={this.func(this.state.dataAccess[index])}
+                  />
+                  <PrivateRoute
+                    path="/addpromot-nd"
+                    component={addPromotionND}
+                  />
+                  <PrivateRoute path="/addpromot-d" component={addPromotionD} />
+                  <PrivateRoute
+                    path="/editpromot-d"
+                    component={editPromotionD}
+                  />
+                  <PrivateRoute
+                    path="/editpromot-nd"
+                    component={editPromotionND}
+                  />
+                </Switch>
+              );
+            }
           }
 
           // Routes for Transasction Design

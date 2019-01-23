@@ -4,8 +4,46 @@ import PropTypes from "prop-types";
 // Redux Actions
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authAction";
-
+import { getAllMenu } from "../../actions/menuActions";
+import { getListAccess } from "../../actions/accessMenuActions";
 class Navbar extends Component {
+  state = {
+    masterMenu: [],
+    transactionMenu: []
+  };
+  componentDidMount() {
+    if (this.props.auth.user.m_role_id !== undefined) {
+      this.props.getAllMenu();
+      this.props.getListAccess(this.props.auth.user.m_role_id);
+    }
+  }
+  UNSAFE_componentWillReceiveProps(propsData) {
+    let master = [];
+    let transaction = [];
+    propsData.accessData.dataAccess.forEach(access => {
+      propsData.menuData.menuArr.forEach(menu => {
+        if (
+          menu.controller !== false &&
+          menu.controller === access &&
+          menu.parent_id === "ME0006"
+        ) {
+          master.push(menu);
+        } else if (
+          menu.controller !== false &&
+          menu.controller === access &&
+          menu.parent_id === "ME0011"
+        ) {
+          transaction.push(menu);
+        }
+      });
+    });
+
+    this.setState({
+      masterMenu: master,
+      transactionMenu: transaction
+    });
+  }
+
   // Logout Function
   onLogout = e => {
     e.preventDefault();
@@ -31,16 +69,19 @@ class Navbar extends Component {
               Master
             </Link>
             <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-              <Link to="#" className="dropdown-item">
-                Action
-              </Link>
-              <Link to="#" className="dropdown-item">
-                Another action
-              </Link>
-              <div className="dropdown-divider" />
-              <Link to="#" className="dropdown-item">
-                Something else here
-              </Link>
+              {this.state.masterMenu.length === 0 ? (
+                <div>You can't access Master Menu</div>
+              ) : (
+                this.state.masterMenu.map((content, index) => (
+                  <a
+                    className="dropdown-item"
+                    key={index.toString()}
+                    href={content.controller}
+                  >
+                    {content.name}
+                  </a>
+                ))
+              )}
             </div>
           </li>
           <li className="nav-item dropdown">
@@ -55,17 +96,21 @@ class Navbar extends Component {
             >
               Transaction
             </Link>
+
             <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-              <Link to="#" className="dropdown-item">
-                Action
-              </Link>
-              <Link to="#" className="dropdown-item">
-                Another action
-              </Link>
-              <div className="dropdown-divider" />
-              <Link to="#" className="dropdown-item">
-                Something else here
-              </Link>
+              {this.state.transactionMenu.length === 0 ? (
+                <div>You can't access Transaction Menu</div>
+              ) : (
+                this.state.transactionMenu.map((content, index) => (
+                  <a
+                    className="dropdown-item"
+                    key={index.toString()}
+                    href={content.controller}
+                  >
+                    {content.name}
+                  </a>
+                ))
+              )}
             </div>
           </li>
           <li className="nav-item">
@@ -94,14 +139,20 @@ class Navbar extends Component {
 
 Navbar.propTypes = {
   logoutUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  getAllMenu: PropTypes.func.isRequired,
+  getListAccess: PropTypes.func.isRequired,
+  menuData: PropTypes.object.isRequired,
+  accessData: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  menuData: state.menu,
+  accessData: state.accessMenuData
 });
 
 export default connect(
   mapStateToProps,
-  { logoutUser }
+  { logoutUser, getAllMenu, getListAccess }
 )(Navbar);

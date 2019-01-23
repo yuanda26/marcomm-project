@@ -564,19 +564,18 @@ class addPromotionD extends React.Component {
                     <thead />
                   ) : (
                     <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Qty</th>
-                        <th>Todo</th>
-                        <th>Due Date</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Note</th>
-                        <th />
+                      <tr className="text-center font-weight-bold">
+                        <td nowrap="true">File Name</td>
+                        <td nowrap="true">Qty</td>
+                        <td nowrap="true">Todo</td>
+                        <td nowrap="true">Due Date</td>
+                        <td nowrap="true">Start Date</td>
+                        <td nowrap="true">End Date</td>
+                        <td nowrap="true">Note</td>
                       </tr>
                       {this.state.oldFile.map((content, index) => (
-                        <tr>
-                          <td colspan="1">
+                        <tr key={index.toString()}>
+                          <td nowrap="true" colSpan="1">
                             <div className="custom-file">
                               <input
                                 type="text"
@@ -586,7 +585,7 @@ class addPromotionD extends React.Component {
                               />
                             </div>
                           </td>
-                          <td>
+                          <td nowrap="true">
                             <input
                               type="text"
                               className="form-control"
@@ -594,7 +593,7 @@ class addPromotionD extends React.Component {
                               disabled
                             />
                           </td>
-                          <td>
+                          <td nowrap="true">
                             <input
                               type="text"
                               className="form-control"
@@ -602,7 +601,7 @@ class addPromotionD extends React.Component {
                               disabled
                             />
                           </td>
-                          <td>
+                          <td nowrap="true">
                             <input
                               type="text"
                               className="form-control"
@@ -610,7 +609,7 @@ class addPromotionD extends React.Component {
                               disabled
                             />
                           </td>
-                          <td>
+                          <td nowrap="true">
                             <input
                               type="date"
                               className="form-control"
@@ -618,7 +617,7 @@ class addPromotionD extends React.Component {
                               disabled
                             />
                           </td>
-                          <td>
+                          <td nowrap="true">
                             <input
                               type="date"
                               className="form-control"
@@ -626,7 +625,7 @@ class addPromotionD extends React.Component {
                               disabled
                             />
                           </td>
-                          <td>
+                          <td nowrap="true">
                             <input
                               type="text"
                               className="form-control"
@@ -634,7 +633,7 @@ class addPromotionD extends React.Component {
                               disabled
                             />
                           </td>
-                          <td>
+                          <td nowrap="true">
                             <a href="#!" data-tip="Download File">
                               <button
                                 className="btn btn-primary"
