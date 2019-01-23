@@ -182,9 +182,13 @@ class CreateUser extends React.Component {
       };
     });
 
-    this.state.status === 200
-      ? this.props.modalStatus(1, "Created!", this.state.formdata.username)
-      : console.log(this.state.status);
+    this.state.status === 200 &&
+      this.props.modalStatus(
+        1,
+        "User has been Created!",
+        this.state.formdata.username
+      );
+
     return (
       <Modal isOpen={this.props.create} className={this.props.className}>
         <ModalHeader> Add User</ModalHeader>

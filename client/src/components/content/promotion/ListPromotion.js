@@ -24,6 +24,7 @@ import Spinner from "../../common/Spinner";
 import Search from "@material-ui/icons/Search";
 import Refresh from "@material-ui/icons/Refresh";
 import Create from "@material-ui/icons/Add";
+import ReactTooltip from "react-tooltip";
 const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
@@ -320,7 +321,9 @@ class ListPromotion extends React.Component {
         <div className="row">
           <div className="col-md-12">
             <div className="card border-primary mb-3">
-              <div className="card-header lead">List Marketing Promotion</div>
+              <div className="card-header lead bg-primary text-white">
+                List Marketing Promotion
+              </div>
               <div className="card-body">
                 <nav aria-label="breadcrumb mb-4">
                   <ol className="breadcrumb">
@@ -335,14 +338,17 @@ class ListPromotion extends React.Component {
 
                 {this.props.data.user.m_role_id !== "RO0001" ? (
                   <div className="col-xs-1 mb-2">
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      onClick={this.showHandler}
-                    >
-                      <Create />
-                    </Button>
+                    <a href="#!" data-tip="Add Promotion">
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={this.showHandler}
+                      >
+                        <Create />
+                      </Button>
+                      <ReactTooltip place="top" type="dark" effect="solid" />
+                    </a>
                   </div>
                 ) : (
                   <div />
@@ -356,7 +362,7 @@ class ListPromotion extends React.Component {
                         <tr>
                           <td>
                             <input
-                              class="form-control"
+                              className="form-control"
                               placeholder="Transaction Code"
                               name="code"
                               onChange={this.changeHandler}
@@ -365,7 +371,7 @@ class ListPromotion extends React.Component {
                           </td>
                           <td>
                             <input
-                              class="form-control"
+                              className="form-control"
                               placeholder="Request By"
                               name="request_by"
                               onChange={this.changeHandler}
@@ -374,7 +380,7 @@ class ListPromotion extends React.Component {
                           </td>
                           <td>
                             <input
-                              class="form-control"
+                              className="form-control"
                               placeholder="Request Date"
                               name="request_date"
                               type="date"
@@ -384,7 +390,7 @@ class ListPromotion extends React.Component {
                           </td>
                           <td>
                             <input
-                              class="form-control"
+                              className="form-control"
                               placeholder="Assign to"
                               name="assign_to"
                               onChange={this.changeHandler}
@@ -393,7 +399,7 @@ class ListPromotion extends React.Component {
                           </td>
                           <td>
                             <input
-                              class="form-control"
+                              className="form-control"
                               placeholder="Created Date"
                               type="date"
                               name="created_date"
@@ -403,7 +409,7 @@ class ListPromotion extends React.Component {
                           </td>
                           <td>
                             <input
-                              class="form-control"
+                              className="form-control"
                               placeholder="Created By"
                               type="text"
                               name="created_by"
@@ -413,24 +419,40 @@ class ListPromotion extends React.Component {
                           </td>
                           <td>
                             {this.state.number ? (
-                              <button
-                                className="btn btn-primary btn-block"
-                                onClick={this.search}
-                              >
-                                <Search />
-                              </button>
+                              <a href="#!" data-tip="Search">
+                                <button
+                                  className="btn btn-primary btn-block"
+                                  onClick={this.search}
+                                >
+                                  <Search />
+                                </button>
+
+                                <ReactTooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
+                              </a>
                             ) : (
-                              <button
-                                className="btn btn-warning btn-block"
-                                onClick={() => {
-                                  this.setState({
-                                    hasil: this.state.allPromotion,
-                                    number: true
-                                  });
-                                }}
-                              >
-                                <Refresh />
-                              </button>
+                              <a href="#!" data-tip="Refresh Search">
+                                <button
+                                  className="btn btn-warning btn-block"
+                                  onClick={() => {
+                                    this.setState({
+                                      hasil: this.state.allPromotion,
+                                      number: true
+                                    });
+                                  }}
+                                >
+                                  <Refresh />
+                                </button>
+
+                                <ReactTooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
+                              </a>
                             )}
                           </td>
                         </tr>
@@ -467,11 +489,17 @@ class ListPromotion extends React.Component {
                                 <td>
                                   {this.props.data.user.m_employee_id ===
                                     row.created_by && row.status === 1 ? (
-                                    <Link to="#">
+                                    <Link to="#" data-tip="Edit Promotion">
                                       <CreateOutlinedIcon
                                         onClick={() => {
                                           this.editModalHandler(row);
                                         }}
+                                      />
+
+                                      <ReactTooltip
+                                        place="top"
+                                        type="dark"
+                                        effect="solid"
                                       />
                                     </Link>
                                   ) : (
@@ -479,11 +507,17 @@ class ListPromotion extends React.Component {
                                   )}
                                   {this.props.data.user.m_role_id ===
                                     "RO0001" && parseInt(row.status) === 1 ? (
-                                    <Link to="#">
+                                    <Link to="#" data-tip="Approval Promotion">
                                       <Gavel
                                         onClick={() => {
                                           this.approval(row);
                                         }}
+                                      />
+
+                                      <ReactTooltip
+                                        place="top"
+                                        type="dark"
+                                        effect="solid"
                                       />
                                     </Link>
                                   ) : (
@@ -491,11 +525,17 @@ class ListPromotion extends React.Component {
                                   )}
                                   {this.props.data.user.m_role_id ===
                                     "RO0006" && parseInt(row.status) === 2 ? (
-                                    <Link to="#">
+                                    <Link to="#" data-tip="Close Promotion">
                                       <Assignment
                                         onClick={() => {
                                           this.closePromot(row);
                                         }}
+                                      />
+
+                                      <ReactTooltip
+                                        place="top"
+                                        type="dark"
+                                        effect="solid"
                                       />
                                     </Link>
                                   ) : (

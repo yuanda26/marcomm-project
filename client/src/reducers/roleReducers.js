@@ -2,6 +2,7 @@ import { GET_ROLE, DEL_ROLE, ADD_ROLE, PUT_ROLE } from "../actions/types"; //CRE
 
 const initialState = {
   rolan: [], //nilai awal masih kosong (array kosong) bebas variabel
+  dataRole: [],
   statusGET: "",
   statusDEL: "",
   statusADD: "",
@@ -37,7 +38,11 @@ export default function(state = initialState, action) {
         // rolan: state.rolan.filter(rolan => rolan._id !== action.payload._id),
         statusPUT: action.status
       };
-
+    case "GET_NO_ACCESS":
+      return {
+        ...state,
+        dataRole: action.payload
+      };
     default:
       return state;
   }

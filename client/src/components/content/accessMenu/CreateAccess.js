@@ -4,6 +4,7 @@ import { getAllMenu } from "../../../actions/menuActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { createAccessMenu } from "../../../actions/accessMenuActions";
+import { getnoAccess } from "../../../actions/roleActions";
 import { withStyles } from "@material-ui/core";
 
 const styles = theme => ({
@@ -24,143 +25,135 @@ class CreateAccess extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      formdata: {
-        m_role_id: this.props.access[1],
-        m_menu_id: []
-      },
+      m_role_id: "",
+      m_menu_id: [],
       menu: [],
-      partOne: [],
-      partTwo: [],
+      role: [],
       checkVariable: {}
     };
   }
   componentDidMount() {
     this.props.getAllMenu();
+    this.props.getnoAccess();
   }
   UNSAFE_componentWillReceiveProps(propsData) {
-    const half = propsData.menuData.menuArr.length / 2;
     let test = {};
-    propsData.menuData.menuArr.forEach((content, index) => {
-      let data = this.props.theAccess.filter(a => a === content.controller);
-      if (data.length === 0) {
-        test[content.code] = false;
-      } else {
-        test[content.code] = true;
-      }
+    propsData.menuData.menuArr.forEach(content => {
+      test[content.code] = false;
     });
     this.setState({
-      formdata: {
-        m_menu_id: propsData.menuData.menuArr
-          .map(content => {
-            if (test[content.code] === true) return content.code;
-            else return false;
-          })
-          .filter(a => a !== false),
-        m_role_id: propsData.access[1]
-      },
+      role: propsData.getTheRole.dataRole,
       checkVariable: test,
-      partOne: propsData.menuData.menuArr
-        .map((content, index) => {
-          if (index < half && content.controller !== false) return content;
-          else return false;
-        })
-        .filter(a => a !== false),
-      partTwo: propsData.menuData.menuArr
-        .map((content, index) => {
-          if (index >= half && content.controller !== false) return content;
-          else return false;
-        })
-        .filter(a => a !== false),
-      menu: propsData.menuData.menuArr
+      menu: propsData.menuData.menuArr.filter(a => a.controller !== false)
     });
   }
-  getChecked = code => {
-    let data = this.props.theAccess.filter(a => a === code);
-    if (data.length !== 0) {
-      return true;
-    } else {
-      return false;
-    }
-  };
   changeCheck = event => {
     let temp = this.state.checkVariable;
     temp[event.target.name] = event.target.checked;
     this.setState({
-      formdata: {
-        m_menu_id: this.state.menu
-          .map(content => {
-            if (temp[content.code] === true) return content.code;
-            else return false;
-          })
-          .filter(a => a !== false),
-        m_role_id: this.props.access[1]
-      },
+      m_menu_id: this.state.menu
+        .map(content => {
+          if (temp[content.code] === true) return content.code;
+          else return false;
+        })
+        .filter(a => a !== false),
       checkVariable: temp
     });
   };
+  selectRole = event => {
+    this.setState({
+      m_role_id: event.target.value
+    });
+  };
   submit = () => {
-    this.props.createAccessMenu(this.state.formdata);
-    this.props.modalStatus2();
+    this.props.createAccessMenu({
+      m_role_id: this.state.m_role_id,
+      m_menu_id: this.state.m_menu_id
+    });
+    this.props.modalStatus(1, "Access Menu has been added", 200);
   };
   render() {
     return (
       <Modal isOpen={this.props.create} className={this.props.className}>
-        <ModalHeader>{`Edit Access (${this.props.access[0]})`}</ModalHeader>
-        <ModalBody>
-          <div className="table-responsive">
-            <table className="table table-borderless">
-              <tbody>
-                {this.state.partOne.map((row, rowIndex) => (
-                  <tr>
-                    {["satu", "dua"].map((column, columnIndex) => (
-                      <td>
-                        {columnIndex % 2 === 0 ? (
-                          <div className="form-check">
-                            <input
-                              type="checkbox"
-                              className="form-check-input"
-                              name={row.code}
-                              onChange={this.changeCheck}
-                              checked={this.state.checkVariable[row.code]}
-                              id={`defaultCheck${rowIndex + columnIndex}`}
-                            />
-                            <label
-                              htmlFor={`defaultCheck${rowIndex + columnIndex}`}
-                              className="form-check-label"
-                            >
-                              {row.name}
-                            </label>
-                          </div>
-                        ) : (
-                          <div className="form-check">
-                            <input
-                              type="checkbox"
-                              className="form-check-input"
-                              checked={
-                                this.state.checkVariable[
-                                  this.state.partTwo[rowIndex].code
-                                ]
-                              }
-                              name={this.state.partTwo[rowIndex].code}
-                              onChange={this.changeCheck}
-                              id={`defaultCheck${rowIndex + columnIndex}`}
-                            />
-                            <label
-                              htmlFor={`defaultCheck${rowIndex + columnIndex}`}
-                              className="form-check-label"
-                            >
-                              {this.state.partTwo[rowIndex].name}
-                            </label>
-                          </div>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
+        <ModalHeader>{`Add Access Menu`}</ModalHeader>
+
+        {this.state.role.length !== 0 ? (
+          <ModalBody>
+            <div className="input-group mb-3">
+              <select
+                onChange={this.selectRole}
+                value={this.state.m_role_id}
+                className="custom-select"
+                id="inputGroupSelect01"
+              >
+                <option value="" disabled>
+                  Select Role...
+                </option>
+                {this.state.role.map(content => (
+                  <option key={content.code} value={content.code}>
+                    {content.name}
+                  </option>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </ModalBody>
+              </select>
+            </div>
+            <div>Select Menu</div>
+            <div className="col-md-12">
+              <div className="row">
+                <div className="col-md-6">
+                  {this.state.menu
+                    .slice(0, this.state.menu.length / 2)
+                    .map((row, index) => (
+                      <div key={index.toString()}>
+                        <div className="form-check">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            name={row.code}
+                            onChange={this.changeCheck}
+                            checked={this.state.checkVariable[row.code]}
+                            id={`defaultCheck${index}`}
+                          />
+                          <label
+                            htmlFor={`defaultCheck${index}`}
+                            className="form-check-label"
+                          >
+                            {row.name}
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+                <div className="col-md-6">
+                  {this.state.menu
+                    .slice(this.state.menu.length / 2)
+                    .map((row, index) => (
+                      <div key={index.toString()}>
+                        <div className="form-check">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            name={row.code}
+                            onChange={this.changeCheck}
+                            checked={this.state.checkVariable[row.code]}
+                            id={`defaultCheck${index}`}
+                          />
+                          <label
+                            htmlFor={`defaultCheck${index}`}
+                            className="form-check-label"
+                          >
+                            {row.name}
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+          </ModalBody>
+        ) : (
+          <ModalBody>All Role was have access!</ModalBody>
+        )}
+
         <ModalFooter>
           <Button
             color="danger"
@@ -169,9 +162,14 @@ class CreateAccess extends React.Component {
           >
             Close
           </Button>
-          <Button color="primary" variant="contained" onClick={this.submit}>
-            Save
-          </Button>
+
+          {this.state.role.length !== 0 ? (
+            <Button color="primary" variant="contained" onClick={this.submit}>
+              Save
+            </Button>
+          ) : (
+            <div />
+          )}
         </ModalFooter>
       </Modal>
     );
@@ -180,16 +178,19 @@ class CreateAccess extends React.Component {
 
 const mapStateToProps = state => ({
   auth: state.auth,
-  menuData: state.menu
+  menuData: state.menu,
+  getTheRole: state.roleData
 });
 CreateAccess.propTypes = {
   classes: PropTypes.object.isRequired,
   getAllMenu: PropTypes.func.isRequired,
   menuData: PropTypes.object.isRequired,
+  getTheRole: PropTypes.object.isRequired,
+  getnoAccess: PropTypes.func.isRequired,
   createAccessMenu: PropTypes.func.isRequired
 };
 const style = withStyles(styles)(CreateAccess);
 export default connect(
   mapStateToProps,
-  { getAllMenu, createAccessMenu }
+  { getAllMenu, createAccessMenu, getnoAccess }
 )(style);

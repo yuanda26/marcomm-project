@@ -21,7 +21,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         userPayload: state.userPayload.filter(
-          userPayload => userPayload._id !== action.payload
+          content => content._id !== action.payload
         ),
         statusDEL: action.status
       };

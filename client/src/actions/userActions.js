@@ -1,11 +1,11 @@
 import axios from "axios";
-import apiConfig from "../config/Host_Config";
+import HostConfig from "../config/Host_Config";
 
 let token = localStorage.token;
 
 export const getAllUser = () => dispatch => {
   let options = {
-    url: `${apiConfig.host}/user`,
+    url: `${HostConfig}/user`,
     method: "get",
     headers: {
       Authorization: token
@@ -30,7 +30,7 @@ export const getAllUser = () => dispatch => {
 
 export const delUser = param => dispatch => {
   let options = {
-    url: `${apiConfig.host}/user/${param}`,
+    url: `${HostConfig}/user/${param}`,
     method: "delete",
     headers: {
       Authorization: token
@@ -55,7 +55,7 @@ export const delUser = param => dispatch => {
 
 export const createUser = body => dispatch => {
   let option = {
-    url: `${apiConfig.host}/user`,
+    url: `${HostConfig}/user`,
     method: "post",
     headers: {
       Authorization: token,
@@ -82,7 +82,7 @@ export const createUser = body => dispatch => {
 
 export const putUser = body => dispatch => {
   let option = {
-    url: `${apiConfig.host}/user/${body._id}`,
+    url: `${HostConfig}/user/${body._id}`,
     method: "put",
     headers: {
       Authorization: token,
@@ -108,7 +108,7 @@ export const putUser = body => dispatch => {
 };
 export const getUserEmployee = () => dispatch => {
   let options = {
-    url: `${apiConfig.host}/useremployee`,
+    url: `${HostConfig}/useremployee`,
     method: "get",
     headers: {
       Authorization: token
@@ -133,7 +133,7 @@ export const getUserEmployee = () => dispatch => {
 
 export const getStaff = () => dispatch => {
   let options = {
-    url: `${apiConfig.host}/userstaff`,
+    url: `${HostConfig}/userstaff`,
     method: "get",
     headers: {
       Authorization: token
