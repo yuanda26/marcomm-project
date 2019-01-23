@@ -13,9 +13,8 @@ import {
   getAssignToName,
   clearAlert
 } from "../../../actions/designAction";
-
 // Form Components
-import { CreateOutlined, DeleteOutlined } from "@material-ui/icons";
+import { Create, Delete } from "@material-ui/icons";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import Spinner from "../../common/Spinner";
 import TextFieldGroup from "../../common/TextFieldGroup";
@@ -266,6 +265,8 @@ class DesignAdd extends Component {
       // Save Design & Design Item to Database
       this.props.createDesign(designData);
       this.props.createDesignItem(designItemData);
+      // Get New Code After Created the New One
+      this.props.getCode();
       // Empty Form After Submitting Data
       this.setState({
         eventCode: "",
@@ -540,11 +541,11 @@ class DesignAdd extends Component {
                                     />
                                   </td>
                                   <td nowrap="true">
-                                    <CreateOutlined
+                                    <Create
                                       color="primary"
                                       onClick={this.handleReadonly(idx)}
                                     />
-                                    <DeleteOutlined
+                                    <Delete
                                       color="primary"
                                       onClick={this.handleRemoveModal}
                                     />

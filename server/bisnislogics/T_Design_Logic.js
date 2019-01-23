@@ -15,6 +15,11 @@ const T_Design_Logic = {
       employeeId
     );
   },
+  readAllDesignWithoutFilterHandler: (req, res, next) => {
+    designData.readAllWithoutFilterData(design => {
+      responseHelper.sendResponse(res, 200, design);
+    });
+  },
   readByCodeHandler: (req, res, next) => {
     const code = req.params.code;
 

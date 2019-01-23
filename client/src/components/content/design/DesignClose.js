@@ -196,7 +196,7 @@ class DesignClose extends Component {
           start_date: item.start_date,
           end_date: item.end_date,
           updated_by: this.props.user.m_employee_id,
-          created_date: moment().format("DD/MM/YYYY")
+          updated_date: moment().format("DD/MM/YYYY")
         })
       );
 
@@ -222,8 +222,11 @@ class DesignClose extends Component {
       // Close Design Request & Upload Data
       this.props.updateDesign(this.props.design.code, designData);
       this.props.updateDesignItem(designItemUpdate);
-      this.props.closeDesign(this.props.design.code, designFileData);
-      this.props.uploadDesign(formdata);
+      // Make sure close design & uploading image is doing last
+      setTimeout(() => {
+        this.props.closeDesign(this.props.design.code, designFileData);
+        this.props.uploadDesign(formdata);
+      }, 2500);
     }
   };
 

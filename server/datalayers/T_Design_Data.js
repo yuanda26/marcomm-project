@@ -53,6 +53,19 @@ const designData = {
         });
     }
   },
+  readAllWithoutFilterData: callback => {
+    db.collection("t_design")
+      .find()
+      .sort({ created_date: -1 })
+      .toArray((err, designs) => {
+        // Return Data to Callback
+        if (err) {
+          callback(err);
+        } else {
+          callback(designs);
+        }
+      });
+  },
   readByCodeData: (callback, code) => {
     db.collection("t_design").findOne(
       { is_delete: false, code: code },

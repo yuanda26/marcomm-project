@@ -4,7 +4,9 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { clearAlert } from "../../../actions/designAction";
 // Forms Components
+import TextField from "../../common/TextField";
 import TextFieldGroup from "../../common/TextFieldGroup";
+import TextAreaGroup from "../../common/TextAreaGroup";
 import Alert from "../../common/Alert";
 
 class DesignRead extends Component {
@@ -111,9 +113,9 @@ class DesignRead extends Component {
                 </ol>
               </nav>
               {/* Alert Message */}
-              {designStatus === 2 && (
+              {designStatus === 3 && (
                 <Alert
-                  action="Design Uploaded! "
+                  action="Design Approved! "
                   message={designMessage}
                   data={designData}
                   onClick={this.onClearAlert}
@@ -123,6 +125,14 @@ class DesignRead extends Component {
                 <Alert
                   action="Design Rejected! "
                   message={designMessage}
+                  onClick={this.onClearAlert}
+                />
+              )}
+              {designStatus === 5 && (
+                <Alert
+                  action="Design Uploaded! "
+                  message={designMessage}
+                  data={designData}
                   onClick={this.onClearAlert}
                 />
               )}
@@ -172,7 +182,7 @@ class DesignRead extends Component {
                           value={design.request_date}
                           disabled={true}
                         />
-                        <TextFieldGroup
+                        <TextAreaGroup
                           label="Note"
                           value={design.note}
                           disabled={true}
@@ -200,107 +210,70 @@ class DesignRead extends Component {
                               <td>Start Date</td>
                               <td>End Date</td>
                               <td>Note</td>
-                              <td />
                             </tr>
                           </thead>
                           <tbody>
                             {items.map((item, idx) => (
                               <tr key={idx}>
                                 <td>
-                                  <div className="form-group">
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      placeholder="*Select Product"
-                                      name="m_product_id"
-                                      value={this.getProductName(
-                                        item.m_product_id
-                                      )}
-                                      disabled={true}
-                                    />
-                                  </div>
+                                  <TextField
+                                    value={this.getProductName(
+                                      item.m_product_id
+                                    )}
+                                    disabled={true}
+                                  />
                                 </td>
                                 <td>
-                                  <div className="form-group">
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      placeholder={this.getDescription(
-                                        item.m_product_id
-                                      )}
-                                      disabled={true}
-                                    />
-                                  </div>
+                                  <TextField
+                                    value={this.getDescription(
+                                      item.m_product_id
+                                    )}
+                                    disabled={true}
+                                  />
                                 </td>
                                 <td>
-                                  <div className="form-group">
-                                    <input
-                                      type="text"
-                                      name="title_item"
-                                      value={item.title_item}
-                                      className="form-control"
-                                      placeholder="Type Title"
-                                      disabled={true}
-                                    />
-                                  </div>
+                                  <TextField
+                                    value={item.title_item}
+                                    disabled={true}
+                                  />
                                 </td>
                                 <td>
-                                  <div className="form-group">
-                                    <input
-                                      type="text"
-                                      placeholder="*Select PIC"
-                                      className="form-control"
-                                      name="request_pic"
-                                      value={this.getRequester(
-                                        item.request_pic
-                                      )}
-                                      disabled={true}
-                                    />
-                                  </div>
+                                  <TextField
+                                    value={this.getRequester(item.request_pic)}
+                                    disabled={true}
+                                  />
                                 </td>
                                 <td>
-                                  <div className="form-group">
-                                    <input
-                                      type="date"
-                                      className="form-control"
-                                      placeholder="Due Date"
-                                      name="request_due_date"
-                                      value={item.request_due_date}
-                                      disabled={true}
-                                    />
-                                  </div>
+                                  <TextField
+                                    value={item.request_due_date}
+                                    disabled={true}
+                                  />
                                 </td>
                                 <td>
-                                  <div className="form-group">
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      placeholder="Start Date"
-                                      disabled={true}
-                                    />
-                                  </div>
+                                  <TextField
+                                    value={
+                                      item.start_date === null
+                                        ? "-"
+                                        : item.start_date
+                                    }
+                                    disabled={true}
+                                  />
                                 </td>
                                 <td>
-                                  <div className="form-group">
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      placeholder="End Date"
-                                      disabled={true}
-                                    />
-                                  </div>
+                                  <TextField
+                                    value={
+                                      item.end_date === null
+                                        ? "-"
+                                        : item.end_date
+                                    }
+                                    disabled={true}
+                                  />
                                 </td>
                                 <td>
-                                  <div className="form-group">
-                                    <input
-                                      type="text"
-                                      name="note"
-                                      className="form-control"
-                                      placeholder="Note"
-                                      value={item.note}
-                                      disabled={true}
-                                    />
-                                  </div>
+                                  <TextField
+                                    value={item.note === "" ? "-" : item.note}
+                                    disabled={true}
+                                  />
                                 </td>
                               </tr>
                             ))}

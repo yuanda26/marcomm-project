@@ -82,8 +82,18 @@ class DesignView extends Component {
     } else {
       if (design.status === 1) {
         if (m_role_id !== "RO0001") {
-          return <DeniedPage />;
+          return (
+            <DesignRead
+              code={code}
+              design={design}
+              items={items}
+              employee={assign}
+              product={product}
+              requester={requester}
+            />
+          );
         } else {
+          // Admin Role Can Only Approve Design Request
           return (
             <DesignApprove
               title={this.pageTitle(design.status)}
@@ -98,7 +108,19 @@ class DesignView extends Component {
           );
         }
       } else if (design.status === 2) {
-        if (design.assign_to !== m_employee_id) {
+        if (m_role_id === "RO0001") {
+          // Admin Role Can Only Read Design Request
+          return (
+            <DesignRead
+              code={code}
+              design={design}
+              items={items}
+              employee={assign}
+              product={product}
+              requester={requester}
+            />
+          );
+        } else if (design.assign_to !== m_employee_id) {
           return <DeniedPage />;
         } else {
           return (
