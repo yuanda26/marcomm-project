@@ -273,16 +273,16 @@ module.exports = (server, restify) => {
 
   // T Event Route
   // Made By: Purwanto
-  server.get("/api/event/:empId/:roleId", event.readAllHandler);
-  server.get("/api/event/:eventId", event.readByIdHandler);
+  server.get("/api/event/:empId/:roleId", authenticate, event.readAllHandler);
+  server.get("/api/event", authenticate, event.readAllWithoutFilter);
   server.get(
     // code, request_by, request_date, status, created_date, created_by)
-    "/api/event/:code/:request_by/:request_date/:status/:created_date/:created_by/:empId/:roleId",
+    "/api/event/:code/:request_by/:request_date/:status/:created_date/:created_by/:empId/:roleId", authenticate,
     event.searchHandler
   );
   server.post("/api/event", routeMiddleware, event.createHandler);
-  server.put("/api/event/:eventId", routeMiddleware, event.updateHandler);
-  server.del("/api/event/:eventId", routeMiddleware, event.deleteHandler);
+  server.put("/api/event/:eventId", authenticate, routeMiddleware, event.updateHandler);
+  server.del("/api/event/:eventId", authenticate, routeMiddleware, event.deleteHandler);
   server.put(
     "/api/event/approve/:eventId",
     authenticate,

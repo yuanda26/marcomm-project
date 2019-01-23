@@ -8,11 +8,10 @@ const tEventBisnislogic = {
       responseHelper.sendResponse(res, 200, items);
     });
   },
-  readByIdHandler: (req, res, next) => {
-    let param = req.params.eventId;
-    dtl.readByIdHandlerData(items => {
+  readAllWithoutFilter: (req, res, next) => {
+    dtl.readAllWithoutFilterData(items => {
       responseHelper.sendResponse(res, 200, items);
-    }, param);
+    });
   },
   searchHandler: (req, res, next) => {
     let code = req.params.code;
