@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { clearAlert } from "../../../actions/designAction";
 // Forms Components
 import TextFieldGroup from "../../common/TextFieldGroup";
+import TextAreaGroup from "../../common/TextAreaGroup";
 import Alert from "../../common/Alert";
 
 class DesignRead extends Component {
@@ -111,9 +112,9 @@ class DesignRead extends Component {
                 </ol>
               </nav>
               {/* Alert Message */}
-              {designStatus === 2 && (
+              {designStatus === 3 && (
                 <Alert
-                  action="Design Uploaded! "
+                  action="Design Approved! "
                   message={designMessage}
                   data={designData}
                   onClick={this.onClearAlert}
@@ -123,6 +124,14 @@ class DesignRead extends Component {
                 <Alert
                   action="Design Rejected! "
                   message={designMessage}
+                  onClick={this.onClearAlert}
+                />
+              )}
+              {designStatus === 5 && (
+                <Alert
+                  action="Design Uploaded! "
+                  message={designMessage}
+                  data={designData}
                   onClick={this.onClearAlert}
                 />
               )}
@@ -172,7 +181,7 @@ class DesignRead extends Component {
                           value={design.request_date}
                           disabled={true}
                         />
-                        <TextFieldGroup
+                        <TextAreaGroup
                           label="Note"
                           value={design.note}
                           disabled={true}

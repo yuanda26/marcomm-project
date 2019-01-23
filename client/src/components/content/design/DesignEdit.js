@@ -463,7 +463,6 @@ class DesignEdit extends Component {
       isEmpty(requester) &&
       isEmpty(assign)
     ) {
-      console.log(true);
       return (
         <div className="container">
           <div className="row">
@@ -474,7 +473,12 @@ class DesignEdit extends Component {
         </div>
       );
     } else {
-      if (design.status === 0 || design.status === 2 || design.status === 3) {
+      if (
+        user.m_role_id === "RO0001" ||
+        design.status === 0 ||
+        design.status === 2 ||
+        design.status === 3
+      ) {
         return (
           <DesignRead
             title={this.pageTitle(design.status)}

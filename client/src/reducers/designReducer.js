@@ -105,7 +105,7 @@ export default function(state = initialState, action) {
         ...state,
         designs: [action.payload, ...state.designs],
         designStatus: 1,
-        designMessage: "Transaction Design Request Has Been Added with Code ",
+        designMessage: "Transaction Design Request Has Been Added ",
         designData: action.payload.code
       };
 
@@ -136,7 +136,8 @@ export default function(state = initialState, action) {
         ...state,
         design: { ...state.design, ...action.payload },
         designStatus: 3,
-        designMessage: "Transaction Design Request Has Been Approved!"
+        designMessage: "Transaction Design Request Has Been Approved ",
+        designData: action.code
       };
 
     case REJECT_DESIGN:
@@ -144,14 +145,15 @@ export default function(state = initialState, action) {
         ...state,
         design: { ...state.design, ...action.payload },
         designStatus: 4,
-        designMessage: "Transaction Design Request Has Been Rejected!"
+        designMessage: "Transaction Design Request Has Been Rejected ",
+        designData: action.code
       };
 
     case CLOSE_DESIGN:
       return {
         ...state,
         design: { ...state.design, ...action.payload },
-        designStatus: 2,
+        designStatus: 5,
         designMessage: "Transaction Design Request Has Been Closed ",
         designData: action.code
       };
