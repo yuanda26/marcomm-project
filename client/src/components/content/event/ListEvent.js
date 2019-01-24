@@ -436,6 +436,7 @@ class ListEvent extends React.Component {
                     user={this.props.user}
                     closeModalHandler={this.closeModalHandler}
                     currentEvent={this.state.currentEvent}
+                    modalStatus={this.modalStatus}
                   />
                   <EditEvent
                     edit={this.state.editEvent}
@@ -543,6 +544,7 @@ class ListEvent extends React.Component {
                                 type="button"
                                 className="btn btn-primary"
                                 onClick={this.showHandler}
+                                disabled={this.props.user.m_role_id === "RO0005" ? (false):(true)}
                               >
                                 <Add />
                               </button>

@@ -40,6 +40,17 @@ class ViewEvent extends Component {
       eventId: props.currentEvent._id,
       assign_to: props.currentEvent.assign_to
        });
+    let { statusApprove, statusReject, statusClose } = props.event
+    let { code } = props.currentEvent
+    if(statusApprove || statusReject || statusClose ){
+      if(statusApprove === 200){
+        props.modalStatus(1, `Succes, Event with code ${code} has been Approved`)
+      } else if(statusReject === 200){
+        props.modalStatus(1, `Succes, Event with code ${code} has been Rejected`)
+      } else if(statusClose === 200){
+        props.modalStatus(1, `Succes, Event with code ${code} has been Closed`)
+      }
+    }
   }
 
   onChange = e => {
@@ -290,7 +301,8 @@ ViewEvent.propTypes = {
 
 const mapStateToProps = state => ({
   design: state.design,
-  user: state.auth.user
+  user: state.auth.user,
+  event: state.event
 });
 
 export default connect(
