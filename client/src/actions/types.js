@@ -44,8 +44,8 @@ export const UPDATE_UNIT = "UPDATE_UNIT";
 export const DELETE_UNIT = "DELETE_UNIT";
 export const CLEAR_UNIT_ALERT = "CLEAR_UNIT_ALERT";
 
-// Common Types
-export const ERRORS = "ERRORS";
+// Authentication Types
+export const FORGOT_PASSWORD = "FORGOT_PASSWORD";
 export const CURRENT_USER = "CURRENT_USER";
 
 // Product Types
@@ -127,3 +127,5 @@ export const ADD_P_FILE = "ADD_P_FILE"; //add
 export const PUT_P_FILE = "PUT_P_FILE"; //update
 export const ADD_DATA_P = "ADD_DATA_P";
 //access menu Types
+
+export const ERRORS = "ERRORS";
