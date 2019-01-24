@@ -42,7 +42,6 @@ class RequesterHandler extends React.Component {
 
   componentDidMount() {
     this.props.getAllTSouvenirItemDetil();
-    this.props.getAllTSouvenirItem();
   }
 
   componentWillReceiveProps(newProps) {

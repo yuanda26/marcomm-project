@@ -142,7 +142,7 @@ class ListTsouveniritem extends React.Component {
         created_date: /(?:)/,
         created_by: /(?:)/
       },
-      tsouveniritem: [],
+      tsouveniritem: [null],
       tsouveniritemSearch: [null],
       page: 0,
       rowsPerPage: 5,
@@ -179,10 +179,10 @@ class ListTsouveniritem extends React.Component {
 
   componentDidMount() {
     const { m_role_id, m_employee_id } = this.props.user;
-    if (m_role_id) {
+    if (m_role_id !== undefined && m_employee_id !== undefined) {
       this.props.getAllTSouvenirItem(m_role_id, m_employee_id);
+      this.props.getAllTSouvenirItemDetil();
     }
-    this.props.getAllTSouvenirItemDetil();
   }
 
   componentWillReceiveProps(newProps) {
@@ -435,8 +435,14 @@ class ListTsouveniritem extends React.Component {
       datatip = "Edit Souvenir Request";
     } else if (status === 2) {
       datatip = "Receive Souvenir Request";
+    } else if (status === 3) {
+      datatip = "Settlement Souvenir Request";
+    } else if (status === 4) {
+      datatip = "Approve Settlement Souvenir Request";
+    } else if (status === 5) {
+      datatip = "Close Request";
     } else {
-      datatip = "Haha";
+      datatip = "Closed Request";
     }
     return datatip;
   };
@@ -865,6 +871,8 @@ class ListTsouveniritem extends React.Component {
                               </a>
                             </td>
                           </tr>
+                        </thead>
+                        <thead>
                           <tr
                             className="text-center font-weight-bold"
                             style={columnWidth}
@@ -880,8 +888,9 @@ class ListTsouveniritem extends React.Component {
                           </tr>
                         </thead>
                         <tbody>
-                          {this.state.tsouveniritemSearch[0] === null ? (
-                            <SpinnerTable />
+                          {this.state.tsouveniritemSearch[0] === null &&
+                          this.state.tsouveniritem[0] === null ? (
+                            <Spinner />
                           ) : this.state.tsouveniritemSearch.length === 0 ? (
                             <tr className="text-center">
                               <td colSpan="8">No Souvenir Request Found</td>

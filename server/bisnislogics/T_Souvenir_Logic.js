@@ -47,31 +47,56 @@ const T_Souvenir_Data = {
     dtl.updateHandler(
       items => {
         dti.readByIdHandler(const1 => {
-          let dataOldItem = req.body.oldItem.map((content, idx) => {
-            return {
-              _id: new ObjectId(const1[idx]._id),
-              m_souvenir_id: content.m_souvenir_id,
-              qty: content.qty,
-              note: content.note,
-              created_by: const1[idx].created_by,
-              created_date: const1[idx].created_date,
-              t_souvenir_id: const1[idx].t_souvenir_id,
-              is_delete: false,
-              updated_by: data.updated_by,
-              updated_date: CD
-            };
-          });
-          dtl.deleteData(deleteitem => {
-            dtl.createItem(updateOldFile => {
+          if (req.body.oldItem.length > 0) {
+            let dataOldItem = req.body.oldItem.map((content, idx) => {
+              return {
+                _id: new ObjectId(const1[idx]._id),
+                m_souvenir_id: content.m_souvenir_id,
+                qty: content.qty,
+                note: content.note,
+                created_by: const1[idx].created_by,
+                created_date: const1[idx].created_date,
+                t_souvenir_id: const1[idx].t_souvenir_id,
+                is_delete: false,
+                updated_by: data.updated_by,
+                updated_date: CD
+              };
+            });
+            dtl.deleteData(deleteitem => {
+              dtl.createItem(updateOldFile => {
+                if (req.body.newItem.length > 0) {
+                  dataNewItem = req.body.newItem.map((ele, idx) => {
+                    return {
+                      m_souvenir_id: ele.m_souvenir_id,
+                      qty: ele.qty,
+                      note: ele.note,
+                      created_date: ele.created_date,
+                      created_by: ele.created_by,
+                      t_souvenir_id: ele.t_souvenir_id,
+                      is_delete: false,
+                      updated_by: data.updated_by,
+                      updated_date: CD
+                    };
+                  });
+                  dtl.createItem(createNewFile => {
+                    ResponseHelper.sendResponse(res, 200, createNewFile);
+                  }, dataNewItem);
+                } else {
+                  ResponseHelper.sendResponse(res, 200, updateOldFile);
+                }
+              }, dataOldItem);
+            }, req.body.souv.code);
+          } else {
+            dtl.deleteData(deleteitem => {
               if (req.body.newItem.length > 0) {
                 dataNewItem = req.body.newItem.map((ele, idx) => {
                   return {
                     m_souvenir_id: ele.m_souvenir_id,
                     qty: ele.qty,
                     note: ele.note,
-                    created_date: req.body.oldItem[idx].created_date,
-                    created_by: req.body.oldItem[idx].created_by,
-                    t_souvenir_id: req.body.oldItem[idx].t_souvenir_id,
+                    created_date: ele.created_date,
+                    created_by: ele.created_by,
+                    t_souvenir_id: ele.t_souvenir_id,
                     is_delete: false,
                     updated_by: data.updated_by,
                     updated_date: CD
@@ -81,10 +106,10 @@ const T_Souvenir_Data = {
                   ResponseHelper.sendResponse(res, 200, createNewFile);
                 }, dataNewItem);
               } else {
-                ResponseHelper.sendResponse(res, 200, updateOldFile);
+                ResponseHelper.sendResponse(res, 200, deleteitem);
               }
-            }, dataOldItem);
-          }, req.body.souv.code);
+            }, req.body.souv.code);
+          }
         }, req.body.souv.code);
       },
       data,
