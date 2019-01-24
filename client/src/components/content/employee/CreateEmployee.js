@@ -39,7 +39,7 @@ class CreateEmployee extends React.Component{
     this.props.getAllCompany()
   }
 
-  componentWillReceiveProps = (newProps) => {
+  UNSAFE_componentWillReceiveProps = (newProps) => {
     if ( newProps.statusCreated ) {
       if( newProps.statusCreated === 200 ){
         newProps.modalStatus( 1, `Succes, New Employee with code ${newProps.empNumber} has been add` )

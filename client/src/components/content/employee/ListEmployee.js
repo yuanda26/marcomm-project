@@ -37,9 +37,9 @@ import {
   LastPage,
   Search,
   Add,
-  CreateOutlined,
-  DeleteOutlined,
-  RemoveRedEyeOutlined,
+  Create,
+  Delete,
+  RemoveRedEye,
   RefreshOutlined
 } from "@material-ui/icons";
 const actionsStyles = theme => ({
@@ -513,7 +513,7 @@ class ListEmployee extends React.Component {
                           <td className="text-nowrap text-center">{row.created_by}</td>
                           <td className="text-nowrap text-center">
                           <Link to="#" data-tip="View Employee">
-                            <RemoveRedEyeOutlined
+                            <RemoveRedEye
                               onClick={() => {
                               this.viewModalHandler(row._id);
                               }}
@@ -521,7 +521,7 @@ class ListEmployee extends React.Component {
                             <ReactTooltip place="top" type="dark" effect="solid" />
                           </Link>
                           <Link to="#" data-tip="Edit Employee">
-                            <CreateOutlined
+                            <Create
                               onClick={() => {
                               this.editModalHandler(row._id);
                               }}
@@ -529,7 +529,7 @@ class ListEmployee extends React.Component {
                             <ReactTooltip place="top" type="dark" effect="solid" />
                           </Link>
                           <Link to="#" data-tip="Delete Employee">
-                            <DeleteOutlined
+                            <Delete
                               onClick={() => {
                               this.deleteModalHandler(row._id);
                               }}
