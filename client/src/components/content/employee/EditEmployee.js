@@ -34,7 +34,7 @@ class EditEmployee extends React.Component {
     this.props.getAllCompany()
   }
 
-  componentWillReceiveProps(newProps){
+  UNSAFE_componentWillReceiveProps(newProps){
     let { currentEmployee, statusUpdated, modalStatus } = newProps
     let formdata = {
       employee_number: currentEmployee.employee_number,

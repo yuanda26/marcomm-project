@@ -35,8 +35,8 @@ import {
   LastPage,
   Search,
   Add,
-  CreateOutlined,
-  RemoveRedEyeOutlined,
+  Create,
+  RemoveRedEye,
   RefreshOutlined
 } from "@material-ui/icons";
 
@@ -610,7 +610,7 @@ class ListEvent extends React.Component {
                                 </td>
                                 <td className="text-nowrap text-centered">
                                   <Link to="#" data-tip="View Event">
-                                    <RemoveRedEyeOutlined
+                                    <RemoveRedEye
                                       onClick={() => {
                                         this.viewModalHandler(row._id);
                                       }}
@@ -622,7 +622,7 @@ class ListEvent extends React.Component {
                                     />
                                   </Link>
                                   <Link to="#" data-tip="Edit Event">
-                                    <CreateOutlined
+                                    <Create
                                       onClick={() => {
                                         this.editModalHandler(row._id);
                                       }}
