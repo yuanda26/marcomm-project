@@ -4,7 +4,9 @@ import isEmpty from "../validation/isEmpty";
 const initialState = {
   isAuthenticated: false,
   user: {},
-  errors: null
+  errors: null,
+  status: "",
+  message: ""
 };
 
 export default function(state = initialState, action) {
@@ -18,12 +20,14 @@ export default function(state = initialState, action) {
     case FORGOT_PASSWORD:
       return {
         ...state,
-        status: action.status
+        status: action.status,
+        message: "Reset Password Success! Now you can login with new password."
       };
     case ERRORS:
       return {
         ...state,
-        errors: action.payload
+        status: action.payload.code,
+        message: action.payload.message
       };
 
     default:

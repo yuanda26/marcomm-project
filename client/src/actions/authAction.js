@@ -44,31 +44,24 @@ export const logoutUser = () => dispatch => {
 };
 
 //Forgot Password
-export const ForgotPassword = body => dispatch => {
+export const ForgotPassword = formdata => dispatch => {
   let option = {
-    url: `${HostConfig}/${ApiConfig.user_forgot}/${body.username}`,
+    url: `${HostConfig}/${ApiConfig.user_forgot}/${formdata.username}`,
     method: "put",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    data: body
+    headers: { "Content-Type": "application/json" },
+    data: formdata
   };
   axios(option)
-    .then(res => {
+    .then(res =>
       dispatch({
         type: FORGOT_PASSWORD,
         status: res.data.code
-      });
-      alert(
-        "Perubahan password berhasil disimpan, silahkan login kembali dengan password baru!"
-      );
-      window.location.href = "/";
-    })
+      })
+    )
     .catch(err => {
       dispatch({
         type: ERRORS,
-        status: 404,
-        payload: null
+        payload: err.response.data
       });
     });
 };

@@ -1,150 +1,111 @@
 import React from "react";
-import { Alert } from "reactstrap";
-import { ForgotPassword } from "../../../actions/authAction";
-import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { ForgotPassword } from "../../../actions/authAction";
+// Form Components
+import TextField from "../../common/TextField";
+import isEmpty from "../../../validation/isEmpty";
 
 class Forgot extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      formdata: {
+  state = {
+    username: "",
+    password: "",
+    repeat: "",
+    errorUsername: "",
+    errorPassword: "",
+    errorRepeat: ""
+  };
+
+  onChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  onSubmit = e => {
+    e.preventDefault();
+
+    if (isEmpty(this.state.username)) {
+      this.setState({ errorUsername: "This Field is Required!" });
+    }
+    if (isEmpty(this.state.password)) {
+      this.setState({ errorPassword: "This Field is Required!" });
+    }
+    if (isEmpty(this.state.repeat)) {
+      this.setState({ errorRepeat: "This Field is Required!" });
+    }
+    if (this.state.password !== this.state.repeat) {
+      this.setState({ errorRepeat: "Password Didn't Match!" });
+    }
+
+    if (
+      !isEmpty(this.state.username) &&
+      !isEmpty(this.state.password) &&
+      !isEmpty(this.state.repeat) &&
+      this.state.password === this.state.repeat
+    ) {
+      const formdata = {
+        username: this.state.username,
+        password: this.state.password
+      };
+      this.props.ForgotPassword(formdata);
+      // Clear Form
+      this.setState({
         username: "",
         password: "",
-        repassword: "",
-        updated_by: ""
-      },
-      alertData: {
-        status: false,
-        message: ""
-      },
-      status: "",
-      message: ""
-    };
-    this.Submit = this.Submit.bind(this);
-    this.textChanged = this.textChanged.bind(this);
-  }
-  textChanged(e) {
-    let tmp = this.state.formdata;
-    tmp[e.target.name] = e.target.value;
-    tmp["updated_by"] = tmp["username"];
-    this.setState({
-      formdata: tmp,
-      status: "",
-      message: "",
-      alertData: {
-        status: false
-      }
-    });
-  }
-  validatePassword(password) {
-    let regex = new RegExp(/((?=.*[a-z])(?=.*[A-Z]))/);
-    return regex.test(String(password));
-    /*At least one lC,Up,Number,[@#$%],6-20 /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})/*/
-  }
-
-  Submit() {
-    if (
-      this.state.formdata.username === "" ||
-      this.state.formdata.password === "" ||
-      this.state.formdata.repassword === ""
-    ) {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "All forms must be filled!"
-        }
+        repeat: "",
+        errorUsername: "",
+        errorPassword: "",
+        errorRepeat: ""
       });
     }
-    // else if (this.validatePassword(this.state.formdata.password) === false) {
-    //   this.setState({
-    //     alertData: {
-    //       status: true,
-    //       message: "Password at least one character lowercase, uppercase"
-    //     }
-    //   });
-    // }
-    else if (this.state.formdata.password !== this.state.formdata.repassword) {
-      this.setState({
-        alertData: {
-          status: true,
-          message: "Re-Password Not Match"
-        }
-      });
-    } else {
-      this.props.ForgotPassword(this.state.formdata);
-    }
-  }
-
-  componentWillReceiveProps(newProps) {
-    this.setState({
-      status: newProps.auth.status,
-      message: newProps.auth.message
-    });
-  }
+  };
 
   render() {
+    const { status, message } = this.props.auth;
+
     return (
-      <div className="text-center">
-        <form className="form-signin">
-          <h1 className="h3 mb-3 font-weight-normal">Forgot Password</h1>
-          <label for="inputEmail" className="sr-only">
-            Username
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Username"
-            name="username"
-            required=""
-            autofocus=""
-            value={this.state.formdata.username}
-            onChange={this.textChanged}
-          />
-          <label for="inputPassword" className="sr-only">
-            Password
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            placeholder="Password"
-            name="password"
-            required=""
-            value={this.state.formdata.password}
-            onChange={this.textChanged}
-          />
-          <label for="inputPassword" className="sr-only">
-            Re-Password
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            placeholder="Re-Password"
-            name="repassword"
-            required=""
-            value={this.state.formdata.repassword}
-            onChange={this.textChanged}
-          />
-          {this.state.status === 404 ? (
-            <Alert color="danger">{this.state.message} </Alert>
-          ) : (
-            ""
-          )}
-          {this.state.alertData.status === true ? (
-            <Alert color="danger">{this.state.alertData.message} </Alert>
-          ) : (
-            ""
-          )}
-          <button
-            className="btn btn-lg btn-primary btn-block"
-            disabled={this.state.isRequest}
-            type="button"
-            onClick={this.Submit}
-          >
-            Change Password
-          </button>
-          <p className="mt-5 mb-3 text-muted">© 2017-2018</p>
-        </form>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-5 m-auto">
+            <h1 className="display-4 text-center">Reset Password</h1>
+            {status === 404 && (
+              <div className="alert alert-danger">{message}</div>
+            )}
+            {status === 200 && (
+              <div className="alert alert-danger">{message}</div>
+            )}
+            <form onSubmit={this.onSubmit}>
+              <TextField
+                placeholder="*Username"
+                name="username"
+                value={this.state.username}
+                onChange={this.onChange}
+                errors={this.state.errorUsername}
+              />
+              <TextField
+                type="password"
+                placeholder="*Password"
+                name="password"
+                value={this.state.password}
+                onChange={this.onChange}
+                errors={this.state.errorPassword}
+              />
+              <TextField
+                type="password"
+                placeholder="*Repeat Password"
+                name="repeat"
+                value={this.state.repeat}
+                onChange={this.onChange}
+                errors={this.state.errorRepeat}
+              />
+              <input type="submit" className="btn btn-info btn-block mt-4" />
+              <div className="text-center">
+                Remember Password? Back to
+                <Link to="/"> Login.</Link>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     );
   }
