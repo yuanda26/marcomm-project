@@ -28,10 +28,6 @@ class Login extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
       window.location.href = "/dashboard";
-<<<<<<< HEAD
-      // this.props.history.push("/dashboard");
-=======
->>>>>>> a2f9bb69c12e16e4615f4c1baaf248eef6155471
     }
   }
 
