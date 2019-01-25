@@ -109,66 +109,35 @@ const M_user_Logic = {
       });
     });
   },
-  rePassword: (req, res, nex) => {
-    let id = req.params.userid;
-    let username = req.body.username;
-    let password = req.body.password;
-    userData.readUserByUsername(docs => {
-      //sebelumnya dtl ganti userData
-      if (docs) {
-        if (bcrypt.compareSync(password, docs.password)) {
-          const data = {
-            password: req.body.newPassword,
-            updated_by: username,
-            updated_date: moment().format("DD/MM/YYYY")
-          };
-
-          bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(data.password, salt, (err, hash) => {
-              data.password = hash;
-              userData.rePassword(
-                items => {
-                  responseHelper.sendResponse(res, 200, items);
-                },
-                data,
-                id
-              );
-            });
-          });
-        } else {
-          responseHelper.sendResponse(res, 404, "Password not match");
-        }
-      } else {
-        responseHelper.sendResponse(res, 404, "User not found");
-      }
-    }, username);
-  },
   forgotPassword: (req, res, nex) => {
-    let id = req.params.userid;
-    let username = req.body.username;
+    let userId = req.params.userid;
+    const formdata = {
+      username: req.body.username,
+      password: req.body.password,
+      updated_date: moment().format("DD/MM/YYYY")
+    };
+
+    // Check Username is Exist
     userData.readUserByUsername(docs => {
       if (docs) {
-        const data = {
-          password: req.body.password,
-          updated_by: username,
-          updated_date: moment().format("DD/MM/YYYY")
-        };
         bcrypt.genSalt(10, (err, salt) => {
-          bcrypt.hash(data.password, salt, (err, hash) => {
-            data.password = hash;
+          bcrypt.hash(formdata.password, salt, (err, hash) => {
+            // Update Plain Password with Hashed Password
+            formdata.password = hash;
+
             userData.rePassword(
               items => {
                 responseHelper.sendResponse(res, 200, items);
               },
-              data,
-              id
+              formdata,
+              userId
             );
           });
         });
       } else {
-        responseHelper.sendResponse(res, 404, "User not found");
+        responseHelper.sendResponse(res, 404, "User Not Found!");
       }
-    }, username);
+    }, formdata.username);
   }
 };
 

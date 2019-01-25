@@ -114,10 +114,10 @@ const userData = {
       }
     );
   },
-  rePassword: (callback, data, id) => {
+  rePassword: (callback, formdata, username) => {
     db.collection("m_user").updateOne(
-      { username: id },
-      { $set: data },
+      { username: username },
+      { $set: formdata },
       (err, docs) => {
         callback(docs);
       }

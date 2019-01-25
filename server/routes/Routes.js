@@ -327,12 +327,10 @@ module.exports = (server, restify) => {
   // Made By: Hanif Al Baaits (Edited by: Randika Alditia)
   server.post("/api/user/login", routeMiddleware, userLogic.loginUserHandler);
   server.put(
-    "/api/user/repass/:userid",
-    authenticate,
+    "/api/user/forgot/:userid",
     routeMiddleware,
-    userLogic.rePassword
+    userLogic.forgotPassword
   );
-  server.put("/api/user/forgot/:userid", userLogic.forgotPassword);
   // Master User Route - CRUD - ADMIN
   server.get("/api/useremployee", authenticate, userLogic.readEmployeeFromUser);
   server.get("/api/user", authenticate, userLogic.readUserAllHandler);
