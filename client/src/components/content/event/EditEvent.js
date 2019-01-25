@@ -27,7 +27,7 @@ class EditEvent extends React.Component {
     }
   }
 
-  componentWillReceiveProps(newProps){
+  UNSAFE_componentWillReceiveProps(newProps){
     let { currentEvent, statusUpdate, modalStatus } = newProps
     let formdata = {
       _id: currentEvent._id,

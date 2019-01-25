@@ -7,16 +7,12 @@ import TextField from "../../common/TextField";
 import isEmpty from "../../../validation/isEmpty";
 
 class Login extends Component {
-  constructor() {
-    super();
-
-    this.state = {
-      username: "",
-      password: "",
-      errorUsername: "",
-      errorPassword: ""
-    };
-  }
+  state = {
+    username: "",
+    password: "",
+    errorUsername: "",
+    errorPassword: ""
+  };
 
   onChange = e => {
     this.setState({ [e.target.name]: e.target.value });
@@ -32,7 +28,10 @@ class Login extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
       window.location.href = "/dashboard";
+<<<<<<< HEAD
       // this.props.history.push("/dashboard");
+=======
+>>>>>>> a2f9bb69c12e16e4615f4c1baaf248eef6155471
     }
   }
 
@@ -55,10 +54,13 @@ class Login extends Component {
 
       // Login
       this.props.loginUser(userData);
+      this.setState({ errorUsername: "", errorPassword: "" });
     }
   };
 
   render() {
+    const { errors } = this.props.auth;
+
     return (
       <div className="landing">
         <div className="dark-overlay landing-inner text-light">
@@ -69,16 +71,19 @@ class Login extends Component {
                 <p className="lead text-center">
                   Sign in to your Marcomm Account
                 </p>
+                {errors !== null && (
+                  <div className="alert alert-danger">{errors.message}</div>
+                )}
                 <form onSubmit={this.onSubmit}>
                   <TextField
-                    placeholder="Username"
+                    placeholder="*Username"
                     name="username"
                     value={this.state.username}
                     onChange={this.onChange}
                     errors={this.state.errorUsername}
                   />
                   <TextField
-                    placeholder="Password"
+                    placeholder="*Password"
                     name="password"
                     type="password"
                     value={this.state.password}
@@ -90,7 +95,8 @@ class Login extends Component {
                     className="btn btn-info btn-block mt-4"
                   />
                   <div className="text-center">
-                    <Link to="/forgot_password">Forgot Password></Link>
+                    Forgot Password? Reset
+                    <Link to="/forgot_password"> Here.</Link>
                   </div>
                 </form>
               </div>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-import { CURRENT_USER, ERRORS } from "./types";
+import { CURRENT_USER, FORGOT_PASSWORD, ERRORS } from "./types";
 import HostConfig from "../config/Host_Config";
 import ApiConfig from "../config/Api_Config";
 
@@ -25,7 +25,7 @@ export const loginUser = userData => dispatch => {
     .catch(err =>
       dispatch({
         type: ERRORS,
-        payload: err
+        payload: err.response.data
       })
     );
 };
@@ -56,7 +56,7 @@ export const ForgotPassword = body => dispatch => {
   axios(option)
     .then(res => {
       dispatch({
-        type: "FORGOT_USER",
+        type: FORGOT_PASSWORD,
         status: res.data.code
       });
       alert(
@@ -66,7 +66,7 @@ export const ForgotPassword = body => dispatch => {
     })
     .catch(err => {
       dispatch({
-        type: "FORGOT_USER",
+        type: ERRORS,
         status: 404,
         payload: null
       });

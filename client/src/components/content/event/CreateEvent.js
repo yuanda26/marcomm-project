@@ -42,7 +42,7 @@ class CreateEvent extends React.Component{
     this.props.getEmployeeId(this.props.user.m_employee_id)
   }
 
-  componentWillReceiveProps(newProps){
+  UNSAFE_componentWillReceiveProps(newProps){
     let { employee, statusCreate, modalStatus, tCode } = newProps
     if( employee !== null ){
       let fullName = employee.first_name + " " + employee.last_name

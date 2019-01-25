@@ -37,9 +37,9 @@ import {
   Search,
   RefreshOutlined,
   Add,
-  RemoveRedEyeOutlined,
-  DeleteOutlined,
-  CreateOutlined
+  RemoveRedEye,
+  Delete,
+  Create
 } from "@material-ui/icons";
 
 const actionsStyles = theme => ({
@@ -546,7 +546,7 @@ class ListProduct extends React.Component {
                                 <td>{this.chanegeDate(row.created_date)}</td>
                                 <td>
                                   <Link to="#" data-tip="View Product">
-                                    <RemoveRedEyeOutlined
+                                    <RemoveRedEye
                                       onClick={() => {
                                       this.viewModalHandler(row._id);
                                       }}
@@ -554,7 +554,7 @@ class ListProduct extends React.Component {
                                     <ReactTooltip place="top" type="dark" effect="solid" />
                                   </Link>
                                   <Link to="#" data-tip="Edit Product">
-                                    <CreateOutlined
+                                    <Create
                                       onClick={() => {
                                       this.editModalHandler(row._id);
                                       }}
@@ -562,7 +562,7 @@ class ListProduct extends React.Component {
                                     <ReactTooltip place="top" type="dark" effect="solid" />
                                   </Link>
                                   <Link to="#" data-tip="Delete Product">
-                                    <DeleteOutlined
+                                    <Delete
                                       onClick={() => {
                                       this.deleteModalHandler(row._id);
                                       }}
