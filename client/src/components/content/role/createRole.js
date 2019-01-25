@@ -3,11 +3,12 @@ import { createRole } from "../../../actions/roleActions";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-
+import TextFieldGroup from "../../common/TextFieldGroup";
 class CreateRole extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      errRoleName: "",
       formdata: {
         code: "",
         name: "",
@@ -21,16 +22,35 @@ class CreateRole extends React.Component {
   changeHandler(e) {
     let tmp = this.state.formdata;
     tmp[e.target.name] = e.target.value;
-    this.setState({
-      formdata: tmp
-    });
+    if (e.target.name === "name") {
+      this.setState({
+        formdata: tmp,
+        errRoleName: ""
+      });
+    } else {
+      this.setState({
+        formdata: tmp
+      });
+    }
   }
 
   submitHandler() {
     if (this.state.formdata.name === "") {
-      return alert("All field must be Filled!");
+      this.setState({
+        errRoleName: "This Field is Required!"
+      });
+    } else {
+      this.props.createRole(this.state.formdata, this.props.modalStatus);
+      setTimeout(() => {
+        this.setState({
+          formdata: {
+            code: "",
+            name: "",
+            description: ""
+          }
+        });
+      }, 3000);
     }
-    this.props.createRole(this.state.formdata, this.props.modalStatus);
   }
   render() {
     return (
@@ -38,48 +58,28 @@ class CreateRole extends React.Component {
         <ModalHeader>Add Role</ModalHeader>
         <ModalBody>
           <form>
-            <div className="input-group mb-4 input-group-sm">
-              <label htmlFor="code" className="col-md-3">
-                Role ID
-              </label>
-              <input
-                type="text"
-                placeholder="Auto Generated"
-                className="form-control"
-                readOnly
-                name="code"
-                value={this.state.formdata.code}
-                onChange={this.changeHandler}
-              />
-            </div>
-            <div className="input-group mb-4 input-group-sm">
-              <label htmlFor="text" className="col-md-3">
-                Name Role
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Type Role Name"
-                name="name"
-                value={this.state.formdata.name}
-                onChange={this.changeHandler}
-                required
-              />
-            </div>
-            <div className="input-group mb-4 input-group-sm">
-              <label htmlFor="text" className="col-md-3">
-                Description
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Type Description"
-                name="description"
-                value={this.state.formdata.description}
-                onChange={this.changeHandler}
-                required
-              />
-            </div>
+            <TextFieldGroup
+              label="*Role ID"
+              placeholder="Auto Generated"
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="*Role Name"
+              placeholder="*Type Role Name"
+              name="name"
+              maxLength="50"
+              errors={this.state.errRoleName}
+              value={this.state.formdata.name}
+              onChange={this.changeHandler}
+            />
+            <TextFieldGroup
+              label="Description"
+              placeholder="Type Description"
+              name="description"
+              maxLength="50"
+              value={this.state.formdata.description}
+              onChange={this.changeHandler}
+            />
           </form>
         </ModalBody>
         <ModalFooter>

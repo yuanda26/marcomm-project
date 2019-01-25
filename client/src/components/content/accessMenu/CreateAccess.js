@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { createAccessMenu } from "../../../actions/accessMenuActions";
 import { getnoAccess } from "../../../actions/roleActions";
 import { withStyles } from "@material-ui/core";
-
+import SelectList from "../../common/SelectList";
 const styles = theme => ({
   container: {
     display: "flex",
@@ -25,6 +25,7 @@ class CreateAccess extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      errorOption: "",
       m_role_id: "",
       m_menu_id: [],
       menu: [],
@@ -62,40 +63,47 @@ class CreateAccess extends React.Component {
   };
   selectRole = event => {
     this.setState({
-      m_role_id: event.target.value
+      m_role_id: event.target.value,
+      errorOption: ""
     });
   };
   submit = () => {
-    this.props.createAccessMenu({
-      m_role_id: this.state.m_role_id,
-      m_menu_id: this.state.m_menu_id
-    });
-    this.props.modalStatus(1, "Access Menu has been added", 200);
+    if (this.state.m_role_id === "") {
+      this.setState({
+        errorOption: "This Field is Required!"
+      });
+    } else {
+      this.props.createAccessMenu({
+        m_role_id: this.state.m_role_id,
+        m_menu_id: this.state.m_menu_id
+      });
+      this.props.modalStatus(1, "Access Menu has been added", 200);
+    }
   };
   render() {
+    const option = [
+      {
+        value: "",
+        label: "*Select Role..."
+      }
+    ].concat(
+      this.state.role.map(content => ({
+        value: content.code,
+        label: content.name
+      }))
+    );
     return (
       <Modal isOpen={this.props.create} className={this.props.className}>
         <ModalHeader>{`Add Access Menu`}</ModalHeader>
 
         {this.state.role.length !== 0 ? (
           <ModalBody>
-            <div className="input-group mb-3">
-              <select
-                onChange={this.selectRole}
-                value={this.state.m_role_id}
-                className="custom-select"
-                id="inputGroupSelect01"
-              >
-                <option value="" disabled>
-                  Select Role...
-                </option>
-                {this.state.role.map(content => (
-                  <option key={content.code} value={content.code}>
-                    {content.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <SelectList
+              value={this.state.m_role_id}
+              onChange={this.selectRole}
+              options={option}
+              errors={this.state.errorOption}
+            />
             <div>Select Menu</div>
             <div className="col-md-12">
               <div className="row">

@@ -3,11 +3,13 @@ import { putRole } from "../../../actions/roleActions";
 import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import TextFieldGroup from "../../common/TextFieldGroup";
 class EditRole extends React.Component {
   constructor(props) {
     super(props);
     super(props);
     this.state = {
+      errRoleName: "",
       oldData: {
         code: "",
         name: "",
@@ -33,16 +35,34 @@ class EditRole extends React.Component {
   changeHandler(e) {
     let tmp = this.state.formdata;
     tmp[e.target.name] = e.target.value;
-    this.setState({
-      formdata: tmp
-    });
+    if (e.target.name === "name") {
+      this.setState({
+        formdata: tmp,
+        errRoleName: ""
+      });
+    } else {
+      this.setState({
+        formdata: tmp
+      });
+    }
   }
 
   submitHandler() {
     if (this.state.formdata.name === "") {
-      alert("Role name can't be null!!");
+      this.setState({
+        errRoleName: "This Field is Required!"
+      });
     } else {
       this.props.putRole(this.state.formdata, this.props.modalStatus);
+      setTimeout(() => {
+        this.setState({
+          formdata: {
+            code: "",
+            name: "",
+            description: ""
+          }
+        });
+      }, 3000);
     }
   }
 
@@ -51,49 +71,31 @@ class EditRole extends React.Component {
       <Modal isOpen={this.props.edit} className={this.props.className}>
         <ModalHeader> Edit Role</ModalHeader>
         <ModalBody>
-          <div className="table-responsive">
-            <table className="table table-borderless">
-              <tbody>
-                <tr>
-                  <td nowrap="true">Role Code</td>
-                  <td>
-                    <input
-                      type="text"
-                      className="form-control"
-                      readOnly
-                      name="code"
-                      value={this.state.formdata.code}
-                      onChange={this.changeHandler}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td nowrap="true">Role Name</td>
-                  <td>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="name"
-                      value={this.state.formdata.name}
-                      onChange={this.changeHandler}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td nowrap="true">Description</td>
-                  <td>
-                    <textarea
-                      type="text"
-                      className="form-control"
-                      name="description"
-                      value={this.state.formdata.description}
-                      onChange={this.changeHandler}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <form>
+            <TextFieldGroup
+              label="Role Code"
+              name="code"
+              value={this.state.formdata.code}
+              disabled={true}
+            />
+            <TextFieldGroup
+              label="*Role Name"
+              placeholder="*Type Role Name"
+              name="name"
+              maxLength="50"
+              errors={this.state.errRoleName}
+              value={this.state.formdata.name}
+              onChange={this.changeHandler}
+            />
+            <TextFieldGroup
+              label="Role Description"
+              placeholder="*Type Role Description"
+              name="description"
+              maxLength="50"
+              value={this.state.formdata.description}
+              onChange={this.changeHandler}
+            />
+          </form>
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={this.submitHandler}>
