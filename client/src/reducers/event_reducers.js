@@ -13,6 +13,9 @@ const initialState = {
   myEvent: [],
   statusUpdate: null,
   statusCreate: null,
+  statusApprove: null,
+  statusReject: null,
+  statusClose: null,
   code: null
 };
 
@@ -58,7 +61,8 @@ export default function(state = initialState, action) {
 
       return {
         ...state,
-        myEvent: approvedEvent
+        myEvent: approvedEvent,
+        statusApprove: action.statusCode
       };
 
     case REJECT_EVENT:
@@ -71,7 +75,8 @@ export default function(state = initialState, action) {
 
       return {
         ...state,
-        myEvent: rejectedEvent
+        myEvent: rejectedEvent,
+        statusReject: action.statusCode
       };
 
     case CLOSE_EVENT:
@@ -84,7 +89,8 @@ export default function(state = initialState, action) {
 
       return {
         ...state,
-        myEvent: closedEvent
+        myEvent: closedEvent,
+        statusClose: action.statusCode
       };
 
     default:

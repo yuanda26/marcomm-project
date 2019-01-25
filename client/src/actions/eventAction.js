@@ -182,6 +182,7 @@ export const approveEvent = (eventId, approveData) => dispatch => {
       dispatch({
         type: APPROVE_EVENT,
         payload: newPayload,
+        statusCode: res.data.code,
         eventId
       });
     })
@@ -219,6 +220,7 @@ export const rejectEvent = (eventId, rejectData) => dispatch => {
       dispatch({
         type: REJECT_EVENT,
         payload: newPayload,
+        statusCode: res.data.code,
         eventId
       });
     })
@@ -256,6 +258,7 @@ export const closeEvent = (eventId, closeData) => dispatch => {
       dispatch({
         type: CLOSE_EVENT,
         payload: newPayload,
+        statusCode: res.data.code,
         eventId
       });
     })

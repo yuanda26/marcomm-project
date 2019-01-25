@@ -86,22 +86,48 @@ const T_Souvenir_Data = {
     dtl.updateHandler(
       items => {
         dtl.readByIdHandler(oldData => {
-          let dataOldFile = req.body.oldFile.map((content, idx) => {
-            return {
-              _id: new ObjectId(oldData[idx]._id),
-              m_souvenir_id: content.m_souvenir_id,
-              qty: content.qty,
-              note: content.note,
-              created_by: oldData[idx].created_by,
-              created_date: oldData[idx].created_date,
-              t_souvenir_id: oldData[idx].t_souvenir_id,
-              is_delete: false,
-              updated_by: data.updated_by,
-              updated_date: moment().format("YYYY-MM-DD")
-            };
-          });
-          dtl.deleteData(removeOldFile => {
-            dtl.createItem(updateOldFile => {
+          if (req.body.oldFile.length > 0) {
+            let dataOldFile = req.body.oldFile.map((content, idx) => {
+              return {
+                _id: new ObjectId(oldData[idx]._id),
+                m_souvenir_id: content.m_souvenir_id,
+                qty: content.qty,
+                note: content.note,
+                created_by: oldData[idx].created_by,
+                created_date: oldData[idx].created_date,
+                t_souvenir_id: oldData[idx].t_souvenir_id,
+                is_delete: false,
+                updated_by: data.updated_by,
+                updated_date: moment().format("YYYY-MM-DD")
+              };
+            });
+            dtl.deleteData(removeOldFile => {
+              dtl.createItem(updateOldFile => {
+                if (req.body.newFile.length > 0) {
+                  //console.log(req.body.newFile.length)
+                  dataNewFile = req.body.newFile.map((ele, idx) => {
+                    return {
+                      m_souvenir_id: ele.m_souvenir_id,
+                      qty: ele.qty,
+                      note: ele.note,
+                      created_date: ele.created_date,
+                      created_by: ele.created_by,
+                      t_souvenir_id: ele.t_souvenir_id,
+                      is_delete: false,
+                      updated_by: data.updated_by,
+                      updated_date: moment().format("YYYY-MM-DD")
+                    };
+                  });
+                  dtl.createItem(createNewFile => {
+                    ResponseHelper.sendResponse(res, 200, createNewFile);
+                  }, dataNewFile);
+                } else {
+                  ResponseHelper.sendResponse(res, 200, updateOldFile);
+                }
+              }, dataOldFile);
+            }, req.body.souv.code);
+          } else {
+            dtl.deleteData(removeOldFile => {
               if (req.body.newFile.length > 0) {
                 //console.log(req.body.newFile.length)
                 dataNewFile = req.body.newFile.map((ele, idx) => {
@@ -109,9 +135,9 @@ const T_Souvenir_Data = {
                     m_souvenir_id: ele.m_souvenir_id,
                     qty: ele.qty,
                     note: ele.note,
-                    created_date: req.body.oldFile[idx].created_date,
-                    created_by: req.body.oldFile[idx].created_by,
-                    t_souvenir_id: req.body.oldFile[idx].t_souvenir_id,
+                    created_date: ele.created_date,
+                    created_by: ele.created_by,
+                    t_souvenir_id: ele.t_souvenir_id,
                     is_delete: false,
                     updated_by: data.updated_by,
                     updated_date: moment().format("YYYY-MM-DD")
@@ -121,10 +147,10 @@ const T_Souvenir_Data = {
                   ResponseHelper.sendResponse(res, 200, createNewFile);
                 }, dataNewFile);
               } else {
-                ResponseHelper.sendResponse(res, 200, updateOldFile);
+                ResponseHelper.sendResponse(res, 200, removeOldFile);
               }
-            }, dataOldFile);
-          }, req.body.souv.code);
+            }, req.body.souv.code);
+          }
         }, req.body.souv.code);
       },
       data,
