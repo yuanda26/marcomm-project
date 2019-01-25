@@ -19,9 +19,9 @@ import TextAreaGroup from "../../common/TextAreaGroup";
 import SelectListGroup from "../../common/SelectListGroup";
 import SelectList from "../../common/SelectList";
 import Spinner from "../../common/Spinner";
-import SpinnerTable from "../../common/SpinnerTable";
+//import SpinnerTable from "../../common/SpinnerTable";
 import isEmpty from "../../../validation/isEmpty";
-//import moment from "moment";
+import moment from "moment";
 
 class EditTsouvenir extends React.Component {
   constructor(props) {
@@ -124,6 +124,9 @@ class EditTsouvenir extends React.Component {
           m_souvenir_id: "",
           qty: "",
           note: "",
+          created_by: this.props.getAllItem[0].created_by,
+          created_date: this.props.getAllItem[0].created_date,
+          t_souvenir_id: this.props.getAllItem[0].t_souvenir_id,
           disable: true,
           readOnly: true,
           errorSouvenir: "",
@@ -208,6 +211,17 @@ class EditTsouvenir extends React.Component {
     return duplicate;
   };
 
+  changeDateFormat = tanggal => {
+    return moment(tanggal).format("DD/MM/YYYY");
+  };
+
+  closeModalEdit = () => {
+    this.props.closeModalHandler();
+    this.setState({
+      newItem: []
+    });
+  };
+
   submitHandler() {
     if (isEmpty(this.state.formdata.received_by)) {
       this.setState({ errorReceivedBy: "This Field is Required" });
@@ -278,6 +292,7 @@ class EditTsouvenir extends React.Component {
           note: content.note,
           created_by: content.created_by,
           created_date: content.created_date,
+          t_souvenir_id: content.t_souvenir_id,
           is_delete: false
         };
       });
@@ -286,8 +301,14 @@ class EditTsouvenir extends React.Component {
         oldItem: this.state.oldItem,
         newItem: newItem
       };
+      //alert(JSON.stringify(data));
       this.props.updateTsouvenir(data, this.props.modalStatus);
       this.props.closeModalHandler();
+      setTimeout(() => {
+        this.setState({
+          newItem: []
+        });
+      }, 2000);
     }
   }
 
@@ -339,7 +360,7 @@ class EditTsouvenir extends React.Component {
               type="date"
               name="received_date"
               placeholder=""
-              value={this.state.formdata.received_date}
+              value={this.changeDateFormat(this.state.formdata.received_date)}
               onChange={this.changeHandler}
               errors={this.state.errorReceivedDate}
             />
@@ -362,8 +383,10 @@ class EditTsouvenir extends React.Component {
               Add Item
             </button>
             <br />
-            {this.state.oldItem.length === 0 ? (
-              <Spinner />
+            {this.state.oldItem[0] === null ? (
+              <tr className="text-center">
+                <Spinner />
+              </tr>
             ) : (
               <table className="table table-responsive mt-2 mb-2">
                 <thead>
@@ -375,66 +398,56 @@ class EditTsouvenir extends React.Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {this.state.oldItem[0] === null ? (
-                    <tr className="text-center">
-                      <SpinnerTable />
+                  {this.state.oldItem.map((oldItem, idx) => (
+                    <tr key={idx}>
+                      <td>
+                        <SelectList
+                          type="text"
+                          name="m_souvenir_id"
+                          placeholder="*Souvenir Item"
+                          value={oldItem.m_souvenir_id}
+                          onChange={this.handleOldItemChange(idx)}
+                          options={this.state.souvenirOptions}
+                          disabled={oldItem.disable}
+                          errors={oldItem.errorSouvenir}
+                        />
+                      </td>
+                      <td>
+                        <TextField
+                          type="number"
+                          name="qty"
+                          placeholder="*Qty"
+                          value={oldItem.qty}
+                          onChange={this.handleOldItemChange(idx)}
+                          readOnly={oldItem.readOnly}
+                          errors={oldItem.errorQty}
+                        />
+                      </td>
+                      <td>
+                        <TextField
+                          type="text"
+                          name="note"
+                          id="exampleNote"
+                          class="form-control"
+                          value={oldItem.note}
+                          onChange={this.handleOldItemChange(idx)}
+                          readOnly={oldItem.readOnly}
+                          placeholder="Note"
+                        />
+                      </td>
+                      <td>
+                        <Create
+                          className="mr-1"
+                          onClick={this.handleEditOldItem(idx)}
+                          size="small"
+                        />
+                        <Delete
+                          onClick={this.handleRemoveOldItem(idx)}
+                          size="small"
+                        />
+                      </td>
                     </tr>
-                  ) : this.state.oldItem.length === 0 ? (
-                    <tr className="text-center">
-                      <td colSpan="4">No Old Item Found.</td>
-                    </tr>
-                  ) : (
-                    this.state.oldItem.map((oldItem, idx) => (
-                      <tr key={idx}>
-                        <td>
-                          <SelectList
-                            type="text"
-                            name="m_souvenir_id"
-                            placeholder="*Souvenir Item"
-                            value={oldItem.m_souvenir_id}
-                            onChange={this.handleOldItemChange(idx)}
-                            options={this.state.souvenirOptions}
-                            disabled={oldItem.disable}
-                            errors={oldItem.errorSouvenir}
-                          />
-                        </td>
-                        <td>
-                          <TextField
-                            type="number"
-                            name="qty"
-                            placeholder="*Qty"
-                            value={oldItem.qty}
-                            onChange={this.handleOldItemChange(idx)}
-                            readOnly={oldItem.readOnly}
-                            errors={oldItem.errorQty}
-                          />
-                        </td>
-                        <td>
-                          <TextField
-                            type="text"
-                            name="note"
-                            id="exampleNote"
-                            class="form-control"
-                            value={oldItem.note}
-                            onChange={this.handleOldItemChange(idx)}
-                            readOnly={oldItem.readOnly}
-                            placeholder="Note"
-                          />
-                        </td>
-                        <td>
-                          <Create
-                            className="mr-1"
-                            onClick={this.handleEditOldItem(idx)}
-                            size="small"
-                          />
-                          <Delete
-                            onClick={this.handleRemoveOldItem(idx)}
-                            size="small"
-                          />
-                        </td>
-                      </tr>
-                    ))
-                  )}
+                  ))}
                   {this.state.newItem.map((newItem, idx) => (
                     <tr>
                       <td>
@@ -495,7 +508,7 @@ class EditTsouvenir extends React.Component {
           <Button color="primary" onClick={this.submitHandler}>
             Update
           </Button>
-          <Button color="warning" onClick={this.props.closeModalHandler}>
+          <Button color="warning" onClick={this.closeModalEdit}>
             Cancel
           </Button>
         </ModalFooter>

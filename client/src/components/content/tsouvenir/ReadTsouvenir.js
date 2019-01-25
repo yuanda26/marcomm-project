@@ -29,7 +29,7 @@ class ViewTsouvenir extends React.Component {
     return input.filter(a => a.t_souvenir_id === this.props.item.code);
   }
 
-  changeDate = tanggal => {
+  changeDateFormat = tanggal => {
     return moment(tanggal).format("DD/MM/YYYY");
   };
 
@@ -58,7 +58,7 @@ class ViewTsouvenir extends React.Component {
                 <br />
                 {this.props.item.received_by}
                 <br />
-                {this.props.item.received_date}
+                {this.changeDateFormat(this.props.item.received_date)}
                 <br />
                 {this.props.item.note}
                 <br />

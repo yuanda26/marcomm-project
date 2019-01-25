@@ -163,6 +163,7 @@ class EditTsouveniritem extends React.Component {
           note: content.note,
           created_by: content.created_by,
           created_date: content.created_date,
+          t_souvenir_id: content.t_souvenir_id,
           updated_by: content.updated_by,
           updated_date: content.updated_date,
           is_delete: false
@@ -190,6 +191,11 @@ class EditTsouveniritem extends React.Component {
       };
       this.props.updateTSouvenirItem(data, this.props.modalStatus);
       this.props.closeModalHandler();
+      setTimeout(() => {
+        this.setState({
+          newItem: []
+        });
+      }, 2000);
     }
   }
 
@@ -251,6 +257,7 @@ class EditTsouveniritem extends React.Component {
           note: "",
           created_by: this.state.userdata.m_employee_id,
           created_date: moment().format("YYYY-MM-DD"),
+          t_souvenir_id: this.props.getAllItem[0].t_souvenir_id,
           updated_by: this.state.userdata.m_employee_id,
           updated_date: moment().format("YYYY-MM-DD"),
           is_delete: false,
@@ -323,6 +330,17 @@ class EditTsouveniritem extends React.Component {
   handleRemoveOldItem = idx => () => {
     this.setState({
       dataItem: this.state.dataItem.filter((s, sidx) => idx !== sidx)
+    });
+  };
+
+  changeDateFormat = tanggal => {
+    return moment(tanggal).format("DD/MM/YYYY");
+  };
+
+  closeModalEdit = () => {
+    this.props.closeModalHandler();
+    this.setState({
+      newItem: []
     });
   };
 
@@ -538,7 +556,7 @@ class EditTsouveniritem extends React.Component {
           <Button color="primary" onClick={this.submitHandler}>
             Update
           </Button>
-          <Button color="warning" onClick={this.props.closeModalHandler}>
+          <Button color="warning" onClick={this.closeModalEdit}>
             Cancel
           </Button>
         </ModalFooter>
