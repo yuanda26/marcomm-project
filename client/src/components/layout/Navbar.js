@@ -55,7 +55,7 @@ class Navbar extends Component {
     // Define Links
     const authLinks = (
       <Fragment>
-        <ul className="navbar-nav ml-auto">
+        <ul className="navbar-nav mr-auto">
           <li className="nav-item dropdown">
             <Link
               to="#"
@@ -113,6 +113,8 @@ class Navbar extends Component {
               )}
             </div>
           </li>
+        </ul>
+        <ul className="navbar-nav ml-auto">
           <li className="nav-item">
             <Link className="nav-link" to="" onClick={this.onLogout}>
               Logout
