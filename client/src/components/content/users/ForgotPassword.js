@@ -24,6 +24,7 @@ class Forgot extends React.Component {
   onSubmit = e => {
     e.preventDefault();
 
+    // Form Validation
     if (isEmpty(this.state.username)) {
       this.setState({ errorUsername: "This Field is Required!" });
     }
@@ -37,6 +38,7 @@ class Forgot extends React.Component {
       this.setState({ errorRepeat: "Password Didn't Match!" });
     }
 
+    // Final Validation
     if (
       !isEmpty(this.state.username) &&
       !isEmpty(this.state.password) &&
@@ -64,46 +66,53 @@ class Forgot extends React.Component {
     const { status, message } = this.props.auth;
 
     return (
-      <div className="container">
-        <div className="row">
-          <div className="col-md-5 m-auto">
-            <h1 className="display-4 text-center">Reset Password</h1>
-            {status === 404 && (
-              <div className="alert alert-danger">{message}</div>
-            )}
-            {status === 200 && (
-              <div className="alert alert-danger">{message}</div>
-            )}
-            <form onSubmit={this.onSubmit}>
-              <TextField
-                placeholder="*Username"
-                name="username"
-                value={this.state.username}
-                onChange={this.onChange}
-                errors={this.state.errorUsername}
-              />
-              <TextField
-                type="password"
-                placeholder="*Password"
-                name="password"
-                value={this.state.password}
-                onChange={this.onChange}
-                errors={this.state.errorPassword}
-              />
-              <TextField
-                type="password"
-                placeholder="*Repeat Password"
-                name="repeat"
-                value={this.state.repeat}
-                onChange={this.onChange}
-                errors={this.state.errorRepeat}
-              />
-              <input type="submit" className="btn btn-info btn-block mt-4" />
-              <div className="text-center">
-                Remember Password? Back to
-                <Link to="/"> Login.</Link>
-              </div>
-            </form>
+      <div className="landing-inner">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-5 m-auto">
+              <h1 className="display-4 text-center">Reset Password</h1>
+              <p className="lead text-center">Reset your Password Account</p>
+              {status === 404 && (
+                <div className="alert alert-danger">{message}</div>
+              )}
+              {status === 200 && (
+                <div className="alert alert-danger">{message}</div>
+              )}
+              <form onSubmit={this.onSubmit}>
+                <TextField
+                  placeholder="*Username"
+                  name="username"
+                  value={this.state.username}
+                  onChange={this.onChange}
+                  errors={this.state.errorUsername}
+                />
+                <TextField
+                  type="password"
+                  placeholder="*Password"
+                  name="password"
+                  value={this.state.password}
+                  onChange={this.onChange}
+                  errors={this.state.errorPassword}
+                />
+                <TextField
+                  type="password"
+                  placeholder="*Repeat Password"
+                  name="repeat"
+                  value={this.state.repeat}
+                  onChange={this.onChange}
+                  errors={this.state.errorRepeat}
+                />
+                <input
+                  type="submit"
+                  className="btn btn-info btn-block mt-4"
+                  value="Reset"
+                />
+                <div className="text-center">
+                  Remember Password? Back to
+                  <Link to="/"> Login.</Link>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>

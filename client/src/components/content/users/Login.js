@@ -25,8 +25,8 @@ class Login extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.isAuthenticated) {
+  UNSAFE_componentWillReceiveProps(props) {
+    if (props.auth.isAuthenticated) {
       window.location.href = "/dashboard";
     }
   }
