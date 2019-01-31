@@ -6,22 +6,29 @@ import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authAction";
 import { getAllMenu } from "../../actions/menuActions";
 import { getListAccess } from "../../actions/accessMenuActions";
+import { getEmployeeId } from "../../actions/employeeAction";
+// Validation
+import isEmpty from "../../validation/isEmpty";
+
 class Navbar extends Component {
   state = {
     masterMenu: [],
     transactionMenu: []
   };
+
   componentDidMount() {
     if (this.props.auth.user.m_role_id !== undefined) {
       this.props.getAllMenu();
       this.props.getListAccess(this.props.auth.user.m_role_id);
+      this.props.getEmployeeId(this.props.auth.user.m_employee_id);
     }
   }
-  UNSAFE_componentWillReceiveProps(propsData) {
+
+  UNSAFE_componentWillReceiveProps(props) {
     let master = [];
     let transaction = [];
-    propsData.accessData.dataAccess.forEach(access => {
-      propsData.menuData.menuArr.forEach(menu => {
+    props.accessData.dataAccess.forEach(access => {
+      props.menuData.menuArr.forEach(menu => {
         if (
           menu.controller !== false &&
           menu.controller === access &&
@@ -52,6 +59,7 @@ class Navbar extends Component {
 
   render() {
     const { isAuthenticated } = this.props.auth;
+
     // Define Links
     const authLinks = (
       <Fragment>
@@ -115,6 +123,16 @@ class Navbar extends Component {
           </li>
         </ul>
         <ul className="navbar-nav ml-auto">
+          {!isEmpty(this.props.employee) && (
+            <li className="nav-item active">
+              <Link className="nav-link" to="#">
+                Welcome,{" "}
+                {this.props.employee.first_name +
+                  " " +
+                  this.props.employee.last_name}
+              </Link>
+            </li>
+          )}
           <li className="nav-item">
             <Link className="nav-link" to="" onClick={this.onLogout}>
               Logout
@@ -140,21 +158,24 @@ class Navbar extends Component {
 }
 
 Navbar.propTypes = {
-  logoutUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
+  menuData: PropTypes.object.isRequired,
+  accessData: PropTypes.object.isRequired,
+  logoutUser: PropTypes.func.isRequired,
   getAllMenu: PropTypes.func.isRequired,
   getListAccess: PropTypes.func.isRequired,
-  menuData: PropTypes.object.isRequired,
-  accessData: PropTypes.object.isRequired
+  getEmployeeId: PropTypes.func.isRequired,
+  employee: PropTypes.object
 };
 
 const mapStateToProps = state => ({
   auth: state.auth,
   menuData: state.menu,
-  accessData: state.accessMenuData
+  accessData: state.accessMenuData,
+  employee: state.employee.myEmployeeId
 });
 
 export default connect(
   mapStateToProps,
-  { logoutUser, getAllMenu, getListAccess }
+  { logoutUser, getAllMenu, getListAccess, getEmployeeId }
 )(Navbar);
