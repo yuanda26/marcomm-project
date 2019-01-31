@@ -95,8 +95,7 @@ databaseConnection.connect((err, db) => {
 
     const port = process.env.PORT || 4000;
     server.listen(port, () => {
-      console.log("[DATABASE] Has Been Connected!");
-      console.log(`[SERVER] Running on Port ${port}!`);
+      console.log(`[SERVER] Running on Port http://localhost:${port}/`);
     });
   }
 });
