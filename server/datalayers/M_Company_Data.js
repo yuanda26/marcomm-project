@@ -1,6 +1,6 @@
 const DB = require("../models/Database");
 const ObjectID = require("mongodb").ObjectId;
-const M_Company = require("../Models/M_Company_Model");
+const M_Company = require("../models/M_Company_Model");
 
 const db = DB.getConnection();
 const dt = {
