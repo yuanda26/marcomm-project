@@ -13,6 +13,8 @@ const TextFieldGroup = ({
   disabled,
   onChange,
   errors,
+  min,
+  max,
   maxLength
 }) => {
   return (
@@ -29,6 +31,8 @@ const TextFieldGroup = ({
           })}
           placeholder={placeholder}
           name={name}
+          min={min}
+          max={max}
           value={value}
           disabled={disabled}
           onChange={onChange}

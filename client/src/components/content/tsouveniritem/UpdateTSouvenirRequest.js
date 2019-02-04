@@ -110,6 +110,27 @@ class EditTsouveniritem extends React.Component {
     // Souvenir Item Form Validation
     // Set Error Counter
     let errorCounter = 0;
+    this.state.dataItem.forEach((item, idx) => {
+      const oldItems = this.state.dataItem;
+      // Check for Empty Souvenir Name
+      if (isEmpty(item.m_souvenir_id)) {
+        errorCounter += 1;
+        oldItems[idx].errorSouvenir = "This Field is Required!";
+        this.setState({ oldItems });
+      }
+      // Check for Empty Qty
+      if (isEmpty(item.qty)) {
+        errorCounter += 1;
+        oldItems[idx].errorQty = "This Field is Required!";
+        this.setState({ oldItems });
+      }
+      // Check for Positive Qty
+      if (!isEmpty(item.qty) && item.qty <= 0) {
+        errorCounter += 1;
+        oldItems[idx].errorQty = "Qty Must be Positive!";
+        this.setState({ oldItems });
+      }
+    });
     this.state.newItem.forEach((item, idx) => {
       const newItems = this.state.newItem;
       const oldItems = this.state.dataItem;
@@ -123,6 +144,12 @@ class EditTsouveniritem extends React.Component {
       if (isEmpty(item.qty)) {
         errorCounter += 1;
         newItems[idx].errorQty = "This Field is Required!";
+        this.setState({ newItems });
+      }
+      // Check for Positive Qty
+      if (!isEmpty(item.qty) && item.qty <= 0) {
+        errorCounter += 1;
+        newItems[idx].errorQty = "Qty Must be Positive!";
         this.setState({ newItems });
       }
       // Check Duplicate Item
@@ -183,7 +210,6 @@ class EditTsouveniritem extends React.Component {
           is_delete: false
         };
       });
-      //alert(JSON.stringify(newItem));
       let data = {
         souv: this.state.formdata,
         oldFile: oldItem,
@@ -459,6 +485,7 @@ class EditTsouveniritem extends React.Component {
                       <td>
                         <TextField
                           type="number"
+                          min="0"
                           name="qty"
                           placeholder="*Qty"
                           value={oldItem.qty}
@@ -511,6 +538,7 @@ class EditTsouveniritem extends React.Component {
                         <TextField
                           type="number"
                           name="qty"
+                          min="0"
                           placeholder="*Qty"
                           className="form-control"
                           value={item.qty}

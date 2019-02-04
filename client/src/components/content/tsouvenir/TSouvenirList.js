@@ -12,125 +12,23 @@ import EditTsouvenir from "./UpdateTsouvenir";
 import CreateTsouvenir from "./CreateTsouvenir";
 import ViewTsouvenir from "./ReadTsouvenir";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import {
-  TableRow,
-  TableFooter,
-  TablePagination,
-  IconButton
-} from "@material-ui/core";
-import {
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-  Add,
-  Search,
-  Create,
-  RemoveRedEye,
-  Refresh
-} from "@material-ui/icons";
-import FirstPageIcon from "@material-ui/icons/FirstPage";
-import LastPageIcon from "@material-ui/icons/LastPage";
+import { TableRow, TableFooter, TablePagination } from "@material-ui/core";
+import { Add, Search, Create, RemoveRedEye, Refresh } from "@material-ui/icons";
 import moment from "moment";
 import SpinnerTable from "../../common/SpinnerTable";
 import ReactTooltip from "react-tooltip";
-
-const actionsStyles = theme => ({
-  root: {
-    flexShrink: 0,
-    color: theme.palette.text.secondary,
-    marginLeft: theme.spacing.unit * 2.5
-  }
-});
-
-class TablePaginationActions extends React.Component {
-  handleFirstPageButtonClick = event => {
-    this.props.onChangePage(event, 0);
-  };
-
-  handleBackButtonClick = event => {
-    this.props.onChangePage(event, this.props.page - 1);
-  };
-
-  handleNextButtonClick = event => {
-    this.props.onChangePage(event, this.props.page + 1);
-  };
-
-  handleLastPageButtonClick = event => {
-    this.props.onChangePage(
-      event,
-      Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1)
-    );
-  };
-
-  render() {
-    const { classes, count, page, rowsPerPage, theme } = this.props;
-
-    return (
-      <div className={classes.root}>
-        <IconButton
-          onClick={this.handleFirstPageButtonClick}
-          disabled={page === 0}
-          aria-label="First Page"
-        >
-          {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
-        </IconButton>
-        <IconButton
-          onClick={this.handleBackButtonClick}
-          disabled={page === 0}
-          aria-label="Previous Page"
-        >
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowRight />
-          ) : (
-            <KeyboardArrowLeft />
-          )}
-        </IconButton>
-        <IconButton
-          onClick={this.handleNextButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Next Page"
-        >
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowLeft />
-          ) : (
-            <KeyboardArrowRight />
-          )}
-        </IconButton>
-        <IconButton
-          onClick={this.handleLastPageButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Last Page"
-        >
-          {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
-        </IconButton>
-      </div>
-    );
-  }
-}
-
-TablePaginationActions.propTypes = {
-  classes: PropTypes.object.isRequired,
-  count: PropTypes.number.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-  theme: PropTypes.object.isRequired
-};
-
-const TablePaginationActionsWrapped = withStyles(actionsStyles, {
-  withTheme: true
-})(TablePaginationActions);
+import Pagination from "../../common/Pagination";
 
 class ListTsouvenir extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       formSearch: {
-        code: /(?:)/,
-        received_by: /(?:)/,
-        received_date: /(?:)/,
-        created_date: /(?:)/,
-        created_by: /(?:)/
+        code: "",
+        received_by: "",
+        received_date: "",
+        created_date: "",
+        created_by: ""
       },
       showCreateTsouvenir: false,
       getitem: "",
@@ -244,8 +142,6 @@ class ListTsouvenir extends React.Component {
   searchHandler = event => {
     let tmp = this.state.formSearch;
     if (event.target.name) {
-      tmp[event.target.name] = new RegExp(event.target.value.toLowerCase());
-    } else {
       tmp[event.target.name] = event.target.value;
     }
     this.setState({
@@ -253,7 +149,8 @@ class ListTsouvenir extends React.Component {
     });
   };
 
-  search = () => {
+  search = e => {
+    e.preventDefault();
     const {
       code,
       received_by,
@@ -261,14 +158,25 @@ class ListTsouvenir extends React.Component {
       created_by,
       created_date
     } = this.state.formSearch;
+    const searchCode = new RegExp(code, "i");
+    const searchReceivedBy = new RegExp(received_by, "i");
+    const searchReceivedDate =
+      received_date === ""
+        ? new RegExp("")
+        : new RegExp(moment(received_date).format("YYYY-MM-DD"));
+    const searchCreatedBy = new RegExp(created_by, "i");
+    const searchCreatedDate =
+      created_date === ""
+        ? new RegExp("")
+        : new RegExp(moment(created_date).format("YYYY-MM-DD"));
     let temp = [];
     this.state.allSouvenirStock.map(ele => {
       if (
-        code.test(ele.code.toLowerCase()) &&
-        received_by.test(ele.received_by.toLowerCase()) &&
-        received_date.test(ele.received_date.toLowerCase()) &&
-        created_by.test(ele.created_by.toLowerCase()) &&
-        created_date.test(ele.created_date.toLowerCase())
+        searchCode.test(ele.code.toLowerCase()) &&
+        searchReceivedBy.test(ele.received_by.toLowerCase()) &&
+        searchReceivedDate.test(ele.received_date) &&
+        searchCreatedBy.test(ele.created_by.toLowerCase()) &&
+        searchCreatedDate.test(ele.created_date)
       ) {
         temp.push(ele);
       }
@@ -283,7 +191,14 @@ class ListTsouvenir extends React.Component {
   refreshSearch = () => {
     this.setState({
       souvenirStockSearch: this.state.allSouvenirStock,
-      search: true
+      search: true,
+      formSearch: {
+        code: "",
+        received_by: "",
+        received_date: "",
+        created_date: "",
+        created_by: ""
+      }
     });
   };
 
@@ -320,6 +235,10 @@ class ListTsouvenir extends React.Component {
 
   changeDateFormat = tanggal => {
     return moment(tanggal).format("DD/MM/YYYY");
+  };
+
+  keyHandler = event => {
+    if (event.key === "Enter") this.search();
   };
 
   render() {
@@ -375,16 +294,20 @@ class ListTsouvenir extends React.Component {
                           <input
                             placeholder="Search by Code"
                             name="code"
+                            value={this.state.formSearch.code}
                             className="form-control"
                             onChange={this.searchHandler}
+                            onKeyPress={this.keyHandler}
                           />
                         </td>
                         <td>
                           <input
                             placeholder="Search by Received By"
                             name="received_by"
+                            value={this.state.formSearch.received_by}
                             className="form-control"
                             onChange={this.searchHandler}
+                            onKeyPress={this.keyHandler}
                           />
                         </td>
                         <td>
@@ -392,16 +315,20 @@ class ListTsouvenir extends React.Component {
                             placeholder="Search by Received Date"
                             type="date"
                             name="received_date"
+                            value={this.state.formSearch.received_date}
                             className="form-control"
                             onChange={this.searchHandler}
+                            onKeyPress={this.keyHandler}
                           />
                         </td>
                         <td>
                           <input
                             placeholder="Search by Create by"
                             name="created_by"
+                            value={this.state.formSearch.created_by}
                             className="form-control"
                             onChange={this.searchHandler}
+                            onKeyPress={this.keyHandler}
                           />
                         </td>
                         <td>
@@ -409,8 +336,10 @@ class ListTsouvenir extends React.Component {
                             placeholder="Search by Create Date"
                             type="date"
                             name="created_date"
+                            value={this.state.formSearch.created_date}
                             className="form-control"
                             onChange={this.searchHandler}
+                            onKeyPress={this.keyHandler}
                           />
                         </td>
                         <td nowrap="true">
@@ -444,19 +373,21 @@ class ListTsouvenir extends React.Component {
                               />
                             </a>
                           )}
-                          <a href="#!" data-tip="Add Souvenir Stock">
-                            <button
-                              className="mr-2 btn btn-primary"
-                              onClick={this.showHandler}
-                            >
-                              <Add />
-                            </button>
-                            <ReactTooltip
-                              place="top"
-                              type="dark"
-                              effect="solid"
-                            />
-                          </a>
+                          {this.props.user.m_role_id !== "RO0001" && (
+                            <a href="#!" data-tip="Add Souvenir Stock">
+                              <button
+                                className="mr-2 btn btn-primary"
+                                onClick={this.showHandler}
+                              >
+                                <Add />
+                              </button>
+                              <ReactTooltip
+                                place="top"
+                                type="dark"
+                                effect="solid"
+                              />
+                            </a>
+                          )}
                         </td>
                       </tr>
                       <tr
@@ -540,7 +471,7 @@ class ListTsouvenir extends React.Component {
                           page={this.state.page}
                           onChangePage={this.handleChangePage}
                           onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                          ActionsComponent={TablePaginationActionsWrapped}
+                          ActionsComponent={Pagination}
                         />
                       </TableRow>
                     </TableFooter>

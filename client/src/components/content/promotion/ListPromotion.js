@@ -4,18 +4,7 @@ import { getAllPromotion } from "../../../actions/promotionActions";
 import { connect } from "react-redux";
 import CreatePromotion from "./createPromotion";
 import PropTypes from "prop-types";
-import {
-  withStyles,
-  TableRow,
-  TableFooter,
-  TablePagination,
-  IconButton,
-  Button
-} from "@material-ui/core";
-import FirstPageIcon from "@material-ui/icons/FirstPage";
-import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
-import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
-import LastPageIcon from "@material-ui/icons/LastPage";
+import { TableRow, TableFooter, TablePagination } from "@material-ui/core";
 import Gavel from "@material-ui/icons/Gavel";
 import Assignment from "@material-ui/icons/Assignment";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
@@ -25,105 +14,20 @@ import Search from "@material-ui/icons/Search";
 import Refresh from "@material-ui/icons/Refresh";
 import Create from "@material-ui/icons/Add";
 import ReactTooltip from "react-tooltip";
-const actionsStyles = theme => ({
-  root: {
-    flexShrink: 0,
-    color: theme.palette.text.secondary,
-    marginLeft: theme.spacing.unit * 2.5
-  }
-});
-
-class TablePaginationActions extends React.Component {
-  handleFirstPageButtonClick = event => {
-    this.props.onChangePage(event, 0);
-  };
-
-  handleBackButtonClick = event => {
-    this.props.onChangePage(event, this.props.page - 1);
-  };
-
-  handleNextButtonClick = event => {
-    this.props.onChangePage(event, this.props.page + 1);
-  };
-
-  handleLastPageButtonClick = event => {
-    this.props.onChangePage(
-      event,
-      Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1)
-    );
-  };
-
-  render() {
-    const { classes, count, page, rowsPerPage, theme } = this.props;
-
-    return (
-      <div className={classes.root}>
-        <IconButton
-          onClick={this.handleFirstPageButtonClick}
-          disabled={page === 0}
-          aria-label="First Page"
-        >
-          {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
-        </IconButton>
-        <IconButton
-          onClick={this.handleBackButtonClick}
-          disabled={page === 0}
-          aria-label="Previous Page"
-        >
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowRight />
-          ) : (
-            <KeyboardArrowLeft />
-          )}
-        </IconButton>
-        <IconButton
-          onClick={this.handleNextButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Next Page"
-        >
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowLeft />
-          ) : (
-            <KeyboardArrowRight />
-          )}
-        </IconButton>
-        <IconButton
-          onClick={this.handleLastPageButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Last Page"
-        >
-          {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
-        </IconButton>
-      </div>
-    );
-  }
-}
-
-TablePaginationActions.propTypes = {
-  classes: PropTypes.object.isRequired,
-  count: PropTypes.number.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-  theme: PropTypes.object.isRequired
-};
-
-const TablePaginationActionsWrapped = withStyles(actionsStyles, {
-  withTheme: true
-})(TablePaginationActions);
+import Pagination from "../../common/Pagination";
 
 class ListPromotion extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       search: {
-        code: null,
-        request_by: null,
-        request_date: null,
-        assign_to: null,
-        status: null,
-        created_date: null,
-        created_by: null
+        code: "",
+        request_by: "",
+        request_date: "",
+        assign_to: "",
+        status: "",
+        created_date: "",
+        created_by: ""
       },
       showCreatePromotion: false,
       allPromotion: [],
@@ -220,57 +124,54 @@ class ListPromotion extends React.Component {
   };
   changeHandler(e) {
     let temp = this.state.search;
-    if (e.target.value === "") {
-      temp[e.target.name] = null;
-      this.setState({
-        search: temp
-      });
-    } else {
-      if (
-        e.target.name === "created_date" ||
-        e.target.name === "request_date"
-      ) {
-        temp[e.target.name] = moment(e.target.value).format("DD/MM/YYYY");
-        this.setState({
-          search: temp
-        });
-      } else {
-        temp[e.target.name] = e.target.value;
-        this.setState({
-          search: temp
-        });
-      }
+    if (e.target.name) {
+      temp[e.target.name] = e.target.value;
     }
+    this.setState({
+      search: temp
+    });
   }
   keyHandler = event => {
     if (event.key === "Enter") this.search();
   };
   search = () => {
-    let patt = {
-      code: new RegExp(this.state.search.code, "i"),
-      request_date: new RegExp(this.state.search.request_date),
-      request_by: new RegExp(this.state.search.request_by, "i"),
-      assign_to: new RegExp(this.state.search.assign_to, "i"),
-      status: new RegExp(this.state.search.status, "i"),
-      created_date: new RegExp(this.state.search.created_date),
-      created_by: new RegExp(this.state.search.created_by)
-    };
-
-    let newResult = this.state.allPromotion
-      .map(content => {
-        if (
-          patt.code.test(content.code) ||
-          patt.request_by.test(content.request_by) ||
-          patt.created_by.test(content.created_by) ||
-          patt.created_date.test(content.created_date) ||
-          patt.request_date.test(content.request_date) ||
-          patt.assign_to.test(this.showAssign(content.assign_to)) ||
-          patt.status.test(this.showstatus(content.status))
-        )
-          return content;
-        else return false;
-      })
-      .filter(a => a !== false);
+    const {
+      code,
+      request_date,
+      request_by,
+      assign_to,
+      created_date,
+      created_by,
+      status
+    } = this.state.search;
+    const searchCode = new RegExp(code, "i");
+    const searchRequestDate =
+      request_date === ""
+        ? new RegExp("")
+        : new RegExp(moment(request_date).format("DD/MM/YYYY"));
+    const searchRequestBy = new RegExp(request_by, "i");
+    const searchAssignTo = new RegExp(assign_to, "i");
+    const searchStatus = new RegExp(status, "i");
+    const searchCreatedDate =
+      created_date === ""
+        ? new RegExp("")
+        : new RegExp(moment(created_date).format("DD/MM/YYYY"));
+    const searchCreatedBy = new RegExp(created_by, "i");
+    let newResult = [];
+    this.state.allPromotion.map(content => {
+      if (
+        searchCode.test(content.code) &&
+        searchRequestBy.test(content.request_by) &&
+        searchCreatedBy.test(content.created_by) &&
+        searchCreatedDate.test(content.created_date) &&
+        searchRequestDate.test(content.request_date) &&
+        searchAssignTo.test(this.showAssign(content.assign_to)) &&
+        searchStatus.test(this.showstatus(content.status))
+      ) {
+        newResult.push(content);
+      }
+      return newResult;
+    });
     this.setState({
       hasil: newResult,
       number: false
@@ -335,24 +236,6 @@ class ListPromotion extends React.Component {
                     </li>
                   </ol>
                 </nav>
-
-                {this.props.data.user.m_role_id !== "RO0001" ? (
-                  <div className="col-xs-1 mb-2">
-                    <a href="#!" data-tip="Add Promotion">
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        onClick={this.showHandler}
-                      >
-                        <Create />
-                      </Button>
-                      <ReactTooltip place="top" type="dark" effect="solid" />
-                    </a>
-                  </div>
-                ) : (
-                  <div />
-                )}
                 {this.state.hasil[0] === null ? (
                   <Spinner />
                 ) : (
@@ -365,6 +248,7 @@ class ListPromotion extends React.Component {
                               className="form-control"
                               placeholder="Transaction Code"
                               name="code"
+                              value={this.state.search.code}
                               onChange={this.changeHandler}
                               onKeyPress={this.keyHandler}
                             />
@@ -374,6 +258,7 @@ class ListPromotion extends React.Component {
                               className="form-control"
                               placeholder="Request By"
                               name="request_by"
+                              value={this.state.search.request_by}
                               onChange={this.changeHandler}
                               onKeyPress={this.keyHandler}
                             />
@@ -384,6 +269,7 @@ class ListPromotion extends React.Component {
                               placeholder="Request Date"
                               name="request_date"
                               type="date"
+                              value={this.state.search.request_date}
                               onChange={this.changeHandler}
                               onKeyPress={this.keyHandler}
                             />
@@ -393,6 +279,17 @@ class ListPromotion extends React.Component {
                               className="form-control"
                               placeholder="Assign to"
                               name="assign_to"
+                              value={this.state.search.assign_to}
+                              onChange={this.changeHandler}
+                              onKeyPress={this.keyHandler}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              className="form-control"
+                              placeholder="Status"
+                              name="status"
+                              value={this.state.search.status}
                               onChange={this.changeHandler}
                               onKeyPress={this.keyHandler}
                             />
@@ -403,6 +300,7 @@ class ListPromotion extends React.Component {
                               placeholder="Created Date"
                               type="date"
                               name="created_date"
+                              value={this.state.search.created_date}
                               onChange={this.changeHandler}
                               onKeyPress={this.keyHandler}
                             />
@@ -413,15 +311,16 @@ class ListPromotion extends React.Component {
                               placeholder="Created By"
                               type="text"
                               name="created_by"
+                              value={this.state.search.created_by}
                               onChange={this.changeHandler}
                               onKeyPress={this.keyHandler}
                             />
                           </td>
-                          <td>
+                          <td nowrap="true">
                             {this.state.number ? (
                               <a href="#!" data-tip="Search">
                                 <button
-                                  className="btn btn-primary btn-block"
+                                  className="mr-2 btn btn-primary"
                                   onClick={this.search}
                                 >
                                   <Search />
@@ -436,17 +335,40 @@ class ListPromotion extends React.Component {
                             ) : (
                               <a href="#!" data-tip="Refresh Search">
                                 <button
-                                  className="btn btn-warning btn-block"
+                                  className="mr-2 btn btn-warning"
                                   onClick={() => {
                                     this.setState({
                                       hasil: this.state.allPromotion,
-                                      number: true
+                                      number: true,
+                                      search: {
+                                        code: "",
+                                        request_by: "",
+                                        request_date: "",
+                                        assign_to: "",
+                                        status: "",
+                                        created_date: "",
+                                        created_by: ""
+                                      }
                                     });
                                   }}
                                 >
                                   <Refresh />
                                 </button>
-
+                                <ReactTooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
+                              </a>
+                            )}
+                            {this.props.data.user.m_role_id !== "RO0001" && (
+                              <a href="#!" data-tip="Add Promotion">
+                                <button
+                                  className="mr-2 btn btn-primary"
+                                  onClick={this.showHandler}
+                                >
+                                  <Create />
+                                </button>
                                 <ReactTooltip
                                   place="top"
                                   type="dark"
@@ -555,7 +477,7 @@ class ListPromotion extends React.Component {
                             page={this.state.page}
                             onChangePage={this.handleChangePage}
                             onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                            ActionsComponent={TablePaginationActionsWrapped}
+                            ActionsComponent={Pagination}
                           />
                         </TableRow>
                       </TableFooter>

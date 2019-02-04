@@ -181,15 +181,6 @@ class EditTsouvenir extends React.Component {
       this.setState({ errorReceivedDate: "" });
     }
 
-    // if (
-    //   e.target.name === "received_date" &&
-    //   moment(e.target.value) < moment().subtract(1, "day")
-    // ) {
-    //   this.setState({
-    //     errorReceivedDate: "Received date must be after today"
-    //   });
-    // }
-
     let tmp = this.state.formdata;
     tmp[e.target.name] = e.target.value;
     this.setState({
@@ -229,16 +220,31 @@ class EditTsouvenir extends React.Component {
     if (isEmpty(this.state.formdata.received_date)) {
       this.setState({ errorReceivedDate: "This Field is Required" });
     }
-    // if (
-    //   moment(this.state.formdata.received_date) <
-    //   moment(this.props.tsouvenirTest.received_date)
-    // ) {
-    //   this.setState({ errorReceivedDate: "Received date must not older than the old one" });
-    // }
 
     // Souvenir Item Form Validation
     // Set Error Counter
     let errorCounter = 0;
+    this.state.oldItem.forEach((item, idx) => {
+      const oldItems = this.state.oldItem;
+      // Check for Empty Souvenir Name
+      if (isEmpty(item.m_souvenir_id)) {
+        errorCounter += 1;
+        oldItems[idx].errorSouvenir = "This Field is Required!";
+        this.setState({ oldItems });
+      }
+      // Check for Empty Qty
+      if (isEmpty(item.qty)) {
+        errorCounter += 1;
+        oldItems[idx].errorQty = "This Field is Required!";
+        this.setState({ oldItems });
+      }
+      // Check for Positive Qty
+      if (!isEmpty(item.qty) && item.qty <= 0) {
+        errorCounter += 1;
+        oldItems[idx].errorQty = "Qty Must be Positive!";
+        this.setState({ oldItems });
+      }
+    });
     this.state.newItem.forEach((item, idx) => {
       const newItems = this.state.newItem;
       const oldItems = this.state.oldItem;
@@ -252,6 +258,12 @@ class EditTsouvenir extends React.Component {
       if (isEmpty(item.qty)) {
         errorCounter += 1;
         newItems[idx].errorQty = "This Field is Required!";
+        this.setState({ newItems });
+      }
+      // Check for Positive Qty
+      if (!isEmpty(item.qty) && item.qty <= 0) {
+        errorCounter += 1;
+        newItems[idx].errorQty = "Qty Must be Positive!";
         this.setState({ newItems });
       }
       // Check Duplicate Item
@@ -360,7 +372,7 @@ class EditTsouvenir extends React.Component {
               type="date"
               name="received_date"
               placeholder=""
-              value={this.changeDateFormat(this.state.formdata.received_date)}
+              value={this.state.formdata.received_date}
               onChange={this.changeHandler}
               errors={this.state.errorReceivedDate}
             />
