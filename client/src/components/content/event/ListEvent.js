@@ -1,133 +1,31 @@
-import React from "react";
-import moment from "moment";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
-import { Alert } from "reactstrap";
+import moment from "moment";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { withStyles } from "@material-ui/core/styles";
-
+// Event Components
 import EditEvent from "./EditEvent";
 import CreateEvent from "./CreateEvent";
 import ViewEvent from "./ViewEvent";
-import SpinnerTable from "../../common/SpinnerTable";
+// Form Components
+import { Alert } from "reactstrap";
 import ReactTooltip from "react-tooltip";
-
+import SpinnerTable from "../../common/SpinnerTable";
+import SelectList from "../../common/SelectList";
+import Pagination from "../../common/Pagination";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+// Redux Actions
+import { connect } from "react-redux";
 import {
   getAllEvent,
   searchEvent,
   eraseStatus
 } from "../../../actions/eventAction";
+// Material UI Icons & Components
+import { Search, Create, RemoveRedEye, Refresh, Add } from "@material-ui/icons";
+import { TableRow, TableFooter, TablePagination } from "@material-ui/core";
 
-import {
-  TableRow,
-  TableFooter,
-  TablePagination,
-  IconButton
-} from "@material-ui/core";
-
-import {
-  FirstPage,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-  LastPage,
-  Search,
-  Add,
-  Create,
-  RemoveRedEye,
-  RefreshOutlined
-} from "@material-ui/icons";
-
-const actionsStyles = theme => ({
-  root: {
-    flexShrink: 0,
-    color: theme.palette.text.secondary,
-    marginLeft: theme.spacing.unit * 2.5
-  }
-});
-
-class TablePaginationActions extends React.Component {
-  handleFirstPageButtonClick = event => {
-    this.props.onChangePage(event, 0);
-  };
-
-  handleBackButtonClick = event => {
-    this.props.onChangePage(event, this.props.page - 1);
-  };
-
-  handleNextButtonClick = event => {
-    this.props.onChangePage(event, this.props.page + 1);
-  };
-
-  handleLastPageButtonClick = event => {
-    this.props.onChangePage(
-      event,
-      Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1)
-    );
-  };
-
-  render() {
-    const { classes, count, page, rowsPerPage, theme } = this.props;
-
-    return (
-      <div className={classes.root}>
-        <IconButton
-          onClick={this.handleFirstPageButtonClick}
-          disabled={page === 0}
-          aria-label="First Page"
-        >
-          {theme.direction === "rtl" ? <LastPage /> : <FirstPage />}
-        </IconButton>
-        <IconButton
-          onClick={this.handleBackButtonClick}
-          disabled={page === 0}
-          aria-label="Previous Page"
-        >
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowRight />
-          ) : (
-            <KeyboardArrowLeft />
-          )}
-        </IconButton>
-        <IconButton
-          onClick={this.handleNextButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Next Page"
-        >
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowLeft />
-          ) : (
-            <KeyboardArrowRight />
-          )}
-        </IconButton>
-        <IconButton
-          onClick={this.handleLastPageButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Last Page"
-        >
-          {theme.direction === "rtl" ? <FirstPage /> : <LastPage />}
-        </IconButton>
-      </div>
-    );
-  }
-}
-
-TablePaginationActions.propTypes = {
-  classes: PropTypes.object.isRequired,
-  count: PropTypes.number.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-  theme: PropTypes.object.isRequired
-};
-
-const TablePaginationActionsWrapped = withStyles(actionsStyles, {
-  withTheme: true
-})(TablePaginationActions);
-
-class ListEvent extends React.Component {
+class ListEvent extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -279,14 +177,6 @@ class ListEvent extends React.Component {
   };
 
   onRestore = () => {
-    let restore = {
-      code: "",
-      request_by: "",
-      request_date: "",
-      status: "",
-      created_date: "",
-      created_by: ""
-    };
     this.props.searchEvent(
       "",
       "",
@@ -299,7 +189,14 @@ class ListEvent extends React.Component {
     );
     this.setState({
       search: false,
-      initialSearch: restore,
+      initialSearch: {
+        code: "",
+        request_by: "",
+        request_date: "",
+        status: "",
+        created_date: "",
+        created_by: ""
+      },
       loading: null
     });
   };
@@ -365,6 +262,15 @@ class ListEvent extends React.Component {
   };
 
   render() {
+    // option for status
+    let statusOptions = [{ label: "Status", value: "" }];
+    this.state.status.map(row =>
+      statusOptions.push({
+        value: row.code,
+        label: row.name
+      })
+    );
+
     return (
       <div className="container">
         <div className="row">
@@ -393,7 +299,7 @@ class ListEvent extends React.Component {
                   </nav>
                 </div>
                 <div>
-                  {this.state.alertData.status === 1 ? (
+                  {this.state.alertData.status === 1 && (
                     <Alert className="alert alert-succes alert-dismissible fade show">
                       <b>{this.state.alertData.message}</b>
                       <button
@@ -406,10 +312,8 @@ class ListEvent extends React.Component {
                         <span>&times;</span>
                       </button>
                     </Alert>
-                  ) : (
-                    ""
                   )}
-                  {this.state.alertData.status === 2 ? (
+                  {this.state.alertData.status === 2 && (
                     <Alert className="alert alert-danger alert-dismissible fade show">
                       <b>{this.state.alertData.message}</b>
                       <button
@@ -422,8 +326,6 @@ class ListEvent extends React.Component {
                         <span>&times;</span>
                       </button>
                     </Alert>
-                  ) : (
-                    ""
                   )}
                   <CreateEvent
                     event={this.state.event}
@@ -445,7 +347,7 @@ class ListEvent extends React.Component {
                     modalStatus={this.modalStatus}
                   />
                   <div className="table-responsive">
-                    <table id="mytable" className="table table-hover">
+                    <table id="mytable" className="table table-stripped">
                       <thead>
                         <tr>
                           <td className="text-nowrap text-centered">
@@ -454,6 +356,7 @@ class ListEvent extends React.Component {
                               className="form-control"
                               name="code"
                               onChange={this.changeHandler}
+                              value={this.state.initialSearch.code}
                             />
                           </td>
                           <td className="text-nowrap text-centered">
@@ -462,6 +365,7 @@ class ListEvent extends React.Component {
                               className="form-control"
                               name="request_by"
                               onChange={this.changeHandler}
+                              value={this.state.initialSearch.request_by}
                             />
                           </td>
                           <td className="text-nowrap text-centered">
@@ -474,21 +378,12 @@ class ListEvent extends React.Component {
                             />
                           </td>
                           <td className="text-nowrap text-centered">
-                            <select
+                            <SelectList
                               name="status"
-                              className="form-control"
+                              options={statusOptions}
                               onChange={this.changeHandler}
-                              defaultValue=""
-                            >
-                              <option value="">Status...</option>
-                              {this.state.status.map((row, x) => {
-                                return (
-                                  <option key={row._id} value={row.code}>
-                                    {row.name}
-                                  </option>
-                                );
-                              })}
-                            </select>
+                              value={this.state.initialSearch.status}
+                            />
                           </td>
                           <td className="text-nowrap text-centered">
                             <DatePicker
@@ -505,6 +400,7 @@ class ListEvent extends React.Component {
                               name="created_by"
                               className="form-control"
                               onChange={this.changeHandler}
+                              value={this.state.initialSearch.created_by}
                             />
                           </td>
                           <td className="text-nowrap">
@@ -515,7 +411,7 @@ class ListEvent extends React.Component {
                                   className="btn mr-2 btn-warning"
                                   onClick={this.onRestore}
                                 >
-                                  <RefreshOutlined />
+                                  <Refresh />
                                 </button>
                                 <ReactTooltip
                                   place="top"
@@ -544,7 +440,11 @@ class ListEvent extends React.Component {
                                 type="button"
                                 className="btn btn-primary"
                                 onClick={this.showHandler}
-                                disabled={this.props.user.m_role_id === "RO0005" ? (false):(true)}
+                                disabled={
+                                  this.props.user.m_role_id === "RO0005"
+                                    ? false
+                                    : true
+                                }
                               >
                                 <Add />
                               </button>
@@ -648,7 +548,7 @@ class ListEvent extends React.Component {
                             page={this.state.page}
                             onChangePage={this.handleChangePage}
                             onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                            ActionsComponent={TablePaginationActionsWrapped}
+                            ActionsComponent={Pagination}
                           />
                         </TableRow>
                       </TableFooter>
