@@ -173,7 +173,7 @@ class ListEvent extends Component {
       this.props.user.m_employee_id,
       this.props.user.m_role_id
     );
-    this.setState({ search: true, loading: null });
+    this.setState({ search: true, loading: false });
   };
 
   onRestore = () => {
@@ -255,10 +255,8 @@ class ListEvent extends Component {
     });
   };
 
-  UNSAFE_componentWillReceiveProps = newProps => {
-    if (newProps.event.myEvent.length > 0) {
-      this.setState({ loading: newProps.event.myEvent });
-    }
+  UNSAFE_componentWillReceiveProps = props => {
+    this.setState({ loading: props.event.myEvent });
   };
 
   render() {
@@ -342,8 +340,8 @@ class ListEvent extends Component {
                   />
                   <EditEvent
                     edit={this.state.editEvent}
-                    closeModalHandler={this.closeModalHandler}
-                    currentEvent={this.state.currentEvent}
+                    event={this.state.currentEvent}
+                    closeHandler={this.closeModalHandler}
                     modalStatus={this.modalStatus}
                   />
                   <div className="table-responsive">
