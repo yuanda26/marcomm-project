@@ -309,16 +309,16 @@ export const updateDesignItem = designItemUpdate => dispatch => {
     headers: { Authorization: localStorage.token },
     data: { designItemUpdate }
   })
-    .then(res => {
+    .then(res =>
       dispatch({
         type: UPDATE_DESIGN_ITEM,
         payload: res.data.message
-      });
-    })
+      })
+    )
     .catch(err =>
       dispatch({
         type: ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };

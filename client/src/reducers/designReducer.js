@@ -125,10 +125,19 @@ export default function(state = initialState, action) {
       };
 
     case UPDATE_DESIGN_ITEM:
+      // Filter Updated Data Only
+      let updatedItems = state.items.map((item, idx) => {
+        if (item._id === action.payload[idx]._id) {
+          return { ...item, ...action.payload[idx] };
+        }
+        return item;
+      });
+
       return {
         ...state,
         designStatus: 2,
-        designMessage: "Transaction Design Request Has Been Updated"
+        designMessage: "Transaction Design Request Has Been Updated",
+        items: updatedItems
       };
 
     case APPROVE_DESIGN:

@@ -15,7 +15,7 @@ import {
   updateDesignItem,
   clearAlert
 } from "../../../actions/designAction";
-import { CreateOutlined, DeleteOutlined } from "@material-ui/icons";
+import { Create, Delete } from "@material-ui/icons";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 // Design Components
 import DesignRead from "./DesignRead";
@@ -301,7 +301,7 @@ class DesignEdit extends Component {
 
       // contain updated items
       const designItemUpdate = [];
-      this.state.items.forEach((item, index) => {
+      this.state.items.forEach(item => {
         // Delete Some Property
         delete item.disabled;
         delete item.errorDueDate;
@@ -309,14 +309,12 @@ class DesignEdit extends Component {
         delete item.errorProduct;
         delete item.errorTitle;
         // Compare Updated Data with Original Data
-        if (JSON.stringify(item) !== JSON.stringify(originalData[index])) {
-          if (item._id !== false) {
-            designItemUpdate.push({
-              ...item,
-              updated_by: this.props.user.m_employee_id,
-              updated_date: moment().format("DD/MM/YYYY")
-            });
-          }
+        if (item._id !== false) {
+          designItemUpdate.push({
+            ...item,
+            updated_by: this.props.user.m_employee_id,
+            updated_date: moment().format("DD/MM/YYYY")
+          });
         }
       });
 
@@ -653,7 +651,11 @@ class DesignEdit extends Component {
                                       <TextField
                                         type="date"
                                         name="request_due_date"
-                                        min={moment().format("YYYY-MM-DD")}
+                                        min={
+                                          item.request_due_date
+                                            ? item.request_due_date
+                                            : moment().format("YYYY-MM-DD")
+                                        }
                                         value={item.request_due_date}
                                         disabled={item.disabled}
                                         onChange={this.handleItemChange(idx)}
@@ -683,13 +685,13 @@ class DesignEdit extends Component {
                                     </td>
                                     <td nowrap="true">
                                       <a href="#!">
-                                        <CreateOutlined
+                                        <Create
                                           color="primary"
                                           onClick={this.handleDisabled(idx)}
                                         />
                                       </a>
                                       <a href="#!">
-                                        <DeleteOutlined
+                                        <Delete
                                           color="primary"
                                           onClick={this.handleRemoveModal(idx)}
                                         />
