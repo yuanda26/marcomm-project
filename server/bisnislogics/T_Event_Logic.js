@@ -4,9 +4,13 @@ const moment = require("moment");
 
 const tEventBisnislogic = {
   readAllHandler: (req, res, next) => {
-    dtl.readAllHandlerData(function(items) {
-      responseHelper.sendResponse(res, 200, items);
-    }, req.params.empId, req.params.roleId);
+    dtl.readAllHandlerData(
+      function(items) {
+        responseHelper.sendResponse(res, 200, items);
+      },
+      req.params.empId,
+      req.params.roleId
+    );
   },
   readAllWithoutFilter: (req, res, next) => {
     dtl.readAllWithoutFilterData(items => {
@@ -67,43 +71,29 @@ const tEventBisnislogic = {
       body.code = codeTEvent;
       body.created_date = moment().format("DD/MM/YYYY");
       dtl.createHandlerData(function(items, date) {
-        dtl.readAllHandlerData(function(callbackReadData) {
-          responseHelper.sendResponse(res, 200, callbackReadData);
-        }, req.params.empId, req.params.roleId);
+        dtl.readAllHandlerData(
+          function(callbackReadData) {
+            responseHelper.sendResponse(res, 200, callbackReadData);
+          },
+          req.params.empId,
+          req.params.roleId
+        );
       }, body);
     }, date);
   },
   updateHandler: (req, res, next) => {
-    let date = moment().format("DD/MM/YYYY");
     let param = req.params.eventId;
-    let body = {
-      code: req.body.code,
-      event_name: req.body.event_name,
-      start_date: req.body.start_date,
-      end_date: req.body.end_date,
-      place: req.body.place,
-      budget: req.body.budget,
-      request_by: req.body.request_by,
-      request_date: req.body.request_date,
-      approved_by: req.body.approved_by,
-      approved_date: req.body.approved_date,
-      assign_to: req.body.assign_to,
-      closed_date: req.body.closed_date,
-      note: req.body.note,
-      status: "1",
-      reject_reason: req.body.reject_reason,
-      is_delete: false,
-      created_by: req.body.created_by,
-      created_date: req.body.created_date,
-      updated_by: req.body.updated_by,
-      updated_date: date
-    };
+    let body = req.body;
 
     dtl.updateHandlerData(
       items => {
-        dtl.readAllHandlerData(function(callbackReadData) {
-          responseHelper.sendResponse(res, 200, callbackReadData);
-        }, req.params.empId, req.params.roleId);
+        dtl.readAllHandlerData(
+          function(callbackReadData) {
+            responseHelper.sendResponse(res, 200, callbackReadData);
+          },
+          req.params.empId,
+          req.params.roleId
+        );
       },
       param,
       body
