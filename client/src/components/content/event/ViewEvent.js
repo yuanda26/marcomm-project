@@ -36,19 +36,25 @@ class ViewEvent extends Component {
   }
 
   UNSAFE_componentWillReceiveProps(props, state) {
-    this.setState({ 
+    this.setState({
       eventId: props.currentEvent._id,
       assign_to: props.currentEvent.assign_to
-       });
-    let { statusApprove, statusReject, statusClose } = props.event
-    let { code } = props.currentEvent
-    if(statusApprove || statusReject || statusClose ){
-      if(statusApprove === 200){
-        props.modalStatus(1, `Succes, Event with code ${code} has been Approved`)
-      } else if(statusReject === 200){
-        props.modalStatus(1, `Succes, Event with code ${code} has been Rejected`)
-      } else if(statusClose === 200){
-        props.modalStatus(1, `Succes, Event with code ${code} has been Closed`)
+    });
+    let { statusApprove, statusReject, statusClose } = props.event;
+    let { code } = props.currentEvent;
+    if (statusApprove || statusReject || statusClose) {
+      if (statusApprove === 200) {
+        props.modalStatus(
+          1,
+          `Succes, Event with code ${code} has been Approved`
+        );
+      } else if (statusReject === 200) {
+        props.modalStatus(
+          1,
+          `Succes, Event with code ${code} has been Rejected`
+        );
+      } else if (statusClose === 200) {
+        props.modalStatus(1, `Succes, Event with code ${code} has been Closed`);
       }
     }
   }
@@ -220,15 +226,17 @@ class ViewEvent extends Component {
                       value={budget}
                       disabled={true}
                     />
-                    <SelectListGroup
-                      label="*Assign To"
-                      name="assign_to"
-                      value={this.state.assign_to}
-                      onChange={this.onChange}
-                      options={options}
-                      errors={this.state.errorAssign}
-                      disabled={status === "Submitted" ? (false) : (true)}
-                    />
+                    {this.props.user.m_role_id === "RO0001" &&
+                      status === "Submitted" && (
+                        <SelectListGroup
+                          label="*Assign To"
+                          name="assign_to"
+                          value={this.state.assign_to}
+                          onChange={this.onChange}
+                          options={options}
+                          errors={this.state.errorAssign}
+                        />
+                      )}
                   </div>
                   <div className="col-md-6">
                     <TextFieldGroup
@@ -251,37 +259,37 @@ class ViewEvent extends Component {
                 </div>
               </div>
               <div className="form-group text-right">
-                {status === "Submitted" && (
-                  <Fragment>
-                    <button type="submit" className="btn btn-primary mr-1">
-                      Approve
-                    </button>
+                {this.props.user.m_role_id === "RO0001" &&
+                  status === "Submitted" && (
+                    <Fragment>
+                      <button type="submit" className="btn btn-primary mr-1">
+                        Approve
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-danger mr-1"
+                        onClick={this.openReject}
+                      >
+                        Reject
+                      </button>
+                    </Fragment>
+                  )}
+                {this.props.user.m_role_id === "RO0006" &&
+                  status === "In Progress" && (
                     <button
                       type="button"
-                      className="btn btn-danger mr-1"
-                      onClick={this.openReject}
+                      className="btn btn-primary mr-1"
+                      onClick={this.submitClose}
                     >
-                      Reject
+                      Close Request
                     </button>
-                  </Fragment>
-                )}
-                {status === "In Progress" && (
-                  <button
-                    type="button"
-                    className="btn btn-primary mr-1"
-                    onClick={this.submitClose}
-                    disabled = {this.props.user.m_role_id === "RO0006" ? ( false ) : ( true )}
-                  >
-                    Close Request
-                  </button>
-                )
-              }
+                  )}
                 <button
                   type="button"
                   className="btn btn-warning"
                   onClick={this.props.closeModalHandler}
                 >
-                  Cancel
+                  Close
                 </button>
               </div>
             </form>
