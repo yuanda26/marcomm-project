@@ -36,14 +36,19 @@ const designDataItem = {
     );
   },
   updateItemData: (callback, formdata) => {
+    // Make a Copy of Updated Items Data
+    const updatedData = [];
+    // Alter Object Id to Another Array
     const _ids = [];
     formdata.forEach(data => {
       _ids.push(new ObjectId(data._id));
+      updatedData.push({ ...data });
       delete data._id;
     });
 
+    // Update Items Data
     const cb = [];
-    _ids.map((id, index) => {
+    _ids.forEach((id, index) => {
       db.collection("t_design_item").updateOne(
         { _id: id },
         { $set: formdata[index] },
@@ -58,7 +63,7 @@ const designDataItem = {
     });
 
     //return callback
-    callback(cb);
+    callback(updatedData);
   },
   deleteData: (callback, itemId, deleteItem) => {
     db.collection("t_design_item").updateOne(
