@@ -282,6 +282,11 @@ class DesignRead extends Component {
                       </div>
                     </div>
                   </form>
+                  <div className="text-right mt-4">
+                    <a href="/design" className="btn btn-warning">
+                      Back
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
