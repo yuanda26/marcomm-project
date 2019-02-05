@@ -315,11 +315,19 @@ class DesignList extends Component {
                               />
                             </td>
                             <td>
-                              <TextField
+                              <SelectList
                                 className="search-form"
-                                placeholder="Status"
                                 name="searchStatus"
                                 value={this.state.searchStatus}
+                                options={[
+                                  { label: "~Status~", value: "" },
+                                  { label: "Submitted", value: "Submitted" },
+                                  {
+                                    label: "In Progress",
+                                    value: "In Progress"
+                                  },
+                                  { label: "Done", value: "Done" }
+                                ]}
                                 onChange={this.onSearch}
                               />
                             </td>
