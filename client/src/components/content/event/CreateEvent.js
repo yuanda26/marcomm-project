@@ -12,6 +12,7 @@ import TextAreaGroup from "../../common/TextAreaGroup";
 import isEmpty from "../../../validation/isEmpty";
 
 class CreateEvent extends Component {
+  // Initial State
   state = {
     code: "",
     eventName: "",
@@ -19,13 +20,14 @@ class CreateEvent extends Component {
     startDate: "",
     endDate: "",
     budget: "",
+    note: "",
     errorEventName: "",
     errorEventPlace: "",
     errorStartDate: "",
     errorEndDate: "",
     errorBudget: "",
     currentEmployee: "",
-    regexBudget: /[0-9]+$/
+    regexBudget: /^[1-9]\d*$/
   };
 
   componentDidMount() {
@@ -90,18 +92,21 @@ class CreateEvent extends Component {
   submitHandler = e => {
     e.preventDefault();
 
+    // Destructuring Form State
     let {
       regexBudget,
       eventName,
       eventPlace,
       startDate,
       endDate,
-      budget
+      budget,
+      note
     } = this.state;
 
-    // Set Error Counter
+    // Initiate Error Counter
     let errorCounter = 0;
-    // Validation
+
+    // Form Validation
     if (isEmpty(eventName)) {
       errorCounter += 1;
       this.setState({ errorEventName: "This Field is Required!" });
@@ -122,13 +127,14 @@ class CreateEvent extends Component {
       errorCounter += 1;
       this.setState({ errorBudget: "This Field is Required!" });
     }
-    if (!regexBudget.test(budget)) {
+    if (!isEmpty(budget) && !regexBudget.test(budget)) {
       errorCounter += 1;
       this.setState({
-        errorBudget: "Budget is invalid! Input positif number only."
+        errorBudget: "Budget is Invalid! Input Positif Number Only."
       });
     }
 
+    // Final Validation
     if (errorCounter === 0) {
       const formdata = {
         event_name: eventName,
@@ -136,6 +142,7 @@ class CreateEvent extends Component {
         start_date: startDate,
         end_date: endDate,
         budget: budget,
+        note: note,
         request_by: this.props.user.m_employee_id,
         request_date: moment().format("DD/MM/YYYY"),
         created_by: this.props.user.m_employee_id,
@@ -150,7 +157,6 @@ class CreateEvent extends Component {
       );
 
       // Close Modal & Clear Form
-      this.props.closeHandler();
       this.setState({
         eventName: "",
         eventPlace: "",
@@ -159,6 +165,7 @@ class CreateEvent extends Component {
         budget: "",
         note: ""
       });
+      this.props.closeHandler();
     }
   };
 
