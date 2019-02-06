@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { Link } from "react-router-dom";
@@ -433,25 +433,24 @@ class ListEvent extends Component {
                                 />
                               </a>
                             )}
-                            <Link to="#" data-tip="Add New Event">
-                              <button
-                                type="button"
-                                className="btn btn-primary"
-                                onClick={this.showHandler}
-                                disabled={
-                                  this.props.user.m_role_id === "RO0005"
-                                    ? false
-                                    : true
-                                }
-                              >
-                                <Add />
-                              </button>
-                            </Link>
-                            <ReactTooltip
-                              place="top"
-                              type="dark"
-                              effect="solid"
-                            />
+                            {this.props.user.m_role_id === "RO0005" && (
+                              <Fragment>
+                                <Link to="" data-tip="Add New Event">
+                                  <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={this.showHandler}
+                                  >
+                                    <Add />
+                                  </button>
+                                </Link>
+                                <ReactTooltip
+                                  place="top"
+                                  type="dark"
+                                  effect="solid"
+                                />
+                              </Fragment>
+                            )}
                           </td>
                         </tr>
                       </thead>
