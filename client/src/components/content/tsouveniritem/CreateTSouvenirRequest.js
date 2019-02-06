@@ -188,6 +188,12 @@ class CreateTsouveniritem extends React.Component {
         items[idx].errorQty = "This Field is Required!";
         this.setState({ items });
       }
+      // Check for Positive Qty
+      if (!isEmpty(item.qty) && item.qty <= 0) {
+        errorCounter += 1;
+        items[idx].errorQty = "Qty Must be Positive!";
+        this.setState({ items });
+      }
       // Check Duplicate Item
       if (this.validateDuplicateItem(this.state.shareholders).status === true) {
         let a = this.validateDuplicateItem(this.state.shareholders).index[0];
@@ -270,6 +276,9 @@ class CreateTsouveniritem extends React.Component {
       event_code: "",
       due_date: "",
       note: "",
+      errorEventCode: "",
+      errorRequestDate: "",
+      errorRequestDueDate: "",
       shareholders: []
     });
   };
@@ -400,6 +409,7 @@ class CreateTsouveniritem extends React.Component {
                       <TextFieldGroup
                         type="number"
                         name="qty"
+                        min="0"
                         onChange={this.handleShareholderItemChange(idx)}
                         value={shareholder.qty}
                         errors={shareholder.errorQty}

@@ -8,18 +8,8 @@ import moment from "moment";
 import Spinner from "../../common/Spinner";
 
 import { Alert } from "reactstrap";
-import {
-  TableFooter,
-  TableRow,
-  TablePagination,
-  IconButton
-} from "@material-ui/core";
+import { TableFooter, TableRow, TablePagination } from "@material-ui/core";
 import { Search, Refresh, Create, RemoveRedEye, Add } from "@material-ui/icons";
-import FirstPageIcon from "@material-ui/icons/FirstPage";
-import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
-import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
-import LastPageIcon from "@material-ui/icons/LastPage";
-import { withStyles } from "@material-ui/core/styles";
 
 import {
   getAllTSouvenirItem,
@@ -33,93 +23,7 @@ import AdminHandler from "./AdminHandler";
 import RequesterHandler from "./RequesterHandler";
 import ReactTooltip from "react-tooltip";
 import SpinnerTable from "../../common/SpinnerTable";
-
-const actionsStyles = theme => ({
-  root: {
-    flexShrink: 0,
-    color: theme.palette.text.secondary,
-    marginLeft: theme.spacing.unit * 2.5
-  }
-});
-
-class TablePaginationActions extends React.Component {
-  handleFirstPageButtonClick = event => {
-    this.props.onChangePage(event, 0);
-  };
-
-  handleBackButtonClick = event => {
-    this.props.onChangePage(event, this.props.page - 1);
-  };
-
-  handleNextButtonClick = event => {
-    this.props.onChangePage(event, this.props.page + 1);
-  };
-
-  handleLastPageButtonClick = event => {
-    this.props.onChangePage(
-      event,
-      Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1)
-    );
-  };
-
-  render() {
-    const { classes, count, page, rowsPerPage, theme } = this.props;
-
-    return (
-      <div className={classes.root}>
-        <IconButton
-          onClick={this.handleFirstPageButtonClick}
-          disabled={page === 0}
-          aria-label="First Page"
-        >
-          {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
-        </IconButton>
-        <IconButton
-          onClick={this.handleBackButtonClick}
-          disabled={page === 0}
-          aria-label="Previous Page"
-        >
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowRight />
-          ) : (
-            <KeyboardArrowLeft />
-          )}
-        </IconButton>
-        <IconButton
-          onClick={this.handleNextButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Next Page"
-        >
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowLeft />
-          ) : (
-            <KeyboardArrowRight />
-          )}
-        </IconButton>
-        <IconButton
-          onClick={this.handleLastPageButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Last Page"
-        >
-          {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
-        </IconButton>
-      </div>
-    );
-  }
-}
-
-TablePaginationActions.propTypes = {
-  classes: PropTypes.object.isRequired,
-  count: PropTypes.number.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-  theme: PropTypes.object.isRequired
-};
-
-const TablePaginationActionsWrapped = withStyles(actionsStyles, {
-  withTheme: true
-})(TablePaginationActions);
+import Pagination from "../../common/Pagination";
 
 class ListTsouveniritem extends React.Component {
   constructor(props) {
@@ -134,13 +38,13 @@ class ListTsouveniritem extends React.Component {
         getitem: ""
       },
       formSearch: {
-        code: /(?:)/,
-        request_by: /(?:)/,
-        request_date: /(?:)/,
-        request_due_date: /(?:)/,
-        status: /(?:)/,
-        created_date: /(?:)/,
-        created_by: /(?:)/
+        code: "",
+        request_by: "",
+        request_date: "",
+        request_due_date: "",
+        status: "",
+        created_date: "",
+        created_by: ""
       },
       tsouveniritem: [null],
       tsouveniritemSearch: [null],
@@ -338,8 +242,6 @@ class ListTsouveniritem extends React.Component {
   changeHanlderSearch = event => {
     let tmp = this.state.formSearch;
     if (event.target.name) {
-      tmp[event.target.name] = new RegExp(event.target.value.toLowerCase());
-    } else {
       tmp[event.target.name] = event.target.value;
     }
     this.setState({
@@ -347,7 +249,7 @@ class ListTsouveniritem extends React.Component {
     });
   };
 
-  searchHandler = () => {
+  searchHandler = e => {
     const {
       code,
       request_by,
@@ -357,16 +259,32 @@ class ListTsouveniritem extends React.Component {
       created_date,
       created_by
     } = this.state.formSearch;
+    const searchCode = new RegExp(code, "i");
+    const searchRequestBy = new RegExp(request_by, "i");
+    const searchRequestDate =
+      request_date === ""
+        ? new RegExp("")
+        : new RegExp(moment(request_date).format("YYYY-MM-DD"));
+    const searchRequestDueDate =
+      request_due_date === ""
+        ? new RegExp("")
+        : new RegExp(moment(request_due_date).format("YYYY-MM-DD"));
+    const searchStatus = new RegExp(status, "i");
+    const searchCreatedBy = new RegExp(created_by, "i");
+    const searchCreatedDate =
+      created_date === ""
+        ? new RegExp("")
+        : new RegExp(moment(created_date).format("YYYY-MM-DD"));
     let temp = [];
     this.state.tsouveniritem.map(ele => {
       if (
-        code.test(ele.code.toLowerCase()) &&
-        request_by.test(ele.request_by.toLowerCase()) &&
-        request_date.test(ele.request_date) &&
-        request_due_date.test(ele.request_due_date) &&
-        status.test(this.designStatus(ele.status).toLowerCase()) &&
-        created_date.test(ele.created_date) &&
-        created_by.test(ele.created_by.toLowerCase())
+        searchCode.test(ele.code.toLowerCase()) &&
+        searchRequestBy.test(ele.request_by.toLowerCase()) &&
+        searchRequestDate.test(ele.request_date) &&
+        searchRequestDueDate.test(ele.request_due_date) &&
+        searchStatus.test(this.designStatus(ele.status).toLowerCase()) &&
+        searchCreatedDate.test(ele.created_date) &&
+        searchCreatedBy.test(ele.created_by.toLowerCase())
       ) {
         temp.push(ele);
       }
@@ -381,7 +299,16 @@ class ListTsouveniritem extends React.Component {
   refreshSearch = () => {
     this.setState({
       tsouveniritemSearch: this.state.tsouveniritem,
-      search: true
+      search: true,
+      formSearch: {
+        code: "",
+        request_by: "",
+        request_date: "",
+        request_due_date: "",
+        status: "",
+        created_date: "",
+        created_by: ""
+      }
     });
   };
 
@@ -504,6 +431,7 @@ class ListTsouveniritem extends React.Component {
                               <input
                                 placeholder="Search by Code"
                                 name="code"
+                                value={this.state.formSearch.code}
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
                                 onKeyPress={this.keyHandler}
@@ -513,6 +441,7 @@ class ListTsouveniritem extends React.Component {
                               <input
                                 placeholder="Search by Requester"
                                 name="request_by"
+                                value={this.state.formSearch.request_by}
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
                                 onKeyPress={this.keyHandler}
@@ -523,6 +452,7 @@ class ListTsouveniritem extends React.Component {
                                 placeholder="Search by Request Date"
                                 type="date"
                                 name="request_date"
+                                value={this.state.formSearch.request_date}
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
                                 onKeyPress={this.keyHandler}
@@ -533,6 +463,7 @@ class ListTsouveniritem extends React.Component {
                                 placeholder="Search by Request Due Date"
                                 type="date"
                                 name="request_due_date"
+                                value={this.state.formSearch.request_due_date}
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
                                 onKeyPress={this.keyHandler}
@@ -542,6 +473,7 @@ class ListTsouveniritem extends React.Component {
                               <input
                                 placeholder="Search by Status"
                                 name="status"
+                                value={this.state.formSearch.status}
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
                                 onKeyPress={this.keyHandler}
@@ -551,6 +483,7 @@ class ListTsouveniritem extends React.Component {
                               <input
                                 placeholder="Search by Create by"
                                 name="created_by"
+                                value={this.state.formSearch.created_by}
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
                                 onKeyPress={this.keyHandler}
@@ -561,6 +494,7 @@ class ListTsouveniritem extends React.Component {
                                 placeholder="Search by Create Date"
                                 type="date"
                                 name="created_date"
+                                value={this.state.formSearch.created_date}
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
                                 onKeyPress={this.keyHandler}
@@ -684,7 +618,7 @@ class ListTsouveniritem extends React.Component {
                               page={this.state.page}
                               onChangePage={this.handleChangePage}
                               onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                              ActionsComponent={TablePaginationActionsWrapped}
+                              ActionsComponent={Pagination}
                             />
                           </TableRow>
                         </TableFooter>
@@ -763,6 +697,7 @@ class ListTsouveniritem extends React.Component {
                               <input
                                 placeholder="Search by Code"
                                 name="code"
+                                value={this.state.formSearch.code}
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
                                 onKeyPress={this.keyHandler}
@@ -772,6 +707,7 @@ class ListTsouveniritem extends React.Component {
                               <input
                                 placeholder="Search by Requester"
                                 name="request_by"
+                                value={this.state.formSearch.request_by}
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
                                 onKeyPress={this.keyHandler}
@@ -782,6 +718,7 @@ class ListTsouveniritem extends React.Component {
                                 placeholder="Search by Request Date"
                                 type="date"
                                 name="request_date"
+                                value={this.state.formSearch.request_date}
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
                                 onKeyPress={this.keyHandler}
@@ -792,6 +729,7 @@ class ListTsouveniritem extends React.Component {
                                 placeholder="Search by Request Due Date"
                                 type="date"
                                 name="request_due_date"
+                                value={this.state.formSearch.request_due_date}
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
                                 onKeyPress={this.keyHandler}
@@ -800,6 +738,7 @@ class ListTsouveniritem extends React.Component {
                             <td nowrap="true">
                               <input
                                 placeholder="Search by Status"
+                                value={this.state.formSearch.status}
                                 name="status"
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
@@ -809,6 +748,7 @@ class ListTsouveniritem extends React.Component {
                             <td nowrap="true">
                               <input
                                 placeholder="Search by Create by"
+                                value={this.state.formSearch.created_by}
                                 name="created_by"
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
@@ -820,6 +760,7 @@ class ListTsouveniritem extends React.Component {
                                 placeholder="Search by Create Date"
                                 type="date"
                                 name="created_date"
+                                value={this.state.formSearch.created_date}
                                 className="form-control"
                                 onChange={this.changeHanlderSearch}
                                 onKeyPress={this.keyHandler}
@@ -983,7 +924,7 @@ class ListTsouveniritem extends React.Component {
                               page={this.state.page}
                               onChangePage={this.handleChangePage}
                               onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                              ActionsComponent={TablePaginationActionsWrapped}
+                              ActionsComponent={Pagination}
                             />
                           </TableRow>
                         </TableFooter>
