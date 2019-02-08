@@ -86,14 +86,27 @@ const designDataItem = {
             as: "product_doc"
           }
         },
+        {
+          $lookup: {
+            from: "t_design_item_file",
+            localField: "_id.str",
+            foreignField: "id",
+            as: "design_file"
+          }
+        },
         { $unwind: "$product_doc" },
+        //{ $unwind: "$design_file" },
         {
           $project: {
             t_design_id: "$t_design_id",
             m_product_id: "$m_product_id",
             product_name: "$product_doc.name",
             description: "$product_doc.description",
-            title_item: "$title_item"
+            title_item: "$title_item",
+            start_date: "$start_date",
+            end_date: "$end_date",
+            request_due_date: "$request_due_date",
+            filename: "$design_file.filename"
           }
         },
         { $match: { t_design_id: code } }
