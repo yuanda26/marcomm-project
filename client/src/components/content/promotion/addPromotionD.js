@@ -217,6 +217,7 @@ class addPromotionD extends React.Component {
 
   // <<----------------------------RENDER---------------------------->>
   render() {
+    console.log(this.state.designItem);
     return (
       // Header Setting
       <div className="container-fluid">
@@ -352,13 +353,14 @@ class addPromotionD extends React.Component {
                     * Note
                   </label>
                   <div className="col-8">
-                    <textrea
-                      placeholder="Type Note"
+                    <textarea
                       className="form-control"
-                      aria-label="With textarea"
                       name="note"
+                      id="note"
                       value={this.state.marketHeader.note}
                       onChange={this.changeHandler}
+                      placeholder="Type Note"
+                      aria-label="With textarea"
                     />
                   </div>
                 </div>
@@ -455,6 +457,7 @@ class addPromotionD extends React.Component {
                   <div className="col-8">
                     <textarea
                       className="form-control"
+                      id="note"
                       aria-label="With textarea"
                       placeholder={this.state.designHeader.note}
                       disabled
@@ -588,12 +591,14 @@ class addPromotionD extends React.Component {
                               type="date"
                               className="form-control"
                               id="startdate"
+                              value={content.start_date}
                               disabled
                             />
                           </td>
                           <td>
                             <input
                               type="date"
+                              value={content.end_date}
                               className="form-control"
                               id="enddate"
                               disabled

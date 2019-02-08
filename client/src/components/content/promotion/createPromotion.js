@@ -138,7 +138,7 @@ class CreatePromotion extends React.Component {
     event.map(row => {
       return eventOptions.push({
         value: row.code,
-        label: row.code
+        label: row.event_name
       });
     });
 
@@ -148,7 +148,7 @@ class CreatePromotion extends React.Component {
           if (row.t_event_id === event) {
             return {
               value: row.code,
-              label: row.code
+              label: row.title_header
             };
           } else return false;
         })
