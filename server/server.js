@@ -14,8 +14,10 @@ databaseConnection.connect((err, db) => {
     const server = restify.createServer();
     // CORS Middleware
     const cors = corsMidlleware({
+      preflightMaxAge: 5, //Optional
       origins: ["*"],
-      allowHeaders: ["Authorization"]
+      allowHeaders: ["Authorization", "API-Token"],
+      exposeHeaders: ["API-Token-Expiry"]
     });
     server.pre(cors.preflight);
     server.use(cors.actual);
